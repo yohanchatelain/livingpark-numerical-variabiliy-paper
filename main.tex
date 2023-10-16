@@ -1,0 +1,174 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{todonotes}
+
+\title{Assessment of Numerical Variability in Freesurfer 7.3.1 Using Monte Carlo Arithmetic: A Comparative Study between Healthy Control and Parkinson’s Diseased Populations}
+\author{You}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Brief summary of the research background, methodology, goals, and initial findings. Emphasis on the utilization of the Monte Carlo Arithmetic (MCA) to evaluate numerical instability in Freesurfer 7.3.1 and the subsequent implications on clinical research.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Background}
+
+\begin{itemize}
+    \item Overview of Freesurfer 7.3.1 and its applications.
+    \item  Introduction to numerical variability and its significance.
+    \item Overview of Parkinson’s disease and its prevalence.
+\end{itemize}
+
+\subsection{Motivation}
+
+\begin{itemize}
+    \item Explanation on why studying numerical variability is important, especially in neurological studies involving conditions like Parkinson’s disease.
+\end{itemize}
+
+\subsection{Objectives}
+
+\begin{itemize}
+    \item (Cross-sectional) To assess the difference in numerical variability between Healthy Control (HC) and Parkinson's Diseased (PD) populations.
+    \item (Longitudinal) To evaluate the impact of numerical variability on clinical research.
+\end{itemize}
+
+\section{Methods}
+
+\subsection{Numerical variability assessment}
+
+The floating-point arithmetic, ruled by the IEEE-754 norm, system approximates real numbers using finite precision. Given this limited precision, rounding off becomes essential, which can lead to cumulative errors, rendering some calculations imprecise or incorrect. The challenge of accurately quantifying the error in extensive scientific computations arises from the large number of calculations involved. Stochastic arithmetic, with its reliance on randomness, simplifies this challenge by converting it into a matter of statistical sampling.
+
+\subsubsection{Monte Carlo Arithmetic}
+
+Among the stochastic arithmetic techniques, Monte Carlo Arithmetic~\cite{parker1997monte} (MCA) extends floating-point arithmetic by exploiting randomness to assess numerical instability that arises from finite precision calculations. MCA introduces random noise into basic arithmetic operations $(+,-,\times,\div)$ to emulate unbiased, random rounding that is independent of prior operations. Consequently, MCA facilitates assessments of changes in Operating Systems or architectures, enabling the evaluation of their impact on the significance of results. By running the same code multiple times, the stability of outcomes can be measured by calculating the number of significant digits in the outputs.
+
+\subsubsection{Significant digits formula}
+
+We compute the number of significant bits \(\hat{s}\) with probability \(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \emph{Significant Digits} package\footnote{\url{https://github.com/verificarlo/significantdigits}} (version 0.2.0).
+\emph{Significant Digits} implements the Centered Normality Hypothesis approach described in~\cite{sohier2021confidence}:
+\[
+  \hat{s_i} = -\log_2 \left| \frac{\hat{\sigma_i}}{\hat{\mu_i}} \right| - \delta(n, \alpha_s, p_s),
+\]
+where \(\hat{\sigma_i}\) and \(\hat{\mu_i}\) are the average and standard deviation over the repetitions, and
+\begin{equation}
+  \delta(n, \alpha_s, p_s) = \log_2 \left( \sqrt{\frac{n-1}{\chi^2_{1-\alpha_s/2}}} \Phi^{-1} \left( \frac{p_s+1}{2} \right) \right)
+\end{equation}
+is a penalty term for estimating \(\hat{s_i}\) with probability \(p_s\) and confidence level \(1-\alpha_s\) for a sample size \(n\).
+\(\Phi^{-1}\) is the inverse cumulative distribution of the standard normal distribution and \(\chi^2\) is the Chi-2 distribution with \(n\)-1 degrees of freedom.
+
+\subsubsection{Fuzzy-libm}
+
+MCA has been extended to several libraries including the \texttt{libm} which comprises elementary mathematical functions \texttt{(exp, log, cos, sin, ...)}. The Fuzzy-libm~\cite{salari2021accurate} project presents an ecosystem of Docker images, offering a \texttt{libm} that is recompiled with Verificarlo~\cite{denis2015verificarlo}. This LLVM-based compiler replaces floating-point arithmetic instructions for their MCA equivalents. The Fuzzy-libm applies a random perturbation on the results of \texttt{libm}' functions to simulate different implementations. It has been demonstrated to be a good proxy to simulate OS changes~\cite{salari2021accurate}.
+
+
+
+
+\subsection{Experimental Protocol}
+
+\begin{itemize}
+    \item Details on the execution of 10 Freesurfer runs with Fuzzy-libm for each of the 315 subjects (106 HC and 209 PD).
+\end{itemize}
+
+We executed \emph{FreeSurfer} \texttt{recon-all} command 10 times for each subject with the Fuzzy-libm. We set the virtual precision to 53 for binary64 (double precision) and 24 for binary32 (single precision) to simulate error-machine precision. 
+
+
+\todo{Detail failing execution + image QC}
+
+In total, 209 patients diagnosed with Parkinson's Disease (PD) participated in the study: 180 with PD without mild cognitive impairment (PD-non-MCI) and 29 with PD with mild cognitive impairment (PD-MCI). Additionally, 106 healthy controls (HC) were included. All participants were sourced from the Parkinson’s Progression Markers Initiative (PPMI; www.ppmi-info.org). The inclusion criteria for PD patients comprised a primary diagnosis of PD, the availability of a T1-weighted scan, and the absence of other neurological diagnoses. For the clinical analysis, 125 PD-non-MCI patients and all 106 HC were considered. Every participant in this subset had two study visits with T1-weighted images available. Additionally, PD patients were evaluated using the Unified Parkinson’s Disease Rating Scale (UPDRS) scores. PD-MCI patients were excluded from the clinical analysis to prevent potential confounding effects of MCI on clinical evaluations. The data collection was sanctioned by the local ethics committees of PPMI's participating institutions, and all participants provided written informed consent. Descriptive statistics for each group can be found in Table 1. The study adhered to the Declaration of Helsinki and received an exemption from Concordia University’s Research Ethics Unit.
+
+\subsection{Image acquisition}
+
+T1-weighted MRI images were obtained from PPMI that uses standardized acquisition parameters: repetition time = 2.3 s, echo time = 2.98 s, inversion time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view = 256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite project there may be slight differences in the sites’ setup.
+ 
+Brain images were processed using FreeSurfer 7.3.1~\cite{fischl2012freesurfer}. FreeSurfer’s \texttt{recon-all} function was used for cortical reconstruction. Volumes, cortical thickness, and surface area were extracted for each participant. The longitudinal preprocessing stream was used to analyze images in cohort II~\cite{reuter2012within}. The two-time points were processed cross-sectionally with the default pipeline, an unbiased template from the two images was created, and data were processed longitudinally. Specifically, an unbiased within-subject template space and image \cite{reuter2011avoiding} is created using robust, inverse-consistent registration~\cite{reuter2010highly}. Analyzes were performed on the Virtual Imaging Platform~\cite{glatard2012virtual} that utilizes resources offered by the Biomed virtual organization within the European Grid Infrastructure (EGI). Specifically, the authors wish to extend gratitude to Sorina Pop from CREATIS, Lyon, France, for her invaluable technical assistance. Quality control of raw images was performed with MRIQC. Preprocessed images were visually inspected for quality.
+
+\subsection{Data Analysis}
+
+We executed two distinct statistical analyses: computational and clinical. We delved into the variations present in FreeSurfer outputs, specifically focusing on the estimation of volume, cortical thickness, and surface area. For each image, we extracted the cortical and subcortical volumes, as well as the cortical surface areas and thicknesses from all FreeSurfer iterations. To quantify the numerical variability across these measurements, we calculated the number of significant digits. For a more targeted analysis, we evaluated the Parkinson's Disease (PD) and Healthy Control (HC) groups separately. We employed the Whitney-Mann test to find out potential variances in software stability between these subgroups.
+
+\begin{itemize}
+    \item Description of the measurement of numerical variability in terms of the number of significant digits.
+    \item Explanation of statistical analysis, including the Whitney-Mann test and Bonferroni correction.
+\end{itemize}
+
+\section{Results}
+
+\subsection{Descriptive Statistics}
+
+\begin{table}[h]
+    \centering
+    \caption{My LaTeX Table}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+         & HC & PD-non-MCI & All \\
+        \hline
+        Cortical thickness & $1.376708 \pm 0.279691$ & $1.394425 \pm 0.291725$ &  $1.386379 \pm 0.286454$  \\
+        \hline
+        Cortical surface area & Row 2, Col 2 & Row 2, Col 3 & Row 2, Col 4 \\
+        \hline
+        Cortical volume       & Row 3, Col 2 & Row 3, Col 3 & Row 3, Col 4 \\
+        \hline
+        Subcortical volume & Row 4, Col 2 & Row 4, Col 3 & Row 4, Col 4 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item Presentation of the basic numerical summary of the collected data for both HC and PD groups.
+\end{itemize}
+
+\subsection{Inferential Statistics}
+
+\begin{itemize}
+    \item Detailed presentation of the results of the Whitney-Mann test and Bonferroni correction.
+    \item Comparative analysis between HC and PD populations based on the different ROIs for cortical and subcortical volumes, surface area, and cortical thickness.
+\end{itemize}
+
+\section{Discussion}
+
+\subsection{Interpretation of Results}
+
+\begin{itemize}
+    \item Detailed interpretation of the observed numerical variability in HC and PD populations and its implications.
+\end{itemize}
+
+\subsection{Impact on Clinical Research}
+
+\begin{itemize}
+    \item Discussion on how the observed numerical variability can affect clinical research.
+    \item Exploration of potential ramifications in neurological studies, particularly those involving Parkinson's disease.
+\end{itemize}
+
+
+\subsection{Limitations and Future Work}
+
+
+
+\section{Conclusions}
+
+Summary of the findings regarding the numerical variability in Freesurfer 7.3.1 between HC and PD populations and its prospective impact on clinical research.
+Provisional conclusion pending the exploration of goal 2.
+
+\section{Acknowledgements}
+
+ReproVIP team.
+
+\bibliographystyle{alpha}
+\bibliography{biblio}
+
+\end{document}
