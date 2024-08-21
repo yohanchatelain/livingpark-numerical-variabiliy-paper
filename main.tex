@@ -1,11 +1,11 @@
 \documentclass{article}
 
-% Language setting
-% Replace `english' with e.g. `spanish' to change the document language
+% Language setting Replace `english' with e.g. `spanish' to change the document
+% language
 \usepackage[english]{babel}
 
-% Set page size and margins
-% Replace `letterpaper' with `a4paper' for UK/EU standard size
+% Set page size and margins Replace `letterpaper' with `a4paper' for UK/EU
+% standard size
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 % Useful packages
@@ -15,378 +15,524 @@
 \usepackage{todonotes}
 \usepackage{longtable}
 
-\title{Numerical Variability in FreeSurfer 7.3.1: Implications for Parkinson's Disease Research}
+\title{Numerical Variability in FreeSurfer 7.3.1: Implications for Parkinson's
+    Disease Research}
 \author{You}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Neuroimaging studies, particularly those involving structural MRI analysis, have faced challenges in reproducibility due to software variability. This study investigates the impact of numerical instability in FreeSurfer 7.3.1 on structural MRI measures and their relationships with clinical outcomes in Parkinson's disease (PD). Utilizing Monte Carlo Arithmetic (MCA), we evaluate the extent of numerical variability in FreeSurfer's estimation of brain structure metrics. Our findings suggest that software variability ... \todo[inline]{complete with results}
+    Neuroimaging studies, particularly those involving structural MRI analysis,
+    have faced challenges in reproducibility due to software variability. This
+    study investigates the impact of numerical instability in FreeSurfer 7.3.1 on
+    structural MRI measures and their relationships with clinical outcomes in
+    Parkinson's disease (PD). Utilizing Monte Carlo Arithmetic (MCA), we evaluate
+    the extent of numerical variability in FreeSurfer's estimation of brain
+    structure metrics. Our findings suggest that software variability ...
+    \todo[inline]{complete with results}
 \end{abstract}
 
 \section{Introduction}
 
-FreeSurfer is a widely used, publicly available software for analyzing and visualizing structural neuroimaging data. Version 7.3.1 represents one of the latest major releases, offering advanced capabilities for estimating various brain structure metrics such as gray matter volume, cortical thickness, and surface area.
+FreeSurfer is a widely used, publicly available software for analyzing and
+visualizing structural neuroimaging data. Version 7.3.1 represents one of the
+latest major releases, offering advanced capabilities for estimating various
+brain structure metrics such as gray matter volume, cortical thickness, and
+surface area.
 
- Recent studies have highlighted significant variability in neuroimaging results due to differences in software and processing pipelines. For instance, Botvinik-Nezer et al. (2020) demonstrated low agreement levels (21\% to 37\%) among research teams analyzing the same fMRI data with different pipelines. This variability extends to structural MRI measures, with studies showing significant differences in brain volume and cortical thickness estimations between software versions and toolboxes.
+Recent studies have highlighted significant variability in neuroimaging
+results due to differences in software and processing pipelines. For instance,
+Botvinik-Nezer et al. (2020) demonstrated low agreement levels (21\% to 37\%)
+among research teams analyzing the same fMRI data with different pipelines.
+This variability extends to structural MRI measures, with studies showing
+significant differences in brain volume and cortical thickness estimations
+between software versions and toolboxes.
 
- Parkinson's disease (PD) is a progressive neurodegenerative disorder affecting millions worldwide. Its prevalence and the potential of neuroimaging as a diagnostic and prognostic tool make it a critical area for investigating the impact of numerical variability in brain structure analysis.
+Parkinson's disease (PD) is a progressive neurodegenerative disorder affecting
+millions worldwide. Its prevalence and the potential of neuroimaging as a
+diagnostic and prognostic tool make it a critical area for investigating the
+impact of numerical variability in brain structure analysis.
 
 \subsection{Motivation}
 
-The reproducibility crisis in neuroimaging, particularly in the context of clinical research, underscores the importance of studying numerical variability. In Parkinson's disease research, MRI-derived measures have shown associations with disease severity, progression, and differentiation between various syndromes. However, the lack of established MRI measures for PD diagnosis or tracking may partly stem from measurement variability across studies. Understanding the extent and impact of this variability is crucial for:
+The reproducibility crisis in neuroimaging, particularly in the context of
+clinical research, underscores the importance of studying numerical
+variability. In Parkinson's disease research, MRI-derived measures have shown
+associations with disease severity, progression, and differentiation between
+various syndromes. However, the lack of established MRI measures for PD
+diagnosis or tracking may partly stem from measurement variability across
+studies. Understanding the extent and impact of this variability is crucial
+for:
 
 \begin{enumerate}
     \item  Enhancing the reliability of neuroimaging studies in PD research.
-    \item  Improving the potential of MRI as a diagnostic and prognostic tool for PD.
-    \item  Advancing our understanding of the relationship between brain structure and PD clinical outcomes.
+    \item  Improving the potential of MRI as a diagnostic and prognostic tool
+          for PD.
+    \item  Advancing our understanding of the relationship between brain
+          structure and PD clinical outcomes.
 \end{enumerate}
 
 \subsection{Objectives}
 
-\emph{Cross-sectional Analysis}: To assess the difference in numerical variability between Healthy Control (HC) and Parkinson's Disease (PD) populations using FreeSurfer 7.3.1. This involves comparing the estimation of structural MRI measures (gray matter volume, cortical thickness, and surface area) between the two groups and evaluating how numerical instability affects these estimations.
+\emph{Cross-sectional Analysis}: To assess the difference in numerical
+variability between Healthy Control (HC) and Parkinson's Disease (PD)
+populations using FreeSurfer 7.3.1. This involves comparing the estimation of
+structural MRI measures (gray matter volume, cortical thickness, and surface
+area) between the two groups and evaluating how numerical instability affects
+these estimations.
 
-\emph{Longitudinal Analysis}: To evaluate the impact of numerical variability on clinical research outcomes in PD. This includes:
+\emph{Longitudinal Analysis}: To evaluate the impact of numerical variability
+on clinical research outcomes in PD. This includes:
 \begin{itemize}
-   \item Investigating how numerical variability affects the detection of group differences between HC and PD in subcortical volumes and cortical thickness over time.
-   \item Assessing the influence of numerical instability on the observed correlations between disease severity and brain structure measures in PD patients, both at baseline and longitudinally.
+    \item Investigating how numerical variability affects the detection of group
+          differences between HC and PD in subcortical volumes and cortical thickness
+          over time.
+    \item Assessing the influence of numerical instability on the observed
+          correlations between disease severity and brain structure measures in PD
+          patients, both at baseline and longitudinally.
 \end{itemize}
 
-By addressing these objectives, we aim to provide insights into the reliability of FreeSurfer 7.3.1 in PD research and offer recommendations for mitigating the effects of numerical variability in clinical neuroimaging studies.
+By addressing these objectives, we aim to provide insights into the reliability
+of FreeSurfer 7.3.1 in PD research and offer recommendations for mitigating the
+effects of numerical variability in clinical neuroimaging studies.
 
 \section{Methods}
 
 \subsection{Numerical variability assessment}
 
-The floating-point arithmetic, ruled by the IEEE-754 norm, system approximates real numbers using finite precision. Given this limited precision, rounding off becomes essential, which can lead to cumulative errors, rendering some calculations imprecise or incorrect. The challenge of accurately quantifying the error in extensive scientific computations arises from the large number of calculations involved. Stochastic arithmetic, with its reliance on randomness, simplifies this challenge by converting it into a matter of statistical sampling.
+The floating-point arithmetic, ruled by the IEEE-754 norm, system approximates
+real numbers using finite precision. Given this limited precision, rounding off
+becomes essential, which can lead to cumulative errors, rendering some
+calculations imprecise or incorrect. The challenge of accurately quantifying
+the
+error in extensive scientific computations arises from the large number of
+calculations involved. Stochastic arithmetic, with its reliance on randomness,
+simplifies this challenge by converting it into a matter of statistical
+sampling.
 
 \subsubsection{Monte Carlo Arithmetic}
 
-Among the stochastic arithmetic techniques, Monte Carlo Arithmetic~\cite{parker1997monte} (MCA) extends floating-point arithmetic by exploiting randomness to assess numerical instability that arises from finite precision calculations. MCA introduces random noise into basic arithmetic operations $(+,-,\times,\div)$ to emulate unbiased, random rounding that is independent of prior operations. Consequently, MCA facilitates assessments of changes in Operating Systems or architectures, enabling the evaluation of their impact on the significance of results. By running the same code multiple times, the stability of outcomes can be measured by calculating the number of significant digits in the outputs.
+Among the stochastic arithmetic techniques, Monte Carlo
+Arithmetic~\cite{parker1997monte} (MCA) extends floating-point arithmetic by
+exploiting randomness to assess numerical instability that arises from finite
+precision calculations. MCA introduces random noise into basic arithmetic
+operations $(+,-,\times,\div)$ to emulate unbiased, random rounding that is
+independent of prior operations. Consequently, MCA facilitates assessments of
+changes in Operating Systems or architectures, enabling the evaluation of their
+impact on the significance of results. By running the same code multiple times,
+the stability of outcomes can be measured by calculating the number of
+significant digits in the outputs.
 
 \subsubsection{Significant digits formula}
 
-We compute the number of significant bits \(\hat{s}\) with probability \(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \emph{Significant Digits} package\footnote{\url{https://github.com/verificarlo/significantdigits}} (version 0.2.0).
-\emph{Significant Digits} implements the Centered Normality Hypothesis approach described in~\cite{sohier2021confidence}:
+We compute the number of significant bits \(\hat{s}\) with probability
+\(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \emph{Significant
+    Digits}
+package\footnote{\url{https://github.com/verificarlo/significantdigits}}
+(version 0.2.0). \emph{Significant Digits} implements the Centered Normality
+Hypothesis approach described in~\cite{sohier2021confidence}:
 \[
-    \hat{s_i} = -\log_2 \left| \frac{\hat{\sigma_i}}{\hat{\mu_i}} \right| - \delta(n, \alpha_s, p_s),
+    \hat{s_i} = -\log_2 \left| \frac{\hat{\sigma_i}}{\hat{\mu_i}} \right| -
+    \delta(n, \alpha_s, p_s),
 \]
-where \(\hat{\sigma_i}\) and \(\hat{\mu_i}\) are the average and standard deviation over the repetitions, and
+where \(\hat{\sigma_i}\) and \(\hat{\mu_i}\) are the average and standard
+deviation over the repetitions, and
 \begin{equation}
-    \delta(n, \alpha_s, p_s) = \log_2 \left( \sqrt{\frac{n-1}{\chi^2_{1-\alpha_s/2}}} \Phi^{-1} \left( \frac{p_s+1}{2} \right) \right)
+    \delta(n, \alpha_s, p_s) = \log_2 \left(
+    \sqrt{\frac{n-1}{\chi^2_{1-\alpha_s/2}}} \Phi^{-1} \left( \frac{p_s+1}{2}
+    \right) \right)
 \end{equation}
-is a penalty term for estimating \(\hat{s_i}\) with probability \(p_s\) and confidence level \(1-\alpha_s\) for a sample size \(n\).
-\(\Phi^{-1}\) is the inverse cumulative distribution of the standard normal distribution and \(\chi^2\) is the Chi-2 distribution with \(n\)-1 degrees of freedom.
+is a penalty term for estimating \(\hat{s_i}\) with probability \(p_s\) and
+confidence level \(1-\alpha_s\) for a sample size \(n\). \(\Phi^{-1}\) is the
+inverse cumulative distribution of the standard normal distribution and
+\(\chi^2\) is the Chi-2 distribution with \(n\)-1 degrees of freedom.
 
 \subsubsection{Fuzzy-libm}
 
-MCA has been extended to several libraries including the \texttt{libm} which comprises elementary mathematical functions \texttt{(exp, log, cos, sin, ...)}. The Fuzzy-libm~\cite{salari2021accurate} project presents an ecosystem of Docker images, offering a \texttt{libm} that is recompiled with Verificarlo~\cite{denis2015verificarlo}. This LLVM-based compiler replaces floating-point arithmetic instructions for their MCA equivalents. The Fuzzy-libm applies a random perturbation on the results of \texttt{libm}' functions to simulate different implementations. It has been demonstrated to be a good proxy to simulate OS changes~\cite{salari2021accurate}.
+MCA has been extended to several libraries including the \texttt{libm} which
+comprises elementary mathematical functions \texttt{(exp, log, cos, sin, ...)}.
+The Fuzzy-libm~\cite{salari2021accurate} project presents an ecosystem of
+Docker images, offering a \texttt{libm} that is recompiled with
+Verificarlo~\cite{denis2015verificarlo}. This LLVM-based compiler replaces
+floating-point arithmetic instructions for their MCA equivalents. The
+Fuzzy-libm applies a random perturbation on the results of \texttt{libm}'
+functions to simulate different implementations. It has been demonstrated to be
+a good proxy to simulate OS changes~\cite{salari2021accurate}.
 
 \subsection{Participants}
 
-
-
 \begin{itemize}
-    \item Details on the execution of 10 Freesurfer runs with Fuzzy-libm for each of the 315 subjects (106 HC and 209 PD).
+    \item Details on the execution of 10 Freesurfer runs with Fuzzy-libm for
+          each of the 315 subjects (106 HC and 209 PD).
 \end{itemize}
 
-We executed \emph{FreeSurfer} \texttt{recon-all} command 10 times for each subject with the Fuzzy-libm. We set the virtual precision to 53 for binary64 (double precision) and 24 for binary32 (single precision) to simulate error-machine precision.
-
+We executed \emph{FreeSurfer} \texttt{recon-all} command 10 times for each
+subject with the Fuzzy-libm. We set the virtual precision to 53 for binary64
+(double precision) and 24 for binary32 (single precision) to simulate
+error-machine precision.
 
 \todo{Detail failing execution + image QC}
 
-In total, 210 patients diagnosed with Parkinson's Disease (PD) participated in the study: 181 with PD without mild cognitive impairment (PD-non-MCI) and 29 with PD with mild cognitive impairment (PD-MCI). Additionally, 106 healthy controls (HC) were included. All participants were sourced from the Parkinson’s Progression Markers Initiative (PPMI; www.ppmi-info.org). The inclusion criteria for PD patients comprised a primary diagnosis of PD, the availability of a T1-weighted scan, and the absence of other neurological diagnoses. For the clinical analysis, 125 PD-non-MCI patients and all 106 HC were considered. Every participant in this subset had two study visits with T1-weighted images available. Additionally, PD patients were evaluated using the Unified Parkinson’s Disease Rating Scale (UPDRS) scores. PD-MCI patients were excluded from the clinical analysis to prevent potential confounding effects of MCI on clinical evaluations. The data collection was sanctioned by the local ethics committees of PPMI's participating institutions, and all participants provided written informed consent. Descriptive statistics for each group can be found in Table 1. The study adhered to the Declaration of Helsinki and received an exemption from Concordia University’s Research Ethics Unit.
+In total, 210 patients diagnosed with Parkinson's Disease (PD) participated in
+the study: 181 with PD without mild cognitive impairment (PD-non-MCI) and 29
+with PD with mild cognitive impairment (PD-MCI). Additionally, 106 healthy
+controls (HC) were included. All participants were sourced from the Parkinson’s
+Progression Markers Initiative (PPMI; www.ppmi-info.org). The inclusion
+criteria for PD patients comprised a primary diagnosis of PD, the availability
+of a T1-weighted scan, and the absence of other neurological diagnoses. For the
+clinical analysis, 125 PD-non-MCI patients and all 106 HC were considered.
+Every participant in this subset had two study visits with T1-weighted images
+available. Additionally, PD patients were evaluated using the Unified
+Parkinson’s Disease Rating Scale (UPDRS) scores. PD-MCI patients were excluded
+from the clinical analysis to prevent potential confounding effects of MCI on
+clinical evaluations. The data collection was sanctioned by the local ethics
+committees of PPMI's participating institutions, and all participants provided
+written informed consent. Descriptive statistics for each group can be found in
+Table 1. The study adhered to the Declaration of Helsinki and received an
+exemption from Concordia University’s Research Ethics Unit.
 
 \subsection{Image acquisition}
 
-T1-weighted MRI images were obtained from PPMI that uses standardized acquisition parameters: repetition time = 2.3 s, echo time = 2.98 s, inversion time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view = 256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite project there may be slight differences in the sites’ setup.
- 
-Brain images were processed using FreeSurfer 7.3.1~\cite{fischl2012freesurfer}. FreeSurfer’s \texttt{recon-all} function was used for cortical reconstruction. Volumes, cortical thickness, and surface area were extracted for each participant. The longitudinal preprocessing stream was used to analyze images in cohort II~\cite{reuter2012within}. The two-time points were processed cross-sectionally with the default pipeline, an unbiased template from the two images was created, and data were processed longitudinally. Specifically, an unbiased within-subject template space and image \cite{reuter2011avoiding} is created using robust, inverse-consistent registration~\cite{reuter2010highly}. We did analyses on the Virtual Imaging Platform~\cite{glatard2012virtual} that utilizes resources offered by the Biomed virtual organization within the European Grid Infrastructure (EGI). Specifically, the authors wish to extend gratitude to Sorina Pop from CREATIS, Lyon, France. Quality control of raw images was performed with MRIQC. Preprocessed images were visually inspected for quality.
+T1-weighted MRI images were obtained from PPMI that uses standardized
+acquisition parameters: repetition time = 2.3 s, echo time = 2.98 s, inversion
+time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view =
+256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite
+project there may be slight differences in the sites’ setup.
+
+Brain images were processed using FreeSurfer 7.3.1~\cite{fischl2012freesurfer}.
+FreeSurfer’s \texttt{recon-all} function was used for cortical reconstruction.
+Volumes, cortical thickness, and surface area were extracted for each
+participant. The longitudinal preprocessing stream was used to analyze images
+in cohort II~\cite{reuter2012within}. The two-time points were processed
+cross-sectionally with the default pipeline, an unbiased template from the two
+images was created, and data were processed longitudinally. Specifically, an
+unbiased within-subject template space and image \cite{reuter2011avoiding} is
+created using robust, inverse-consistent registration~\cite{reuter2010highly}.
+We did analyses on the Virtual Imaging Platform~\cite{glatard2012virtual} that
+utilizes resources offered by the Biomed virtual organization within the
+European Grid Infrastructure (EGI). Specifically, the authors wish to extend
+gratitude to Sorina Pop from CREATIS, Lyon, France. Quality control of raw
+images was performed with MRIQC. Preprocessed images were visually inspected
+for quality.
 
 \subsection{Data Analysis}
 
-We executed two distinct statistical analyses: computational and clinical. We delved into the variations present in FreeSurfer outputs, specifically focusing on the estimation of volume, cortical thickness, and surface area. For each image, we extracted the cortical and subcortical volumes, as well as the cortical surface areas and thicknesses from all FreeSurfer iterations. To quantify the numerical variability across these measurements, we calculated the number of significant digits. For a more targeted analysis, we evaluated the Parkinson's Disease (PD) and Healthy Control (HC) groups separately. We employed the Whitney-Mann test to find out potential variances in software stability between these subgroups.
+We executed two distinct statistical analyses: computational and clinical. We
+delved into the variations present in FreeSurfer outputs, specifically focusing
+on the estimation of volume, cortical thickness, and surface area. For each
+image, we extracted the cortical and subcortical volumes, as well as the
+cortical surface areas and thicknesses from all FreeSurfer iterations. To
+quantify the numerical variability across these measurements, we calculated the
+number of significant digits. For a more targeted analysis, we evaluated the
+Parkinson's Disease (PD) and Healthy Control (HC) groups separately. We
+employed
+the Whitney-Mann test to find out potential variances in software stability
+between these subgroups.
 
 \begin{itemize}
-    \item Description of the measurement of numerical variability in terms of the number of significant digits.
-    \item Explanation of statistical analysis, including the Whitney-Mann test and Bonferroni correction.
+    \item Description of the measurement of numerical variability in terms of
+          the number of significant digits.
+    \item Explanation of statistical analysis, including the Whitney-Mann test
+          and Bonferroni correction.
 \end{itemize}
 
 \section{Results}
 
 \subsection{Descriptive Statistics}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/group-thickness-sig.png}
-    \caption{Number of significant digits of cortical thickness for each ROI and each group.}
+    \caption{Number of significant digits of cortical thickness for each ROI
+        and each group.}
 \end{figure}
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/group-area-sig.png}
-    \caption{Number of significant digits of cortical surface area for each ROI and each group.}
+    \caption{Number of significant digits of cortical surface area for each ROI
+        and each group.}
 \end{figure}
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/group-volume-sig.png}
-    \caption{Number of significant digits of cortical volume for each ROI and each group.}
+    \caption{Number of significant digits of cortical volume for each ROI and
+        each group.}
 \end{figure}
 
 \begin{figure}
+
     \includegraphics*[width=\linewidth]{figures/group-subcortical-volume-sig.png}
-    \caption{Number of significant digits of subcortical volume for each ROI and each group.}
+    \caption{Number of significant digits of subcortical volume for each ROI
+        and each group.}
 \end{figure}
-
-
 
 \begin{longtable}[h]{|l|c|c|c|}
     \hline
-                                                   & HC               & PD-non-MCI         & All              \\
+                                                   & HC               &
+    PD-non-MCI                                     & All
+    \\
     \hline
-    Cortical thickness                             & $1.37 \pm 0.27$  & $1.39 \pm 0.29$    & $1.38 \pm 0.28$  \\
+    Cortical thickness                             & $1.37 \pm 0.27$  & $1.39
+    \pm 0.29$                                      & $1.38 \pm 0.28$
+    \\
     \hline
-    \quad G\_Ins\_lg\_and\_S\_cent\_ins\_thickness & $1.02 \pm  0.21$ & $1.04 \pm  0.21 $  & $1.03 \pm 0.21$  \\
-    \quad G\_and\_S\_cingul-Ant\_thickness         & $1.50 \pm  0.19$ & $1.47 \pm  0.19 $  & $1.48 \pm 0.19$  \\
-    \quad G\_and\_S\_cingul-Mid-Ant\_thickness     & $1.44 \pm  0.18$ & $1.47 \pm  0.21 $  & $1.45 \pm 0.20$  \\
-    \quad G\_and\_S\_cingul-Mid-Post\_thickness    & $1.52 \pm  0.17$ & $1.51 \pm  0.22 $  & $1.51 \pm 0.20$  \\
-    \quad G\_and\_S\_frontomargin\_thickness       & $1.24 \pm  0.22$ & $1.26 \pm  0.19 $  & $1.25 \pm 0.20$  \\
-    \quad G\_and\_S\_occipital\_inf\_thickness     & $1.37 \pm  0.19$ & $1.40 \pm  0.20 $  & $1.38 \pm 0.20$  \\
-    \quad G\_and\_S\_paracentral\_thickness        & $1.30 \pm  0.26$ & $1.37 \pm  0.25 $  & $1.34 \pm 0.25$  \\
-    \quad G\_and\_S\_subcentral\_thickness         & $1.50 \pm  0.18$ & $1.48 \pm  0.23 $  & $1.49 \pm 0.21$  \\
-    \quad G\_and\_S\_transv\_frontopol\_thickness  & $1.18 \pm  0.24$ & $1.24 \pm  0.24 $  & $1.22 \pm 0.24$  \\
-    \quad G\_cingul-Post-dorsal\_thickness         & $1.38 \pm  0.16$ & $1.38 \pm  0.21 $  & $1.38 \pm 0.19$  \\
-    \quad G\_cingul-Post-ventral\_thickness        & $1.14 \pm  0.18$ & $1.12 \pm  0.20 $  & $1.13 \pm 0.19$  \\
-    \quad G\_cuneus\_thickness                     & $1.27 \pm  0.24$ & $1.34 \pm  0.24 $  & $1.31 \pm 0.24$  \\
-    \quad G\_front\_inf-Opercular\_thickness       & $1.54 \pm  0.18$ & $1.56 \pm  0.24 $  & $1.55 \pm 0.21$  \\
-    \quad G\_front\_inf-Orbital\_thickness         & $1.25 \pm  0.26$ & $1.28 \pm  0.24 $  & $1.26 \pm 0.25$  \\
-    \quad G\_front\_inf-Triangul\_thickness        & $1.36 \pm  0.25$ & $1.41 \pm  0.23 $  & $1.39 \pm 0.24$  \\
-    \quad G\_front\_middle\_thickness              & $1.53 \pm  0.24$ & $1.56 \pm  0.23 $  & $1.55 \pm 0.23$  \\
-    \quad G\_front\_sup\_thickness                 & $1.63 \pm  0.23$ & $1.67 \pm  0.25 $  & $1.65 \pm 0.24$  \\
-    \quad G\_insular\_short\_thickness             & $1.01 \pm  0.23$ & $1.03 \pm  0.24 $  & $1.02 \pm 0.23$  \\
-    \quad G\_oc-temp\_lat-fusifor\_thickness       & $1.45 \pm  0.19$ & $1.48 \pm  0.23 $  & $1.47 \pm 0.21$  \\
-    \quad G\_oc-temp\_med-Lingual\_thickness       & $1.21 \pm  0.23$ & $1.28 \pm  0.24 $  & $1.25 \pm 0.24$  \\
-    \quad G\_oc-temp\_med-Parahip\_thickness       & $1.25 \pm  0.23$ & $1.29 \pm  0.24 $  & $1.27 \pm 0.23$  \\
-    \quad G\_occipital\_middle\_thickness          & $1.52 \pm  0.17$ & $1.52 \pm  0.22 $  & $1.52 \pm 0.20$  \\
-    \quad G\_occipital\_sup\_thickness             & $1.44 \pm  0.21$ & $1.46 \pm  0.24 $  & $1.45 \pm 0.22$  \\
-    \quad G\_orbital\_thickness                    & $1.37 \pm  0.22$ & $1.40 \pm  0.24 $  & $1.38 \pm 0.23$  \\
-    \quad G\_pariet\_inf-Angular\_thickness        & $1.58 \pm  0.18$ & $1.60 \pm  0.20 $  & $1.59 \pm 0.19$  \\
-    \quad G\_pariet\_inf-Supramar\_thickness       & $1.61 \pm  0.20$ & $1.60 \pm  0.22 $  & $1.61 \pm 0.21$  \\
-    \quad G\_parietal\_sup\_thickness              & $1.59 \pm  0.23$ & $1.62 \pm  0.24 $  & $1.61 \pm 0.24$  \\
-    \quad G\_postcentral\_thickness                & $1.49 \pm  0.26$ & $1.52 \pm  0.27 $  & $1.51 \pm 0.27$  \\
-    \quad G\_precentral\_thickness                 & $1.43 \pm  0.29$ & $1.48 \pm  0.32 $  & $1.45 \pm 0.31$  \\
-    \quad G\_precuneus\_thickness                  & $1.58 \pm  0.16$ & $1.59 \pm  0.21 $  & $1.59 \pm 0.19$  \\
-    \quad G\_rectus\_thickness                     & $1.22 \pm  0.21$ & $1.23 \pm  0.23 $  & $1.23 \pm 0.22$  \\
-    \quad G\_subcallosal\_thickness                & $0.93 \pm  0.18$ & $0.95 \pm  0.17 $  & $0.94 \pm 0.17$  \\
-    \quad G\_temp\_sup-G\_T\_transv\_thickness     & $1.28 \pm  0.26$ & $1.30 \pm  0.26 $  & $1.29 \pm 0.26$  \\
-    \quad G\_temp\_sup-Lateral\_thickness          & $1.52 \pm  0.22$ & $1.54 \pm  0.23 $  & $1.53 \pm 0.22$  \\
-    \quad G\_temp\_sup-Plan\_polar\_thickness      & $1.14 \pm  0.23$ & $1.18 \pm  0.26 $  & $1.16 \pm 0.24$  \\
-    \quad G\_temp\_sup-Plan\_tempo\_thickness      & $1.50 \pm  0.21$ & $1.51 \pm  0.24 $  & $1.50 \pm 0.23$  \\
-    \quad G\_temporal\_inf\_thickness              & $1.45 \pm  0.19$ & $1.46 \pm  0.20 $  & $1.45 \pm 0.20$  \\
-    \quad G\_temporal\_middle\_thickness           & $1.56 \pm  0.21$ & $1.58 \pm  0.21 $  & $1.57 \pm 0.21$  \\
-    \quad Lat\_Fis-ant-Horizont\_thickness         & $1.24 \pm  0.22$ & $1.25 \pm  0.22 $  & $1.24 \pm 0.22$  \\
-    \quad Lat\_Fis-ant-Vertical\_thickness         & $1.15 \pm  0.21$ & $1.17 \pm  0.24 $  & $1.16 \pm 0.23$  \\
-    \quad Lat\_Fis-post\_thickness                 & $1.52 \pm  0.18$ & $1.52 \pm  0.22 $  & $1.52 \pm 0.20$  \\
-    \quad MeanThickness\_thickness                 & $1.92 \pm  0.19$ & $1.95 \pm  0.22 $  & $1.93 \pm 0.21$  \\
-    \quad Pole\_occipital\_thickness               & $1.32 \pm  0.21$ & $1.34 \pm  0.24 $  & $1.33 \pm 0.22$  \\
-    \quad Pole\_temporal\_thickness                & $1.24 \pm  0.25$ & $1.32 \pm  0.27 $  & $1.28 \pm 0.27$  \\
-    \quad S\_calcarine\_thickness                  & $1.30 \pm  0.21$ & $1.34 \pm  0.25 $  & $1.32 \pm 0.23$  \\
-    \quad S\_central\_thickness                    & $1.51 \pm  0.24$ & $1.49 \pm  0.27 $  & $1.50 \pm 0.26$  \\
-    \quad S\_cingul-Marginalis\_thickness          & $1.55 \pm  0.18$ & $1.53 \pm  0.23 $  & $1.54 \pm 0.21$  \\
-    \quad S\_circular\_insula\_ant\_thickness      & $1.24 \pm  0.19$ & $1.30 \pm  0.22 $  & $1.27 \pm 0.21$  \\
-    \quad S\_circular\_insula\_inf\_thickness      & $1.34 \pm  0.18$ & $1.36 \pm  0.23 $  & $1.35 \pm 0.21$  \\
-    \quad S\_circular\_insula\_sup\_thickness      & $1.43 \pm  0.17$ & $1.45 \pm  0.20 $  & $1.44 \pm 0.19$  \\
-    \quad S\_collat\_transv\_ant\_thickness        & $1.23 \pm  0.21$ & $1.26 \pm  0.22 $  & $1.25 \pm 0.21$  \\
-    \quad S\_collat\_transv\_post\_thickness       & $1.19 \pm  0.19$ & $1.19 \pm  0.22 $  & $1.19 \pm 0.21$  \\
-    \quad S\_front\_inf\_thickness                 & $1.48 \pm  0.20$ & $1.50 \pm  0.22 $  & $1.49 \pm 0.21$  \\
-    \quad S\_front\_middle\_thickness              & $1.33 \pm  0.20$ & $1.35 \pm  0.22 $  & $1.34 \pm 0.21$  \\
-    \quad S\_front\_sup\_thickness                 & $1.53 \pm  0.19$ & $1.55 \pm  0.21 $  & $1.54 \pm 0.20$  \\
-    \quad S\_interm\_prim-Jensen\_thickness        & $1.13 \pm  0.27$ & $1.16 \pm  0.28 $  & $1.15 \pm 0.28$  \\
-    \quad S\_intrapariet\_and\_P\_trans\_thickness & $1.59 \pm  0.18$ & $1.59 \pm  0.24 $  & $1.59 \pm 0.22$  \\
-    \quad S\_oc-temp\_lat\_thickness               & $1.30 \pm  0.20$ & $1.34 \pm  0.22 $  & $1.32 \pm 0.21$  \\
-    \quad S\_oc-temp\_med\_and\_Lingual\_thickness & $1.46 \pm  0.18$ & $1.49 \pm  0.18 $  & $1.48 \pm 0.18$  \\
-    \quad S\_oc\_middle\_and\_Lunatus\_thickness   & $1.35 \pm  0.18$ & $1.36 \pm  0.21 $  & $1.36 \pm 0.20$  \\
-    \quad S\_oc\_sup\_and\_transversal\_thickness  & $1.49 \pm  0.17$ & $1.46 \pm  0.22 $  & $1.47 \pm 0.20$  \\
-    \quad S\_occipital\_ant\_thickness             & $1.31 \pm  0.19$ & $1.30 \pm  0.23 $  & $1.31 \pm 0.21$  \\
-    \quad S\_orbital-H\_Shaped\_thickness          & $1.37 \pm  0.22$ & $1.38 \pm  0.18 $  & $1.37 \pm 0.20$  \\
-    \quad S\_orbital\_lateral\_thickness           & $1.10 \pm  0.21$ & $1.11 \pm  0.19 $  & $1.10 \pm 0.20$  \\
-    \quad S\_orbital\_med-olfact\_thickness        & $1.11 \pm  0.18$ & $1.17 \pm  0.18 $  & $1.14 \pm 0.19$  \\
-    \quad S\_parieto\_occipital\_thickness         & $1.59 \pm  0.18$ & $1.58 \pm  0.23 $  & $1.58 \pm 0.21$  \\
-    \quad S\_pericallosal\_thickness               & $1.08 \pm  0.16$ & $1.13 \pm  0.18 $  & $1.11 \pm 0.18$  \\
-    \quad S\_postcentral\_thickness                & $1.60 \pm  0.20$ & $1.61 \pm  0.24 $  & $1.61 \pm 0.22$  \\
-    \quad S\_precentral-inf-part\_thickness        & $1.53 \pm  0.23$ & $1.52 \pm  0.25 $  & $1.52 \pm 0.24$  \\
-    \quad S\_precentral-sup-part\_thickness        & $1.46 \pm  0.23$ & $1.44 \pm  0.28 $  & $1.45 \pm 0.26$  \\
-    \quad S\_suborbital\_thickness                 & $1.06 \pm  0.20$ & $1.07 \pm  0.23 $  & $1.06 \pm 0.22$  \\
-    \quad S\_subparietal\_thickness                & $1.40 \pm  0.16$ & $1.38 \pm  0.20 $  & $1.39 \pm 0.18$  \\
-    \quad S\_temporal\_inf\_thickness              & $1.32 \pm  0.19$ & $1.33 \pm  0.18 $  & $1.33 \pm 0.18$  \\
-    \quad S\_temporal\_sup\_thickness              & $1.61 \pm  0.16$ & $1.62 \pm  0.20 $  & $1.61 \pm 0.19$  \\
-    \quad S\_temporal\_transverse\_thickness       & $1.17 \pm  0.22$ & $1.18 \pm  0.23 $  & $1.17 \pm 0.22$  \\
+    \quad G\_Ins\_lg\_and\_S\_cent\_ins\_thickness & $1.02 \pm	0.21$   & $1.04
+    \pm  0.21 $                                    & $1.03 \pm 0.21$
+    \\
+    \quad G\_and\_S\_cingul-Ant\_thickness         & $1.50 \pm	0.19$   & $1.47
+    \pm  0.19 $                                    & $1.48 \pm 0.19$
+    \\
+    \quad G\_and\_S\_cingul-Mid-Ant\_thickness     & $1.44 \pm	0.18$   & $1.47
+    \pm  0.21 $                                    & $1.45 \pm 0.20$
+    \\
+    \quad G\_and\_S\_cingul-Mid-Post\_thickness    & $1.52 \pm	0.17$   & $1.51
+    \pm  0.22 $                                    & $1.51 \pm 0.20$
+    \\
+    \quad G\_and\_S\_frontomargin\_thickness       & $1.24 \pm	0.22$   & $1.26
+    \pm  0.19 $                                    & $1.25 \pm 0.20$
+    \\
+    \quad G\_and\_S\_occipital\_inf\_thickness     & $1.37 \pm	0.19$   & $1.40
+    \pm  0.20 $                                    & $1.38 \pm 0.20$
+    \\
+    \quad G\_and\_S\_paracentral\_thickness        & $1.30 \pm	0.26$   & $1.37
+    \pm  0.25 $                                    & $1.34 \pm 0.25$
+    \\
+    \quad G\_and\_S\_subcentral\_thickness         & $1.50 \pm	0.18$   & $1.48
+    \pm  0.23 $                                    & $1.49 \pm 0.21$
+    \\
+    \quad G\_and\_S\_transv\_frontopol\_thickness  & $1.18 \pm	0.24$   & $1.24
+    \pm  0.24 $                                    & $1.22 \pm 0.24$
+    \\
+    \quad G\_cingul-Post-dorsal\_thickness         & $1.38 \pm	0.16$   & $1.38
+    \pm  0.21 $                                    & $1.38 \pm 0.19$
+    \\
+    \quad G\_cingul-Post-ventral\_thickness        & $1.14 \pm	0.18$   & $1.12
+    \pm  0.20 $                                    & $1.13 \pm 0.19$
+    \\
+    \quad G\_cuneus\_thickness                     & $1.27 \pm	0.24$   & $1.34
+    \pm  0.24 $                                    & $1.31 \pm 0.24$
+    \\
+    \quad G\_front\_inf-Opercular\_thickness       & $1.54 \pm	0.18$   & $1.56
+    \pm  0.24 $                                    & $1.55 \pm 0.21$
+    \\
+    \quad G\_front\_inf-Orbital\_thickness         & $1.25 \pm	0.26$   & $1.28
+    \pm  0.24 $                                    & $1.26 \pm 0.25$
+    \\
+    \quad G\_front\_inf-Triangul\_thickness        & $1.36 \pm	0.25$   & $1.41
+    \pm  0.23 $                                    & $1.39 \pm 0.24$
+    \\
+    \quad G\_front\_middle\_thickness              & $1.53 \pm	0.24$   & $1.56
+    \pm  0.23 $                                    & $1.55 \pm 0.23$
+    \\
+    \quad G\_front\_sup\_thickness                 & $1.63 \pm	0.23$   & $1.67
+    \pm  0.25 $                                    & $1.65 \pm 0.24$
+    \\
+    \quad G\_insular\_short\_thickness             & $1.01 \pm	0.23$   & $1.03
+    \pm  0.24 $                                    & $1.02 \pm 0.23$
+    \\
+    \quad G\_oc-temp\_lat-fusifor\_thickness       & $1.45 \pm	0.19$   & $1.48
+    \pm  0.23 $                                    & $1.47 \pm 0.21$
+    \\
+    \quad G\_oc-temp\_med-Lingual\_thickness       & $1.21 \pm	0.23$   & $1.28
+    \pm  0.24 $                                    & $1.25 \pm 0.24$
+    \\
+    \quad G\_oc-temp\_med-Parahip\_thickness       & $1.25 \pm	0.23$   & $1.29
+    \pm  0.24 $                                    & $1.27 \pm 0.23$
+    \\
+    \quad G\_occipital\_middle\_thickness          & $1.52 \pm	0.17$   & $1.52
+    \pm  0.22 $                                    & $1.52 \pm 0.20$
+    \\
+    \quad G\_occipital\_sup\_thickness             & $1.44 \pm	0.21$   & $1.46
+    \pm  0.24 $                                    & $1.45 \pm 0.22$
+    \\
+    \quad G\_orbital\_thickness                    & $1.37 \pm	0.22$   & $1.40
+    \pm  0.24 $                                    & $1.38 \pm 0.23$
+    \\
+    \quad G\_pariet\_inf-Angular\_thickness        & $1.58 \pm	0.18$   & $1.60
+    \pm  0.20 $                                    & $1.59 \pm 0.19$
+    \\
+    \quad G\_pariet\_inf-Supramar\_thickness       & $1.61 \pm	0.20$   & $1.60
+    \pm  0.22 $                                    & $1.61 \pm 0.21$
+    \\
+    \quad G\_parietal\_sup\_thickness              & $1.59 \pm	0.23$   & $1.62
+    \pm  0.24 $                                    & $1.61 \pm 0.24$
+    \\
+    \quad G\_postcentral\_thickness                & $1.49 \pm	0.26$   & $1.52
+    \pm  0.27 $                                    & $1.51 \pm 0.27$
+    \\
+    \quad G\_precentral\_thickness                 & $1.43 \pm	0.29$   & $1.48
+    \pm  0.32 $                                    & $1.45 \pm 0.31$
+    \\
+    \quad G\_precuneus\_thickness                  & $1.58 \pm	0.16$   & $1.59
+    \pm  0.21 $                                    & $1.59 \pm 0.19$
+    \\
+    \quad G\_rectus\_thickness                     & $1.22 \pm	0.21$   & $1.23
+    \pm  0.23 $                                    & $1.23 \pm 0.22$
+    \\
+    \quad G\_subcallosal\_thickness                & $0.93 \pm	0.18$   & $0.95
+    \pm  0.17 $                                    & $0.94 \pm 0.17$
+    \\
+    \quad G\_temp\_sup-G\_T\_transv\_thickness     & $1.28 \pm	0.26$   & $1.30
+    \pm  0.26 $                                    & $1.29 \pm 0.26$
+    \\
+    \quad G\_temp\_sup-Lateral\_thickness          & $1.52 \pm	0.22$   & $1.54
+    \pm  0.23 $                                    & $1.53 \pm 0.22$
+    \\
+    \quad G\_temp\_sup-Plan\_polar\_thickness      & $1.14 \pm	0.23$   & $1.18
+    \pm  0.26 $                                    & $1.16 \pm 0.24$
+    \\
+    \quad G\_temp\_sup-Plan\_tempo\_thickness      & $1.50 \pm	0.21$   & $1.51
+    \pm  0.24 $                                    & $1.50 \pm 0.23$
+    \\
+    \quad G\_temporal\_inf\_thickness              & $1.45 \pm	0.19$   & $1.46
+    \pm  0.20 $                                    & $1.45 \pm 0.20$
+    \\
+    \quad G\_temporal\_middle\_thickness           & $1.56 \pm	0.21$   & $1.58
+    \pm  0.21 $                                    & $1.57 \pm 0.21$
+    \\
+    \quad Lat\_Fis-ant-Horizont\_thickness         & $1.24 \pm	0.22$   & $1.25
+    \pm  0.22 $                                    & $1.24 \pm 0.22$
+    \\
+    \quad Lat\_Fis-ant-Vertical\_thickness         & $1.15 \pm	0.21$   & $1.17
+    \pm  0.24 $                                    & $1.16 \pm 0.23$
+    \\
+    \quad Lat\_Fis-post\_thickness                 & $1.52 \pm	0.18$   & $1.52
+    \pm  0.22 $                                    & $1.52 \pm 0.20$
+    \\
+    \quad MeanThickness\_thickness                 & $1.92 \pm	0.19$   & $1.95
+    \pm  0.22 $                                    & $1.93 \pm 0.21$
+    \\
+    \quad Pole\_occipital\_thickness               & $1.32 \pm	0.21$   & $1.34
+    \pm  0.24 $                                    & $1.33 \pm 0.22$
+    \\
+    \quad Pole\_temporal\_thickness                & $1.24 \pm	0.25$   & $1.32
+    \pm  0.27 $                                    & $1.28 \pm 0.27$
+    \\
+    \quad S\_calcarine\_thickness                  & $1.30 \pm	0.21$   & $1.34
+    \pm  0.25 $                                    & $1.32 \pm 0.23$
+    \\
+    \quad S\_central\_thickness                    & $1.51 \pm	0.24$   & $1.49
+    \pm  0.27 $                                    & $1.50 \pm 0.26$
+    \\
+    \quad S\_cingul-Marginalis\_thickness          & $1.55 \pm	0.18$   & $1.53
+    \pm  0.23 $                                    & $1.54 \pm 0.21$
+    \\
+    \quad S\_circular\_insula\_ant\_thickness      & $1.24 \pm	0.19$   & $1.30
+    \pm  0.22 $                                    & $1.27 \pm 0.21$
+    \\
+    \quad S\_circular\_insula\_inf\_thickness      & $1.34 \pm	0.18$   & $1.36
+    \pm  0.23 $                                    & $1.35 \pm 0.21$
+    \\
+    \quad S\_circular\_insula\_sup\_thickness      & $1.43 \pm	0.17$   & $1.45
+    \pm  0.20 $                                    & $1.44 \pm 0.19$
+    \\
+    \quad S\_collat\_transv\_ant\_thickness        & $1.23 \pm	0.21$   & $1.26
+    \pm  0.22 $                                    & $1.25 \pm 0.21$
+    \\
+    \quad S\_collat\_transv\_post\_thickness       & $1.19 \pm	0.19$   & $1.19
+    \pm  0.22 $                                    & $1.19 \pm 0.21$
+    \\
+    \quad S\_front\_inf\_thickness                 & $1.48 \pm	0.20$   & $1.50
+    \pm  0.22 $                                    & $1.49 \pm 0.21$
+    \\
+    \quad S\_front\_middle\_thickness              & $1.33 \pm	0.20$   & $1.35
+    \pm  0.22 $                                    & $1.34 \pm 0.21$
+    \\
+    \quad S\_front\_sup\_thickness                 & $1.53 \pm	0.19$   & $1.55
+    \pm  0.21 $                                    & $1.54 \pm 0.20$
+    \\
+    \quad S\_interm\_prim-Jensen\_thickness        & $1.13 \pm	0.27$   & $1.16
+    \pm  0.28 $                                    & $1.15 \pm 0.28$
+    \\
+    \quad S\_intrapariet\_and\_P\_trans\_thickness & $1.59 \pm	0.18$   & $1.59
+    \pm  0.24 $                                    & $1.59 \pm 0.22$
+    \\
+    \quad S\_oc-temp\_lat\_thickness               & $1.30 \pm	0.20$   & $1.34
+    \pm  0.22 $                                    & $1.32 \pm 0.21$
+    \\
+    \quad S\_oc-temp\_med\_and\_Lingual\_thickness & $1.46 \pm	0.18$   & $1.49
+    \pm  0.18 $                                    & $1.48 \pm 0.18$
+    \\
+    \quad S\_oc\_middle\_and\_Lunatus\_thickness   & $1.35 \pm	0.18$   & $1.36
+    \pm  0.21 $                                    & $1.36 \pm 0.20$
+    \\
+    \quad S\_oc\_sup\_and\_transversal\_thickness  & $1.49 \pm	0.17$   & $1.46
+    \pm  0.22 $                                    & $1.47 \pm 0.20$
+    \\
+    \quad S\_occipital\_ant\_thickness             & $1.31 \pm	0.19$   & $1.30
+    \pm  0.23 $                                    & $1.31 \pm 0.21$
+    \\
+    \quad S\_orbital-H\_Shaped\_thickness          & $1.37 \pm	0.22$   & $1.38
+    \pm  0.18 $                                    & $1.37 \pm 0.20$
+    \\
+    \quad S\_orbital\_lateral\_thickness           & $1.10 \pm	0.21$   & $1.11
+    \pm  0.19 $                                    & $1.10 \pm 0.20$
+    \\
+    \quad S\_orbital\_med-olfact\_thickness        & $1.11 \pm	0.18$   & $1.17
+    \pm  0.18 $                                    & $1.14 \pm 0.19$
+    \\
+    \quad S\_parieto\_occipital\_thickness         & $1.59 \pm	0.18$   & $1.58
+    \pm  0.23 $                                    & $1.58 \pm 0.21$
+    \\
+    \quad S\_pericallosal\_thickness               & $1.08 \pm	0.16$   & $1.13
+    \pm  0.18 $                                    & $1.11 \pm 0.18$
+    \\
+    \quad S\_postcentral\_thickness                & $1.60 \pm	0.20$   & $1.61
+    \pm  0.24 $                                    & $1.61 \pm 0.22$
+    \\
+    \quad S\_precentral-inf-part\_thickness        & $1.53 \pm	0.23$   & $1.52
+    \pm  0.25 $                                    & $1.52 \pm 0.24$
+    \\
+    \quad S\_precentral-sup-part\_thickness        & $1.46 \pm	0.23$   & $1.44
+    \pm  0.28 $                                    & $1.45 \pm 0.26$
+    \\
+    \quad S\_suborbital\_thickness                 & $1.06 \pm	0.20$   & $1.07
+    \pm  0.23 $                                    & $1.06 \pm 0.22$
+    \\
+    \quad S\_subparietal\_thickness                & $1.40 \pm	0.16$   & $1.38
+    \pm  0.20 $                                    & $1.39 \pm 0.18$
+    \\
+    \quad S\_temporal\_inf\_thickness              & $1.32 \pm	0.19$   & $1.33
+    \pm  0.18 $                                    & $1.33 \pm 0.18$
+    \\
+    \quad S\_temporal\_sup\_thickness              & $1.61 \pm	0.16$   & $1.62
+    \pm  0.20 $                                    & $1.61 \pm 0.19$
+    \\
+    \quad S\_temporal\_transverse\_thickness       & $1.17 \pm	0.22$   & $1.18
+    \pm  0.23 $                                    & $1.17 \pm 0.22$
+    \\
 
     \hline
-    Cortical surface area                          & $0.93 \pm  0.30$ & $0.94 \pm  0.31$   & $0.93 \pm 0.31$  \\
+    Cortical surface area                          & $0.93 \pm	0.30$   & $0.94
+    \pm  0.31$                                     & $0.93 \pm 0.31$
+    \\
     \hline
-    Cortical volume                                & $0.88 \pm  0.29$ & $ 0.89 \pm  0.30 $ & $0.89  \pm 0.29$ \\
+    Cortical volume                                & $0.88 \pm	0.29$   & $
+        0.89
+    \pm  0.30 $                                    & $0.89  \pm 0.29$
+    \\
     \hline
-    Subcortical volume                             & $1.44 \pm  0.76$ & $1.45 \pm 0.75$    & $1.45 \pm 0.75$  \\
+    Subcortical volume                             & $1.44 \pm	0.76$   & $1.45
+    \pm 0.75$                                      & $1.45 \pm 0.75$
+    \\
     \hline
     \caption{Significant digits average across all subjects and ROI.}
 \end{longtable}
 
 \begin{itemize}
-    \item Presentation of the basic numerical summary of the collected data for both HC and PD groups.
+    \item Presentation of the basic numerical summary of the collected data for
+          both HC and PD groups.
 \end{itemize}
 
 \subsection{Inferential Statistics}
 
 \begin{itemize}
-    \item Detailed presentation of the results of the Whitney-Mann test and Bonferroni correction.
-    \item Comparative analysis between HC and PD populations based on the different ROIs for cortical and subcortical volumes, surface area, and cortical thickness.
+    \item Detailed presentation of the results of the Whitney-Mann test and
+          Bonferroni correction.
+    \item Comparative analysis between HC and PD populations based on the
+          different ROIs for cortical and subcortical volumes, surface area,
+          and
+          cortical thickness.
 \end{itemize}
 
 \section{Discussion}
@@ -394,24 +540,25 @@ We executed two distinct statistical analyses: computational and clinical. We de
 \subsection{Interpretation of Results}
 
 \begin{itemize}
-    \item Detailed interpretation of the observed numerical variability in HC and PD populations and its implications.
+    \item Detailed interpretation of the observed numerical variability in HC
+          and PD populations and its implications.
 \end{itemize}
 
 \subsection{Impact on Clinical Research}
 
 \begin{itemize}
-    \item Discussion on how the observed numerical variability can affect clinical research.
-    \item Exploration of potential ramifications in neurological studies, particularly those involving Parkinson's disease.
+    \item Discussion on how the observed numerical variability can affect
+          clinical research.
+    \item Exploration of potential ramifications in neurological studies,
+          particularly those involving Parkinson's disease.
 \end{itemize}
-
 
 \subsection{Limitations and Future Work}
 
-
-
 \section{Conclusions}
 
-Summary of the findings regarding the numerical variability in Freesurfer 7.3.1 between HC and PD populations and its prospective impact on clinical research.
+Summary of the findings regarding the numerical variability in Freesurfer 7.3.1
+between HC and PD populations and its prospective impact on clinical research.
 Provisional conclusion pending the exploration of goal 2.
 
 \section{Acknowledgements}
