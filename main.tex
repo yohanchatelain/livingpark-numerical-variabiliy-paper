@@ -14,6 +14,12 @@
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{todonotes}
 \usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\usepackage{xcolor}
+\usepackage{tabularray}
+\usepackage{booktabs} % For \toprule, \midrule, \bottomrule
 
 \title{Numerical Variability in FreeSurfer 7.3.1: Implications for Parkinson's
     Disease Research}
@@ -25,9 +31,11 @@
 \begin{abstract}
     Neuroimaging studies, particularly those involving structural MRI analysis,
     have faced challenges in reproducibility due to software variability. This
-    study investigates the impact of numerical instability in FreeSurfer 7.3.1 on
+    study investigates the impact of numerical instability in FreeSurfer 7.3.1
+    on
     structural MRI measures and their relationships with clinical outcomes in
-    Parkinson's disease (PD). Utilizing Monte Carlo Arithmetic (MCA), we evaluate
+    Parkinson's disease (PD). Utilizing Monte Carlo Arithmetic (MCA), we
+    evaluate
     the extent of numerical variability in FreeSurfer's estimation of brain
     structure metrics. Our findings suggest that software variability ...
     \todo[inline]{complete with results}
@@ -41,8 +49,8 @@ latest major releases, offering advanced capabilities for estimating various
 brain structure metrics such as gray matter volume, cortical thickness, and
 surface area.
 
-Recent studies have highlighted significant variability in neuroimaging
-results due to differences in software and processing pipelines. For instance,
+Recent studies have highlighted significant variability in neuroimaging results
+due to differences in software and processing pipelines. For instance,
 Botvinik-Nezer et al. (2020) demonstrated low agreement levels (21\% to 37\%)
 among research teams analyzing the same fMRI data with different pipelines.
 This variability extends to structural MRI measures, with studies showing
@@ -67,30 +75,27 @@ for:
 
 \begin{enumerate}
     \item  Enhancing the reliability of neuroimaging studies in PD research.
-    \item  Improving the potential of MRI as a diagnostic and prognostic tool
-          for PD.
-    \item  Advancing our understanding of the relationship between brain
-          structure and PD clinical outcomes.
+    \item  Improving the potential of MRI as a diagnostic and prognostic tool for PD.
+    \item  Advancing our understanding of the relationship between brain structure and PD
+          clinical outcomes.
 \end{enumerate}
 
 \subsection{Objectives}
 
-\emph{Cross-sectional Analysis}: To assess the difference in numerical
-variability between Healthy Control (HC) and Parkinson's Disease (PD)
-populations using FreeSurfer 7.3.1. This involves comparing the estimation of
-structural MRI measures (gray matter volume, cortical thickness, and surface
-area) between the two groups and evaluating how numerical instability affects
-these estimations.
+\emph{Cross-sectional Analysis}: To measure the impact of the  numerical
+variability of FreeSurfer 7.3.1 on the PPMI cohort. This involves comparing the
+estimation of structural MRI measures such as cortical and subcortical volumes,
+cortical thicknesses, and surface areas.
 
 \emph{Longitudinal Analysis}: To evaluate the impact of numerical variability
-on clinical research outcomes in PD. This includes:
+on clinical research outcomes in the PD group. This includes:
 \begin{itemize}
     \item Investigating how numerical variability affects the detection of group
           differences between HC and PD in subcortical volumes and cortical thickness
           over time.
-    \item Assessing the influence of numerical instability on the observed
-          correlations between disease severity and brain structure measures in PD
-          patients, both at baseline and longitudinally.
+    \item Assessing the influence of numerical instability on the observed correlations
+          between disease severity and brain structure measures in PD patients, both at
+          baseline and longitudinally.
 \end{itemize}
 
 By addressing these objectives, we aim to provide insights into the reliability
@@ -101,30 +106,32 @@ effects of numerical variability in clinical neuroimaging studies.
 
 \subsection{Numerical variability assessment}
 
-The floating-point arithmetic, ruled by the IEEE-754 norm, system approximates
-real numbers using finite precision. Given this limited precision, rounding off
-becomes essential, which can lead to cumulative errors, rendering some
-calculations imprecise or incorrect. The challenge of accurately quantifying
-the
-error in extensive scientific computations arises from the large number of
-calculations involved. Stochastic arithmetic, with its reliance on randomness,
-simplifies this challenge by converting it into a matter of statistical
-sampling.
+The floating-point arithmetic, ruled by the IEEE-754 norm, approximates real
+numbers using finite precision in modern computers. Given a limited precision,
+rounding off are inevitable, which can lead to cumulative errors, rendering
+some calculations imprecise or incorrect. The challenge of accurately
+quantifying the error in extensive scientific computations arises from the
+large number of calculations involved. Stochastic arithmetic, with its reliance
+on randomness, simplifies this challenge by converting it into a matter of
+statistical sampling.
 
 \subsubsection{Monte Carlo Arithmetic}
+\label{sec:mca}
 
-Among the stochastic arithmetic techniques, Monte Carlo
+Among the existing stochastic arithmetic techniques, Monte Carlo
 Arithmetic~\cite{parker1997monte} (MCA) extends floating-point arithmetic by
 exploiting randomness to assess numerical instability that arises from finite
 precision calculations. MCA introduces random noise into basic arithmetic
 operations $(+,-,\times,\div)$ to emulate unbiased, random rounding that is
 independent of prior operations. Consequently, MCA facilitates assessments of
-changes in Operating Systems or architectures, enabling the evaluation of their
-impact on the significance of results. By running the same code multiple times,
-the stability of outcomes can be measured by calculating the number of
-significant digits in the outputs.
+changes in softwares or hardwares, enabling the evaluation of their impact on
+the significance of results. MCA offers a control over the magnitude of the
+noised injected into the calculations with the concept of virtual precision. By
+running the same code multiple times, the stability of outcomes can be measured
+by calculating the number of significant digits in the outputs.
 
 \subsubsection{Significant digits formula}
+\label{sec:sig_digits}
 
 We compute the number of significant bits \(\hat{s}\) with probability
 \(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \emph{Significant
@@ -149,6 +156,7 @@ inverse cumulative distribution of the standard normal distribution and
 \(\chi^2\) is the Chi-2 distribution with \(n\)-1 degrees of freedom.
 
 \subsubsection{Fuzzy-libm}
+\label{sec:fuzzy-libm}
 
 MCA has been extended to several libraries including the \texttt{libm} which
 comprises elementary mathematical functions \texttt{(exp, log, cos, sin, ...)}.
@@ -160,19 +168,7 @@ Fuzzy-libm applies a random perturbation on the results of \texttt{libm}'
 functions to simulate different implementations. It has been demonstrated to be
 a good proxy to simulate OS changes~\cite{salari2021accurate}.
 
-\subsection{Participants}
-
-\begin{itemize}
-    \item Details on the execution of 10 Freesurfer runs with Fuzzy-libm for
-          each of the 315 subjects (106 HC and 209 PD).
-\end{itemize}
-
-We executed \emph{FreeSurfer} \texttt{recon-all} command 10 times for each
-subject with the Fuzzy-libm. We set the virtual precision to 53 for binary64
-(double precision) and 24 for binary32 (single precision) to simulate
-error-machine precision.
-
-\todo{Detail failing execution + image QC}
+\subsection{Participants}d
 
 In total, 210 patients diagnosed with Parkinson's Disease (PD) participated in
 the study: 181 with PD without mild cognitive impairment (PD-non-MCI) and 29
@@ -189,8 +185,70 @@ from the clinical analysis to prevent potential confounding effects of MCI on
 clinical evaluations. The data collection was sanctioned by the local ethics
 committees of PPMI's participating institutions, and all participants provided
 written informed consent. Descriptive statistics for each group can be found in
-Table 1. The study adhered to the Declaration of Helsinki and received an
-exemption from Concordia University’s Research Ethics Unit.
+Table~\ref{tab:cohort_stat}. The study adhered to the Declaration of Helsinki
+and received an exemption from Concordia University’s Research Ethics Unit.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{lc|c|c||c|}
+        \hline
+                                & \multicolumn{3}{c||}{Cross-sectional} &
+        Longitudinal
+        \\ \hline
+        Cohort                  & HC                                    &
+        PD-non-MCI
+                                & PD-MCI                                &
+        PD-non-MCI
+        \\ \hline
+        n                       & 106                                   & 181
+                                & 29                                    & 125
+        \\
+        Age (y)                 & 60.6 ± 10.2                           & 61.7
+        ±
+        9.6
+                                & 67.7 ± 7.7                            & 61.1
+        ±
+        9.3
+        \\
+        Age range               & 30.6 - 84.3                           & 36.3
+        -
+        83.3                    & 49.9 - 80.5                           & 39.2
+        -
+        83.3
+        \\
+        Gender (male, \%)       & 58, 54.7\%                            & 119,
+        65.7\%                  & 22, 75.9\%                            & 84,
+        67.2\%
+        \\
+        Education (y)           & 16.6 ± 3.3                            & 15.9
+        ±
+        2.9
+                                & 15.1 ± 3.5                            & 16.1
+        ±
+        3.0
+        \\
+        Duration T2-T1 (y)      &                                       &
+                                &                                       & 1.4 ±
+        0.7
+        \\
+        UPDRS III OFF baseline  &                                       &
+                                &                                       & 23.8
+        ±
+        10.2
+        \\
+        UPDRS III OFF follow-up &                                       &
+                                &                                       & 26.3
+        ±
+        11.6
+        \\
+    \end{tabular}
+    \caption{Descriptive statistics. \\
+        \textbf{MCI}: Mild Cognitive Impairment; \textbf{UPDRS}: Unified
+        Parkinson’s Disease Rating Scale; \textbf{PD}: Parkinson’s disease.
+        PD-non-MCI longitudinal sample is a subsample of PD-non-MCI
+        cross-sectional sample that had longitudinal data and disease severity
+        score available.\label{tab:cohort_stat}}
+\end{table}
 
 \subsection{Image acquisition}
 
@@ -200,42 +258,36 @@ time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view =
 256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite
 project there may be slight differences in the sites’ setup.
 
-Brain images were processed using FreeSurfer 7.3.1~\cite{fischl2012freesurfer}.
-FreeSurfer’s \texttt{recon-all} function was used for cortical reconstruction.
-Volumes, cortical thickness, and surface area were extracted for each
-participant. The longitudinal preprocessing stream was used to analyze images
-in cohort II~\cite{reuter2012within}. The two-time points were processed
-cross-sectionally with the default pipeline, an unbiased template from the two
-images was created, and data were processed longitudinally. Specifically, an
-unbiased within-subject template space and image \cite{reuter2011avoiding} is
-created using robust, inverse-consistent registration~\cite{reuter2010highly}.
-We did analyses on the Virtual Imaging Platform~\cite{glatard2012virtual} that
-utilizes resources offered by the Biomed virtual organization within the
-European Grid Infrastructure (EGI). Specifically, the authors wish to extend
-gratitude to Sorina Pop from CREATIS, Lyon, France. Quality control of raw
-images was performed with MRIQC. Preprocessed images were visually inspected
-for quality.
+\subsubsection{Preprocessing}
 
-\subsection{Data Analysis}
+To assess numerical variability in FreeSurfer outputs, we utilized FreeSurfer
+7.3.1, instrumented with Fuzzy-libm. The virtual precision was set to 53 for
+binary64 (double precision) and 24 for binary32 (single precision) to simulate
+error-machine precision. The \texttt{recon-all} function was used for cortical
+reconstruction, extracting volumes, cortical thickness, and surface area for
+each participant. This process was repeated 34 times per subject, generating 34
+sets of brain structure metrics. Due to the inherent instability of MCA, some
+runs failed and were excluded from the analysis. To standardize the dataset, we
+randomly selected 26 successful runs per subject, resulting in 26 sets of MCA
+repetitions, each containing the same number of subjects. Ensuring consistency
+in the number of subjects across repetitions is essential for statistical
+analysis. Once the perturbed datasets were obtained, downstream analysis was
+performed using a FreeSurfer pipeline without Fuzzy-libm to prevent further
+perturbations.
 
-We executed two distinct statistical analyses: computational and clinical. We
-delved into the variations present in FreeSurfer outputs, specifically focusing
-on the estimation of volume, cortical thickness, and surface area. For each
-image, we extracted the cortical and subcortical volumes, as well as the
-cortical surface areas and thicknesses from all FreeSurfer iterations. To
-quantify the numerical variability across these measurements, we calculated the
-number of significant digits. For a more targeted analysis, we evaluated the
-Parkinson's Disease (PD) and Healthy Control (HC) groups separately. We
-employed
-the Whitney-Mann test to find out potential variances in software stability
-between these subgroups.
+For each MCA repetition, we followed the longitudinal preprocessing stream to
+analyze images~\cite{reuter2012within}. Initially, both time points were
+processed cross-sectionally with the default pipeline, after which an unbiased
+template from the two images was generated and processed longitudinally.
+Specifically, an unbiased within-subject template space and
+image~\cite{reuter2011avoiding} was created using robust, inverse-consistent
+registration~\cite{reuter2010highly}.
 
-\begin{itemize}
-    \item Description of the measurement of numerical variability in terms of
-          the number of significant digits.
-    \item Explanation of statistical analysis, including the Whitney-Mann test
-          and Bonferroni correction.
-\end{itemize}
+The analyses were conducted on the Virtual Imaging
+Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
+Biomed virtual organization within the European Grid Infrastructure (EGI). We
+extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
+All preprocessed images were visually inspected for quality.
 
 \section{Results}
 
@@ -268,271 +320,411 @@ between these subgroups.
 
 \begin{longtable}[h]{|l|c|c|c|}
     \hline
-                                                   & HC               &
-    PD-non-MCI                                     & All
+                                    & HC               &
+    PD-non-MCI                      & All
     \\
     \hline
-    Cortical thickness                             & $1.37 \pm 0.27$  & $1.39
-    \pm 0.29$                                      & $1.38 \pm 0.28$
+    Cortical thickness              & $1.37 \pm 0.27$  & $1.39
+    \pm 0.29$                       & $1.38 \pm 0.28$
     \\
     \hline
-    \quad G\_Ins\_lg\_and\_S\_cent\_ins\_thickness & $1.02 \pm	0.21$   & $1.04
-    \pm  0.21 $                                    & $1.03 \pm 0.21$
+    \quad G Ins lg and S cent ins   & $1.02 \pm	0.21$  & $1.04
+    \pm  0.21 $                     & $1.03 \pm 0.21$
     \\
-    \quad G\_and\_S\_cingul-Ant\_thickness         & $1.50 \pm	0.19$   & $1.47
-    \pm  0.19 $                                    & $1.48 \pm 0.19$
+    \quad G and S cingul-Ant        & $1.50 \pm	0.19$  & $1.47
+    \pm  0.19 $                     & $1.48 \pm 0.19$
     \\
-    \quad G\_and\_S\_cingul-Mid-Ant\_thickness     & $1.44 \pm	0.18$   & $1.47
-    \pm  0.21 $                                    & $1.45 \pm 0.20$
+    \quad G and S cingul-Mid-Ant    & $1.44 \pm	0.18$  & $1.47
+    \pm  0.21 $                     & $1.45 \pm 0.20$
     \\
-    \quad G\_and\_S\_cingul-Mid-Post\_thickness    & $1.52 \pm	0.17$   & $1.51
-    \pm  0.22 $                                    & $1.51 \pm 0.20$
+    \quad G and S cingul-Mid-Post   & $1.52 \pm	0.17$  & $1.51
+    \pm  0.22 $                     & $1.51 \pm 0.20$
     \\
-    \quad G\_and\_S\_frontomargin\_thickness       & $1.24 \pm	0.22$   & $1.26
-    \pm  0.19 $                                    & $1.25 \pm 0.20$
+    \quad G and S frontomargin      & $1.24 \pm	0.22$  & $1.26
+    \pm  0.19 $                     & $1.25 \pm 0.20$
     \\
-    \quad G\_and\_S\_occipital\_inf\_thickness     & $1.37 \pm	0.19$   & $1.40
-    \pm  0.20 $                                    & $1.38 \pm 0.20$
+    \quad G and S occipital inf     & $1.37 \pm	0.19$  & $1.40
+    \pm  0.20 $                     & $1.38 \pm 0.20$
     \\
-    \quad G\_and\_S\_paracentral\_thickness        & $1.30 \pm	0.26$   & $1.37
-    \pm  0.25 $                                    & $1.34 \pm 0.25$
+    \quad G and S paracentral       & $1.30 \pm	0.26$  & $1.37
+    \pm  0.25 $                     & $1.34 \pm 0.25$
     \\
-    \quad G\_and\_S\_subcentral\_thickness         & $1.50 \pm	0.18$   & $1.48
-    \pm  0.23 $                                    & $1.49 \pm 0.21$
+    \quad G and S subcentral        & $1.50 \pm	0.18$  & $1.48
+    \pm  0.23 $                     & $1.49 \pm 0.21$
     \\
-    \quad G\_and\_S\_transv\_frontopol\_thickness  & $1.18 \pm	0.24$   & $1.24
-    \pm  0.24 $                                    & $1.22 \pm 0.24$
+    \quad G and S transv frontopol  & $1.18 \pm	0.24$  & $1.24
+    \pm  0.24 $                     & $1.22 \pm 0.24$
     \\
-    \quad G\_cingul-Post-dorsal\_thickness         & $1.38 \pm	0.16$   & $1.38
-    \pm  0.21 $                                    & $1.38 \pm 0.19$
+    \quad G cingul-Post-dorsal      & $1.38 \pm	0.16$  & $1.38
+    \pm  0.21 $                     & $1.38 \pm 0.19$
     \\
-    \quad G\_cingul-Post-ventral\_thickness        & $1.14 \pm	0.18$   & $1.12
-    \pm  0.20 $                                    & $1.13 \pm 0.19$
+    \quad G cingul-Post-ventral     & $1.14 \pm	0.18$  & $1.12
+    \pm  0.20 $                     & $1.13 \pm 0.19$
     \\
-    \quad G\_cuneus\_thickness                     & $1.27 \pm	0.24$   & $1.34
-    \pm  0.24 $                                    & $1.31 \pm 0.24$
+    \quad G cuneus                  & $1.27 \pm	0.24$  & $1.34
+    \pm  0.24 $                     & $1.31 \pm 0.24$
     \\
-    \quad G\_front\_inf-Opercular\_thickness       & $1.54 \pm	0.18$   & $1.56
-    \pm  0.24 $                                    & $1.55 \pm 0.21$
+    \quad G front inf-Opercular     & $1.54 \pm	0.18$  & $1.56
+    \pm  0.24 $                     & $1.55 \pm 0.21$
     \\
-    \quad G\_front\_inf-Orbital\_thickness         & $1.25 \pm	0.26$   & $1.28
-    \pm  0.24 $                                    & $1.26 \pm 0.25$
+    \quad G front inf-Orbital       & $1.25 \pm	0.26$  & $1.28
+    \pm  0.24 $                     & $1.26 \pm 0.25$
     \\
-    \quad G\_front\_inf-Triangul\_thickness        & $1.36 \pm	0.25$   & $1.41
-    \pm  0.23 $                                    & $1.39 \pm 0.24$
+    \quad G front inf-Triangul      & $1.36 \pm	0.25$  & $1.41
+    \pm  0.23 $                     & $1.39 \pm 0.24$
     \\
-    \quad G\_front\_middle\_thickness              & $1.53 \pm	0.24$   & $1.56
-    \pm  0.23 $                                    & $1.55 \pm 0.23$
+    \quad G front middle            & $1.53 \pm	0.24$  & $1.56
+    \pm  0.23 $                     & $1.55 \pm 0.23$
     \\
-    \quad G\_front\_sup\_thickness                 & $1.63 \pm	0.23$   & $1.67
-    \pm  0.25 $                                    & $1.65 \pm 0.24$
+    \quad G front sup               & $1.63 \pm	0.23$  & $1.67
+    \pm  0.25 $                     & $1.65 \pm 0.24$
     \\
-    \quad G\_insular\_short\_thickness             & $1.01 \pm	0.23$   & $1.03
-    \pm  0.24 $                                    & $1.02 \pm 0.23$
+    \quad G insular short           & $1.01 \pm	0.23$  & $1.03
+    \pm  0.24 $                     & $1.02 \pm 0.23$
     \\
-    \quad G\_oc-temp\_lat-fusifor\_thickness       & $1.45 \pm	0.19$   & $1.48
-    \pm  0.23 $                                    & $1.47 \pm 0.21$
+    \quad G oc-temp lat-fusifor     & $1.45 \pm	0.19$  & $1.48
+    \pm  0.23 $                     & $1.47 \pm 0.21$
     \\
-    \quad G\_oc-temp\_med-Lingual\_thickness       & $1.21 \pm	0.23$   & $1.28
-    \pm  0.24 $                                    & $1.25 \pm 0.24$
+    \quad G oc-temp med-Lingual     & $1.21 \pm	0.23$  & $1.28
+    \pm  0.24 $                     & $1.25 \pm 0.24$
     \\
-    \quad G\_oc-temp\_med-Parahip\_thickness       & $1.25 \pm	0.23$   & $1.29
-    \pm  0.24 $                                    & $1.27 \pm 0.23$
+    \quad G oc-temp med-Parahip     & $1.25 \pm	0.23$  & $1.29
+    \pm  0.24 $                     & $1.27 \pm 0.23$
     \\
-    \quad G\_occipital\_middle\_thickness          & $1.52 \pm	0.17$   & $1.52
-    \pm  0.22 $                                    & $1.52 \pm 0.20$
+    \quad G occipital middle        & $1.52 \pm	0.17$  & $1.52
+    \pm  0.22 $                     & $1.52 \pm 0.20$
     \\
-    \quad G\_occipital\_sup\_thickness             & $1.44 \pm	0.21$   & $1.46
-    \pm  0.24 $                                    & $1.45 \pm 0.22$
+    \quad G occipital sup           & $1.44 \pm	0.21$  & $1.46
+    \pm  0.24 $                     & $1.45 \pm 0.22$
     \\
-    \quad G\_orbital\_thickness                    & $1.37 \pm	0.22$   & $1.40
-    \pm  0.24 $                                    & $1.38 \pm 0.23$
+    \quad G orbital                 & $1.37 \pm	0.22$  & $1.40
+    \pm  0.24 $                     & $1.38 \pm 0.23$
     \\
-    \quad G\_pariet\_inf-Angular\_thickness        & $1.58 \pm	0.18$   & $1.60
-    \pm  0.20 $                                    & $1.59 \pm 0.19$
+    \quad G pariet inf-Angular      & $1.58 \pm	0.18$  & $1.60
+    \pm  0.20 $                     & $1.59 \pm 0.19$
     \\
-    \quad G\_pariet\_inf-Supramar\_thickness       & $1.61 \pm	0.20$   & $1.60
-    \pm  0.22 $                                    & $1.61 \pm 0.21$
+    \quad G pariet inf-Supramar     & $1.61 \pm	0.20$  & $1.60
+    \pm  0.22 $                     & $1.61 \pm 0.21$
     \\
-    \quad G\_parietal\_sup\_thickness              & $1.59 \pm	0.23$   & $1.62
-    \pm  0.24 $                                    & $1.61 \pm 0.24$
+    \quad G parietal sup            & $1.59 \pm	0.23$  & $1.62
+    \pm  0.24 $                     & $1.61 \pm 0.24$
     \\
-    \quad G\_postcentral\_thickness                & $1.49 \pm	0.26$   & $1.52
-    \pm  0.27 $                                    & $1.51 \pm 0.27$
+    \quad G postcentral             & $1.49 \pm	0.26$  & $1.52
+    \pm  0.27 $                     & $1.51 \pm 0.27$
     \\
-    \quad G\_precentral\_thickness                 & $1.43 \pm	0.29$   & $1.48
-    \pm  0.32 $                                    & $1.45 \pm 0.31$
+    \quad G precentral              & $1.43 \pm	0.29$  & $1.48
+    \pm  0.32 $                     & $1.45 \pm 0.31$
     \\
-    \quad G\_precuneus\_thickness                  & $1.58 \pm	0.16$   & $1.59
-    \pm  0.21 $                                    & $1.59 \pm 0.19$
+    \quad G precuneus               & $1.58 \pm	0.16$  & $1.59
+    \pm  0.21 $                     & $1.59 \pm 0.19$
     \\
-    \quad G\_rectus\_thickness                     & $1.22 \pm	0.21$   & $1.23
-    \pm  0.23 $                                    & $1.23 \pm 0.22$
+    \quad G rectus                  & $1.22 \pm	0.21$  & $1.23
+    \pm  0.23 $                     & $1.23 \pm 0.22$
     \\
-    \quad G\_subcallosal\_thickness                & $0.93 \pm	0.18$   & $0.95
-    \pm  0.17 $                                    & $0.94 \pm 0.17$
+    \quad G subcallosal             & $0.93 \pm	0.18$  & $0.95
+    \pm  0.17 $                     & $0.94 \pm 0.17$
     \\
-    \quad G\_temp\_sup-G\_T\_transv\_thickness     & $1.28 \pm	0.26$   & $1.30
-    \pm  0.26 $                                    & $1.29 \pm 0.26$
+    \quad G temp sup-G T transv     & $1.28 \pm	0.26$  & $1.30
+    \pm  0.26 $                     & $1.29 \pm 0.26$
     \\
-    \quad G\_temp\_sup-Lateral\_thickness          & $1.52 \pm	0.22$   & $1.54
-    \pm  0.23 $                                    & $1.53 \pm 0.22$
+    \quad G temp sup-Lateral        & $1.52 \pm	0.22$  & $1.54
+    \pm  0.23 $                     & $1.53 \pm 0.22$
     \\
-    \quad G\_temp\_sup-Plan\_polar\_thickness      & $1.14 \pm	0.23$   & $1.18
-    \pm  0.26 $                                    & $1.16 \pm 0.24$
+    \quad G temp sup-Plan polar     & $1.14 \pm	0.23$  & $1.18
+    \pm  0.26 $                     & $1.16 \pm 0.24$
     \\
-    \quad G\_temp\_sup-Plan\_tempo\_thickness      & $1.50 \pm	0.21$   & $1.51
-    \pm  0.24 $                                    & $1.50 \pm 0.23$
+    \quad G temp sup-Plan tempo     & $1.50 \pm	0.21$  & $1.51
+    \pm  0.24 $                     & $1.50 \pm 0.23$
     \\
-    \quad G\_temporal\_inf\_thickness              & $1.45 \pm	0.19$   & $1.46
-    \pm  0.20 $                                    & $1.45 \pm 0.20$
+    \quad G temporal inf            & $1.45 \pm	0.19$  & $1.46
+    \pm  0.20 $                     & $1.45 \pm 0.20$
     \\
-    \quad G\_temporal\_middle\_thickness           & $1.56 \pm	0.21$   & $1.58
-    \pm  0.21 $                                    & $1.57 \pm 0.21$
+    \quad G temporal middle         & $1.56 \pm	0.21$  & $1.58
+    \pm  0.21 $                     & $1.57 \pm 0.21$
     \\
-    \quad Lat\_Fis-ant-Horizont\_thickness         & $1.24 \pm	0.22$   & $1.25
-    \pm  0.22 $                                    & $1.24 \pm 0.22$
+    \quad Lat Fis-ant-Horizont      & $1.24 \pm	0.22$  & $1.25
+    \pm  0.22 $                     & $1.24 \pm 0.22$
     \\
-    \quad Lat\_Fis-ant-Vertical\_thickness         & $1.15 \pm	0.21$   & $1.17
-    \pm  0.24 $                                    & $1.16 \pm 0.23$
+    \quad Lat Fis-ant-Vertical      & $1.15 \pm	0.21$  & $1.17
+    \pm  0.24 $                     & $1.16 \pm 0.23$
     \\
-    \quad Lat\_Fis-post\_thickness                 & $1.52 \pm	0.18$   & $1.52
-    \pm  0.22 $                                    & $1.52 \pm 0.20$
+    \quad Lat Fis-post              & $1.52 \pm	0.18$  & $1.52
+    \pm  0.22 $                     & $1.52 \pm 0.20$
     \\
-    \quad MeanThickness\_thickness                 & $1.92 \pm	0.19$   & $1.95
-    \pm  0.22 $                                    & $1.93 \pm 0.21$
+    \quad MeanThickness             & $1.92 \pm	0.19$  & $1.95
+    \pm  0.22 $                     & $1.93 \pm 0.21$
     \\
-    \quad Pole\_occipital\_thickness               & $1.32 \pm	0.21$   & $1.34
-    \pm  0.24 $                                    & $1.33 \pm 0.22$
+    \quad Pole occipital            & $1.32 \pm	0.21$  & $1.34
+    \pm  0.24 $                     & $1.33 \pm 0.22$
     \\
-    \quad Pole\_temporal\_thickness                & $1.24 \pm	0.25$   & $1.32
-    \pm  0.27 $                                    & $1.28 \pm 0.27$
+    \quad Pole temporal             & $1.24 \pm	0.25$  & $1.32
+    \pm  0.27 $                     & $1.28 \pm 0.27$
     \\
-    \quad S\_calcarine\_thickness                  & $1.30 \pm	0.21$   & $1.34
-    \pm  0.25 $                                    & $1.32 \pm 0.23$
+    \quad S calcarine               & $1.30 \pm	0.21$  & $1.34
+    \pm  0.25 $                     & $1.32 \pm 0.23$
     \\
-    \quad S\_central\_thickness                    & $1.51 \pm	0.24$   & $1.49
-    \pm  0.27 $                                    & $1.50 \pm 0.26$
+    \quad S central                 & $1.51 \pm	0.24$  & $1.49
+    \pm  0.27 $                     & $1.50 \pm 0.26$
     \\
-    \quad S\_cingul-Marginalis\_thickness          & $1.55 \pm	0.18$   & $1.53
-    \pm  0.23 $                                    & $1.54 \pm 0.21$
+    \quad S cingul-Marginalis       & $1.55 \pm	0.18$  & $1.53
+    \pm  0.23 $                     & $1.54 \pm 0.21$
     \\
-    \quad S\_circular\_insula\_ant\_thickness      & $1.24 \pm	0.19$   & $1.30
-    \pm  0.22 $                                    & $1.27 \pm 0.21$
+    \quad S circular insula ant     & $1.24 \pm	0.19$  & $1.30
+    \pm  0.22 $                     & $1.27 \pm 0.21$
     \\
-    \quad S\_circular\_insula\_inf\_thickness      & $1.34 \pm	0.18$   & $1.36
-    \pm  0.23 $                                    & $1.35 \pm 0.21$
+    \quad S circular insula inf     & $1.34 \pm	0.18$  & $1.36
+    \pm  0.23 $                     & $1.35 \pm 0.21$
     \\
-    \quad S\_circular\_insula\_sup\_thickness      & $1.43 \pm	0.17$   & $1.45
-    \pm  0.20 $                                    & $1.44 \pm 0.19$
+    \quad S circular insula sup     & $1.43 \pm	0.17$  & $1.45
+    \pm  0.20 $                     & $1.44 \pm 0.19$
     \\
-    \quad S\_collat\_transv\_ant\_thickness        & $1.23 \pm	0.21$   & $1.26
-    \pm  0.22 $                                    & $1.25 \pm 0.21$
+    \quad S collat transv ant       & $1.23 \pm	0.21$  & $1.26
+    \pm  0.22 $                     & $1.25 \pm 0.21$
     \\
-    \quad S\_collat\_transv\_post\_thickness       & $1.19 \pm	0.19$   & $1.19
-    \pm  0.22 $                                    & $1.19 \pm 0.21$
+    \quad S collat transv post      & $1.19 \pm	0.19$  & $1.19
+    \pm  0.22 $                     & $1.19 \pm 0.21$
     \\
-    \quad S\_front\_inf\_thickness                 & $1.48 \pm	0.20$   & $1.50
-    \pm  0.22 $                                    & $1.49 \pm 0.21$
+    \quad S front inf               & $1.48 \pm	0.20$  & $1.50
+    \pm  0.22 $                     & $1.49 \pm 0.21$
     \\
-    \quad S\_front\_middle\_thickness              & $1.33 \pm	0.20$   & $1.35
-    \pm  0.22 $                                    & $1.34 \pm 0.21$
+    \quad S front middle            & $1.33 \pm	0.20$  & $1.35
+    \pm  0.22 $                     & $1.34 \pm 0.21$
     \\
-    \quad S\_front\_sup\_thickness                 & $1.53 \pm	0.19$   & $1.55
-    \pm  0.21 $                                    & $1.54 \pm 0.20$
+    \quad S front sup               & $1.53 \pm	0.19$  & $1.55
+    \pm  0.21 $                     & $1.54 \pm 0.20$
     \\
-    \quad S\_interm\_prim-Jensen\_thickness        & $1.13 \pm	0.27$   & $1.16
-    \pm  0.28 $                                    & $1.15 \pm 0.28$
+    \quad S interm prim-Jensen      & $1.13 \pm	0.27$  & $1.16
+    \pm  0.28 $                     & $1.15 \pm 0.28$
     \\
-    \quad S\_intrapariet\_and\_P\_trans\_thickness & $1.59 \pm	0.18$   & $1.59
-    \pm  0.24 $                                    & $1.59 \pm 0.22$
+    \quad S intrapariet and P trans & $1.59 \pm	0.18$  & $1.59
+    \pm  0.24 $                     & $1.59 \pm 0.22$
     \\
-    \quad S\_oc-temp\_lat\_thickness               & $1.30 \pm	0.20$   & $1.34
-    \pm  0.22 $                                    & $1.32 \pm 0.21$
+    \quad S oc-temp lat             & $1.30 \pm	0.20$  & $1.34
+    \pm  0.22 $                     & $1.32 \pm 0.21$
     \\
-    \quad S\_oc-temp\_med\_and\_Lingual\_thickness & $1.46 \pm	0.18$   & $1.49
-    \pm  0.18 $                                    & $1.48 \pm 0.18$
+    \quad S oc-temp med and Lingual & $1.46 \pm	0.18$  & $1.49
+    \pm  0.18 $                     & $1.48 \pm 0.18$
     \\
-    \quad S\_oc\_middle\_and\_Lunatus\_thickness   & $1.35 \pm	0.18$   & $1.36
-    \pm  0.21 $                                    & $1.36 \pm 0.20$
+    \quad S oc middle and Lunatus   & $1.35 \pm	0.18$  & $1.36
+    \pm  0.21 $                     & $1.36 \pm 0.20$
     \\
-    \quad S\_oc\_sup\_and\_transversal\_thickness  & $1.49 \pm	0.17$   & $1.46
-    \pm  0.22 $                                    & $1.47 \pm 0.20$
+    \quad S oc sup and transversal  & $1.49 \pm	0.17$  & $1.46
+    \pm  0.22 $                     & $1.47 \pm 0.20$
     \\
-    \quad S\_occipital\_ant\_thickness             & $1.31 \pm	0.19$   & $1.30
-    \pm  0.23 $                                    & $1.31 \pm 0.21$
+    \quad S occipital ant           & $1.31 \pm	0.19$  & $1.30
+    \pm  0.23 $                     & $1.31 \pm 0.21$
     \\
-    \quad S\_orbital-H\_Shaped\_thickness          & $1.37 \pm	0.22$   & $1.38
-    \pm  0.18 $                                    & $1.37 \pm 0.20$
+    \quad S orbital-H Shaped        & $1.37 \pm	0.22$  & $1.38
+    \pm  0.18 $                     & $1.37 \pm 0.20$
     \\
-    \quad S\_orbital\_lateral\_thickness           & $1.10 \pm	0.21$   & $1.11
-    \pm  0.19 $                                    & $1.10 \pm 0.20$
+    \quad S orbital lateral         & $1.10 \pm	0.21$  & $1.11
+    \pm  0.19 $                     & $1.10 \pm 0.20$
     \\
-    \quad S\_orbital\_med-olfact\_thickness        & $1.11 \pm	0.18$   & $1.17
-    \pm  0.18 $                                    & $1.14 \pm 0.19$
+    \quad S orbital med-olfact      & $1.11 \pm	0.18$  & $1.17
+    \pm  0.18 $                     & $1.14 \pm 0.19$
     \\
-    \quad S\_parieto\_occipital\_thickness         & $1.59 \pm	0.18$   & $1.58
-    \pm  0.23 $                                    & $1.58 \pm 0.21$
+    \quad S parieto occipital       & $1.59 \pm	0.18$  & $1.58
+    \pm  0.23 $                     & $1.58 \pm 0.21$
     \\
-    \quad S\_pericallosal\_thickness               & $1.08 \pm	0.16$   & $1.13
-    \pm  0.18 $                                    & $1.11 \pm 0.18$
+    \quad S pericallosal            & $1.08 \pm	0.16$  & $1.13
+    \pm  0.18 $                     & $1.11 \pm 0.18$
     \\
-    \quad S\_postcentral\_thickness                & $1.60 \pm	0.20$   & $1.61
-    \pm  0.24 $                                    & $1.61 \pm 0.22$
+    \quad S postcentral             & $1.60 \pm	0.20$  & $1.61
+    \pm  0.24 $                     & $1.61 \pm 0.22$
     \\
-    \quad S\_precentral-inf-part\_thickness        & $1.53 \pm	0.23$   & $1.52
-    \pm  0.25 $                                    & $1.52 \pm 0.24$
+    \quad S precentral-inf-part     & $1.53 \pm	0.23$  & $1.52
+    \pm  0.25 $                     & $1.52 \pm 0.24$
     \\
-    \quad S\_precentral-sup-part\_thickness        & $1.46 \pm	0.23$   & $1.44
-    \pm  0.28 $                                    & $1.45 \pm 0.26$
+    \quad S precentral-sup-part     & $1.46 \pm	0.23$  & $1.44
+    \pm  0.28 $                     & $1.45 \pm 0.26$
     \\
-    \quad S\_suborbital\_thickness                 & $1.06 \pm	0.20$   & $1.07
-    \pm  0.23 $                                    & $1.06 \pm 0.22$
+    \quad S suborbital              & $1.06 \pm	0.20$  & $1.07
+    \pm  0.23 $                     & $1.06 \pm 0.22$
     \\
-    \quad S\_subparietal\_thickness                & $1.40 \pm	0.16$   & $1.38
-    \pm  0.20 $                                    & $1.39 \pm 0.18$
+    \quad S subparietal             & $1.40 \pm	0.16$  & $1.38
+    \pm  0.20 $                     & $1.39 \pm 0.18$
     \\
-    \quad S\_temporal\_inf\_thickness              & $1.32 \pm	0.19$   & $1.33
-    \pm  0.18 $                                    & $1.33 \pm 0.18$
+    \quad S temporal inf            & $1.32 \pm	0.19$  & $1.33
+    \pm  0.18 $                     & $1.33 \pm 0.18$
     \\
-    \quad S\_temporal\_sup\_thickness              & $1.61 \pm	0.16$   & $1.62
-    \pm  0.20 $                                    & $1.61 \pm 0.19$
+    \quad S temporal sup            & $1.61 \pm	0.16$  & $1.62
+    \pm  0.20 $                     & $1.61 \pm 0.19$
     \\
-    \quad S\_temporal\_transverse\_thickness       & $1.17 \pm	0.22$   & $1.18
-    \pm  0.23 $                                    & $1.17 \pm 0.22$
+    \quad S temporal transverse     & $1.17 \pm	0.22$  & $1.18
+    \pm  0.23 $                     & $1.17 \pm 0.22$
     \\
 
     \hline
-    Cortical surface area                          & $0.93 \pm	0.30$   & $0.94
-    \pm  0.31$                                     & $0.93 \pm 0.31$
+    Cortical surface area           & $0.93 \pm	0.30$  & $0.94
+    \pm  0.31$                      & $0.93 \pm 0.31$
     \\
     \hline
-    Cortical volume                                & $0.88 \pm	0.29$   & $
+    Cortical volume                 & $0.88 \pm	0.29$  & $
         0.89
-    \pm  0.30 $                                    & $0.89  \pm 0.29$
+    \pm  0.30 $                     & $0.89  \pm 0.29$
     \\
     \hline
-    Subcortical volume                             & $1.44 \pm	0.76$   & $1.45
-    \pm 0.75$                                      & $1.45 \pm 0.75$
+    Subcortical volume              & $1.44 \pm	0.76$  & $1.45
+    \pm 0.75$                       & $1.45 \pm 0.75$
     \\
     \hline
     \caption{Significant digits average across all subjects and ROI.}
 \end{longtable}
 
+% WhiteSurfArea & 2.0 +/- 0.34 & 1.97 +/- 0.31
+
+\begin{longtblr}[
+        caption={Significant digits average across all subjects and regions.},
+        label={tab:sig-cortical},
+    ]{
+        colspec={lcc|cc|cc}, width=0.25\linewidth,
+        row{even}={white,font=\small},
+        row{odd}={gray9,font=\small},
+        rows = {rowsep=0pt},
+        rowhead=2,
+        row{1}={white,font=\bfseries},
+        row{2}={gray9}
+    }
+    \SetCell[c=1]{c}Region    & \SetCell[c=2]{c}{cortical thickness } &                 & \SetCell[c=2]{c}{surface area} &                 & \SetCell[c=2]{c}{cortical volume} &                 \\
+                              & lh                                    & rh              & lh                             & rh              & lh                                & rh              \\
+    \hline
+    G Ins lg and S cent ins   & $1.16 \pm 0.19$                       & $1.14 \pm 0.19$ & $0.85 \pm 0.12$                & $0.72 \pm 0.17$ & $0.88 \pm 0.13$                   & $0.84 \pm 0.14$ \\
+    G and S cingul-Ant        & $1.58 \pm 0.19$                       & $1.61 \pm 0.18$ & $1.13 \pm 0.20$                & $1.15 \pm 0.21$ & $1.11 \pm 0.21$                   & $1.12 \pm 0.19$ \\
+    G and S cingul-Mid-Ant    & $1.57 \pm 0.17$                       & $1.59 \pm 0.17$ & $1.05 \pm 0.20$                & $1.08 \pm 0.21$ & $1.02 \pm 0.19$                   & $1.05 \pm 0.20$ \\
+    G and S cingul-Mid-Post   & $1.65 \pm 0.17$                       & $1.62 \pm 0.18$ & $1.23 \pm 0.20$                & $1.18 \pm 0.23$ & $1.20 \pm 0.21$                   & $1.14 \pm 0.24$ \\
+    G and S frontomargin      & $1.42 \pm 0.21$                       & $1.30 \pm 0.20$ & $1.07 \pm 0.21$                & $0.92 \pm 0.16$ & $1.00 \pm 0.19$                   & $0.86 \pm 0.16$ \\
+    G and S occipital inf     & $1.50 \pm 0.18$                       & $1.50 \pm 0.17$ & $1.07 \pm 0.16$                & $1.05 \pm 0.15$ & $1.03 \pm 0.16$                   & $1.04 \pm 0.17$ \\
+    G and S paracentral       & $1.45 \pm 0.23$                       & $1.45 \pm 0.24$ & $1.12 \pm 0.15$                & $1.16 \pm 0.19$ & $1.05 \pm 0.17$                   & $1.09 \pm 0.21$ \\
+    G and S subcentral        & $1.62 \pm 0.18$                       & $1.62 \pm 0.18$ & $1.11 \pm 0.14$                & $1.13 \pm 0.19$ & $1.10 \pm 0.15$                   & $1.14 \pm 0.18$ \\
+    G and S transv frontopol  & $1.30 \pm 0.25$                       & $1.34 \pm 0.22$ & $0.91 \pm 0.16$                & $0.91 \pm 0.15$ & $0.87 \pm 0.19$                   & $0.92 \pm 0.17$ \\
+    G cingul-Post-dorsal      & $1.51 \pm 0.17$                       & $1.48 \pm 0.18$ & $0.98 \pm 0.14$                & $0.95 \pm 0.17$ & $0.99 \pm 0.16$                   & $0.97 \pm 0.19$ \\
+    G cingul-Post-ventral     & $1.20 \pm 0.16$                       & $1.28 \pm 0.18$ & $0.77 \pm 0.13$                & $0.87 \pm 0.15$ & $0.75 \pm 0.14$                   & $0.90 \pm 0.16$ \\
+    G cuneus                  & $1.41 \pm 0.22$                       & $1.43 \pm 0.22$ & $1.24 \pm 0.17$                & $1.22 \pm 0.19$ & $1.19 \pm 0.18$                   & $1.16 \pm 0.19$ \\
+    G front inf-Opercular     & $1.66 \pm 0.22$                       & $1.65 \pm 0.21$ & $1.09 \pm 0.17$                & $1.09 \pm 0.20$ & $1.11 \pm 0.18$                   & $1.12 \pm 0.21$ \\
+    G front inf-Orbital       & $1.41 \pm 0.24$                       & $1.31 \pm 0.24$ & $0.78 \pm 0.15$                & $0.67 \pm 0.16$ & $0.81 \pm 0.17$                   & $0.67 \pm 0.17$ \\
+    G front inf-Triangul      & $1.56 \pm 0.23$                       & $1.44 \pm 0.24$ & $1.03 \pm 0.17$                & $0.90 \pm 0.22$ & $1.06 \pm 0.19$                   & $0.92 \pm 0.23$ \\
+    G front middle            & $1.70 \pm 0.23$                       & $1.62 \pm 0.23$ & $1.17 \pm 0.23$                & $0.97 \pm 0.22$ & $1.21 \pm 0.24$                   & $0.99 \pm 0.23$ \\
+    G front sup               & $1.78 \pm 0.23$                       & $1.73 \pm 0.23$ & $1.37 \pm 0.20$                & $1.28 \pm 0.22$ & $1.39 \pm 0.21$                   & $1.33 \pm 0.22$ \\
+    G insular short           & $1.21 \pm 0.23$                       & $1.06 \pm 0.18$ & $0.89 \pm 0.13$                & $0.65 \pm 0.14$ & $1.00 \pm 0.16$                   & $0.89 \pm 0.14$ \\
+    G oc-temp lat-fusifor     & $1.58 \pm 0.19$                       & $1.58 \pm 0.20$ & $1.15 \pm 0.17$                & $1.13 \pm 0.18$ & $1.17 \pm 0.18$                   & $1.15 \pm 0.19$ \\
+    G oc-temp med-Lingual     & $1.37 \pm 0.23$                       & $1.35 \pm 0.23$ & $1.25 \pm 0.18$                & $1.26 \pm 0.18$ & $1.25 \pm 0.19$                   & $1.26 \pm 0.20$ \\
+    G oc-temp med-Parahip     & $1.41 \pm 0.22$                       & $1.35 \pm 0.21$ & $1.02 \pm 0.20$                & $0.88 \pm 0.22$ & $1.02 \pm 0.21$                   & $0.96 \pm 0.19$ \\
+    G occipital middle        & $1.64 \pm 0.18$                       & $1.66 \pm 0.18$ & $1.01 \pm 0.17$                & $1.10 \pm 0.18$ & $1.14 \pm 0.18$                   & $1.15 \pm 0.19$ \\
+    G occipital sup           & $1.55 \pm 0.19$                       & $1.57 \pm 0.20$ & $1.17 \pm 0.13$                & $1.10 \pm 0.15$ & $1.15 \pm 0.15$                   & $1.09 \pm 0.16$ \\
+    G orbital                 & $1.53 \pm 0.24$                       & $1.43 \pm 0.21$ & $1.27 \pm 0.18$                & $1.08 \pm 0.16$ & $1.28 \pm 0.18$                   & $1.22 \pm 0.16$ \\
+    G pariet inf-Angular      & $1.69 \pm 0.21$                       & $1.71 \pm 0.18$ & $1.11 \pm 0.19$                & $1.05 \pm 0.21$ & $1.10 \pm 0.20$                   & $1.06 \pm 0.21$ \\
+    G pariet inf-Supramar     & $1.71 \pm 0.21$                       & $1.74 \pm 0.19$ & $1.15 \pm 0.20$                & $1.19 \pm 0.26$ & $1.16 \pm 0.21$                   & $1.20 \pm 0.27$ \\
+    G parietal sup            & $1.73 \pm 0.22$                       & $1.68 \pm 0.22$ & $1.16 \pm 0.22$                & $1.06 \pm 0.24$ & $1.21 \pm 0.23$                   & $1.09 \pm 0.25$ \\
+    G postcentral             & $1.62 \pm 0.26$                       & $1.57 \pm 0.30$ & $1.21 \pm 0.21$                & $1.23 \pm 0.27$ & $1.23 \pm 0.21$                   & $1.26 \pm 0.26$ \\
+    G precentral              & $1.56 \pm 0.30$                       & $1.51 \pm 0.35$ & $1.26 \pm 0.18$                & $1.25 \pm 0.23$ & $1.29 \pm 0.22$                   & $1.26 \pm 0.28$ \\
+    G precuneus               & $1.70 \pm 0.19$                       & $1.70 \pm 0.21$ & $1.22 \pm 0.19$                & $1.19 \pm 0.21$ & $1.24 \pm 0.19$                   & $1.20 \pm 0.23$ \\
+    G rectus                  & $1.35 \pm 0.21$                       & $1.29 \pm 0.22$ & $0.96 \pm 0.15$                & $0.96 \pm 0.15$ & $0.95 \pm 0.15$                   & $0.96 \pm 0.16$ \\
+    G subcallosal             & $1.07 \pm 0.13$                       & $1.02 \pm 0.13$ & $0.55 \pm 0.15$                & $0.61 \pm 0.11$ & $0.57 \pm 0.15$                   & $0.67 \pm 0.13$ \\
+    G temp sup-G T transv     & $1.42 \pm 0.23$                       & $1.41 \pm 0.21$ & $0.97 \pm 0.16$                & $0.88 \pm 0.12$ & $1.00 \pm 0.18$                   & $0.93 \pm 0.13$ \\
+    G temp sup-Lateral        & $1.63 \pm 0.23$                       & $1.66 \pm 0.22$ & $1.02 \pm 0.19$                & $1.26 \pm 0.16$ & $1.22 \pm 0.20$                   & $1.28 \pm 0.18$ \\
+    G temp sup-Plan polar     & $1.31 \pm 0.23$                       & $1.22 \pm 0.21$ & $0.81 \pm 0.17$                & $0.69 \pm 0.17$ & $0.81 \pm 0.19$                   & $0.79 \pm 0.16$ \\
+    G temp sup-Plan tempo     & $1.61 \pm 0.20$                       & $1.62 \pm 0.19$ & $1.07 \pm 0.18$                & $1.06 \pm 0.15$ & $1.03 \pm 0.18$                   & $1.07 \pm 0.14$ \\
+    G temporal inf            & $1.54 \pm 0.20$                       & $1.56 \pm 0.21$ & $1.08 \pm 0.20$                & $1.15 \pm 0.18$ & $1.09 \pm 0.22$                   & $1.19 \pm 0.19$ \\
+    G temporal middle         & $1.64 \pm 0.19$                       & $1.72 \pm 0.18$ & $1.15 \pm 0.19$                & $1.27 \pm 0.17$ & $1.21 \pm 0.20$                   & $1.32 \pm 0.18$ \\
+    Lat Fis-ant-Horizont      & $1.33 \pm 0.20$                       & $1.39 \pm 0.20$ & $0.74 \pm 0.20$                & $0.84 \pm 0.19$ & $0.65 \pm 0.19$                   & $0.76 \pm 0.19$ \\
+    Lat Fis-ant-Vertical      & $1.32 \pm 0.21$                       & $1.22 \pm 0.23$ & $0.66 \pm 0.21$                & $0.58 \pm 0.25$ & $0.58 \pm 0.21$                   & $0.49 \pm 0.23$ \\
+    Lat Fis-post              & $1.62 \pm 0.18$                       & $1.67 \pm 0.15$ & $1.09 \pm 0.14$                & $1.09 \pm 0.14$ & $1.00 \pm 0.14$                   & $1.02 \pm 0.14$ \\
+    Pole occipital            & $1.42 \pm 0.21$                       & $1.46 \pm 0.22$ & $1.14 \pm 0.14$                & $1.23 \pm 0.16$ & $1.06 \pm 0.18$                   & $1.14 \pm 0.17$ \\
+    Pole temporal             & $1.34 \pm 0.27$                       & $1.42 \pm 0.24$ & $1.06 \pm 0.21$                & $1.11 \pm 0.20$ & $1.00 \pm 0.24$                   & $1.08 \pm 0.23$ \\
+    S calcarine               & $1.45 \pm 0.21$                       & $1.42 \pm 0.21$ & $1.25 \pm 0.22$                & $1.21 \pm 0.21$ & $1.21 \pm 0.18$                   & $1.17 \pm 0.17$ \\
+    S central                 & $1.60 \pm 0.25$                       & $1.61 \pm 0.24$ & $1.37 \pm 0.25$                & $1.33 \pm 0.30$ & $1.32 \pm 0.21$                   & $1.28 \pm 0.26$ \\
+    S cingul-Marginalis       & $1.66 \pm 0.20$                       & $1.65 \pm 0.21$ & $1.18 \pm 0.18$                & $1.19 \pm 0.22$ & $1.07 \pm 0.18$                   & $1.06 \pm 0.22$ \\
+    S circular insula ant     & $1.38 \pm 0.22$                       & $1.37 \pm 0.22$ & $0.98 \pm 0.16$                & $0.96 \pm 0.18$ & $0.86 \pm 0.15$                   & $0.84 \pm 0.16$ \\
+    S circular insula inf     & $1.45 \pm 0.17$                       & $1.50 \pm 0.17$ & $1.09 \pm 0.18$                & $1.09 \pm 0.17$ & $0.98 \pm 0.15$                   & $0.98 \pm 0.15$ \\
+    S circular insula sup     & $1.58 \pm 0.18$                       & $1.54 \pm 0.17$ & $1.12 \pm 0.13$                & $1.02 \pm 0.15$ & $1.01 \pm 0.13$                   & $0.94 \pm 0.14$ \\
+    S collat transv ant       & $1.33 \pm 0.20$                       & $1.40 \pm 0.19$ & $0.93 \pm 0.19$                & $0.96 \pm 0.21$ & $0.83 \pm 0.19$                   & $0.85 \pm 0.19$ \\
+    S collat transv post      & $1.31 \pm 0.19$                       & $1.30 \pm 0.18$ & $0.81 \pm 0.17$                & $0.73 \pm 0.16$ & $0.72 \pm 0.18$                   & $0.65 \pm 0.17$ \\
+    S front inf               & $1.61 \pm 0.19$                       & $1.58 \pm 0.20$ & $1.13 \pm 0.24$                & $1.06 \pm 0.25$ & $1.06 \pm 0.23$                   & $0.99 \pm 0.25$ \\
+    S front middle            & $1.46 \pm 0.19$                       & $1.41 \pm 0.20$ & $0.90 \pm 0.23$                & $0.85 \pm 0.22$ & $0.81 \pm 0.24$                   & $0.70 \pm 0.23$ \\
+    S front sup               & $1.68 \pm 0.19$                       & $1.63 \pm 0.19$ & $1.09 \pm 0.22$                & $0.96 \pm 0.25$ & $1.01 \pm 0.21$                   & $0.87 \pm 0.24$ \\
+    S interm prim-Jensen      & $1.22 \pm 0.28$                       & $1.33 \pm 0.21$ & $0.61 \pm 0.30$                & $0.65 \pm 0.23$ & $0.53 \pm 0.29$                   & $0.57 \pm 0.22$ \\
+    S intrapariet and P trans & $1.72 \pm 0.18$                       & $1.71 \pm 0.19$ & $1.14 \pm 0.22$                & $1.10 \pm 0.25$ & $1.11 \pm 0.21$                   & $1.03 \pm 0.23$ \\
+    S oc-temp lat             & $1.41 \pm 0.19$                       & $1.47 \pm 0.18$ & $0.83 \pm 0.17$                & $0.96 \pm 0.19$ & $0.73 \pm 0.17$                   & $0.86 \pm 0.19$ \\
+    S oc-temp med and Lingual & $1.58 \pm 0.17$                       & $1.61 \pm 0.17$ & $1.15 \pm 0.19$                & $1.16 \pm 0.19$ & $1.08 \pm 0.18$                   & $1.10 \pm 0.17$ \\
+    S oc middle and Lunatus   & $1.49 \pm 0.19$                       & $1.47 \pm 0.19$ & $1.00 \pm 0.20$                & $0.96 \pm 0.21$ & $0.91 \pm 0.19$                   & $0.87 \pm 0.20$ \\
+    S oc sup and transversal  & $1.60 \pm 0.17$                       & $1.59 \pm 0.18$ & $1.17 \pm 0.18$                & $1.12 \pm 0.20$ & $1.10 \pm 0.18$                   & $1.06 \pm 0.18$ \\
+    S occipital ant           & $1.40 \pm 0.19$                       & $1.47 \pm 0.17$ & $0.67 \pm 0.15$                & $0.85 \pm 0.15$ & $0.60 \pm 0.16$                   & $0.76 \pm 0.15$ \\
+    S orbital-H Shaped        & $1.50 \pm 0.18$                       & $1.48 \pm 0.19$ & $1.16 \pm 0.26$                & $1.14 \pm 0.28$ & $1.14 \pm 0.23$                   & $1.14 \pm 0.22$ \\
+    S orbital lateral         & $1.23 \pm 0.20$                       & $1.21 \pm 0.19$ & $0.69 \pm 0.19$                & $0.65 \pm 0.20$ & $0.59 \pm 0.19$                   & $0.56 \pm 0.18$ \\
+    S orbital med-olfact      & $1.32 \pm 0.17$                       & $1.20 \pm 0.17$ & $0.92 \pm 0.17$                & $0.60 \pm 0.13$ & $0.85 \pm 0.14$                   & $0.63 \pm 0.13$ \\
+    S parieto occipital       & $1.70 \pm 0.19$                       & $1.69 \pm 0.21$ & $1.32 \pm 0.19$                & $1.33 \pm 0.19$ & $1.24 \pm 0.18$                   & $1.27 \pm 0.19$ \\
+    S pericallosal            & $1.21 \pm 0.13$                       & $1.24 \pm 0.14$ & $0.98 \pm 0.25$                & $1.04 \pm 0.26$ & $0.86 \pm 0.21$                   & $0.92 \pm 0.21$ \\
+    S postcentral             & $1.74 \pm 0.20$                       & $1.73 \pm 0.22$ & $1.20 \pm 0.27$                & $1.20 \pm 0.31$ & $1.13 \pm 0.25$                   & $1.13 \pm 0.27$ \\
+    S precentral-inf-part     & $1.64 \pm 0.22$                       & $1.62 \pm 0.28$ & $1.21 \pm 0.24$                & $1.19 \pm 0.26$ & $1.13 \pm 0.24$                   & $1.10 \pm 0.29$ \\
+    S precentral-sup-part     & $1.57 \pm 0.24$                       & $1.51 \pm 0.31$ & $1.09 \pm 0.22$                & $1.09 \pm 0.23$ & $1.03 \pm 0.21$                   & $1.00 \pm 0.24$ \\
+    S suborbital              & $1.27 \pm 0.16$                       & $1.05 \pm 0.20$ & $0.74 \pm 0.16$                & $0.52 \pm 0.22$ & $0.61 \pm 0.15$                   & $0.43 \pm 0.20$ \\
+    S subparietal             & $1.53 \pm 0.17$                       & $1.50 \pm 0.17$ & $1.04 \pm 0.21$                & $0.98 \pm 0.23$ & $0.95 \pm 0.20$                   & $0.88 \pm 0.21$ \\
+    S temporal inf            & $1.45 \pm 0.16$                       & $1.46 \pm 0.15$ & $0.86 \pm 0.17$                & $0.94 \pm 0.17$ & $0.76 \pm 0.16$                   & $0.83 \pm 0.16$ \\
+    S temporal sup            & $1.73 \pm 0.17$                       & $1.75 \pm 0.15$ & $1.29 \pm 0.22$                & $1.33 \pm 0.19$ & $1.23 \pm 0.20$                   & $1.24 \pm 0.18$ \\
+    S temporal transverse     & $1.32 \pm 0.19$                       & $1.30 \pm 0.18$ & $0.82 \pm 0.19$                & $0.77 \pm 0.19$ & $0.73 \pm 0.18$                   & $0.68 \pm 0.18$ \\
+\end{longtblr}
+
+\begin{longtblr}[
+        caption={Significant digits average across all subjects and regions.},
+        label={tab:sig-subcortical-volume},
+    ]{
+        colspec={lr|lr},
+        row{even}={gray9,font=\small},
+        row{odd}={white,font=\small},
+        rows = {rowsep=0pt},
+        row{Z}={font=\small},
+        rowhead=1,
+        rowfoot=1,
+        row{1}={font=\bfseries}
+    }
+    Region                        & Subcortical volume & Region                        & Subcortical volume \\
+    \hline
+    3rd-Ventricle                 & $1.44 \pm 0.20$    & MaskVol                       & $2.77 \pm 0.63$    \\
+    4th-Ventricle                 & $1.32 \pm 0.20$    & MaskVol-to-eTIV               & $2.74 \pm 0.38$    \\
+    5th-Ventricle                 & $13.51 \pm 4.98$   & Optic-Chiasm                  & $0.76 \pm 0.23$    \\
+    Brain-Stem                    & $1.70 \pm 0.21$    & CortexVol                     & $2.15 \pm 0.27$    \\
+    BrainSegVol                   & $2.18 \pm 0.30$    & CerebralWhiteMatterVol        & $1.97 \pm 0.32$    \\
+    BrainSegVol-to-eTIV           & $2.17 \pm 0.30$    & CSF                           & $1.14 \pm 0.21$    \\
+    BrainSegVolNotVent            & $2.16 \pm 0.30$    & SubCortGrayVol                & $1.86 \pm 0.20$    \\
+    CC Anterior                   & $1.34 \pm 0.36$    & SupraTentorialVol             & $2.14 \pm 0.31$    \\
+    CC Central                    & $1.08 \pm 0.38$    & SupraTentorialVolNotVent      & $2.12 \pm 0.31$    \\
+    CC Mid Anterior               & $1.20 \pm 0.39$    & SurfaceHoles                  & $0.32 \pm 0.18$    \\
+    CC Mid Posterior              & $1.13 \pm 0.36$    & TotalGrayVol                  & $2.23 \pm 0.25$    \\
+    CC Posterior                  & $1.38 \pm 0.47$    & WM-hypointensities            & $0.79 \pm 0.30$    \\
+    EstimatedTotalIntraCranialVol & $3.98 \pm 0.25$    & non-WM-hypointensities        & $9.96 \pm 7.55$    \\
+    rhCerebralWhiteMatterVol      & $1.84 \pm 0.28$    & lhCerebralWhiteMatterVol      & $1.87 \pm 0.32$    \\
+    rhCortexVol                   & $2.05 \pm 0.26$    & lhCortexVol                   & $2.01 \pm 0.27$    \\
+    rhSurfaceHoles                & $0.20 \pm 0.17$    & lhSurfaceHoles                & $0.19 \pm 0.18$    \\
+    Left-Accumbens-area           & $0.87 \pm 0.17$    & Right-Accumbens-area          & $0.98 \pm 0.16$    \\
+    Left-Amygdala                 & $1.12 \pm 0.16$    & Right-Amygdala                & $1.22 \pm 0.18$    \\
+    Left-Caudate                  & $1.56 \pm 0.21$    & Right-Caudate                 & $1.50 \pm 0.26$    \\
+    Left-Cerebellum-Cortex        & $1.88 \pm 0.23$    & Right-Cerebellum-Cortex       & $1.87 \pm 0.25$    \\
+    Left-Cerebellum-White-Matter  & $1.24 \pm 0.24$    & Right-Cerebellum-White-Matter & $1.25 \pm 0.28$    \\
+    Left-Hippocampus              & $1.47 \pm 0.18$    & Right-Hippocampus             & $1.53 \pm 0.19$    \\
+    Left-Inf-Lat-Vent             & $0.82 \pm 0.23$    & Right-Inf-Lat-Vent            & $0.88 \pm 0.27$    \\
+    Left-Lateral-Ventricle        & $1.88 \pm 0.25$    & Right-Lateral-Ventricle       & $1.83 \pm 0.28$    \\
+    Left-Pallidum                 & $1.24 \pm 0.20$    & Right-Pallidum                & $1.21 \pm 0.21$    \\
+    Left-Putamen                  & $1.47 \pm 0.23$    & Right-Putamen                 & $1.49 \pm 0.28$    \\
+    Left-Thalamus                 & $1.41 \pm 0.22$    & Right-Thalamus                & $1.42 \pm 0.22$    \\
+    Left-VentralDC                & $1.40 \pm 0.16$    & Right-VentralDC               & $1.39 \pm 0.15$    \\
+    Left-WM-hypointensities       & $15.22 \pm 0.00$   & Right-WM-hypointensities      & $15.22 \pm 0.00$   \\
+    Left-choroid-plexus           & $0.81 \pm 0.16$    & Right-choroid-plexus          & $0.83 \pm 0.16$    \\
+    Left-non-WM-hypointensities   & $15.22 \pm 0.00$   & Right-non-WM-hypointensities  & $15.22 \pm 0.00$   \\
+    Left-vessel                   & $0.46 \pm 0.63$    & Right-vessel                  & $0.23 \pm 0.89$
+\end{longtblr}
+
 \begin{itemize}
-    \item Presentation of the basic numerical summary of the collected data for
-          both HC and PD groups.
+    \item Presentation of the basic numerical summary of the collected data for both HC
+          and PD groups.
 \end{itemize}
 
 \subsection{Inferential Statistics}
 
 \begin{itemize}
-    \item Detailed presentation of the results of the Whitney-Mann test and
-          Bonferroni correction.
-    \item Comparative analysis between HC and PD populations based on the
-          different ROIs for cortical and subcortical volumes, surface area,
-          and
-          cortical thickness.
+    \item Detailed presentation of the results of the Whitney-Mann test and Bonferroni
+          correction.
+    \item Comparative analysis between HC and PD populations based on the different ROIs
+          for cortical and subcortical volumes, surface area, and cortical thickness.
 \end{itemize}
 
 \section{Discussion}
@@ -540,17 +732,17 @@ between these subgroups.
 \subsection{Interpretation of Results}
 
 \begin{itemize}
-    \item Detailed interpretation of the observed numerical variability in HC
-          and PD populations and its implications.
+    \item Detailed interpretation of the observed numerical variability in HC and PD
+          populations and its implications.
 \end{itemize}
 
 \subsection{Impact on Clinical Research}
 
 \begin{itemize}
-    \item Discussion on how the observed numerical variability can affect
-          clinical research.
-    \item Exploration of potential ramifications in neurological studies,
-          particularly those involving Parkinson's disease.
+    \item Discussion on how the observed numerical variability can affect clinical
+          research.
+    \item Exploration of potential ramifications in neurological studies, particularly
+          those involving Parkinson's disease.
 \end{itemize}
 
 \subsection{Limitations and Future Work}
