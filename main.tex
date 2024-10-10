@@ -21,6 +21,8 @@
 \usepackage{tabularray}
 \usepackage{booktabs} % For \toprule, \midrule, \bottomrule
 
+\newcommand{\0}{\mspace{9mu}}
+
 \title{Numerical Variability in FreeSurfer 7.3.1: Implications for Parkinson's
     Disease Research}
 \author{You}
@@ -168,7 +170,7 @@ Fuzzy-libm applies a random perturbation on the results of \texttt{libm}'
 functions to simulate different implementations. It has been demonstrated to be
 a good proxy to simulate OS changes~\cite{salari2021accurate}.
 
-\subsection{Participants}d
+\subsection{Participants}
 
 In total, 210 patients diagnosed with Parkinson's Disease (PD) participated in
 the study: 181 with PD without mild cognitive impairment (PD-non-MCI) and 29
@@ -250,15 +252,13 @@ and received an exemption from Concordia University’s Research Ethics Unit.
         score available.\label{tab:cohort_stat}}
 \end{table}
 
-\subsection{Image acquisition}
+\subsection{Image acquisition and preprocessing}
 
 T1-weighted MRI images were obtained from PPMI that uses standardized
 acquisition parameters: repetition time = 2.3 s, echo time = 2.98 s, inversion
 time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view =
 256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite
 project there may be slight differences in the sites’ setup.
-
-\subsubsection{Preprocessing}
 
 To assess numerical variability in FreeSurfer outputs, we utilized FreeSurfer
 7.3.1, instrumented with Fuzzy-libm. The virtual precision was set to 53 for
@@ -289,287 +289,119 @@ Biomed virtual organization within the European Grid Infrastructure (EGI). We
 extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 All preprocessed images were visually inspected for quality.
 
+\subsection{Numerical Variability Assessment}
+
+We evaluated the numerical variability of FreeSurfer 7.3.1 in two contexts: (1)
+cross-sectional analysis and (2) longitudinal analysis.
+
+\subsubsection{Cross-sectional Analysis}
+
+First, we measured the numerical variability in estimating brain volumes,
+cortical thickness, and surface area using the PPMI cohort. For each subject,
+cortical and subcortical volumes, as well as cortical surface areas and
+thickness, were extracted from each T1w scan across the 26 MCA repetitions
+using the Destrieux 2009 atlas in FreeSurfer. We calculated the number of
+significant digits and the standard deviation of these measurements. The
+\emph{Significant Digits} package (described in Section~\ref{sec:sig_digits})
+was used to compute the number of significant digits, while the standard
+deviation captured variability across repetitions.
+
+We also compared the number of significant digits between HC and PD groups
+using a paired t-test. To further investigate differences in software
+variability between these groups, we conducted a two-sample t-test.
+Additionally, we calculated the Sørensen–Dice coefficient to assess structural
+overlap across MCA repetitions. The extended Sørensen–Dice coefficient was
+applied for each ROI and structural measure using the following formula:
+\[
+    \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \overset{n}{\underset{i=1}{\bigcap}} A_i \right|}{\overset{n}{\underset{i=1}{\sum}} \left| A_i \right|}.
+\]
+
+\subsubsection{Longitudinal Analysis}
+
+Second, we analyzed volume, cortical thickness, and surface area across two
+time points in the longitudinal cohort. At the subcortical level, we examined
+correlations between baseline subcortical volumes and UPDRS scores, as well as
+potential group differences in subcortical volumes between PD-non-MCI and HC
+groups. We also conducted longitudinal analyses to assess the correlation
+between the rate of change in UPDRS scores and subcortical volumes, as well as
+group differences in subcortical volume change rates. The rate of subcortical
+volume change was calculated as $((\text{volume}_2 - \text{volume}_1) /
+    \text{volume}_1) \times 100$.
+
+Partial correlation analysis was used for correlation assessments, while ANCOVA
+was applied for group comparisons. All analyses were adjusted for age and sex,
+with additional adjustments for the time interval between visits in
+longitudinal analyses.
+
+At the cortical vertex level, we explored correlations between baseline
+cortical thickness and UPDRS scores, along with group differences in baseline
+cortical thickness. Vertex-wise longitudinal analyses were performed to assess
+correlations between changes in UPDRS scores and the rate of change in cortical
+thickness, as well as group differences in cortical thickness change rates. The
+rate of cortical thickness change was calculated as $(\text{thickness}_2 -
+    \text{thickness}_1) / (\text{time}_2 - \text{time}_1)$, expressed in mm/year.
+Age and sex were included as covariates, and longitudinal analyses were further
+adjusted for the time between visits. A cluster-wise permutation-based
+$p$-value threshold of 0.05 was applied, and the frequency of identified
+clusters across the 26 MCA repetitions was reported.
+
 \section{Results}
 
-\subsection{Descriptive Statistics}
+The PD patients and HC group did not differ significantly in age ($p > 0.05$).
+However, significant differences were found in years of education ($t = -2.05$,
+$p = 0.04$) and sex distribution ($\chi^2 = 4.15$, $p = 0.04$). In the clinical
+cohort, no significant differences were observed between PD-non-MCI patients
+and the HC group in terms of age, education, time interval between visits, or
+sex distribution ($p > 0.05$). The descriptive statistics are presented in
+Table~\ref{tab:cohort_stat}.
+
+\todo[inline]{Add Quality Control}
+
+\subsection{Cross-sectional Analysis}
+
+We evaluated the numerical variability of FreeSurfer 7.3.1 in estimating brain
+structure metrics such as cortical thickness, surface area, and both cortical
+and subcortical volumes. Figure~\ref{fig } illustrates the number of
+significant digits for each cortical region and metric. Table~\ref{tab }
+provides the average number of significant digits across all subjects and
+regions. Figure~\ref{fig } presents the Dice coefficient for each ROI and
+structural measure, while Figure~\ref{fig } shows the number of significant
+digits for subcortical volume in each region and group.
+
+Our results indicate that the measurements produced by FreeSurfer 7.3.1 exhibit
+numerical instability, with an average of $1.49 \pm 0.27$ significant digits
+for cortical thickness, $1.03 \pm 0.27$ for surface area, and $1.00 \pm 0.28$
+for volume. This suggests that, on average, the measurements are precise to
+only one decimal place. The number of significant digits is consistent across
+regions, with an average range of $[\min, \max]$ significant digits between
+$[1.05, 1.75]$ for cortical thickness, $[0.58, 1.35]$ for surface area, and
+$[0.52, 1.36]$ for cortical volume. Notably, the variability between subjects
+is high for all three metrics, with some measurements showing as few as zero
+significant digits, indicating a complete loss of precision in certain cases.
+\todo[inline]{Complete with between-subjects variability. Update the figure.}
+
+The Dice coefficients for cortical thickness, surface area, and volume are on
+average $?$, $?$, and $?$, respectively. Figure~\ref{fig } highlights
+substantial discrepancies between subjects. Visually, the distribution of the
+Dice coefficient appears similar across regions, although certain regions,
+particularly the vessels, show the highest variability.
 
 \begin{figure}
-    \includegraphics*[width=\linewidth]{figures/group-thickness-sig.png}
-    \caption{Number of significant digits of cortical thickness for each ROI
-        and each group.}
+    \includegraphics*[width=\linewidth]{figures/dice.pdf}
+    \caption{Dice coefficient.\label{fig:dice}}
+
 \end{figure}
 
 \begin{figure}
-    \includegraphics*[width=\linewidth]{figures/group-area-sig.png}
-    \caption{Number of significant digits of cortical surface area for each ROI
-        and each group.}
+    \includegraphics*[width=\linewidth]{figures/sig_digits.pdf}
+    \caption{Number of significant digits for each cortical region and metric.\label{fig:sig_digits}}
 \end{figure}
 
 \begin{figure}
-    \includegraphics*[width=\linewidth]{figures/group-volume-sig.png}
-    \caption{Number of significant digits of cortical volume for each ROI and
-        each group.}
-\end{figure}
-
-\begin{figure}
-
     \includegraphics*[width=\linewidth]{figures/group-subcortical-volume-sig.png}
     \caption{Number of significant digits of subcortical volume for each ROI
-        and each group.}
+        and each group.\label{fig:group-subcortical-volume-sig}}
 \end{figure}
-
-\begin{longtable}[h]{|l|c|c|c|}
-    \hline
-                                    & HC               &
-    PD-non-MCI                      & All
-    \\
-    \hline
-    Cortical thickness              & $1.37 \pm 0.27$  & $1.39
-    \pm 0.29$                       & $1.38 \pm 0.28$
-    \\
-    \hline
-    \quad G Ins lg and S cent ins   & $1.02 \pm	0.21$  & $1.04
-    \pm  0.21 $                     & $1.03 \pm 0.21$
-    \\
-    \quad G and S cingul-Ant        & $1.50 \pm	0.19$  & $1.47
-    \pm  0.19 $                     & $1.48 \pm 0.19$
-    \\
-    \quad G and S cingul-Mid-Ant    & $1.44 \pm	0.18$  & $1.47
-    \pm  0.21 $                     & $1.45 \pm 0.20$
-    \\
-    \quad G and S cingul-Mid-Post   & $1.52 \pm	0.17$  & $1.51
-    \pm  0.22 $                     & $1.51 \pm 0.20$
-    \\
-    \quad G and S frontomargin      & $1.24 \pm	0.22$  & $1.26
-    \pm  0.19 $                     & $1.25 \pm 0.20$
-    \\
-    \quad G and S occipital inf     & $1.37 \pm	0.19$  & $1.40
-    \pm  0.20 $                     & $1.38 \pm 0.20$
-    \\
-    \quad G and S paracentral       & $1.30 \pm	0.26$  & $1.37
-    \pm  0.25 $                     & $1.34 \pm 0.25$
-    \\
-    \quad G and S subcentral        & $1.50 \pm	0.18$  & $1.48
-    \pm  0.23 $                     & $1.49 \pm 0.21$
-    \\
-    \quad G and S transv frontopol  & $1.18 \pm	0.24$  & $1.24
-    \pm  0.24 $                     & $1.22 \pm 0.24$
-    \\
-    \quad G cingul-Post-dorsal      & $1.38 \pm	0.16$  & $1.38
-    \pm  0.21 $                     & $1.38 \pm 0.19$
-    \\
-    \quad G cingul-Post-ventral     & $1.14 \pm	0.18$  & $1.12
-    \pm  0.20 $                     & $1.13 \pm 0.19$
-    \\
-    \quad G cuneus                  & $1.27 \pm	0.24$  & $1.34
-    \pm  0.24 $                     & $1.31 \pm 0.24$
-    \\
-    \quad G front inf-Opercular     & $1.54 \pm	0.18$  & $1.56
-    \pm  0.24 $                     & $1.55 \pm 0.21$
-    \\
-    \quad G front inf-Orbital       & $1.25 \pm	0.26$  & $1.28
-    \pm  0.24 $                     & $1.26 \pm 0.25$
-    \\
-    \quad G front inf-Triangul      & $1.36 \pm	0.25$  & $1.41
-    \pm  0.23 $                     & $1.39 \pm 0.24$
-    \\
-    \quad G front middle            & $1.53 \pm	0.24$  & $1.56
-    \pm  0.23 $                     & $1.55 \pm 0.23$
-    \\
-    \quad G front sup               & $1.63 \pm	0.23$  & $1.67
-    \pm  0.25 $                     & $1.65 \pm 0.24$
-    \\
-    \quad G insular short           & $1.01 \pm	0.23$  & $1.03
-    \pm  0.24 $                     & $1.02 \pm 0.23$
-    \\
-    \quad G oc-temp lat-fusifor     & $1.45 \pm	0.19$  & $1.48
-    \pm  0.23 $                     & $1.47 \pm 0.21$
-    \\
-    \quad G oc-temp med-Lingual     & $1.21 \pm	0.23$  & $1.28
-    \pm  0.24 $                     & $1.25 \pm 0.24$
-    \\
-    \quad G oc-temp med-Parahip     & $1.25 \pm	0.23$  & $1.29
-    \pm  0.24 $                     & $1.27 \pm 0.23$
-    \\
-    \quad G occipital middle        & $1.52 \pm	0.17$  & $1.52
-    \pm  0.22 $                     & $1.52 \pm 0.20$
-    \\
-    \quad G occipital sup           & $1.44 \pm	0.21$  & $1.46
-    \pm  0.24 $                     & $1.45 \pm 0.22$
-    \\
-    \quad G orbital                 & $1.37 \pm	0.22$  & $1.40
-    \pm  0.24 $                     & $1.38 \pm 0.23$
-    \\
-    \quad G pariet inf-Angular      & $1.58 \pm	0.18$  & $1.60
-    \pm  0.20 $                     & $1.59 \pm 0.19$
-    \\
-    \quad G pariet inf-Supramar     & $1.61 \pm	0.20$  & $1.60
-    \pm  0.22 $                     & $1.61 \pm 0.21$
-    \\
-    \quad G parietal sup            & $1.59 \pm	0.23$  & $1.62
-    \pm  0.24 $                     & $1.61 \pm 0.24$
-    \\
-    \quad G postcentral             & $1.49 \pm	0.26$  & $1.52
-    \pm  0.27 $                     & $1.51 \pm 0.27$
-    \\
-    \quad G precentral              & $1.43 \pm	0.29$  & $1.48
-    \pm  0.32 $                     & $1.45 \pm 0.31$
-    \\
-    \quad G precuneus               & $1.58 \pm	0.16$  & $1.59
-    \pm  0.21 $                     & $1.59 \pm 0.19$
-    \\
-    \quad G rectus                  & $1.22 \pm	0.21$  & $1.23
-    \pm  0.23 $                     & $1.23 \pm 0.22$
-    \\
-    \quad G subcallosal             & $0.93 \pm	0.18$  & $0.95
-    \pm  0.17 $                     & $0.94 \pm 0.17$
-    \\
-    \quad G temp sup-G T transv     & $1.28 \pm	0.26$  & $1.30
-    \pm  0.26 $                     & $1.29 \pm 0.26$
-    \\
-    \quad G temp sup-Lateral        & $1.52 \pm	0.22$  & $1.54
-    \pm  0.23 $                     & $1.53 \pm 0.22$
-    \\
-    \quad G temp sup-Plan polar     & $1.14 \pm	0.23$  & $1.18
-    \pm  0.26 $                     & $1.16 \pm 0.24$
-    \\
-    \quad G temp sup-Plan tempo     & $1.50 \pm	0.21$  & $1.51
-    \pm  0.24 $                     & $1.50 \pm 0.23$
-    \\
-    \quad G temporal inf            & $1.45 \pm	0.19$  & $1.46
-    \pm  0.20 $                     & $1.45 \pm 0.20$
-    \\
-    \quad G temporal middle         & $1.56 \pm	0.21$  & $1.58
-    \pm  0.21 $                     & $1.57 \pm 0.21$
-    \\
-    \quad Lat Fis-ant-Horizont      & $1.24 \pm	0.22$  & $1.25
-    \pm  0.22 $                     & $1.24 \pm 0.22$
-    \\
-    \quad Lat Fis-ant-Vertical      & $1.15 \pm	0.21$  & $1.17
-    \pm  0.24 $                     & $1.16 \pm 0.23$
-    \\
-    \quad Lat Fis-post              & $1.52 \pm	0.18$  & $1.52
-    \pm  0.22 $                     & $1.52 \pm 0.20$
-    \\
-    \quad MeanThickness             & $1.92 \pm	0.19$  & $1.95
-    \pm  0.22 $                     & $1.93 \pm 0.21$
-    \\
-    \quad Pole occipital            & $1.32 \pm	0.21$  & $1.34
-    \pm  0.24 $                     & $1.33 \pm 0.22$
-    \\
-    \quad Pole temporal             & $1.24 \pm	0.25$  & $1.32
-    \pm  0.27 $                     & $1.28 \pm 0.27$
-    \\
-    \quad S calcarine               & $1.30 \pm	0.21$  & $1.34
-    \pm  0.25 $                     & $1.32 \pm 0.23$
-    \\
-    \quad S central                 & $1.51 \pm	0.24$  & $1.49
-    \pm  0.27 $                     & $1.50 \pm 0.26$
-    \\
-    \quad S cingul-Marginalis       & $1.55 \pm	0.18$  & $1.53
-    \pm  0.23 $                     & $1.54 \pm 0.21$
-    \\
-    \quad S circular insula ant     & $1.24 \pm	0.19$  & $1.30
-    \pm  0.22 $                     & $1.27 \pm 0.21$
-    \\
-    \quad S circular insula inf     & $1.34 \pm	0.18$  & $1.36
-    \pm  0.23 $                     & $1.35 \pm 0.21$
-    \\
-    \quad S circular insula sup     & $1.43 \pm	0.17$  & $1.45
-    \pm  0.20 $                     & $1.44 \pm 0.19$
-    \\
-    \quad S collat transv ant       & $1.23 \pm	0.21$  & $1.26
-    \pm  0.22 $                     & $1.25 \pm 0.21$
-    \\
-    \quad S collat transv post      & $1.19 \pm	0.19$  & $1.19
-    \pm  0.22 $                     & $1.19 \pm 0.21$
-    \\
-    \quad S front inf               & $1.48 \pm	0.20$  & $1.50
-    \pm  0.22 $                     & $1.49 \pm 0.21$
-    \\
-    \quad S front middle            & $1.33 \pm	0.20$  & $1.35
-    \pm  0.22 $                     & $1.34 \pm 0.21$
-    \\
-    \quad S front sup               & $1.53 \pm	0.19$  & $1.55
-    \pm  0.21 $                     & $1.54 \pm 0.20$
-    \\
-    \quad S interm prim-Jensen      & $1.13 \pm	0.27$  & $1.16
-    \pm  0.28 $                     & $1.15 \pm 0.28$
-    \\
-    \quad S intrapariet and P trans & $1.59 \pm	0.18$  & $1.59
-    \pm  0.24 $                     & $1.59 \pm 0.22$
-    \\
-    \quad S oc-temp lat             & $1.30 \pm	0.20$  & $1.34
-    \pm  0.22 $                     & $1.32 \pm 0.21$
-    \\
-    \quad S oc-temp med and Lingual & $1.46 \pm	0.18$  & $1.49
-    \pm  0.18 $                     & $1.48 \pm 0.18$
-    \\
-    \quad S oc middle and Lunatus   & $1.35 \pm	0.18$  & $1.36
-    \pm  0.21 $                     & $1.36 \pm 0.20$
-    \\
-    \quad S oc sup and transversal  & $1.49 \pm	0.17$  & $1.46
-    \pm  0.22 $                     & $1.47 \pm 0.20$
-    \\
-    \quad S occipital ant           & $1.31 \pm	0.19$  & $1.30
-    \pm  0.23 $                     & $1.31 \pm 0.21$
-    \\
-    \quad S orbital-H Shaped        & $1.37 \pm	0.22$  & $1.38
-    \pm  0.18 $                     & $1.37 \pm 0.20$
-    \\
-    \quad S orbital lateral         & $1.10 \pm	0.21$  & $1.11
-    \pm  0.19 $                     & $1.10 \pm 0.20$
-    \\
-    \quad S orbital med-olfact      & $1.11 \pm	0.18$  & $1.17
-    \pm  0.18 $                     & $1.14 \pm 0.19$
-    \\
-    \quad S parieto occipital       & $1.59 \pm	0.18$  & $1.58
-    \pm  0.23 $                     & $1.58 \pm 0.21$
-    \\
-    \quad S pericallosal            & $1.08 \pm	0.16$  & $1.13
-    \pm  0.18 $                     & $1.11 \pm 0.18$
-    \\
-    \quad S postcentral             & $1.60 \pm	0.20$  & $1.61
-    \pm  0.24 $                     & $1.61 \pm 0.22$
-    \\
-    \quad S precentral-inf-part     & $1.53 \pm	0.23$  & $1.52
-    \pm  0.25 $                     & $1.52 \pm 0.24$
-    \\
-    \quad S precentral-sup-part     & $1.46 \pm	0.23$  & $1.44
-    \pm  0.28 $                     & $1.45 \pm 0.26$
-    \\
-    \quad S suborbital              & $1.06 \pm	0.20$  & $1.07
-    \pm  0.23 $                     & $1.06 \pm 0.22$
-    \\
-    \quad S subparietal             & $1.40 \pm	0.16$  & $1.38
-    \pm  0.20 $                     & $1.39 \pm 0.18$
-    \\
-    \quad S temporal inf            & $1.32 \pm	0.19$  & $1.33
-    \pm  0.18 $                     & $1.33 \pm 0.18$
-    \\
-    \quad S temporal sup            & $1.61 \pm	0.16$  & $1.62
-    \pm  0.20 $                     & $1.61 \pm 0.19$
-    \\
-    \quad S temporal transverse     & $1.17 \pm	0.22$  & $1.18
-    \pm  0.23 $                     & $1.17 \pm 0.22$
-    \\
-
-    \hline
-    Cortical surface area           & $0.93 \pm	0.30$  & $0.94
-    \pm  0.31$                      & $0.93 \pm 0.31$
-    \\
-    \hline
-    Cortical volume                 & $0.88 \pm	0.29$  & $
-        0.89
-    \pm  0.30 $                     & $0.89  \pm 0.29$
-    \\
-    \hline
-    Subcortical volume              & $1.44 \pm	0.76$  & $1.45
-    \pm 0.75$                       & $1.45 \pm 0.75$
-    \\
-    \hline
-    \caption{Significant digits average across all subjects and ROI.}
-\end{longtable}
 
 % WhiteSurfArea & 2.0 +/- 0.34 & 1.97 +/- 0.31
 
@@ -578,8 +410,8 @@ All preprocessed images were visually inspected for quality.
         label={tab:sig-cortical},
     ]{
         colspec={lcc|cc|cc}, width=0.25\linewidth,
-        row{even}={white,font=\small},
-        row{odd}={gray9,font=\small},
+        row{even}={white,font=\footnotesize},
+        row{odd}={gray9,font=\footnotesize},
         rows = {rowsep=0pt},
         rowhead=2,
         row{1}={white,font=\bfseries},
@@ -665,52 +497,172 @@ All preprocessed images were visually inspected for quality.
 \end{longtblr}
 
 \begin{longtblr}[
+        caption={Standard-deviation average across all subjects and regions.},
+        label={tab:std-cortical},
+    ]{
+        colspec={lcc|cc|cc}, width=\linewidth,
+        row{even}={white,font=\footnotesize},
+        row{odd}={gray9,font=\footnotesize},
+        rows = {rowsep=0pt},
+        rowhead=2,
+        row{1}={white,font=\bfseries},
+        row{2}={gray9}
+    }
+    \SetCell[c=1]{c}Region    & \SetCell[c=2]{c}{cortical thickness                                                                                                               \\ (mm)} &                 & \SetCell[c=2]{c}{surface area \\ ($\text{mm}^2$)} &                    & \SetCell[c=2]{c}{cortical volume \\ ($\text{mm}^3$)} &                     \\
+                              & lh                                  & rh              & lh                 & rh                   & lh                    & rh                    \\
+    \hline
+    G Ins lg and S cent ins   & $0.09 \pm 0.04$                     & $0.10 \pm 0.05$ & $26.80 \pm 12.53$  & $34.88 \pm 19.32$    & $\081.42 \pm \048.62$ & $\088.35 \pm \046.33$ \\
+    G and S cingul-Ant        & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $51.54 \pm 39.32$  & $63.44 \pm 42.94$    & $145.54  \pm 108.64$  & $173.81  \pm \099.91$ \\
+    G and S cingul-Mid-Ant    & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $34.57 \pm 24.10$  & $35.63 \pm 22.48$    & $\089.14 \pm \052.30$ & $\095.86 \pm \057.77$ \\
+    G and S cingul-Mid-Post   & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $24.28 \pm 19.46$  & $30.54 \pm 27.37$    & $\065.07 \pm \053.03$ & $\085.59 \pm \075.73$ \\
+    G and S frontomargin      & $0.04 \pm 0.03$                     & $0.05 \pm 0.03$ & $31.83 \pm 21.28$  & $31.61 \pm 13.38$    & $\094.56 \pm \064.13$ & $\097.65 \pm \046.48$ \\
+    G and S occipital inf     & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $39.02 \pm 19.81$  & $32.57 \pm 15.92$    & $119.36  \pm \056.10$ & $\099.07 \pm \046.18$ \\
+    G and S paracentral       & $0.03 \pm 0.02$                     & $0.04 \pm 0.02$ & $33.65 \pm 17.96$  & $29.67 \pm 26.32$    & $109.16  \pm \066.28$ & $\094.71 \pm \072.49$ \\
+    G and S subcentral        & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $33.87 \pm 19.69$  & $31.97 \pm 21.67$    & $104.20  \pm \061.20$ & $\089.71 \pm \060.11$ \\
+    G and S transv frontopol  & $0.06 \pm 0.05$                     & $0.05 \pm 0.03$ & $28.12 \pm 12.80$  & $40.99 \pm 16.84$    & $104.12  \pm \065.82$ & $134.29  \pm \065.41$ \\
+    G cingul-Post-dorsal      & $0.04 \pm 0.03$                     & $0.04 \pm 0.04$ & $19.23 \pm 14.88$  & $17.77 \pm 12.57$    & $\064.32 \pm \044.09$ & $\059.57 \pm \035.92$ \\
+    G cingul-Post-ventral     & $0.07 \pm 0.05$                     & $0.06 \pm 0.05$ & $15.66 \pm 17.15$  & $12.99 \pm 22.56$    & $\050.17 \pm \027.85$ & $\038.86 \pm \036.83$ \\
+    G cuneus                  & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $35.26 \pm 30.33$  & $40.96 \pm 42.52$    & $\084.71 \pm \074.31$ & $101.9   \pm \097.02$ \\
+    G front inf-Opercular     & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $32.65 \pm 25.00$  & $35.08 \pm 34.37$    & $105.47  \pm \078.45$ & $108.38  \pm \098.3$  \\
+    G front inf-Orbital       & $0.05 \pm 0.04$                     & $0.06 \pm 0.04$ & $21.20 \pm 11.01$  & $25.25 \pm 10.37$    & $\071.05 \pm \046.15$ & $\086.33 \pm \038.23$ \\
+    G front inf-Triangul      & $0.03 \pm 0.03$                     & $0.04 \pm 0.03$ & $30.29 \pm 19.17$  & $37.08 \pm 32.23$    & $\091.18 \pm \065.35$ & $116.92  \pm 104.8$   \\
+    G front middle            & $0.02 \pm 0.02$                     & $0.03 \pm 0.02$ & $92.58 \pm 75.11$  & $126.22 \pm 77.76\0$ & $273.22  \pm 234.35$  & $403.59  \pm 245.74$  \\
+    G front sup               & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $97.83 \pm 73.49$  & $113.70 \pm 97.83\0$ & $299.95  \pm 206.52$  & $339.13  \pm 278.46$  \\
+    G insular short           & $0.09 \pm 0.05$                     & $0.11 \pm 0.05$ & $29.04 \pm 15.99$  & $47.90 \pm 23.20$    & $\098.87 \pm \058.14$ & $112.37  \pm \056.78$ \\
+    G oc-temp lat-fusifor     & $0.03 \pm 0.02$                     & $0.03 \pm 0.03$ & $37.79 \pm 21.25$  & $41.78 \pm 26.17$    & $128.12  \pm \071.17$ & $146.71  \pm \094.52$ \\
+    G oc-temp med-Lingual     & $0.04 \pm 0.02$                     & $0.04 \pm 0.02$ & $51.64 \pm 39.25$  & $48.19 \pm 36.79$    & $122.30  \pm \098.61$ & $118.59  \pm \098.07$ \\
+    G oc-temp med-Parahip     & $0.05 \pm 0.03$                     & $0.06 \pm 0.03$ & $37.22 \pm 36.52$  & $49.76 \pm 69.91$    & $143.85  \pm 100.75$  & $158.91  \pm 121.6$   \\
+    G occipital middle        & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $47.90 \pm 22.84$  & $52.98 \pm 30.88$    & $138.60  \pm \079.51$ & $148.24  \pm \095.59$ \\
+    G occipital sup           & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $26.48 \pm 14.00$  & $34.90 \pm 21.23$    & $\068.90 \pm \041.73$ & $\091.73 \pm \053.70$ \\
+    G orbital                 & $0.03 \pm 0.02$                     & $0.04 \pm 0.02$ & $39.63 \pm 27.95$  & $63.63 \pm 27.59$    & $126.67  \pm \098.09$ & $162.43  \pm \078.39$ \\
+    G pariet inf-Angular      & $0.02 \pm 0.02$                     & $0.02 \pm 0.01$ & $57.33 \pm 29.55$  & $77.98 \pm 47.01$    & $179.81  \pm \096.06$ & $236.38  \pm 142.78$  \\
+    G pariet inf-Supramar     & $0.02 \pm 0.02$                     & $0.02 \pm 0.01$ & $62.02 \pm 46.17$  & $54.59 \pm 60.03$    & $192.54  \pm 148.64$  & $170.62  \pm 190.83$  \\
+    G parietal sup            & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $62.42 \pm 52.63$  & $65.13 \pm 50.00$    & $161.05  \pm 166.21$  & $177.73  \pm 159.43$  \\
+    G postcentral             & $0.03 \pm 0.03$                     & $0.03 \pm 0.03$ & $42.75 \pm 36.99$  & $39.75 \pm 47.18$    & $106.60  \pm \082.38$ & $\096.85 \pm 114.98$  \\
+    G precentral              & $0.04 \pm 0.04$                     & $0.04 \pm 0.05$ & $42.85 \pm 36.80$  & $47.68 \pm 45.38$    & $138.71  \pm 137.38$  & $164.16  \pm 191.76$  \\
+    G precuneus               & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $49.44 \pm 43.95$  & $49.64 \pm 40.76$    & $145.37  \pm 137.81$  & $149.86  \pm 128.30$  \\
+    G rectus                  & $0.05 \pm 0.03$                     & $0.06 \pm 0.04$ & $32.20 \pm 15.60$  & $27.50 \pm 12.79$    & $106.76  \pm \051.68$ & $\091.10 \pm \049.31$ \\
+    G subcallosal             & $0.08 \pm 0.02$                     & $0.09 \pm 0.03$ & $51.68 \pm 17.71$  & $34.17 \pm 12.84$    & $110.85  \pm \037.44$ & $\073.96 \pm \031.21$ \\
+    G temp sup-G T transv     & $0.04 \pm 0.04$                     & $0.04 \pm 0.03$ & $15.35 \pm \08.69$ & $13.73 \pm \05.19$   & $\042.31 \pm \028.07$ & $\037.23 \pm \014.97$ \\
+    G temp sup-Lateral        & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $38.43 \pm 27.47$  & $29.34 \pm 15.20$    & $147.99  \pm \097.89$ & $111.92  \pm \061.68$ \\
+    G temp sup-Plan polar     & $0.07 \pm 0.05$                     & $0.08 \pm 0.04$ & $32.33 \pm 18.14$  & $47.67 \pm 23.04$    & $119.94  \pm \070.10$ & $124.65  \pm \058.27$ \\
+    G temp sup-Plan tempo     & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $24.87 \pm 16.10$  & $20.93 \pm \09.79$   & $\071.54 \pm \039.15$ & $\055.07 \pm \022.84$ \\
+    G temporal inf            & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $63.81 \pm 45.99$  & $52.37 \pm 28.88$    & $230.73  \pm 163.99$  & $180.27  \pm 100.37$  \\
+    G temporal middle         & $0.03 \pm 0.02$                     & $0.02 \pm 0.01$ & $54.58 \pm 37.80$  & $46.74 \pm 27.32$    & $184.08  \pm 135.35$  & $155.87  \pm \083.42$ \\
+    Lat Fis-ant-Horizont      & $0.04 \pm 0.03$                     & $0.04 \pm 0.02$ & $15.78 \pm 07.02$  & $16.00 \pm \09.18$   & $\037.09 \pm \018.17$ & $\037.24 \pm \022.79$ \\
+    Lat Fis-ant-Vertical      & $0.05 \pm 0.03$                     & $0.06 \pm 0.06$ & $19.09 \pm \08.70$ & $16.93 \pm \07.9$    & $\047.83 \pm \023.08$ & $\042.18 \pm \019.39$ \\
+    Lat Fis-post              & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $24.88 \pm 13.15$  & $30.93 \pm 13.87$    & $\056.61 \pm \030.98$ & $\071.03 \pm \031.70$ \\
+    Pole occipital            & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $40.70 \pm 18.96$  & $56.64 \pm 36.50$    & $113.61  \pm 66.05$   & $157.76  \pm \095.97$ \\
+    Pole temporal             & $0.06 \pm 0.04$                     & $0.05 \pm 0.03$ & $46.23 \pm 30.07$  & $43.02 \pm 26.78$    & $251.05  \pm 187.99$  & $215.93  \pm 147.79$  \\
+    S calcarine               & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $44.93 \pm 39.69$  & $47.41 \pm 45.06$    & $\077.13 \pm \067.45$ & $\083.23 \pm \065.81$ \\
+    S central                 & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $45.58 \pm 48.37$  & $52.54 \pm 69.94$    & $\080.26 \pm \074.65$ & $\092.02 \pm 109.44$  \\
+    S cingul-Marginalis       & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $21.30 \pm 17.52$  & $25.74 \pm 22.14$    & $\053.01 \pm \041.86$ & $\071.65 \pm \058.25$ \\
+    S circular insula ant     & $0.05 \pm 0.04$                     & $0.05 \pm 0.04$ & $15.81 \pm 10.25$  & $18.35 \pm 12.25$    & $\046.26 \pm \034.95$ & $\053.18 \pm \033.38$ \\
+    S circular insula inf     & $0.04 \pm 0.03$                     & $0.03 \pm 0.02$ & $33.02 \pm 19.40$  & $27.57 \pm 16.37$    & $\092.16 \pm \047.87$ & $\073.13 \pm \035.95$ \\
+    S circular insula sup     & $0.03 \pm 0.03$                     & $0.03 \pm 0.02$ & $35.16 \pm 16.49$  & $36.41 \pm 20.50$    & $\091.74 \pm \044.20$ & $\089.54 \pm \047.94$ \\
+    S collat transv ant       & $0.05 \pm 0.04$                     & $0.04 \pm 0.03$ & $31.84 \pm 18.98$  & $31.78 \pm 17.89$    & $\095.76 \pm \052.02$ & $\097.81 \pm \051.0$  \\
+    S collat transv post      & $0.04 \pm 0.03$                     & $0.04 \pm 0.02$ & $22.36 \pm \09.36$ & $24.44 \pm 10.34$    & $\049.00 \pm \022.33$ & $\052.38 \pm \023.3$  \\
+    S front inf               & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $50.05 \pm 48.10$  & $55.04 \pm 53.15$    & $122.15  \pm 115.86$  & $137.13  \pm 139.79$  \\
+    S front middle            & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $51.70 \pm 33.07$  & $91.25 \pm 60.17$    & $137.58  \pm \098.08$ & $282.75  \pm 181.72$  \\
+    S front sup               & $0.02 \pm 0.01$                     & $0.02 \pm 0.02$ & $70.65 \pm 53.57$  & $88.18 \pm 73.29$    & $189.44  \pm 133.17$  & $242.99  \pm 183.7$   \\
+    S interm prim-Jensen      & $0.07 \pm 0.09$                     & $0.05 \pm 0.04$ & $22.91 \pm 15.67$  & $26.85 \pm 14.81$    & $\055.28 \pm \035.58$ & $\062.20 \pm \032.78$ \\
+    S intrapariet and P trans & $0.02 \pm 0.02$                     & $0.02 \pm 0.01$ & $65.99 \pm 57.12$  & $83.26 \pm 77.54$    & $133.09  \pm 111.32$  & $186.66  \pm 155.46$  \\
+    S oc-temp lat             & $0.04 \pm 0.03$                     & $0.03 \pm 0.02$ & $37.74 \pm 16.79$  & $33.31 \pm 16.25$    & $101.88  \pm \046.87$ & $\090.78 \pm \043.89$ \\
+    S oc-temp med and Lingual & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $43.42 \pm 29.10$  & $40.87 \pm 26.30$    & $105.48  \pm \057.26$ & $\093.32 \pm \050.19$ \\
+    S oc middle and Lunatus   & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $28.69 \pm 15.64$  & $29.71 \pm 19.00$    & $\061.89 \pm \033.18$ & $\065.79 \pm \040.53$ \\
+    S oc sup and transversal  & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $24.28 \pm 14.75$  & $30.11 \pm 20.51$    & $\054.26 \pm \032.40$ & $\065.35 \pm \038.76$ \\
+    S occipital ant           & $0.04 \pm 0.02$                     & $0.03 \pm 0.02$ & $40.53 \pm 15.92$  & $29.35 \pm 13.03$    & $\098.81 \pm \042.71$ & $\076.07 \pm \035.41$ \\
+    S orbital-H Shaped        & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $30.77 \pm 27.50$  & $30.63 \pm 24.64$    & $\075.75 \pm \060.88$ & $\069.25 \pm \045.60$ \\
+    S orbital lateral         & $0.05 \pm 0.03$                     & $0.05 \pm 0.03$ & $20.80 \pm 10.56$  & $28.47 \pm 13.86$    & $\050.60 \pm \026.90$ & $\066.88 \pm \032.94$ \\
+    S orbital med-olfact      & $0.05 \pm 0.03$                     & $0.06 \pm 0.03$ & $22.67 \pm \09.39$ & $52.03 \pm 15.39$    & $\051.77 \pm \021.69$ & $\096.61 \pm \038.19$ \\
+    S parieto occipital       & $0.02 \pm 0.02$                     & $0.02 \pm 0.03$ & $29.51 \pm 23.78$  & $32.84 \pm 34.50$    & $\068.41 \pm \046.21$ & $\072.54 \pm \068.14$ \\
+    S pericallosal            & $0.04 \pm 0.02$                     & $0.04 \pm 0.02$ & $44.29 \pm 80.37$  & $44.16 \pm 60.70$    & $\078.45 \pm 149.00$  & $\074.66 \pm \086.88$ \\
+    S postcentral             & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $59.33 \pm 63.12$  & $57.23 \pm 76.08$    & $132.12  \pm 121.05$  & $118.64  \pm 135.52$  \\
+    S precentral-inf-part     & $0.02 \pm 0.03$                     & $0.03 \pm 0.04$ & $32.56 \pm 41.72$  & $35.05 \pm 38.33$    & $\082.93 \pm 113.93$  & $\095.11 \pm 120.79$  \\
+    S precentral-sup-part     & $0.03 \pm 0.04$                     & $0.04 \pm 0.05$ & $32.51 \pm 24.59$  & $33.81 \pm 26.76$    & $\074.56 \pm \059.33$ & $\081.98 \pm \069.50$ \\
+    S suborbital              & $0.05 \pm 0.03$                     & $0.09 \pm 0.08$ & $37.26 \pm 17.06$  & $27.92 \pm 11.25$    & $101.77  \pm \051.24$ & $\071.72 \pm \029.02$ \\
+    S subparietal             & $0.03 \pm 0.03$                     & $0.03 \pm 0.03$ & $29.36 \pm 27.35$  & $38.95 \pm 35.41$    & $\070.32 \pm \055.27$ & $101.75  \pm \074.08$ \\
+    S temporal inf            & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $60.38 \pm 30.96$  & $41.64 \pm 17.77$    & $156.80  \pm \075.30$ & $106.77  \pm \042.99$ \\
+    S temporal sup            & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $86.27 \pm 60.78$  & $83.72 \pm 54.81$    & $217.81  \pm 141.29$  & $220.72  \pm 129.73$  \\
+    S temporal transverse     & $0.04 \pm 0.03$                     & $0.05 \pm 0.03$ & $17.51 \pm 9.28$   & $14.56 \pm \06.46$   & $\040.39 \pm \021.69$ & $\036.01 \pm \017.13$
+
+\end{longtblr}
+
+\begin{longtblr}[
         caption={Significant digits average across all subjects and regions.},
         label={tab:sig-subcortical-volume},
     ]{
-        colspec={lr|lr},
-        row{even}={gray9,font=\small},
-        row{odd}={white,font=\small},
+        colspec={lc|lc},
+        row{even}={gray9,font=\footnotesize},
+        row{odd}={white,font=\footnotesize},
         rows = {rowsep=0pt},
         row{Z}={font=\small},
         rowhead=1,
         rowfoot=1,
         row{1}={font=\bfseries}
     }
-    Region                        & Subcortical volume & Region                        & Subcortical volume \\
+    Region                       & Subcortical volume & Region                        & Subcortical volume \\
     \hline
-    3rd-Ventricle                 & $1.44 \pm 0.20$    & MaskVol                       & $2.77 \pm 0.63$    \\
-    4th-Ventricle                 & $1.32 \pm 0.20$    & MaskVol-to-eTIV               & $2.74 \pm 0.38$    \\
-    5th-Ventricle                 & $13.51 \pm 4.98$   & Optic-Chiasm                  & $0.76 \pm 0.23$    \\
-    Brain-Stem                    & $1.70 \pm 0.21$    & CortexVol                     & $2.15 \pm 0.27$    \\
-    BrainSegVol                   & $2.18 \pm 0.30$    & CerebralWhiteMatterVol        & $1.97 \pm 0.32$    \\
-    BrainSegVol-to-eTIV           & $2.17 \pm 0.30$    & CSF                           & $1.14 \pm 0.21$    \\
-    BrainSegVolNotVent            & $2.16 \pm 0.30$    & SubCortGrayVol                & $1.86 \pm 0.20$    \\
-    CC Anterior                   & $1.34 \pm 0.36$    & SupraTentorialVol             & $2.14 \pm 0.31$    \\
-    CC Central                    & $1.08 \pm 0.38$    & SupraTentorialVolNotVent      & $2.12 \pm 0.31$    \\
-    CC Mid Anterior               & $1.20 \pm 0.39$    & SurfaceHoles                  & $0.32 \pm 0.18$    \\
-    CC Mid Posterior              & $1.13 \pm 0.36$    & TotalGrayVol                  & $2.23 \pm 0.25$    \\
-    CC Posterior                  & $1.38 \pm 0.47$    & WM-hypointensities            & $0.79 \pm 0.30$    \\
-    EstimatedTotalIntraCranialVol & $3.98 \pm 0.25$    & non-WM-hypointensities        & $9.96 \pm 7.55$    \\
-    rhCerebralWhiteMatterVol      & $1.84 \pm 0.28$    & lhCerebralWhiteMatterVol      & $1.87 \pm 0.32$    \\
-    rhCortexVol                   & $2.05 \pm 0.26$    & lhCortexVol                   & $2.01 \pm 0.27$    \\
-    rhSurfaceHoles                & $0.20 \pm 0.17$    & lhSurfaceHoles                & $0.19 \pm 0.18$    \\
-    Left-Accumbens-area           & $0.87 \pm 0.17$    & Right-Accumbens-area          & $0.98 \pm 0.16$    \\
-    Left-Amygdala                 & $1.12 \pm 0.16$    & Right-Amygdala                & $1.22 \pm 0.18$    \\
-    Left-Caudate                  & $1.56 \pm 0.21$    & Right-Caudate                 & $1.50 \pm 0.26$    \\
-    Left-Cerebellum-Cortex        & $1.88 \pm 0.23$    & Right-Cerebellum-Cortex       & $1.87 \pm 0.25$    \\
-    Left-Cerebellum-White-Matter  & $1.24 \pm 0.24$    & Right-Cerebellum-White-Matter & $1.25 \pm 0.28$    \\
-    Left-Hippocampus              & $1.47 \pm 0.18$    & Right-Hippocampus             & $1.53 \pm 0.19$    \\
-    Left-Inf-Lat-Vent             & $0.82 \pm 0.23$    & Right-Inf-Lat-Vent            & $0.88 \pm 0.27$    \\
-    Left-Lateral-Ventricle        & $1.88 \pm 0.25$    & Right-Lateral-Ventricle       & $1.83 \pm 0.28$    \\
-    Left-Pallidum                 & $1.24 \pm 0.20$    & Right-Pallidum                & $1.21 \pm 0.21$    \\
-    Left-Putamen                  & $1.47 \pm 0.23$    & Right-Putamen                 & $1.49 \pm 0.28$    \\
-    Left-Thalamus                 & $1.41 \pm 0.22$    & Right-Thalamus                & $1.42 \pm 0.22$    \\
-    Left-VentralDC                & $1.40 \pm 0.16$    & Right-VentralDC               & $1.39 \pm 0.15$    \\
-    Left-WM-hypointensities       & $15.22 \pm 0.00$   & Right-WM-hypointensities      & $15.22 \pm 0.00$   \\
-    Left-choroid-plexus           & $0.81 \pm 0.16$    & Right-choroid-plexus          & $0.83 \pm 0.16$    \\
-    Left-non-WM-hypointensities   & $15.22 \pm 0.00$   & Right-non-WM-hypointensities  & $15.22 \pm 0.00$   \\
-    Left-vessel                   & $0.46 \pm 0.63$    & Right-vessel                  & $0.23 \pm 0.89$
+    3rd-Ventricle                & $1.44 \pm 0.20$    & CC Anterior                   & $1.34 \pm 0.36$    \\
+    4th-Ventricle                & $1.32 \pm 0.20$    & CC Central                    & $1.08 \pm 0.38$    \\
+    5th-Ventricle                & $13.51 \pm 4.98\0$ & CC Mid Anterior               & $1.20 \pm 0.39$    \\
+    Brain-Stem                   & $1.70 \pm 0.21$    & CC Mid Posterior              & $1.13 \pm 0.36$    \\
+    CSF                          & $1.14 \pm 0.21$    & CC Posterior                  & $1.38 \pm 0.47$    \\
+    Left-Accumbens-area          & $0.87 \pm 0.17$    & Right-Accumbens-area          & $0.98 \pm 0.16$    \\
+    Left-Amygdala                & $1.12 \pm 0.16$    & Right-Amygdala                & $1.22 \pm 0.18$    \\
+    Left-Caudate                 & $1.56 \pm 0.21$    & Right-Caudate                 & $1.50 \pm 0.26$    \\
+    Left-Cerebellum-Cortex       & $1.88 \pm 0.23$    & Right-Cerebellum-Cortex       & $1.87 \pm 0.25$    \\
+    Left-Cerebellum-White-Matter & $1.24 \pm 0.24$    & Right-Cerebellum-White-Matter & $1.25 \pm 0.28$    \\
+    Left-Hippocampus             & $1.47 \pm 0.18$    & Right-Hippocampus             & $1.53 \pm 0.19$    \\
+    Left-Inf-Lat-Vent            & $0.82 \pm 0.23$    & Right-Inf-Lat-Vent            & $0.88 \pm 0.27$    \\
+    Left-Lateral-Ventricle       & $1.88 \pm 0.25$    & Right-Lateral-Ventricle       & $1.83 \pm 0.28$    \\
+    Left-Pallidum                & $1.24 \pm 0.20$    & Right-Pallidum                & $1.21 \pm 0.21$    \\
+    Left-Putamen                 & $1.47 \pm 0.23$    & Right-Putamen                 & $1.49 \pm 0.28$    \\
+    Left-Thalamus                & $1.41 \pm 0.22$    & Right-Thalamus                & $1.42 \pm 0.22$    \\
+    Left-VentralDC               & $1.40 \pm 0.16$    & Right-VentralDC               & $1.39 \pm 0.15$    \\
+    Left-WM-hypointensities      & $15.22 \pm 0.00\0$ & Right-WM-hypointensities      & $15.22 \pm 0.00\0$ \\
+    Left-choroid-plexus          & $0.81 \pm 0.16$    & Right-choroid-plexus          & $0.83 \pm 0.16$    \\
+    Left-non-WM-hypointensities  & $15.22 \pm 0.00\0$ & Right-non-WM-hypointensities  & $15.22 \pm 0.00\0$ \\
+    Left-vessel                  & $0.46 \pm 0.63$    & Right-vessel                  & $0.23 \pm 0.89$    \\
+    Optic-Chiasm                 & $0.76 \pm 0.23$    &                               &                    \\
+\end{longtblr}
+
+\begin{longtblr}[
+        caption={Standard-deviation average across all subjects and regions.},
+        label={tab:std-subcortical-volume},
+    ]{
+        colspec={lc|lc},
+        row{even}={gray9,font=\footnotesize},
+        row{odd}={white,font=\footnotesize},
+        rows = {rowsep=0pt},
+        row{Z}={font=\small},
+        rowhead=1,
+        row{1}={font=\bfseries}
+    }
+    Region                       & {Subcortical volume                                                        \\ (mm)} & Region                        & {Subcortical volume \\ (mm)} \\
+    \hline
+    3rd-Ventricle                & $25.18 \pm 34.65$   & CC Anterior                   & $23.67 \pm 29.16$    \\
+    4th-Ventricle                & $38.47 \pm 23.49$   & CC Central                    & $23.89 \pm 23.90$    \\
+    5th-Ventricle                & $0.09 \pm  0.43$    & CC Mid Anterior               & $19.86 \pm 24.04$    \\
+    Brain-Stem                   & $187.47 \pm 103.98$ & CC Mid Posterior              & $21.69 \pm 29.83$    \\
+    CSF                          & $38.22   \pm 49.09$ & CC Posterior                  & $31.59 \pm 53.10$    \\
+    Left-Accumbens-area          & $24.50 \pm 9.50$    & Right-Accumbens-area          & $20.89   \pm 8.86$   \\
+    Left-Amygdala                & $49.73 \pm 20.47$   & Right-Amygdala                & $43.96   \pm 24.00$  \\
+    Left-Caudate                 & $40.85 \pm 28.91$   & Right-Caudate                 & $51.88   \pm 45.72$  \\
+    Left-Cerebellum-Cortex       & $313.86 \pm 227.78$ & Right-Cerebellum-Cortex       & $338.10  \pm 271.17$ \\
+    Left-Cerebellum-White-Matter & $380.83 \pm 224.68$ & Right-Cerebellum-White-Matter & $379.10  \pm 329.94$ \\
+    Left-Hippocampus             & $57.14 \pm 40.36$   & Right-Hippocampus             & $51.70   \pm 39.33$  \\
+    Left-Inf-Lat-Vent            & $31.66 \pm 16.10$   & Right-Inf-Lat-Vent            & $28.75   \pm 15.28$  \\
+    Left-Lateral-Ventricle       & $88.18 \pm 185.84$  & Right-Lateral-Ventricle       & $121.41  \pm 578.96$ \\
+    Left-Pallidum                & $49.21 \pm 30.03$   & Right-Pallidum                & $52.09   \pm 37.88$  \\
+    Left-Putamen                 & $69.42 \pm 51.72$   & Right-Putamen                 & $73.75   \pm 96.90$  \\
+    Left-Thalamus                & $124.64 \pm 81.18$  & Right-Thalamus                & $124.52  \pm 111.74$ \\
+    Left-VentralDC               & $65.09 \pm 30.33$   & Right-VentralDC               & $65.07   \pm 27.96$  \\
+    Left-WM-hypointensities      & $15.22 \pm 0.00$    & Right-WM-hypointensities      & $0.00    \pm 0.00$   \\
+    Left-choroid-plexus          & $43.74 \pm 22.99$   & Right-choroid-plexus          & $44.79   \pm 25.13$  \\
+    Left-non-WM-hypointensities  & $0.00 \pm 0.00$     & Right-non-WM-hypointensities  & $0.00    \pm 0.00$   \\
+    Left-vessel                  & $6.42 \pm 4.91$     & Right-vessel                  & $7.92    \pm 5.38$   \\
+    Optic-Chiasm                 & $13.11 \pm 6.56\0$  &                               &                      \\
 \end{longtblr}
 
 \begin{itemize}
@@ -758,6 +710,6 @@ Provisional conclusion pending the exploration of goal 2.
 ReproVIP team.
 
 \bibliographystyle{alpha}
-\bibliography{biblio}
+\bibliography{main}
 
 \end{document}
