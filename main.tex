@@ -23,88 +23,202 @@
 
 \newcommand{\0}{\mspace{9mu}}
 
-\title{Numerical Variability in FreeSurfer 7.3.1: Implications for Parkinson's
+\title{Numerical Variability in FreeSurfer: Implications for Parkinson's
     Disease Research}
-\author{You}
+
+\author{Yohan Chatelain, Andrzej Sokołowski, Jean-Baptiste Poline, Madeleine Sharp, Tristan Glatard}
 
 \begin{document}
+
 \maketitle
 
 \begin{abstract}
     Neuroimaging studies, particularly those involving structural MRI analysis,
     have faced challenges in reproducibility due to software variability. This
     study investigates the impact of numerical instability in FreeSurfer 7.3.1
-    on
-    structural MRI measures and their relationships with clinical outcomes in
+    on structural MRI measures and their relationships with clinical outcomes in
     Parkinson's disease (PD). Utilizing Monte Carlo Arithmetic (MCA), we
-    evaluate
-    the extent of numerical variability in FreeSurfer's estimation of brain
-    structure metrics. Our findings suggest that software variability ...
-    \todo[inline]{complete with results}
+    evaluate the extent of numerical variability in FreeSurfer's estimation of
+    brain structure metrics, including cortical thickness, surface area,
+    cortical and subcortical volumes. Our findings suggest that numerical
+    variability affects the precision of these metrics, with implications for
+    both cross-sectional and longitudinal analyses. Specifically, the
+    variability influences the detection of group differences between PD
+    patients and healthy controls, as well as correlations between MRI-derived
+    measures and disease severity. These results highlight the need for greater
+    caution in interpreting structural MRI metrics in clinical research and
+    underscore the importance of addressing numerical variability to improve the
+    reliability of neuroimaging outcomes in PD studies.
 \end{abstract}
 
 \section{Introduction}
 
+Neuroscience relies heavily on computational methods to analyze neuroimaging
+data. However, the reproducibility of such analyses has recently come under
+scrutiny. Reproducibility in neuroimaging is characterized by two key aspects:
+the ability to replicate findings using the same analyses, and the
+generalizability of results obtained with different data and computational
+approaches. A notable example of the reproducibility challenge was shown in the
+study by Botvinik-Nezer et al~\cite{botvinik2020variability}, where 70
+independent research teams analyzed the same fMRI dataset using different
+pipelines, yet agreed on only 4 of 9 predefined hypotheses. The variability in
+outcomes was largely attributed to differences in the data processing methods,
+emphasizing the role of software variability in neuroimaging.
 
+Beyond functional imaging, variability in structural MRI measurements has also
+been well documented, especially regarding differences between software
+versions. Gronenschild et al.~\cite{gronenschild2012effects} found that the
+estimation of brain volume and cortical thickness varied significantly across
+FreeSurfer versions, while Bhagwat et al.~\cite{bhagwat2021understanding}
+reported low correlations in cortical thickness measurements between different
+neuroimaging software packages. More recent studies have also highlighted the
+effects of software version changes on measurement reliability. For instance,
+Haddad et al.~\cite{haddad2023multisite} found significant differences in brain
+structure estimation between different FreeSurfer versions, with varying
+degrees of compatibility depending on the brain region being measured.
 
-FreeSurfer is a widely used, publicly available software for analyzing and
-visualizing structural neuroimaging data. Version 7.3.1 represents one of the
-latest major releases, offering advanced capabilities for estimating various
-brain structure metrics such as gray matter volume, cortical thickness, and
-surface area.
+Despite the growing body of evidence on software-related variability, less
+attention has been paid to within-version numerical variability. Numerical
+variability refers to small changes in software output caused by factors such
+as random initializations, parallel processing, or computational imprecision,
+all of which can occur even when the same software version is used. This type
+of variability could potentially have a significant impact on clinical
+research, where neuroimaging data is often used to investigate relationships
+between brain structure and disease progression. In the context of Parkinson’s
+disease (PD), MRI-derived metrics such as cortical thickness and subcortical
+volume have been associated with disease severity and progression. However, the
+reliability of these associations could be compromised by numerical
+variability, as measurement differences may obscure subtle changes in brain
+structure that are clinically relevant.
 
-Recent studies have highlighted significant variability in neuroimaging results
-due to differences in software and processing pipelines. For instance,
-Botvinik-Nezer et al. (2020) demonstrated low agreement levels (21\% to 37\%)
-among research teams analyzing the same fMRI data with different pipelines.
-This variability extends to structural MRI measures, with studies showing
-significant differences in brain volume and cortical thickness estimations
-between software versions and toolboxes.
+The goal of this study was to investigate the impact of numerical variability
+within a single version of FreeSurfer (7.3.1) on the estimation of structural
+MRI-derived measures and their associations with clinical outcomes in
+Parkinson’s disease. While prior research has focused on the differences
+between software versions, this study seeks to quantify the extent to which
+numerical variability within the same version affects these outcomes. We
+focused on cortical thickness, surface area, and subcortical volumes, which are
+commonly used in clinical neuroscience research. By comparing the results
+across repeated runs of the same analysis pipeline, we aimed to assess the
+stability of these metrics and evaluate how variability in these measurements
+might influence the detection of group differences between PD patients and
+healthy controls, as well as correlations between brain structure and clinical
+measures such as UPDRS scores.
 
-Parkinson's disease (PD) is a progressive neurodegenerative disorder affecting
-millions worldwide. Its prevalence and the potential of neuroimaging as a
-diagnostic and prognostic tool make it a critical area for investigating the
-impact of numerical variability in brain structure analysis.
+Our study addresses a gap in the literature by focusing on within-version
+variability, as opposed to the more commonly studied between-version
+variability. Previous studies have shown that software version changes can
+impact the estimation of brain structure, but fewer studies have quantified the
+variability that exists even when using a single version of the software. Given
+that numerical variability could interfere with the ability to detect subtle
+disease-related changes, it is critical to evaluate its potential effects on
+both cross-sectional and longitudinal analyses in PD. Our findings will provide
+important insights into the reliability of FreeSurfer’s outputs in clinical
+research and help inform future efforts to improve reproducibility in
+neuroimaging studies.
 
 \subsection{Motivation}
 
-The reproducibility crisis in neuroimaging, particularly in the context of
-clinical research, underscores the importance of studying numerical
-variability. In Parkinson's disease research, MRI-derived measures have shown
-associations with disease severity, progression, and differentiation between
-various syndromes. However, the lack of established MRI measures for PD
-diagnosis or tracking may partly stem from measurement variability across
-studies. Understanding the extent and impact of this variability is crucial
-for:
+The reproducibility crisis in neuroimaging, particularly within clinical
+research, has drawn attention to the inherent variability in computational
+methods used to analyze brain imaging data. This issue is especially pertinent
+in Parkinson’s disease (PD) research, where MRI-derived measures, such as
+cortical thickness and subcortical volumes, have shown promising associations
+with disease severity, progression, and the differentiation between various
+syndromes. However, despite these associations, there are currently no
+established MRI biomarkers widely accepted for PD diagnosis or monitoring
+disease progression. One of the key reasons for this gap is the variability in
+brain structure measurements across studies, which undermines the reliability
+and generalizability of findings.
+
+Measurement variability can stem from several factors, including differences
+between software versions, variations in processing pipelines, and even
+numerical variability within a single software version. While between-version
+variability has been extensively studied, within-version numerical
+variability—small differences in results generated from repeated runs of the
+same analysis software—remains underexplored. This variability can be due to
+subtle factors such as parallel processing, floating-point precision, and
+random initializations, all of which may affect the reproducibility of
+structural brain metrics, particularly in cross-sectional and longitudinal
+studies of neurodegenerative diseases like PD.
+
+Understanding the extent and impact of numerical variability is crucial for
+several reasons:
 
 \begin{enumerate}
-    \item  Enhancing the reliability of neuroimaging studies in PD research.
-    \item  Improving the potential of MRI as a diagnostic and prognostic tool for PD.
-    \item  Advancing our understanding of the relationship between brain structure and PD
-          clinical outcomes.
+    \item Enhancing the reliability of neuroimaging studies in PD research: If numerical
+          variability is not accounted for, researchers may draw incorrect conclusions
+          about the association between brain structure and disease severity, potentially
+          leading to inconsistent findings across studies. By investigating numerical
+          variability, we can better assess the stability of MRI-derived metrics and
+          ensure that these measures are reliable across repeated analyses.
+
+    \item Improving the potential of MRI as a diagnostic and prognostic tool for PD: As a
+          non-invasive imaging method, MRI holds significant promise for diagnosing and
+          monitoring Parkinson's disease, offering a way to track brain structure changes
+          without the need for invasive procedures. One of the main barriers to realizing
+          MRI’s clinical utility lies in the variability of the measurements it produces.
+          Subtle differences in brain structure, which could be key early indicators of
+          PD or markers of disease progression, may be obscured by variability factors
+          such as numerical variability. By quantifying and addressing this variability,
+          we aim to improve the precision and consistency of MRI metrics, potentially
+          paving the way for MRI to fulfill its role as an effective tool in clinical
+          practice.
+
+    \item Advancing our understanding of the relationship between brain structure and PD
+          clinical outcomes: A clearer understanding of the relationship between
+          MRI-derived structural measures and clinical outcomes, such as the Unified
+          Parkinson’s Disease Rating Scale (UPDRS) scores, is vital for improving PD
+          management. However, this relationship can only be reliably studied if the
+          structural measures themselves are stable and consistent across different
+          analysis sessions. Investigating the impact of numerical variability will help
+          clarify whether observed associations between brain structure and clinical
+          outcomes are robust, or if they are partly artifacts of measurement
+          inconsistency.
 \end{enumerate}
+
+In summary, the motivation for this study stems from the pressing need to
+address numerical variability in MRI-derived measures, particularly in the
+context of Parkinson’s disease research. By doing so, we aim to enhance the
+reliability of neuroimaging studies, improve the diagnostic and prognostic
+potential of MRI for PD, and deepen our understanding of how brain structure
+relates to clinical outcomes in this complex neurodegenerative disease.
 
 \subsection{Objectives}
 
-\emph{Cross-sectional Analysis}: To measure the impact of the  numerical
-variability of FreeSurfer 7.3.1 on the PPMI cohort. This involves comparing the
-estimation of structural MRI measures such as cortical and subcortical volumes,
-cortical thicknesses, and surface areas.
+The overall objective is to investigate the impact of numerical variability in
+FreeSurfer 7.3.1 on the estimation of structural MRI measures and their
+relationships with clinical outcomes in Parkinson's disease. To achieve this
+goal, the study is divided into two main components: a cross-sectional analysis
+and a longitudinal analysis.
 
-\emph{Longitudinal Analysis}: To evaluate the impact of numerical variability
-on clinical research outcomes in the PD group. This includes:
-\begin{itemize}
-    \item Investigating how numerical variability affects the detection of group
-          differences between HC and PD in subcortical volumes and cortical thickness
-          over time.
-    \item Assessing the influence of numerical instability on the observed correlations
-          between disease severity and brain structure measures in PD patients, both at
-          baseline and longitudinally.
-\end{itemize}
+\subsubsection{Cross-sectional Analysis}
 
-By addressing these objectives, we aim to provide insights into the reliability
-of FreeSurfer 7.3.1 in PD research and offer recommendations for mitigating the
-effects of numerical variability in clinical neuroimaging studies.
+The primary objective of the cross-sectional analysis is to measure the impact
+of numerical variability in FreeSurfer version 7.3.1 on the PPMI (Parkinson's
+Progression Markers Initiative) cohort. This will involve comparing the
+estimation of structural MRI measures, including cortical and subcortical
+volumes, cortical thickness, and surface area. The goal is to assess the
+stability of these key metrics and determine how numerical variability may
+affect their reliability in clinical research.
+
+\subsubsection{Longitudinal Analysis}
+
+In the longitudinal analysis, the focus shifts to evaluating the influence of
+numerical variability on clinical research outcomes within the PD group.
+Specifically, this analysis aims to (1) investigate how numerical variability
+affects the detection of group differences in subcortical volumes and cortical
+thickness between healthy controls (HC) and Parkinson’s disease (PD) patients
+over time. (2) Assess the extent to which numerical instability impacts
+observed correlations between disease severity, as measured by clinical
+outcomes (e.g., UPDRS scores), and brain structure measures in PD patients,
+both at baseline and longitudinally.
+
+By addressing these objectives, the study aims to provide valuable insights
+into the reliability of FreeSurfer 7.3.1 for Parkinson's disease research.
+Furthermore, it seeks to offer recommendations on how to mitigate the effects
+of numerical variability in clinical neuroimaging studies, ultimately enhancing
+the reproducibility and accuracy of MRI-derived measures in PD research.
 
 \section{Methods}
 
@@ -216,7 +330,7 @@ and received an exemption from Concordia University’s Research Ethics Unit.
         \\
         Age range               & 30.6 - 84.3                           & 36.3
         -
-        83.3                    & 49.9 - 80.5                           & 39.2
+        83.3                    & 49.9 - 80.5                           & 39.26
         -
         83.3
         \\
@@ -406,6 +520,129 @@ particularly the vessels, show the highest variability.
 \end{figure}
 
 % WhiteSurfArea & 2.0 +/- 0.34 & 1.97 +/- 0.31
+
+\begin{itemize}
+    \item Presentation of the basic numerical summary of the collected data for both HC
+          and PD groups.
+\end{itemize}
+
+\subsection{Longitudinal Analysis}
+
+We tested the group differences (PD vs HC) in subcortical volumes at baseline.
+
+\section{Discussion}
+
+The observed numerical variability in key metrics --- cortical thickness,
+surface area, and volume --- raises concerns about the reliability of these
+measurements in clinical research. The low precision in these metrics could
+impede the detection of meaningful effects, particularly in studies of diseases
+like Parkinson’s. At baseline, we found no statistically significant
+differences between the HC and PD groups across all regions and metrics. This
+lack of differentiation suggests that these metrics may not be sensitive enough
+to detect early-stage or subtle effects of Parkinson’s disease. The clusters
+identified in the analysis were inconsistent across repetitions, with only 1
+out of 26 clusters appearing consistently. This highlights the challenge of
+reproducing significant findings, likely due to variability in the
+data.Inconsistencies were also observed across different methodologies,
+specifically when comparing results from a Z-test and a permutation test. This
+suggests that methodological choices can significantly impact outcomes and
+interpretations.
+
+It is possible that higher-resolution data could have revealed more significant
+findings, as the current resolution may be insufficient to capture subtle
+structural changes. Additionally, the metrics used—cortical thickness, surface
+area, and volume—may lack the sensitivity required to detect subtle
+neuroanatomical differences associated with Parkinson’s disease. The effects of
+Parkinson’s disease itself may be too subtle to be detected by current
+methodologies, further compounded by the numerical variability inherent in the
+data.
+
+While numerical variability appears to have a more substantial impact on the
+results than software-related variability (as reported by Sokolowski et al.,
+2024), our longitudinal analysis shows limited significance. Fewer clusters
+were identified using the permutation test compared to the Z-test, and the
+clusters identified by the Z-test were not consistent across repetitions.
+
+The higher variability observed between subjects, compared to within-subject
+variability, is a positive sign for the reproducibility of results. Despite
+numerical variability, this suggests that the software remains reliable when
+applied across different subjects, supporting its use in future studies.
+
+\section{Conclusions}
+Our analysis of cross-sectional data reveals several key insights into the
+reliability of FreeSurfer’s brain structure metrics. Across all subjects and
+regions, the measurements for cortical thickness, surface area, and cortical
+volume demonstrated a low average number of significant digits. This indicates
+a limited precision in these metrics, which could affect the reliability of the
+results in clinical research, particularly when detecting small,
+disease-related changes in brain structure. Additionally, the Dice coefficients
+for both cortical and subcortical volumes were found to be low, indicating poor
+overlap between repeated measures. This variability undermines the utility of
+volume estimates for robust comparisons in either longitudinal or
+cross-sectional studies.
+
+Furthermore, there was substantial variability in the number of significant
+digits between subjects, suggesting that the numerical stability of these
+measurements varies markedly between individuals. This variability complicates
+comparisons across subjects and raises concerns about the generalizability of
+the results. However, one positive finding was that the variability between
+subjects was greater than the variability within subjects. This is an
+encouraging sign for reproducibility, as it suggests that FreeSurfer performs
+consistently when applied to the same subject over time, which enhances
+confidence in its ability to track longitudinal changes within individuals.
+
+In the longitudinal analysis, additional challenges emerged in tracking changes
+over time in brain metrics, particularly in relation to clinical outcomes such
+as the UPDRS scores. We found no significant vertex-wise correlations between
+baseline UPDRS scores, which assess Parkinson’s disease severity, and cortical
+thickness. This lack of correlation implies that cortical thickness may not be
+a sensitive biomarker for disease severity at the individual level,
+particularly in the early stages of Parkinson’s. Similarly, no significant
+vertex-wise correlations were observed between the rate of change in UPDRS
+scores and the rate of change in cortical thickness, suggesting that the
+progression of Parkinson’s, as measured by UPDRS scores, may not be closely
+linked to changes in cortical thickness, at least with the metrics and
+resolution employed in this study.
+
+Another notable limitation was the inconsistency in cluster detection across
+repetitions. Only one out of 26 clusters was reproduced consistently,
+highlighting the challenge of obtaining reliable results using cluster-based
+statistical methods. The variability in the data appears to have a strong
+influence on cluster identification, further emphasizing the need for
+methodological refinements. Moreover, no statistically significant group
+differences in cortical thickness were found at baseline between Parkinson’s
+disease (PD) patients and healthy controls (HC), indicating that cortical
+thickness alone may not be a sufficient marker for distinguishing between these
+groups at early stages of the disease. Likewise, there were no significant
+differences in the rate of cortical thickness change between the two groups
+over time, suggesting that the progression of cortical thinning may be too
+subtle or inconsistent to detect with the current methodologies, or that the
+metrics used lack sensitivity to capture meaningful longitudinal changes
+associated with Parkinson’s disease.
+
+In summary, these findings underscore the limitations of FreeSurfer 7.3.1 in
+providing precise and reliable brain structure measurements for both
+cross-sectional and longitudinal studies, especially in the context of
+Parkinson’s disease research. The observed low numerical stability, high
+between-subject variability, and the absence of significant group differences
+or correlations with clinical measures raise concerns about the sensitivity and
+robustness of these metrics for detecting subtle disease-related changes.
+Future research should consider the use of higher-resolution data, larger
+sample sizes, and alternative neuroimaging biomarkers to better capture subtle
+structural changes in the brain. Additionally, methodological improvements are
+needed to reduce numerical variability and enhance the reproducibility of
+results across different studies and subjects.
+
+\section{Acknowledgements}
+
+ReproVIP team.
+
+\bibliographystyle{alpha}
+\bibliography{main}
+
+\appendix
+
+\section{Appendix}
 
 \begin{longtblr}[
         caption={Significant digits average across all subjects and regions.},
@@ -641,7 +878,7 @@ particularly the vessels, show the highest variability.
         rowhead=1,
         row{1}={font=\bfseries}
     }
-    Region                       & {Subcortical volume                                                        \\ (mm)} & Region                        & {Subcortical volume \\ (mm)} \\
+    Region                       & {Subcortical volume                                                        \\ ($\text{mm}^3$)} & Region                        & {Subcortical volume \\ ($\text{mm}^3$)} \\
     \hline
     3rd-Ventricle                & $25.18 \pm 34.65$   & CC Anterior                   & $23.67 \pm 29.16$    \\
     4th-Ventricle                & $38.47 \pm 23.49$   & CC Central                    & $23.89 \pm 23.90$    \\
@@ -666,52 +903,5 @@ particularly the vessels, show the highest variability.
     Left-vessel                  & $6.42 \pm 4.91$     & Right-vessel                  & $7.92    \pm 5.38$   \\
     Optic-Chiasm                 & $13.11 \pm 6.56\0$  &                               &                      \\
 \end{longtblr}
-
-\begin{itemize}
-    \item Presentation of the basic numerical summary of the collected data for both HC
-          and PD groups.
-\end{itemize}
-
-\subsection{Inferential Statistics}
-
-\begin{itemize}
-    \item Detailed presentation of the results of the Whitney-Mann test and Bonferroni
-          correction.
-    \item Comparative analysis between HC and PD populations based on the different ROIs
-          for cortical and subcortical volumes, surface area, and cortical thickness.
-\end{itemize}
-
-\section{Discussion}
-
-\subsection{Interpretation of Results}
-
-\begin{itemize}
-    \item Detailed interpretation of the observed numerical variability in HC and PD
-          populations and its implications.
-\end{itemize}
-
-\subsection{Impact on Clinical Research}
-
-\begin{itemize}
-    \item Discussion on how the observed numerical variability can affect clinical
-          research.
-    \item Exploration of potential ramifications in neurological studies, particularly
-          those involving Parkinson's disease.
-\end{itemize}
-
-\subsection{Limitations and Future Work}
-
-\section{Conclusions}
-
-Summary of the findings regarding the numerical variability in Freesurfer 7.3.1
-between HC and PD populations and its prospective impact on clinical research.
-Provisional conclusion pending the exploration of goal 2.
-
-\section{Acknowledgements}
-
-ReproVIP team.
-
-\bibliographystyle{alpha}
-\bibliography{main}
 
 \end{document}
