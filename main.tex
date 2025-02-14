@@ -84,7 +84,7 @@ as random initializations, parallel processing, or computational imprecision,
 all of which can occur even when the same software version is used. This type
 of variability could potentially have a significant impact on clinical
 research, where neuroimaging data is often used to investigate relationships
-between brain structure and disease progression. In the context of Parkinson’s
+between brain structure and disease progression. In the context of Parkinson's
 disease (PD), MRI-derived metrics such as cortical thickness and subcortical
 volume have been associated with disease severity and progression. However, the
 reliability of these associations could be compromised by numerical
@@ -94,7 +94,7 @@ structure that are clinically relevant.
 The goal of this study was to investigate the impact of numerical variability
 within a single version of FreeSurfer (7.3.1) on the estimation of structural
 MRI-derived measures and their associations with clinical outcomes in
-Parkinson’s disease. While prior research has focused on the differences
+Parkinson's disease. While prior research has focused on the differences
 between software versions, this study seeks to quantify the extent to which
 numerical variability within the same version affects these outcomes. We
 focused on cortical thickness, surface area, and subcortical volumes, which are
@@ -113,7 +113,7 @@ variability that exists even when using a single version of the software. Given
 that numerical variability could interfere with the ability to detect subtle
 disease-related changes, it is critical to evaluate its potential effects on
 both cross-sectional and longitudinal analyses in PD. Our findings will provide
-important insights into the reliability of FreeSurfer’s outputs in clinical
+important insights into the reliability of FreeSurfer's outputs in clinical
 research and help inform future efforts to improve reproducibility in
 neuroimaging studies.
 
@@ -122,7 +122,7 @@ neuroimaging studies.
 The reproducibility crisis in neuroimaging, particularly within clinical
 research, has drawn attention to the inherent variability in computational
 methods used to analyze brain imaging data. This issue is especially pertinent
-in Parkinson’s disease (PD) research, where MRI-derived measures, such as
+in Parkinson's disease (PD) research, where MRI-derived measures, such as
 cortical thickness and subcortical volumes, have shown promising associations
 with disease severity, progression, and the differentiation between various
 syndromes. However, despite these associations, there are currently no
@@ -157,7 +157,7 @@ several reasons:
           non-invasive imaging method, MRI holds significant promise for diagnosing and
           monitoring Parkinson's disease, offering a way to track brain structure changes
           without the need for invasive procedures. One of the main barriers to realizing
-          MRI’s clinical utility lies in the variability of the measurements it produces.
+          MRI's clinical utility lies in the variability of the measurements it produces.
           Subtle differences in brain structure, which could be key early indicators of
           PD or markers of disease progression, may be obscured by variability factors
           such as numerical variability. By quantifying and addressing this variability,
@@ -168,7 +168,7 @@ several reasons:
     \item Advancing our understanding of the relationship between brain structure and PD
           clinical outcomes: A clearer understanding of the relationship between
           MRI-derived structural measures and clinical outcomes, such as the Unified
-          Parkinson’s Disease Rating Scale (UPDRS) scores, is vital for improving PD
+          Parkinson's Disease Rating Scale (UPDRS) scores, is vital for improving PD
           management. However, this relationship can only be reliably studied if the
           structural measures themselves are stable and consistent across different
           analysis sessions. Investigating the impact of numerical variability will help
@@ -179,7 +179,7 @@ several reasons:
 
 In summary, the motivation for this study stems from the pressing need to
 address numerical variability in MRI-derived measures, particularly in the
-context of Parkinson’s disease research. By doing so, we aim to enhance the
+context of Parkinson's disease research. By doing so, we aim to enhance the
 reliability of neuroimaging studies, improve the diagnostic and prognostic
 potential of MRI for PD, and deepen our understanding of how brain structure
 relates to clinical outcomes in this complex neurodegenerative disease.
@@ -208,7 +208,7 @@ In the longitudinal analysis, the focus shifts to evaluating the influence of
 numerical variability on clinical research outcomes within the PD group.
 Specifically, this analysis aims to (1) investigate how numerical variability
 affects the detection of group differences in subcortical volumes and cortical
-thickness between healthy controls (HC) and Parkinson’s disease (PD) patients
+thickness between healthy controls (HC) and Parkinson's disease (PD) patients
 over time. (2) Assess the extent to which numerical instability impacts
 observed correlations between disease severity, as measured by clinical
 outcomes (e.g., UPDRS scores), and brain structure measures in PD patients,
@@ -248,8 +248,7 @@ noised injected into the calculations with the concept of virtual precision. By
 running the same code multiple times, the stability of outcomes can be measured
 by calculating the number of significant digits in the outputs.
 
-\subsubsection{Significant digits formula}
-\label{sec:sig_digits}
+\subsubsection{Significant digits formula}\label{sec:sig_digits}
 
 We compute the number of significant bits \(\hat{s}\) with probability
 \(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \emph{Significant
@@ -291,20 +290,21 @@ a good proxy to simulate OS changes~\cite{salari2021accurate}.
 In total, 210 patients diagnosed with Parkinson's Disease (PD) participated in
 the study: 181 with PD without mild cognitive impairment (PD-non-MCI) and 29
 with PD with mild cognitive impairment (PD-MCI). Additionally, 106 healthy
-controls (HC) were included. All participants were sourced from the Parkinson’s
+controls (HC) were included. All participants were sourced from the Parkinson's
 Progression Markers Initiative (PPMI; www.ppmi-info.org). The inclusion
 criteria for PD patients comprised a primary diagnosis of PD, the availability
 of a T1-weighted scan, and the absence of other neurological diagnoses. For the
 clinical analysis, 125 PD-non-MCI patients and all 106 HC were considered.
 Every participant in this subset had two study visits with T1-weighted images
 available. Additionally, PD patients were evaluated using the Unified
-Parkinson’s Disease Rating Scale (UPDRS) scores. PD-MCI patients were excluded
+Parkinson's Disease Rating Scale (UPDRS) scores. PD-MCI patients were excluded
 from the clinical analysis to prevent potential confounding effects of MCI on
 clinical evaluations. The data collection was sanctioned by the local ethics
 committees of PPMI's participating institutions, and all participants provided
 written informed consent. Descriptive statistics for each group can be found in
-Table~\ref{tab:cohort_stat}. The study adhered to the Declaration of Helsinki
-and received an exemption from Concordia University’s Research Ethics Unit.
+Table~\ref{tab:cohort_stat}.\todo[inline]{The table must be before or after
+    exclusion?} The study adhered to the Declaration of Helsinki and received an
+exemption from Concordia University's Research Ethics Unit.
 
 \begin{table}[h!]
     \centering
@@ -362,7 +362,7 @@ and received an exemption from Concordia University’s Research Ethics Unit.
     \end{tabular}
     \caption{Descriptive statistics. \\
         \textbf{MCI}: Mild Cognitive Impairment; \textbf{UPDRS}: Unified
-        Parkinson’s Disease Rating Scale; \textbf{PD}: Parkinson’s disease.
+        Parkinson's Disease Rating Scale; \textbf{PD}: Parkinson's disease.
         PD-non-MCI longitudinal sample is a subsample of PD-non-MCI
         cross-sectional sample that had longitudinal data and disease severity
         score available.\label{tab:cohort_stat}}
@@ -374,21 +374,31 @@ T1-weighted MRI images were obtained from PPMI that uses standardized
 acquisition parameters: repetition time = 2.3 s, echo time = 2.98 s, inversion
 time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view =
 256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite
-project there may be slight differences in the sites’ setup.
+project there may be slight differences in the sites' setup.
 
-To assess numerical variability in FreeSurfer outputs, we utilized FreeSurfer
+To assess numerical variability in FreeSurfer outputs, we used FreeSurfer
 7.3.1, instrumented with Fuzzy-libm. The virtual precision was set to 53 for
 binary64 (double precision) and 24 for binary32 (single precision) to simulate
-error-machine precision. The \texttt{recon-all} function was used for cortical
-reconstruction, extracting volumes, cortical thickness, and surface area for
-each participant. This process was repeated 34 times per subject, generating 34
-sets of brain structure metrics. Due to the inherent instability of MCA, some
-runs failed and were excluded from the analysis. To standardize the dataset, we
-randomly selected 26 successful runs per subject, resulting in 26 sets of MCA
-repetitions, each containing the same number of subjects. Ensuring consistency
-in the number of subjects across repetitions is essential for statistical
-analysis. Once the perturbed datasets were obtained, downstream analysis was
-performed using a FreeSurfer pipeline without Fuzzy-libm to prevent further
+machine-level precision errors. The \texttt{recon-all} function was employed
+for cortical reconstruction, extracting volumes, cortical thickness, and
+surface area for each participant. This process was repeated 34 times per
+subject, generating 34 sets of brain structure metrics. Due to instabilities
+introduced by MCA, some runs failed and were excluded from the analysis.
+
+To ensure the quality of the segmentations, we manually inspected them along
+the three anatomical axes. Segmentations with visible errors were excluded from
+the analysis. Table~\ref{tab:qc-stats} summarizes the number of excluded
+executions.
+
+To standardize the dataset, we randomly selected 25 successful runs per
+subject/visit pair, resulting in 25 sets of MCA repetitions, each containing
+the same number of subject/visit pairs. Maintaining a consistent number of
+subjects across repetitions was essential for statistical analysis.
+Subject/visit pairs with fewer than 25 MCA repetitions were excluded to ensure
+consistency in statistical analyses.
+
+Once the perturbed datasets were obtained, downstream analysis was performed
+using a FreeSurfer pipeline without Fuzzy-libm to prevent further
 perturbations.
 
 For each MCA repetition, we followed the longitudinal preprocessing stream to
@@ -403,7 +413,6 @@ The analyses were conducted on the Virtual Imaging
 Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
 Biomed virtual organization within the European Grid Infrastructure (EGI). We
 extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
-All preprocessed images were visually inspected for quality.
 
 \subsection{Numerical Variability Assessment}
 
@@ -425,8 +434,8 @@ deviation captured variability across repetitions.
 We also compared the number of significant digits between HC and PD groups
 using a paired t-test. To further investigate differences in software
 variability between these groups, we conducted a two-sample t-test.
-Additionally, we calculated the Sørensen–Dice coefficient to assess structural
-overlap across MCA repetitions. The extended Sørensen–Dice coefficient was
+Additionally, we calculated the Sørensen-Dice coefficient to assess structural
+overlap across MCA repetitions. The extended Sørensen-Dice coefficient was
 applied for each ROI and structural measure using the following formula:
 \[
     \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \overset{n}{\underset{i=1}{\bigcap}} A_i \right|}{\overset{n}{\underset{i=1}{\sum}} \left| A_i \right|}.
@@ -475,12 +484,13 @@ Table~\ref{tab:cohort_stat}.
 
 We evaluated the numerical variability of FreeSurfer 7.3.1 in estimating brain
 structure metrics such as cortical thickness, surface area, and both cortical
-and subcortical volumes. Figure~\ref{fig } illustrates the number of
-significant digits for each cortical region and metric. Table~\ref{tab }
-provides the average number of significant digits across all subjects and
-regions. Figure~\ref{fig } presents the Dice coefficient for each ROI and
-structural measure, while Figure~\ref{fig } shows the number of significant
-digits for subcortical volume in each region and group.
+and subcortical volumes. Figure~\ref{fig:sig_digits_cortical} illustrates the
+number of significant digits for each cortical region and metric.
+Table~\ref{tab:sig-cortical} provides the average number of significant digits
+across all subjects and regions. Figure~\ref{fig:dice} presents the Dice
+coefficient for each ROI and structural measure, while
+Figure~\ref{fig:sig_digits_subcortical} shows the number of significant digits
+for subcortical volume in each region and group.
 
 Our results indicate that the measurements produced by FreeSurfer 7.3.1 exhibit
 numerical instability, with an average of $1.49 \pm 0.27$ significant digits
@@ -494,11 +504,10 @@ is high for all three metrics, with some measurements showing as few as zero
 significant digits, indicating a complete loss of precision in certain cases.
 \todo[inline]{Complete with between-subjects variability. Update the figure.}
 
-The Dice coefficients for cortical thickness, surface area, and volume are on
-average $?$, $?$, and $?$, respectively. Figure~\ref{fig } highlights
-substantial discrepancies between subjects. Visually, the distribution of the
-Dice coefficient appears similar across regions, although certain regions,
-particularly the vessels, show the highest variability.
+Figure~\ref{fig:dice} highlights substantial discrepancies between subjects.
+Visually, the distribution of the Dice coefficient appears similar across
+regions, although certain regions, particularly the vessels, show the highest
+variability.
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/dice.pdf}
@@ -508,13 +517,12 @@ particularly the vessels, show the highest variability.
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/sig_digits.pdf}
-    \caption{Number of significant digits for each cortical region and metric.\label{fig:sig_digits}}
+    \caption{Number of significant digits for each cortical region and metric.\label{fig:sig_digits_cortical}}
 \end{figure}
 
 \begin{figure}
-    \includegraphics*[width=\linewidth]{figures/group-subcortical-volume-sig.png}
-    \caption{Number of significant digits of subcortical volume for each ROI
-        and each group.\label{fig:group-subcortical-volume-sig}}
+    \includegraphics*[width=\linewidth]{figures/sig_digits_subcortical_volume.pdf}
+    \caption{Number of significant digits of subcortical volume for each ROI.\label{fig:sig_digits_subcortical}}
 \end{figure}
 
 % WhiteSurfArea & 2.0 +/- 0.34 & 1.97 +/- 0.31
@@ -526,7 +534,120 @@ particularly the vessels, show the highest variability.
 
 \subsection{Longitudinal Analysis}
 
-We tested the group differences (PD vs HC) in subcortical volumes at baseline.
+\paragraph{Vertex-Wise Analyses}
+
+To investigate the relationships between cortical thickness and clinical
+measures over time, we conducted vertex-wise analyses. These analyses focused
+on three key aspects:
+
+\begin{itemize}
+    \item The correlation between \textbf{UPDRS scores} and \textbf{baseline cortical
+              thickness}.
+    \item The correlation between the \textbf{rate of change} in UPDRS scores and the
+          \textbf{rate of change} in cortical thickness.
+    \item Group differences between \textbf{healthy controls (HC)} and
+          \textbf{PD-non-MCI} in both \textbf{baseline cortical thickness} and its
+          \textbf{longitudinal change}.
+\end{itemize}
+
+To assess statistical significance, we employed both \textbf{Z-tests} and
+\textbf{permutation tests}. Z-tests evaluate whether a given measure
+significantly deviates from the population mean under a normality assumption,
+while permutation tests provide a non-parametric alternative that does not rely
+on distributional assumptions. The results of these analyses are summarized in
+the following sections.
+
+\paragraph{Inconsistency of Statistically Significant Regions Across MCA Repetitions}
+Due to the inherent variability introduced by Monte Carlo Arithmetic (MCA), the
+significance of cortical regions fluctuated across repetitions. Specifically:
+\begin{itemize}
+    \item Only \textbf{two regions} were found to be statistically significant in
+          \textbf{two repetitions out of 26}, suggesting a lack of statistical power.
+    \item The surface sizes of significant regions varied considerably, with examples
+          such as \textbf{1005.95 ± 39.34 mm²} and \textbf{996.83 ± 42.91 mm²}.
+\end{itemize}
+
+\subsection{Z-Tests Identified More Significant Regions Than Permutation Tests}
+When comparing the two statistical approaches:
+\begin{itemize}
+    \item \textbf{7 regions} were found significant using the \textbf{Z-test}, whereas only \textbf{3 regions} were found significant using the \textbf{permutation test}.
+    \item However, significant regions \textbf{were not consistent} across MCA
+          repetitions, reinforcing concerns regarding replicability.
+\end{itemize}
+
+\subsection{Group Analysis}
+
+\subsubsection{Z-Test Results}
+The following table summarizes significant regions identified in the
+\textbf{group analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)). Each
+region was statistically significant in only \textbf{one MCA repetition},
+highlighting a \textbf{lack of replicability}.
+
+\begin{table}[h]
+    \centering
+    \caption{Significant regions identified using a Z-test (\(\alpha = 0.05\)) for the group analysis.}
+    \begin{tabular}{l c c c c c c}
+        \toprule
+        \textbf{Region}       & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max} & \textbf{Frequency} \\
+        \midrule
+        \textbf{Baseline}     &                        &                &                &                &              &                    \\
+        R postcentral         & 844.98                 & 23.8           & -36.4          & 57.2           & -2.964       & 1 / 25             \\
+        \midrule
+        \textbf{Longitudinal} &                        &                &                &                &              &                    \\
+        L inferior parietal   & 3337.65                & -56.6          & -43.6          & -18.1          & 2.8572       & 1 / 25             \\
+        R parstriangularis    & 3265.87                & 44.4           & 35.8           & 3.7            & 2.8129       & 1 / 25             \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{Permutation Test Results}
+No clusters were found to be statistically significant using the
+\textbf{permutation test} (1000 permutations).
+
+\subsection{Correlation Analysis}
+
+\subsubsection{Z-Test Results}
+The following table presents significant regions identified in the
+\textbf{correlation analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)).
+Notably, only \textbf{two regions} were found to be significant in \textbf{two
+    different MCA repetitions}, with variability in their estimated \textbf{size}
+and \textbf{MNI coordinates}.
+
+\begin{table}[h]
+    \centering
+    \caption{Significant regions identified using a Z-test (\(\alpha = 0.05\)) for the correlation analysis.}
+    \begin{tabular}{lllllll}
+        \toprule
+        \textbf{Region}     & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max}    & \textbf{Frequency} \\
+        \midrule
+        \textbf{Baseline}   &                        &                &                &                &                 &                    \\
+        L postcentral       & 1006.20 ± 39.27        & -37.0          & -33.8/-34      & 62.5/61.7      & -4.7429/-3.7576 & 2/25               \\
+        L precentral        & 1011.32                & -18.2          & -19.8          & 70.1           & -4.2896         & 1/25               \\
+        R lateral occipital & $\0997.20 \pm 43.08$   & $\014.2$/20.7      & -99.8/-96.5    & $\01.9$/-13.1  & -2.9967/-3.1263 & 2/25               \\
+        R pericalcarine     & 2085.19                & $\010.8$           & -74.9          & $\04.4$        & -3.000          & 1/25               \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{Permutation Test Results}
+The following regions were identified using a \textbf{permutation test} (1000
+permutations) for the correlation analysis. Each region was significant in only
+\textbf{one MCA repetition}, further demonstrating a \textbf{lack of
+    replicability}.
+
+\begin{table}[h]
+    \centering
+    \caption{Significant regions identified using a permutation test (1000 permutations) for the correlation analysis.}
+    \begin{tabular}{lllllll}
+        \toprule
+        \textbf{Region}     & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max} & \textbf{Frequency} \\
+        \midrule
+        L inferior temporal & 3337.13                & -56.6          & -43.6          & -18.1          & 2.8572       & 1/25               \\
+        R lingual           & 1150.84                & 23.2           & -61.3          & $\00.4$          & 4.6403       & 1/25               \\
+        R parstriangularis  & 3265.87                & 44.4           & 35.8           & $\03.7$          & 2.8129       & 1/25               \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \section{Discussion}
 
@@ -534,10 +655,10 @@ The observed numerical variability in key metrics --- cortical thickness,
 surface area, and volume --- raises concerns about the reliability of these
 measurements in clinical research. The low precision in these metrics could
 impede the detection of meaningful effects, particularly in studies of diseases
-like Parkinson’s. At baseline, we found no statistically significant
+like Parkinson's. At baseline, we found no statistically significant
 differences between the HC and PD groups across all regions and metrics. This
 lack of differentiation suggests that these metrics may not be sensitive enough
-to detect early-stage or subtle effects of Parkinson’s disease. The clusters
+to detect early-stage or subtle effects of Parkinson's disease. The clusters
 identified in the analysis were inconsistent across repetitions, with only 1
 out of 26 clusters appearing consistently. This highlights the challenge of
 reproducing significant findings, likely due to variability in the
@@ -550,8 +671,8 @@ It is possible that higher-resolution data could have revealed more significant
 findings, as the current resolution may be insufficient to capture subtle
 structural changes. Additionally, the metrics used—cortical thickness, surface
 area, and volume—may lack the sensitivity required to detect subtle
-neuroanatomical differences associated with Parkinson’s disease. The effects of
-Parkinson’s disease itself may be too subtle to be detected by current
+neuroanatomical differences associated with Parkinson's disease. The effects of
+Parkinson's disease itself may be too subtle to be detected by current
 methodologies, further compounded by the numerical variability inherent in the
 data.
 
@@ -568,7 +689,7 @@ applied across different subjects, supporting its use in future studies.
 
 \section{Conclusions}
 Our analysis of cross-sectional data reveals several key insights into the
-reliability of FreeSurfer’s brain structure metrics. Across all subjects and
+reliability of FreeSurfer's brain structure metrics. Across all subjects and
 regions, the measurements for cortical thickness, surface area, and cortical
 volume demonstrated a low average number of significant digits. This indicates
 a limited precision in these metrics, which could affect the reliability of the
@@ -592,13 +713,13 @@ confidence in its ability to track longitudinal changes within individuals.
 In the longitudinal analysis, additional challenges emerged in tracking changes
 over time in brain metrics, particularly in relation to clinical outcomes such
 as the UPDRS scores. We found no significant vertex-wise correlations between
-baseline UPDRS scores, which assess Parkinson’s disease severity, and cortical
+baseline UPDRS scores, which assess Parkinson's disease severity, and cortical
 thickness. This lack of correlation implies that cortical thickness may not be
 a sensitive biomarker for disease severity at the individual level,
-particularly in the early stages of Parkinson’s. Similarly, no significant
+particularly in the early stages of Parkinson's. Similarly, no significant
 vertex-wise correlations were observed between the rate of change in UPDRS
 scores and the rate of change in cortical thickness, suggesting that the
-progression of Parkinson’s, as measured by UPDRS scores, may not be closely
+progression of Parkinson's, as measured by UPDRS scores, may not be closely
 linked to changes in cortical thickness, at least with the metrics and
 resolution employed in this study.
 
@@ -608,7 +729,7 @@ highlighting the challenge of obtaining reliable results using cluster-based
 statistical methods. The variability in the data appears to have a strong
 influence on cluster identification, further emphasizing the need for
 methodological refinements. Moreover, no statistically significant group
-differences in cortical thickness were found at baseline between Parkinson’s
+differences in cortical thickness were found at baseline between Parkinson's
 disease (PD) patients and healthy controls (HC), indicating that cortical
 thickness alone may not be a sufficient marker for distinguishing between these
 groups at early stages of the disease. Likewise, there were no significant
@@ -616,12 +737,12 @@ differences in the rate of cortical thickness change between the two groups
 over time, suggesting that the progression of cortical thinning may be too
 subtle or inconsistent to detect with the current methodologies, or that the
 metrics used lack sensitivity to capture meaningful longitudinal changes
-associated with Parkinson’s disease.
+associated with Parkinson's disease.
 
 In summary, these findings underscore the limitations of FreeSurfer 7.3.1 in
 providing precise and reliable brain structure measurements for both
 cross-sectional and longitudinal studies, especially in the context of
-Parkinson’s disease research. The observed low numerical stability, high
+Parkinson's disease research. The observed low numerical stability, high
 between-subject variability, and the absence of significant group differences
 or correlations with clinical measures raise concerns about the sensitivity and
 robustness of these metrics for detecting subtle disease-related changes.
