@@ -279,7 +279,7 @@ MCA has been extended to several libraries including the \texttt{libm} which
 comprises elementary mathematical functions \texttt{(exp, log, cos, sin, ...)}.
 The Fuzzy-libm~\cite{salari2021accurate} project presents an ecosystem of
 Docker images, offering a \texttt{libm} that is recompiled with
-Verificarlo~\cite{denis2015verificarlo}. This LLVM-based compiler replaces
+Verificarlo~\cite{denis2016verificarlo}. This LLVM-based compiler replaces
 floating-point arithmetic instructions for their MCA equivalents. The
 Fuzzy-libm applies a random perturbation on the results of \texttt{libm}'
 functions to simulate different implementations. It has been demonstrated to be
@@ -451,12 +451,10 @@ groups. We also conducted longitudinal analyses to assess the correlation
 between the rate of change in UPDRS scores and subcortical volumes, as well as
 group differences in subcortical volume change rates. The rate of subcortical
 volume change was calculated as $((\text{volume}_2 - \text{volume}_1) /
-    \text{volume}_1) \times 100$.
-
-Partial correlation analysis was used for correlation assessments, while ANCOVA
-was applied for group comparisons. All analyses were adjusted for age and sex,
-with additional adjustments for the time interval between visits in
-longitudinal analyses.
+    \text{volume}_1) \times 100$. Partial correlation analysis was used for
+correlation assessments, while ANCOVA was applied for group comparisons. All
+analyses were adjusted for age and sex, with additional adjustments for the
+time interval between visits in longitudinal analyses.
 
 At the cortical vertex level, we explored correlations between baseline
 cortical thickness and UPDRS scores, along with group differences in baseline
@@ -534,106 +532,65 @@ variability.
 
 \subsection{Longitudinal Analysis}
 
-\paragraph{Vertex-Wise Analyses}
+\subsubsection{Subcortical volume analysis}
 
-To investigate the relationships between cortical thickness and clinical
-measures over time, we conducted vertex-wise analyses. These analyses focused
-on three key aspects:
+\begin{enumerate}
+    \item The partial correlation between the UPDRS-III scores and the subcortical volume
+          at baseline.
+    \item The partial correlation between the rate of change in UPDRS-III scores and the
+          rate of change in subcortical volume longitudinally.
+    \item The group differences in the baseline subcortical volume between PD patients
+          and healthy controls.
+    \item The group differences in the rate of change in subcortical volume
+          longitudinally between PD patients and healthy controls.
+\end{enumerate}
 
-\begin{itemize}
-    \item The correlation between \textbf{UPDRS scores} and \textbf{baseline cortical
-              thickness}.
-    \item The correlation between the \textbf{rate of change} in UPDRS scores and the
-          \textbf{rate of change} in cortical thickness.
-    \item Group differences between \textbf{healthy controls (HC)} and
-          \textbf{PD-non-MCI} in both \textbf{baseline cortical thickness} and its
-          \textbf{longitudinal change}.
-\end{itemize}
+\begin{figure}
+    \includegraphics*[width=\linewidth]{figures/significance_correlation.pdf}
+    \caption{Ratio of statistical tests that were significant
+        ($p<0.05$) among the 26 MCA repetitions for each regions.}
+\end{figure}
 
-To assess statistical significance, we employed both \textbf{Z-tests} and
-\textbf{permutation tests}. Z-tests evaluate whether a given measure
-significantly deviates from the population mean under a normality assumption,
-while permutation tests provide a non-parametric alternative that does not rely
-on distributional assumptions. The results of these analyses are summarized in
-the following sections.
+\begin{figure}
+    \includegraphics*[width=\linewidth]{figures/statstest_coefficients_distribution.pdf}
+    \caption{r-values and F-values distribution for the significant tests among the 26 MCA repetitions.
+        Top row: r-values distribution. Bottom row: F-values distribution. Left column: Baseline analysis. Right column: Longitudinal analysis.}
+\end{figure}
 
-\paragraph{Inconsistency of Statistically Significant Regions Across MCA Repetitions}
-Due to the inherent variability introduced by Monte Carlo Arithmetic (MCA), the
-significance of cortical regions fluctuated across repetitions. Specifically:
-\begin{itemize}
-    \item Only \textbf{two regions} were found to be statistically significant in
-          \textbf{two repetitions out of 26}, suggesting a lack of statistical power.
-    \item The surface sizes of significant regions varied considerably, with examples
-          such as \textbf{1005.95 ± 39.34 mm²} and \textbf{996.83 ± 42.91 mm²}.
-\end{itemize}
+\subsubsection{Vertex-wise analysis}
 
-\subsection{Z-Tests Identified More Significant Regions Than Permutation Tests}
-When comparing the two statistical approaches:
-\begin{itemize}
-    \item \textbf{7 regions} were found significant using the \textbf{Z-test}, whereas only \textbf{3 regions} were found significant using the \textbf{permutation test}.
-    \item However, significant regions \textbf{were not consistent} across MCA
-          repetitions, reinforcing concerns regarding replicability.
-\end{itemize}
+\begin{enumerate}
+    \item The correlation between the UPDRS-III scores and the cortical thickness at
+          baseline.
+    \item The correlation between the rate of change in UPDRS-III scores and the rate of
+          change in cortical thickness longitudinally.
+    \item The group differences in the baseline cortical thickness between PD patients
+          and healthy controls.
+    \item The group differences in the rate of change in cortical thickness
+          longitudinally between PD patients and healthy controls.
+\end{enumerate}
 
-\subsection{Group Analysis}
+To assess statistical significance, we employed permutation tests. Permutation
+test provides a non-parametric test to evaluate whether a given measure
+significantly deviates from the population. Variability introduced by MCA
+reveals the numerical instability of FreeSurfer 7.3.1 shows that the
+significance of cortical regions fluctuated across repetitions.
 
-\subsubsection{Z-Test Results}
-The following table summarizes significant regions identified in the
-\textbf{group analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)). Each
-region was statistically significant in only \textbf{one MCA repetition},
-highlighting a \textbf{lack of replicability}.
+Specifically, only two regions were found to be statistically significant in
+two repetitions out of 26, suggesting a lack of statistical power. The surface
+sizes of significant regions varied considerably, with examples such as 1005.95
+± 39.34 mm² and 996.83 ± 42.91 mm².
 
-\begin{table}[h]
-    \centering
-    \caption{Significant regions identified using a Z-test (\(\alpha = 0.05\)) for the group analysis.}
-    \begin{tabular}{l c c c c c c}
-        \toprule
-        \textbf{Region}       & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max} & \textbf{Frequency} \\
-        \midrule
-        \textbf{Baseline}     &                        &                &                &                &              &                    \\
-        R postcentral         & 844.98                 & 23.8           & -36.4          & 57.2           & -2.964       & 1 / 25             \\
-        \midrule
-        \textbf{Longitudinal} &                        &                &                &                &              &                    \\
-        L inferior parietal   & 3337.65                & -56.6          & -43.6          & -18.1          & 2.8572       & 1 / 25             \\
-        R parstriangularis    & 3265.87                & 44.4           & 35.8           & 3.7            & 2.8129       & 1 / 25             \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+\paragraph{Group Analysis}
 
-\subsubsection{Permutation Test Results}
-No clusters were found to be statistically significant using the
-\textbf{permutation test} (1000 permutations).
+No clusters were found to be statistically significant using the permutation
+test (1000 permutations).
 
-\subsection{Correlation Analysis}
+\paragraph{Correlation Analysis}
 
-\subsubsection{Z-Test Results}
-The following table presents significant regions identified in the
-\textbf{correlation analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)).
-Notably, only \textbf{two regions} were found to be significant in \textbf{two
-    different MCA repetitions}, with variability in their estimated \textbf{size}
-and \textbf{MNI coordinates}.
-
-\begin{table}[h]
-    \centering
-    \caption{Significant regions identified using a Z-test (\(\alpha = 0.05\)) for the correlation analysis.}
-    \begin{tabular}{lllllll}
-        \toprule
-        \textbf{Region}     & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max}    & \textbf{Frequency} \\
-        \midrule
-        \textbf{Baseline}   &                        &                &                &                &                 &                    \\
-        L postcentral       & 1006.20 ± 39.27        & -37.0          & -33.8/-34      & 62.5/61.7      & -4.7429/-3.7576 & 2/25               \\
-        L precentral        & 1011.32                & -18.2          & -19.8          & 70.1           & -4.2896         & 1/25               \\
-        R lateral occipital & $\0997.20 \pm 43.08$   & $\014.2$/20.7      & -99.8/-96.5    & $\01.9$/-13.1  & -2.9967/-3.1263 & 2/25               \\
-        R pericalcarine     & 2085.19                & $\010.8$           & -74.9          & $\04.4$        & -3.000          & 1/25               \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\subsubsection{Permutation Test Results}
-The following regions were identified using a \textbf{permutation test} (1000
+The following regions were identified using a permutation test (1000
 permutations) for the correlation analysis. Each region was significant in only
-\textbf{one MCA repetition}, further demonstrating a \textbf{lack of
-    replicability}.
+one MCA repetition, further demonstrating a lack of replicability.
 
 \begin{table}[h]
     \centering
@@ -643,8 +600,8 @@ permutations) for the correlation analysis. Each region was significant in only
         \textbf{Region}     & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max} & \textbf{Frequency} \\
         \midrule
         L inferior temporal & 3337.13                & -56.6          & -43.6          & -18.1          & 2.8572       & 1/25               \\
-        R lingual           & 1150.84                & 23.2           & -61.3          & $\00.4$          & 4.6403       & 1/25               \\
-        R parstriangularis  & 3265.87                & 44.4           & 35.8           & $\03.7$          & 2.8129       & 1/25               \\
+        R lingual           & 1150.84                & 23.2           & -61.3          & $\00.4$        & 4.6403       & 1/25               \\
+        R parstriangularis  & 3265.87                & 44.4           & 35.8           & $\03.7$        & 2.8129       & 1/25               \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -1022,5 +979,54 @@ ReproVIP team.
     Left-vessel                  & $6.42 \pm 4.91$     & Right-vessel                  & $7.92    \pm 5.38$   \\
     Optic-Chiasm                 & $13.11 \pm 6.56\0$  &                               &                      \\
 \end{longtblr}
+
+\section{Vertex-wise Analysis}
+\subsection{Z-Test Results}
+
+\subsubsection{Group analysis}
+The following table summarizes significant regions identified in the
+\textbf{group analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)). Each
+region was statistically significant in only \textbf{one MCA repetition},
+highlighting a \textbf{lack of replicability}.
+
+\begin{table}[h]
+    \centering
+    \caption{Significant regions identified using a Z-test (\(\alpha = 0.05\)) for the group analysis.}
+    \begin{tabular}{l c c c c c c}
+        \toprule
+        \textbf{Region}       & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max} & \textbf{Frequency} \\
+        \midrule
+        \textbf{Baseline}     &                        &                &                &                &              &                    \\
+        R postcentral         & 844.98                 & 23.8           & -36.4          & 57.2           & -2.964       & 1 / 25             \\
+        \midrule
+        \textbf{Longitudinal} &                        &                &                &                &              &                    \\
+        L inferior parietal   & 3337.65                & -56.6          & -43.6          & -18.1          & 2.8572       & 1 / 25             \\
+        R parstriangularis    & 3265.87                & 44.4           & 35.8           & 3.7            & 2.8129       & 1 / 25             \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{Correlation analysis}
+The following table presents significant regions identified in the
+\textbf{correlation analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)).
+Notably, only \textbf{two regions} were found to be significant in \textbf{two
+    different MCA repetitions}, with variability in their estimated \textbf{size}
+and \textbf{MNI coordinates}.
+
+\begin{table}[h]
+    \centering
+    \caption{Significant regions identified using a Z-test (\(\alpha = 0.05\)) for the correlation analysis.}
+    \begin{tabular}{lllllll}
+        \toprule
+        \textbf{Region}     & \textbf{Size ($mm^2$)} & \textbf{MNI X} & \textbf{MNI Y} & \textbf{MNI Z} & \textbf{Max}    & \textbf{Frequency} \\
+        \midrule
+        \textbf{Baseline}   &                        &                &                &                &                 &                    \\
+        L postcentral       & 1006.20 ± 39.27        & -37.0          & -33.8/-34      & 62.5/61.7      & -4.7429/-3.7576 & 2/25               \\
+        L precentral        & 1011.32                & -18.2          & -19.8          & 70.1           & -4.2896         & 1/25               \\
+        R lateral occipital & $\0997.20 \pm 43.08$   & $\014.2$/20.7  & -99.8/-96.5    & $\01.9$/-13.1  & -2.9967/-3.1263 & 2/25               \\
+        R pericalcarine     & 2085.19                & $\010.8$       & -74.9          & $\04.4$        & -3.000          & 1/25               \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \end{document}
