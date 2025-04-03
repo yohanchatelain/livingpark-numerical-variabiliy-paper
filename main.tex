@@ -409,10 +409,6 @@ Specifically, an unbiased within-subject template space and
 image~\cite{reuter2011avoiding} was created using robust, inverse-consistent
 registration~\cite{reuter2010highly}.
 
-The analyses were conducted on the Virtual Imaging
-Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
-Biomed virtual organization within the European Grid Infrastructure (EGI). We
-extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 
 \subsection{Numerical Variability Assessment}
 
@@ -545,16 +541,48 @@ variability.
           longitudinally between PD patients and healthy controls.
 \end{enumerate}
 
+Figure~\ref{fig:significance_correlation} displays the proportion of
+statistically significant tests ($p < 0.05$) across the 26 MCA repetitions for
+each brain region. These tests were uncorrected for multiple comparisons. The
+resulting ratios fluctuate between 0 and 1, but are not uniformly distributed.
+This variability reflects uncertainty in the statistical significance of the
+results, attributable to numerical instability. This ratio can be interpreted
+as an indicator of confidence or consensus across repetitions: values near 0.5
+indicate maximal uncertainty—where entropy is highest—while values approaching
+0 or 1 suggest higher apparent consistency. However, these values alone are not
+sufficient to infer statistical or clinical significance; further analyses
+would be required to support any such conclusions. The purpose here is to
+highlight the uncertainty introduced by numerical variability in statistical
+computations.
+
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/significance_correlation.pdf}
     \caption{Ratio of statistical tests that were significant
-        ($p<0.05$) among the 26 MCA repetitions for each regions.}
+        ($p<0.05$) among the 26 MCA repetitions for each regions.\label{fig:significance_correlation}}
 \end{figure}
+
+Figure~\ref{fig:statstest_coefficients_distribution} presents the distributions
+of partial correlation coefficients (r-values) and F-statistics from ANCOVA,
+across MCA repetitions, for both baseline and longitudinal analyses. Yellow
+dots represent individual results from MCA repetitions; grey violins depict the
+estimated distributions; red diamonds indicate the results obtained from a
+standard FreeSurfer execution using IEEE arithmetic (i.e., without MCA-induced
+variability). For partial correlations (top row), the distance between the
+center of the distribution and zero correlates with the proportion of
+significant results shown in Figure 1. For example, the Right Caudate and Right
+Putamen regions in the longitudinal analysis show distributions centered near
+zero, corresponding to a significance ratio close to 0.5. For group comparisons
+(bottom row), regions with distributions closed to zero correlates with ratio
+equal or close to zero. For instance, the Left-Caudate and Right-Caudate at
+baseline or the Right-Accumbens-area for longitudinal analysis. A more
+comprehensive understanding of how distribution characteristics relate to
+significance ratios would require additional in-depth analysis.
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/statstest_coefficients_distribution.pdf}
     \caption{r-values and F-values distribution for the significant tests among the 26 MCA repetitions.
-        Top row: r-values distribution. Bottom row: F-values distribution. Left column: Baseline analysis. Right column: Longitudinal analysis.}
+        Top row: r-values distribution. Bottom row: F-values distribution. Left column: Baseline analysis.
+        Right column: Longitudinal analysis.\label{fig:statstest_coefficients_distribution}}
 \end{figure}
 
 \subsubsection{Vertex-wise analysis}
@@ -645,6 +673,7 @@ numerical variability, this suggests that the software remains reliable when
 applied across different subjects, supporting its use in future studies.
 
 \section{Conclusions}
+
 Our analysis of cross-sectional data reveals several key insights into the
 reliability of FreeSurfer's brain structure metrics. Across all subjects and
 regions, the measurements for cortical thickness, surface area, and cortical
@@ -711,7 +740,10 @@ results across different studies and subjects.
 
 \section{Acknowledgements}
 
-ReproVIP team.
+The analyses were conducted on the Virtual Imaging
+Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
+Biomed virtual organization within the European Grid Infrastructure (EGI). We
+extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 
 \bibliographystyle{alpha}
 \bibliography{main}
