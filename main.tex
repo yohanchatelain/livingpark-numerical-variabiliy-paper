@@ -302,9 +302,8 @@ from the clinical analysis to prevent potential confounding effects of MCI on
 clinical evaluations. The data collection was sanctioned by the local ethics
 committees of PPMI's participating institutions, and all participants provided
 written informed consent. Descriptive statistics for each group can be found in
-Table~\ref{tab:cohort_stat}.\todo[inline]{The table must be before or after
-    exclusion?} The study adhered to the Declaration of Helsinki and received an
-exemption from Concordia University's Research Ethics Unit.
+Table~\ref{tab:cohort_stat}. The study adhered to the Declaration of Helsinki
+and received an exemption from Concordia University's Research Ethics Unit.
 
 \begin{table}[h!]
     \centering
@@ -365,7 +364,7 @@ exemption from Concordia University's Research Ethics Unit.
         Parkinson's Disease Rating Scale; \textbf{PD}: Parkinson's disease.
         PD-non-MCI longitudinal sample is a subsample of PD-non-MCI
         cross-sectional sample that had longitudinal data and disease severity
-        score available.\label{tab:cohort_stat}}
+        score available.\label{tab:cohort_stat} \todo[inline]{Table is before removing subjects. To update}}
 \end{table}
 
 \subsection{Image acquisition and preprocessing}
@@ -408,7 +407,6 @@ template from the two images was generated and processed longitudinally.
 Specifically, an unbiased within-subject template space and
 image~\cite{reuter2011avoiding} was created using robust, inverse-consistent
 registration~\cite{reuter2010highly}.
-
 
 \subsection{Numerical Variability Assessment}
 
@@ -1016,10 +1014,9 @@ extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 \subsection{Z-Test Results}
 
 \subsubsection{Group analysis}
-The following table summarizes significant regions identified in the
-\textbf{group analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)). Each
-region was statistically significant in only \textbf{one MCA repetition},
-highlighting a \textbf{lack of replicability}.
+The following table summarizes significant regions identified in the group
+analysis using a Z-test (\(\alpha = 0.05\)). Each region was statistically
+significant in only one MCA repetition, highlighting a lack of replicability.
 
 \begin{table}[h]
     \centering
@@ -1039,11 +1036,10 @@ highlighting a \textbf{lack of replicability}.
 \end{table}
 
 \subsubsection{Correlation analysis}
-The following table presents significant regions identified in the
-\textbf{correlation analysis} using a \textbf{Z-test} (\(\alpha = 0.05\)).
-Notably, only \textbf{two regions} were found to be significant in \textbf{two
-    different MCA repetitions}, with variability in their estimated \textbf{size}
-and \textbf{MNI coordinates}.
+The following table presents significant regions identified in the correlation
+analysis using a Z-test (\(\alpha = 0.05\)). Notably, only two regions were
+found to be significant in two different MCA repetitions, with variability in
+their estimated size and MNI coordinates.
 
 \begin{table}[h]
     \centering
@@ -1057,6 +1053,22 @@ and \textbf{MNI coordinates}.
         L precentral        & 1011.32                & -18.2          & -19.8          & 70.1           & -4.2896         & 1/25               \\
         R lateral occipital & $\0997.20 \pm 43.08$   & $\014.2$/20.7  & -99.8/-96.5    & $\01.9$/-13.1  & -2.9967/-3.1263 & 2/25               \\
         R pericalcarine     & 2085.19                & $\010.8$       & -74.9          & $\04.4$        & -3.000          & 1/25               \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \caption{Summary of executions failure and excluded subjects. To standardize the sample, we keep 25 repetitions per subject/visits pair.
+        Subject/visit pairs with less than 25 repetitions were excluded which is 12 subjects.}
+    \begin{tabular}{l c c}
+        \toprule
+        \textbf{Stage}     & \textbf{Number of rejected repetitions} & \textbf{Total number of repetitions} \\
+        \midrule
+        Cluster failure    & 1246 (5.80\%)                           & 21488                                \\
+        FreeSurfer failure & 68 (0.33\%)                             & 21488                                \\
+        QC failure         & 319 (1.48\%)                            & 21488                                \\
+        Total              & 1633 (7.60\%)                           & 21488                                \\
         \bottomrule
     \end{tabular}
 \end{table}
