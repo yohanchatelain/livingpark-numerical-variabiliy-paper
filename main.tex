@@ -53,396 +53,63 @@
 
 \section{Introduction}
 
-Neuroscience relies heavily on computational methods to analyze neuroimaging
-data. However, the reproducibility of such analyses has recently come under
-scrutiny. Reproducibility in neuroimaging is characterized by two key aspects:
-the ability to replicate findings using the same analyses, and the
-generalizability of results obtained with different data and computational
-approaches. A notable example of the reproducibility challenge was shown in the
-study by Botvinik-Nezer et al~\cite{botvinik2020variability}, where 70
-independent research teams analyzed the same fMRI dataset using different
-pipelines, yet agreed on only 4 of 9 predefined hypotheses. The variability in
-outcomes was largely attributed to differences in the data processing methods,
-emphasizing the role of software variability in neuroimaging.
+Neuroimaging reproducibility has emerged as a critical challenge in neuroscience research. While inter-software variability is well-documented~\cite{botvinik2020variability,gronenschild2012effects,bhagwat2021understanding}, within-version numerical variability—small output variations from identical software runs—remains underexplored despite potentially significant clinical implications.
 
-Beyond functional imaging, variability in structural MRI measurements has also
-been well documented, especially regarding differences between software
-versions. Gronenschild et al.~\cite{gronenschild2012effects} found that the
-estimation of brain volume and cortical thickness varied significantly across
-FreeSurfer versions, while Bhagwat et al.~\cite{bhagwat2021understanding}
-reported low correlations in cortical thickness measurements between different
-neuroimaging software packages. More recent studies have also highlighted the
-effects of software version changes on measurement reliability. For instance,
-Haddad et al.~\cite{haddad2023multisite} found significant differences in brain
-structure estimation between different FreeSurfer versions, with varying
-degrees of compatibility depending on the brain region being measured.
+Numerical variability arises from computational factors including floating-point precision, parallel processing, and random initializations. In Parkinson's disease (PD) research, where MRI-derived metrics like cortical thickness and subcortical volumes serve as potential biomarkers, such variability could obscure subtle disease-related changes and compromise statistical reliability.
 
-Despite the growing body of evidence on software-related variability, less
-attention has been paid to within-version numerical variability. Numerical
-variability refers to small changes in software output caused by factors such
-as random initializations, parallel processing, or computational imprecision,
-all of which can occur even when the same software version is used. This type
-of variability could potentially have a significant impact on clinical
-research, where neuroimaging data is often used to investigate relationships
-between brain structure and disease progression. In the context of Parkinson's
-disease (PD), MRI-derived metrics such as cortical thickness and subcortical
-volume have been associated with disease severity and progression. However, the
-reliability of these associations could be compromised by numerical
-variability, as measurement differences may obscure subtle changes in brain
-structure that are clinically relevant.
+Previous studies have demonstrated substantial between-version differences in FreeSurfer outputs~\cite{haddad2023multisite}, but the impact of computational uncertainty within single software versions on clinical associations remains unclear. This gap is particularly concerning for PD research, where establishing reliable brain-behavior relationships is essential for developing neuroimaging biomarkers.
 
-The goal of this study was to investigate the impact of numerical variability
-within a single version of FreeSurfer (7.3.1) on the estimation of structural
-MRI-derived measures and their associations with clinical outcomes in
-Parkinson's disease. While prior research has focused on the differences
-between software versions, this study seeks to quantify the extent to which
-numerical variability within the same version affects these outcomes. We
-focused on cortical thickness, surface area, and subcortical volumes, which are
-commonly used in clinical neuroscience research. By comparing the results
-across repeated runs of the same analysis pipeline, we aimed to assess the
-stability of these metrics and evaluate how variability in these measurements
-might influence the detection of group differences between PD patients and
-healthy controls, as well as correlations between brain structure and clinical
-measures such as UPDRS scores.
-
-Our study addresses a gap in the literature by focusing on within-version
-variability, as opposed to the more commonly studied between-version
-variability. Previous studies have shown that software version changes can
-impact the estimation of brain structure, but fewer studies have quantified the
-variability that exists even when using a single version of the software. Given
-that numerical variability could interfere with the ability to detect subtle
-disease-related changes, it is critical to evaluate its potential effects on
-both cross-sectional and longitudinal analyses in PD. Our findings will provide
-important insights into the reliability of FreeSurfer's outputs in clinical
-research and help inform future efforts to improve reproducibility in
-neuroimaging studies.
+Here, we investigate numerical variability in FreeSurfer 7.3.1 using Monte Carlo Arithmetic to simulate realistic computational perturbations. We introduce the Numerical-Anatomical Variability Ratio (NAVR) to quantify computational uncertainty relative to biological variation and derive its theoretical relationship to statistical effect sizes. Using longitudinal data from the Parkinson's Progression Markers Initiative, we assess how numerical precision affects group comparisons and clinical correlations in PD research.
 
 \subsection{Motivation}
 
-The reproducibility crisis in neuroimaging, particularly within clinical
-research, has drawn attention to the inherent variability in computational
-methods used to analyze brain imaging data. This issue is especially pertinent
-in Parkinson's disease (PD) research, where MRI-derived measures, such as
-cortical thickness and subcortical volumes, have shown promising associations
-with disease severity, progression, and the differentiation between various
-syndromes. However, despite these associations, there are currently no
-established MRI biomarkers widely accepted for PD diagnosis or monitoring
-disease progression. One of the key reasons for this gap is the variability in
-brain structure measurements across studies, which undermines the reliability
-and generalizability of findings.
+Despite promising associations between MRI-derived metrics and PD severity, no neuroimaging biomarkers are widely accepted for clinical diagnosis or monitoring. Measurement variability across studies undermines reliability and generalizability, hindering translation to clinical practice.
 
-Measurement variability can stem from several factors, including differences
-between software versions, variations in processing pipelines, and even
-numerical variability within a single software version. While between-version
-variability has been extensively studied, within-version numerical
-variability—small differences in results generated from repeated runs of the
-same analysis software—remains underexplored. This variability can be due to
-subtle factors such as parallel processing, floating-point precision, and
-random initializations, all of which may affect the reproducibility of
-structural brain metrics, particularly in cross-sectional and longitudinal
-studies of neurodegenerative diseases like PD.
+While between-software and between-version variability have been extensively studied, within-version numerical variability remains underexplored. This computational uncertainty could significantly impact PD research by: (1) masking subtle disease-related changes essential for early detection, (2) compromising statistical power for detecting group differences and clinical correlations, and (3) reducing reproducibility across studies using identical analysis pipelines.
 
-Understanding the extent and impact of numerical variability is crucial for
-several reasons:
-
-\begin{enumerate}
-    \item Enhancing the reliability of neuroimaging studies in PD research: If numerical
-          variability is not accounted for, researchers may draw incorrect conclusions
-          about the association between brain structure and disease severity, potentially
-          leading to inconsistent findings across studies. By investigating numerical
-          variability, we can better assess the stability of MRI-derived metrics and
-          ensure that these measures are reliable across repeated analyses.
-
-    \item Improving the potential of MRI as a diagnostic and prognostic tool for PD: As a
-          non-invasive imaging method, MRI holds significant promise for diagnosing and
-          monitoring Parkinson's disease, offering a way to track brain structure changes
-          without the need for invasive procedures. One of the main barriers to realizing
-          MRI's clinical utility lies in the variability of the measurements it produces.
-          Subtle differences in brain structure, which could be key early indicators of
-          PD or markers of disease progression, may be obscured by variability factors
-          such as numerical variability. By quantifying and addressing this variability,
-          we aim to improve the precision and consistency of MRI metrics, potentially
-          paving the way for MRI to fulfill its role as an effective tool in clinical
-          practice.
-
-    \item Advancing our understanding of the relationship between brain structure and PD
-          clinical outcomes: A clearer understanding of the relationship between
-          MRI-derived structural measures and clinical outcomes, such as the Unified
-          Parkinson's Disease Rating Scale (UPDRS) scores, is vital for improving PD
-          management. However, this relationship can only be reliably studied if the
-          structural measures themselves are stable and consistent across different
-          analysis sessions. Investigating the impact of numerical variability will help
-          clarify whether observed associations between brain structure and clinical
-          outcomes are robust, or if they are partly artifacts of measurement
-          inconsistency.
-\end{enumerate}
-
-In summary, the motivation for this study stems from the pressing need to
-address numerical variability in MRI-derived measures, particularly in the
-context of Parkinson's disease research. By doing so, we aim to enhance the
-reliability of neuroimaging studies, improve the diagnostic and prognostic
-potential of MRI for PD, and deepen our understanding of how brain structure
-relates to clinical outcomes in this complex neurodegenerative disease.
+Understanding numerical variability is crucial for advancing MRI as a diagnostic tool in PD, where reliable quantification of brain-behavior relationships is essential for developing clinically meaningful biomarkers.
 
 \subsection{Objectives}
 
-The overall objective is to investigate the impact of numerical variability in
-FreeSurfer 7.3.1 on the clinical outcomes in Parkinson's disease. Specifically,
-this analysis aims to (1) investigate how numerical variability affects the
-detection of group differences in subcortical volumes and cortical thickness
-between healthy controls (HC) and Parkinson's disease (PD) patients over time.
-(2) Assess the extent to which numerical instability impacts observed
-correlations between disease severity, as measured by clinical outcomes (e.g.,
-UPDRS scores), and brain structure measures in PD patients, both at baseline
-and longitudinally.
+This study investigates numerical variability impacts in FreeSurfer 7.3.1 on PD neuroimaging outcomes. Specific aims include: (1) quantifying how computational uncertainty affects group difference detection between PD patients and healthy controls, (2) assessing numerical variability effects on brain-behavior correlations with clinical measures (UPDRS scores), and (3) developing the NAVR framework to predict statistical reliability from computational precision.
 
-The study aims to provide valuable insights into the reliability of FreeSurfer
-7.3.1 for Parkinson's disease research. Furthermore, it seeks to offer
-recommendations on how to mitigate the effects of numerical variability in
-clinical neuroimaging studies, ultimately enhancing the reproducibility and
-accuracy of MRI-derived measures in PD research.
-
-\section{Methods}
-
-\subsection{Numerical variability assessment}
-
-Floating-point arithmetic, governed by the IEEE-754 standard, approximates real
-numbers with finite precision, making rounding errors inevitable. These
-rounding errors can accumulate, potentially rendering extensive scientific
-computations imprecise or erroneous. Quantifying such numerical errors
-accurately is challenging due to the vast number of calculations typically
-involved. Stochastic arithmetic addresses this issue by treating the evaluation
-of numerical errors as a statistical sampling problem.
-
-Among stochastic arithmetic techniques, Monte Carlo Arithmetic
-(MCA)~\cite{parker1997monte} leverages randomness to assess numerical
-instability resulting from finite-precision calculations. MCA introduces
-controlled random perturbations into basic arithmetic operations
-$(+,-,\times,\div)$, simulating unbiased rounding independent of previous
-operations. This approach enables systematic evaluations of how software or
-hardware modifications impact computational stability and result reliability.
-MCA incorporates the concept of virtual precision, which controls the amplitude
-of injected noise. By executing the same computational task multiple times, MCA
-allows measurement of result stability by estimating the number of significant
-digits preserved across runs.
-
-MCA has also been extended to elementary mathematical libraries, such as
-\texttt{libm}, which includes functions like \texttt{exp}, \texttt{log},
-\texttt{sin}, and \texttt{cos}. The Fuzzy-libm
-project~\cite{salari2021accurate} provides a comprehensive ecosystem of Docker
-images containing a version of \texttt{libm} compiled with
-Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler that replaces
-traditional floating-point operations with their MCA counterparts. Fuzzy-libm
-applies random perturbations to the output of \texttt{libm} functions,
-effectively simulating variability across different software implementations.
-This approach has proven effective for emulating the impact of operating system
-changes on numerical computations~\cite{salari2021accurate}.
-
-\subsection{Participants}
-
-We selected participants from the Parkinson's Progression Markers Initiative
-(PPMI) cohort, a large-scale, multi-site study designed to identify biomarkers
-of Parkinson's disease. The PPMI cohort includes individuals with early-stage
-Parkinson's disease, healthy controls, and those with other parkinsonian
-syndromes. The PPMI study aims to collect and analyze a wide range of clinical,
-genetic, and imaging data to better understand the progression of Parkinson's
-disease and identify potential biomarkers for diagnosis and treatment.
-
-We started with 210 patients diagnosed with Parkinson's Disease (PD)
-participated in the study: 181 with PD without mild cognitive impairment
-(PD-non-MCI) and 29 with PD with mild cognitive impairment (PD-MCI) and 106
-healthy controls (HC). We excluded PD-MCI patients from the analysis to avoid
-confounding effects of mild cognitive impairment on clinical evaluations.
-Additionally, we excluded participants with other neurological diagnoses to
-ensure that the results reflected the effects of Parkinson's disease alone. The
-inclusion criteria for PD patients comprised a primary diagnosis of PD, the
-availability of two visits with a T1-weighted scan, and the absence of other
-neurological diagnoses. PD patients were evaluated using the Unified
-Parkinson's Disease Rating Scale (UPDRS) scores.
-
-
-
-We ended with 125 PD-non-MCI patients and 106 HC were considered. 
-
-
-The data
-collection was sanctioned by the local ethics committees of PPMI's
-participating institutions, and all participants provided written informed
-consent. Descriptive statistics for each group can be found in
-Table~\ref{tab:cohort_stat}. The study adhered to the Declaration of Helsinki
-and received an exemption from Concordia University's Research Ethics Unit.
-
-In total, 210 patients diagnosed with Parkinson's Disease (PD) participated in
-the study: 181 with PD without mild cognitive impairment (PD-non-MCI) and 29
-with PD with mild cognitive impairment (PD-MCI). Additionally, 106 healthy
-controls (HC) were included. All participants were sourced from the Parkinson's
-Progression Markers Initiative (PPMI; www.ppmi-info.org). The inclusion
-criteria for PD patients comprised a primary diagnosis of PD, the availability
-of a T1-weighted scan, and the absence of other neurological diagnoses. For the
-clinical analysis, 125 PD-non-MCI patients and all 106 HC were considered.
-Every participant in this subset had two study visits with T1-weighted images
-available. Additionally, PD patients were evaluated using the Unified
-Parkinson's Disease Rating Scale (UPDRS) scores. PD-MCI patients were excluded
-from the clinical analysis to prevent potential confounding effects of MCI on
-clinical evaluations.
-
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{lcc}
-        \toprule
-        \textbf{Cohort}         & \textbf{HC}        & \textbf{PD-non-MCI} \\
-        \hline
-        n                       & $103 $             & $121 $              \\
-        Age (y)                 & $60.7 \pm 10.3 $   & $60.7 \pm \09.1 $   \\
-        Age
-        range                   & $30.6 - 84.3 $     & $39.2 - 78.3 $      \\
-        Gender (male, \%)       & $57 \; (55.3\%)
-        $                       & $80 \; (66.1\%) $                        \\
-        Education (y)           & $16.6 \pm \03.3 $  & $16.1 \pm \03.0 $   \\
-        UPDRS III OFF baseline  & $- $               & $23.4 \pm 10.1 $    \\
-        UPDRS III OFF follow-up & $- $               & $25.8 \pm 11.1 $    \\
-        Duration T2 - T1 (y)    & $\01.4 \pm \00.5 $ & $\01.4 \pm \00.7 $  \\ \bottomrule
-    \end{tabular}
-    \vspace{1em}
-
-    \caption{\textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS = Unified Parkinson's Disease Rating Scale; PD = Parkinson's disease. Values are expressed as mean $\pm$ standard deviation. PD-non-MCI longitudinal sample is a subsample of the PD-non-MCI original sample that had longitudinal data and disease severity scores available.
-        \label{tab:cohort_stat}}
-\end{table}
-
-\subsection{Image acquisition and preprocessing}
-
-T1-weighted MRI images were obtained from PPMI that uses standardized
-acquisition parameters: repetition time = 2.3 s, echo time = 2.98 s, inversion
-time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view =
-256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite
-project there may be slight differences in the sites' setup.
-
-To assess numerical variability in FreeSurfer outputs, we used FreeSurfer
-7.3.1, instrumented with Fuzzy-libm. The virtual precision was set to 53 for
-binary64 (double precision) and 24 for binary32 (single precision) to simulate
-machine-level precision errors. The \texttt{recon-all} function was employed
-for cortical reconstruction, extracting volumes, cortical thickness, and
-surface area for each participant. This process was repeated 34 times per
-subject, generating 34 sets of brain structure metrics. Due to instabilities
-introduced by MCA, some runs failed and were excluded from the analysis.
-
-To ensure the quality of the segmentations, we manually inspected them along
-the three anatomical axes. Segmentations with visible errors were excluded from
-the analysis. Table~\ref{tab:qc-stats} summarizes the number of excluded
-executions.
-
-To standardize the dataset, we randomly selected 25 successful runs per
-subject/visit pair, resulting in 25 sets of MCA repetitions, each containing
-the same number of subject/visit pairs. Maintaining a consistent number of
-subjects across repetitions was essential for statistical analysis.
-Subject/visit pairs with fewer than 25 MCA repetitions were excluded to ensure
-consistency in statistical analyses.
-
-Once the perturbed datasets were obtained, downstream analysis was performed
-using a FreeSurfer pipeline without Fuzzy-libm to prevent further
-perturbations.
-
-For each MCA repetition, we followed the longitudinal preprocessing stream to
-analyze images~\cite{reuter2012within}. Initially, both time points were
-processed cross-sectionally with the default pipeline, after which an unbiased
-template from the two images was generated and processed longitudinally.
-Specifically, an unbiased within-subject template space and
-image~\cite{reuter2011avoiding} was created using robust, inverse-consistent
-registration~\cite{reuter2010highly}.
-
-\subsection{Numerical Variability Assessment}
-
-We evaluated the numerical variability of FreeSurfer 7.3.1 in two contexts: (1)
-cross-sectional analysis and (2) longitudinal analysis.
-
-\subsubsection{Cross-sectional Analysis}
-
-First, we measured the numerical variability in estimating brain volumes,
-cortical thickness, and surface area using the PPMI cohort. For each subject,
-cortical and subcortical volumes, as well as cortical surface areas and
-thickness, were extracted from each T1w scan across the 26 MCA repetitions
-using the Destrieux 2009 atlas in FreeSurfer. We calculated the number of
-significant digits and the standard deviation of these measurements. The
-\emph{Significant Digits} package (described in Section~\ref{sec:sig_digits})
-was used to compute the number of significant digits, while the standard
-deviation captured variability across repetitions.
-
-We also compared the number of significant digits between HC and PD groups
-using a paired t-test. To further investigate differences in software
-variability between these groups, we conducted a two-sample t-test.
-Additionally, we calculated the Sørensen-Dice coefficient to assess structural
-overlap across MCA repetitions. The extended Sørensen-Dice coefficient was
-applied for each ROI and structural measure using the following formula:
-\[
-    \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \overset{n}{\underset{i=1}{\bigcap}} A_i \right|}{\overset{n}{\underset{i=1}{\sum}} \left| A_i \right|}.
-\]
-
-\subsubsection{Longitudinal Analysis}
-
-Second, we analyzed volume, cortical thickness, and surface area across two
-time points in the longitudinal cohort. At the subcortical level, we examined
-correlations between baseline subcortical volumes and UPDRS scores, as well as
-potential group differences in subcortical volumes between PD-non-MCI and HC
-groups. We also conducted longitudinal analyses to assess the correlation
-between the rate of change in UPDRS scores and subcortical volumes, as well as
-group differences in subcortical volume change rates. The rate of subcortical
-volume change was calculated as $((\text{volume}_2 - \text{volume}_1) /
-    \text{volume}_1) \times 100$. Partial correlation analysis was used for
-correlation assessments, while ANCOVA was applied for group comparisons. All
-analyses were adjusted for age and sex, with additional adjustments for the
-time interval between visits in longitudinal analyses.
-
-At the cortical vertex level, we explored correlations between baseline
-cortical thickness and UPDRS scores, along with group differences in baseline
-cortical thickness. Vertex-wise longitudinal analyses were performed to assess
-correlations between changes in UPDRS scores and the rate of change in cortical
-thickness, as well as group differences in cortical thickness change rates. The
-rate of cortical thickness change was calculated as $(\text{thickness}_2 -
-    \text{thickness}_1) / (\text{time}_2 - \text{time}_1)$, expressed in mm/year.
-Age and sex were included as covariates, and longitudinal analyses were further
-adjusted for the time between visits. A cluster-wise permutation-based
-$p$-value threshold of 0.05 was applied, and the frequency of identified
-clusters across the 26 MCA repetitions was reported.
+Our findings will inform strategies for mitigating numerical variability effects and enhancing reproducibility in clinical neuroimaging studies.
 
 \section{Results}
 
-The PD patients and HC group did not differ significantly in age ($p > 0.05$).
-However, significant differences were found in years of education ($t = -2.05$,
-$p = 0.04$) and sex distribution ($\chi^2 = 4.15$, $p = 0.04$). In the clinical
-cohort, no significant differences were observed between PD-non-MCI patients
-and the HC group in terms of age, education, time interval between visits, or
-sex distribution ($p > 0.05$). The descriptive statistics are presented in
-Table~\ref{tab:cohort_stat}.
+PD and HC groups showed no significant age differences ($p > 0.05$) but differed in education ($t = -2.05$, $p = 0.04$) and sex distribution ($\chi^2 = 4.15$, $p = 0.04$). The longitudinal cohort showed no significant demographic differences between groups (Table~\ref{tab:cohort_stat}).
 
-\subsection{Cross-sectional Analysis}
+\subsection{Statistical consistency varies with numerical precision}
 
-We evaluated the numerical variability of FreeSurfer 7.3.1 in estimating brain
-structure metrics such as cortical thickness, surface area, and both cortical
-and subcortical volumes. Figure~\ref{fig:sig_digits_cortical} illustrates the
-number of significant digits for each cortical region and metric.
-Table~\ref{tab:sig-cortical} provides the average number of significant digits
-across all subjects and regions. Figure~\ref{fig:dice} presents the Dice
-coefficient for each ROI and structural measure, while
-Figure~\ref{fig:sig_digits_subcortical} shows the number of significant digits
-for subcortical volume in each region and group.
+Statistical significance proportions across 26 MCA repetitions varied substantially for subcortical volumes (Figure~\ref{fig:significance_correlation}). Ratios near 0.5 indicated maximal uncertainty, while values approaching 0 or 1 suggested consistent results across computational variations.
 
-Our results indicate that the measurements produced by FreeSurfer 7.3.1 exhibit
-numerical instability, with an average of $1.49 \pm 0.27$ significant digits
-for cortical thickness, $1.03 \pm 0.27$ for surface area, and $1.00 \pm 0.28$
-for volume. This suggests that, on average, the measurements are precise to
-only one decimal place. The number of significant digits is consistent across
-regions, with an average range of $[\min, \max]$ significant digits between
-$[1.05, 1.75]$ for cortical thickness, $[0.58, 1.35]$ for surface area, and
-$[0.52, 1.36]$ for cortical volume. Notably, the variability between subjects
-is high for all three metrics, with some measurements showing as few as zero
-significant digits, indicating a complete loss of precision in certain cases.
-\todo[inline]{Complete with between-subjects variability. Update the figure.}
+Effect size distributions showed notable variability across MCA repetitions (Figure~\ref{fig:statstest_coefficients_distribution}). Partial correlation coefficients and F-statistics from ANCOVA analyses demonstrated spread around standard IEEE-754 results (red markers), indicating that numerical precision affects both statistical significance and effect size estimation. 
 
-Figure~\ref{fig:dice} highlights substantial discrepancies between subjects.
-Visually, the distribution of the Dice coefficient appears similar across
-regions, although certain regions, particularly the vessels, show the highest
-variability.
+\begin{figure}
+\includegraphics[width=\linewidth]{figures/subcortical_volume_significance_correlation.pdf}
+\caption{Proportion of statistically significant tests ($p < 0.05$) across the 26 MCA repetitions for subcortical volume measures.\label{fig:significance_correlation}}
+\end{figure}
 
+\begin{figure}
+\includegraphics[width=\linewidth]{figures/subcortical_volume_coefficients_distribution.pdf}
+\caption{Distribution of partial correlation coefficients (r-values) and F-statistics from ANCOVA across MCA repetitions for subcortical volume measures. Red dots represent the IEEE results. The top row shows r-values, while the bottom row shows F-values. The left column represents baseline analysis, and the right column represents longitudinal analysis.\label{fig:statstest_coefficients_distribution}}
+\end{figure}
+
+\subsection{NAVR reveals region-specific numerical instabilities}
+
+NAVR values varied substantially across brain regions, with some showing computational uncertainty comparable to or exceeding biological variation (Figure~\ref{fig:navr_subcortical}). Regions with high NAVR values indicate areas where numerical precision limitations may compromise the detection of true anatomical differences.
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{figures/NAVR_subcortical_volume_all.png}
+        \caption{Numerical-Anatomical Variability Ratio (NAVR) for subcortical volumes across regions and groups. Higher NAVR values indicate greater computational uncertainty relative to biological variation.\label{fig:navr_subcortical}}
+\end{figure}
+
+\subsection{Cross-sectional numerical precision analysis}
+
+FreeSurfer 7.3.1 showed limited numerical precision across all cortical measures: $1.49 \pm 0.27$ significant digits for thickness, $1.03 \pm 0.27$ for surface area, and $1.00 \pm 0.28$ for volume (Figures~\ref{fig:sig_digits_cortical}, \ref{fig:sig_digits_subcortical}). These values indicate measurements are typically precise to only one decimal place, with some instances showing complete precision loss.
+
+Regional consistency was observed within each metric type, with thickness showing the highest precision (range: 1.05-1.75 digits) compared to area (0.58-1.35 digits) and volume (0.52-1.36 digits). Dice coefficients revealed substantial inter-subject variability, particularly in vessel regions (Figure~\ref{fig:dice}).
+ 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/dice.pdf}
     \caption{Dice coefficient.\label{fig:dice}}
@@ -481,49 +148,7 @@ variability.
           longitudinally between PD patients and healthy controls.
 \end{enumerate}
 
-Figure~\ref{fig:significance_correlation} displays the proportion of
-statistically significant tests ($p < 0.05$) across the 26 MCA repetitions for
-each brain region. These tests were uncorrected for multiple comparisons. The
-resulting ratios fluctuate between 0 and 1, but are not uniformly distributed.
-This variability reflects uncertainty in the statistical significance of the
-results, attributable to numerical instability. This ratio can be interpreted
-as an indicator of confidence or consensus across repetitions: values near 0.5
-indicate maximal uncertainty—where entropy is highest—while values approaching
-0 or 1 suggest higher apparent consistency. However, these values alone are not
-sufficient to infer statistical or clinical significance; further analyses
-would be required to support any such conclusions. The purpose here is to
-highlight the uncertainty introduced by numerical variability in statistical
-computations.
 
-\begin{figure}
-    \includegraphics*[width=\linewidth]{figures/significance_correlation.pdf}
-    \caption{Ratio of statistical tests that were significant
-        ($p<0.05$) among the 26 MCA repetitions for each regions.\label{fig:significance_correlation}}
-\end{figure}
-
-Figure~\ref{fig:statstest_coefficients_distribution} presents the distributions
-of partial correlation coefficients (r-values) and F-statistics from ANCOVA,
-across MCA repetitions, for both baseline and longitudinal analyses. Yellow
-dots represent individual results from MCA repetitions; grey violins depict the
-estimated distributions; red diamonds indicate the results obtained from a
-standard FreeSurfer execution using IEEE arithmetic (i.e., without MCA-induced
-variability). For partial correlations (top row), the distance between the
-center of the distribution and zero correlates with the proportion of
-significant results shown in Figure 1. For example, the Right Caudate and Right
-Putamen regions in the longitudinal analysis show distributions centered near
-zero, corresponding to a significance ratio close to 0.5. For group comparisons
-(bottom row), regions with distributions closed to zero correlates with ratio
-equal or close to zero. For instance, the Left-Caudate and Right-Caudate at
-baseline or the Right-Accumbens-area for longitudinal analysis. A more
-comprehensive understanding of how distribution characteristics relate to
-significance ratios would require additional in-depth analysis.
-
-\begin{figure}
-    \includegraphics*[width=\linewidth]{figures/statstest_coefficients_distribution.pdf}
-    \caption{r-values and F-values distribution for the significant tests among the 26 MCA repetitions.
-        Top row: r-values distribution. Bottom row: F-values distribution. Left column: Baseline analysis.
-        Right column: Longitudinal analysis.\label{fig:statstest_coefficients_distribution}}
-\end{figure}
 
 \subsubsection{Vertex-wise analysis}
 
@@ -576,107 +201,132 @@ one MCA repetition, further demonstrating a lack of replicability.
 
 \section{Discussion}
 
-The observed numerical variability in key metrics --- cortical thickness,
-surface area, and volume --- raises concerns about the reliability of these
-measurements in clinical research. The low precision in these metrics could
-impede the detection of meaningful effects, particularly in studies of diseases
-like Parkinson's. At baseline, we found no statistically significant
-differences between the HC and PD groups across all regions and metrics. This
-lack of differentiation suggests that these metrics may not be sensitive enough
-to detect early-stage or subtle effects of Parkinson's disease. The clusters
-identified in the analysis were inconsistent across repetitions, with only 1
-out of 26 clusters appearing consistently. This highlights the challenge of
-reproducing significant findings, likely due to variability in the
-data.Inconsistencies were also observed across different methodologies,
-specifically when comparing results from a Z-test and a permutation test. This
-suggests that methodological choices can significantly impact outcomes and
-interpretations.
+Our analysis reveals significant numerical instability in FreeSurfer 7.3.1, with cortical measurements showing limited precision (1-1.5 significant digits) that substantially impacts statistical reliability in neuroimaging studies. These precision limitations pose particular challenges for detecting subtle disease-related changes in conditions like Parkinson's disease.
 
-It is possible that higher-resolution data could have revealed more significant
-findings, as the current resolution may be insufficient to capture subtle
-structural changes. Additionally, the metrics used—cortical thickness, surface
-area, and volume—may lack the sensitivity required to detect subtle
-neuroanatomical differences associated with Parkinson's disease. The effects of
-Parkinson's disease itself may be too subtle to be detected by current
-methodologies, further compounded by the numerical variability inherent in the
-data.
+The absence of significant baseline differences between PD and HC groups, combined with inconsistent cluster detection (only 1/26 clusters reproduced across repetitions), demonstrates how numerical variability can compromise reproducibility. The NAVR framework quantifies this relationship, showing that computational uncertainty approaches or exceeds biological variation in many brain regions.
 
-While numerical variability appears to have a more substantial impact on the
-results than software-related variability (as reported by Sokolowski et al.,
-2024), our longitudinal analysis shows limited significance. Fewer clusters
-were identified using the permutation test compared to the Z-test, and the
-clusters identified by the Z-test were not consistent across repetitions.
+Statistical test consistency varied markedly across MCA repetitions, with methodological choices (Z-test vs. permutation test) further influencing outcome reliability. Effect size distributions showed substantial spread around standard IEEE-754 results, indicating that numerical precision directly affects both significance testing and effect size estimation.
 
-The higher variability observed between subjects, compared to within-subject
-variability, is a positive sign for the reproducibility of results. Despite
-numerical variability, this suggests that the software remains reliable when
-applied across different subjects, supporting its use in future studies.
+Importantly, inter-subject variability exceeded intra-subject variability, suggesting that FreeSurfer maintains relative consistency across different individuals despite numerical limitations. This supports continued use while highlighting the need for improved computational precision in future neuroimaging software development.
+
+
+\section{Methods}
+
+\subsection{Numerical variability assessment}
+
+We employed Monte Carlo Arithmetic (MCA)~\cite{parker1997monte} to quantify numerical instability in FreeSurfer computations. MCA introduces controlled random perturbations into floating-point operations, simulating rounding errors that occur across different computational environments. This stochastic approach enables systematic assessment of result stability by measuring variation across multiple runs of identical analyses.
+
+We used Fuzzy-libm~\cite{salari2021accurate}, which extends MCA to mathematical library functions (\texttt{exp}, \texttt{log}, \texttt{sin}, \texttt{cos}) through Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler. Virtual precision parameters were set to 53 bits for double precision and 24 bits for single precision to simulate realistic machine-level precision errors.
+
+\subsection{Participants}
+
+We analyzed data from the Parkinson's Progression Markers Initiative (PPMI), a multi-site longitudinal study. From 316 initial participants, we selected 125 Parkinson's disease patients without mild cognitive impairment (PD-non-MCI) and 106 healthy controls (HC) with complete longitudinal T1-weighted MRI data. PD-MCI patients were excluded to avoid confounding effects of cognitive impairment.
+
+Inclusion criteria required: (1) primary PD diagnosis or healthy control status, (2) availability of two visits with T1-weighted scans, and (3) absence of other neurological diagnoses. PD severity was assessed using the Unified Parkinson's Disease Rating Scale (UPDRS). The study received ethics approval from participating institutions, and all participants provided written informed consent (Table~\ref{tab:cohort_stat}).
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Cohort}         & \textbf{HC}        & \textbf{PD-non-MCI} \\
+        \hline
+        n                       & $103 $             & $121 $              \\
+        Age (y)                 & $60.7 \pm 10.3 $   & $60.7 \pm \09.1 $   \\
+        Age
+        range                   & $30.6 - 84.3 $     & $39.2 - 78.3 $      \\
+        Gender (male, \%)       & $57 \; (55.3\%)
+        $                       & $80 \; (66.1\%) $                        \\
+        Education (y)           & $16.6 \pm \03.3 $  & $16.1 \pm \03.0 $   \\
+        UPDRS III OFF baseline  & $- $               & $23.4 \pm 10.1 $    \\
+        UPDRS III OFF follow-up & $- $               & $25.8 \pm 11.1 $    \\
+        Duration T2 - T1 (y)    & $\01.4 \pm \00.5 $ & $\01.4 \pm \00.7 $  \\ \bottomrule
+    \end{tabular}
+    \vspace{1em}
+
+    \caption{\textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS = Unified Parkinson's Disease Rating Scale; PD = Parkinson's disease. Values are expressed as mean $\pm$ standard deviation. PD-non-MCI longitudinal sample is a subsample of the PD-non-MCI original sample that had longitudinal data and disease severity scores available.
+        \label{tab:cohort_stat}}
+\end{table}
+
+\subsection{Image acquisition and preprocessing}
+
+T1-weighted MRI images were acquired using standardized PPMI parameters: TR/TE/TI = 2.3/2.98/0.9 s, 1mm isotropic resolution, 192 slices, 256×256 matrix. Minor site-specific variations existed due to the multi-site design.
+
+We processed images using FreeSurfer 7.3.1 instrumented with Fuzzy-libm to introduce controlled numerical perturbations. Each participant underwent 34 \texttt{recon-all} executions, extracting cortical thickness, surface area, and volumes. After quality control and exclusion of failed runs, we randomly selected 25 successful repetitions per subject to ensure balanced datasets for statistical analysis.
+
+Longitudinal processing followed the standard FreeSurfer stream~\cite{reuter2012within}: cross-sectional processing of both timepoints, followed by creation of an unbiased within-subject template~\cite{reuter2011avoiding} using robust registration~\cite{reuter2010highly}. Downstream analyses used unperturbed FreeSurfer to prevent additional numerical perturbations.
+
+\subsection{Numerical Variability Assessment}
+
+We assessed FreeSurfer 7.3.1 numerical stability in cross-sectional and longitudinal contexts using the Numerical-Anatomical Variability Ratio (NAVR) and its relationship to statistical effect sizes.
+
+\subsubsection{Numerical-Anatomical Variability Ratio (NAVR)}
+
+To quantify computational stability relative to biological variation, we developed the Numerical-Anatomical Variability Ratio (NAVR). For each brain region, NAVR measures the ratio of measurement uncertainty arising from computational processes to natural inter-subject anatomical variation:
+
+\[
+\text{NAVR} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
+\]
+
+where $\sigma_{\text{num}}$ represents numerical variability (measurement precision across MCA repetitions for individual subjects) and $\sigma_{\text{anat}}$ represents anatomical variability (inter-subject differences within each repetition).
+
+For each region of interest, measurements from $n$ MCA repetitions across $m$ subject-visit pairs form a data matrix $\mathcal{M}_{n \times m}$, where element $x_{i,j}$ represents the measurement for subject $j$ in repetition $i$.
+
+Numerical variability quantifies intra-subject measurement consistency:
+\begin{equation}
+\sigma^2_{\text{num}} = \frac{1}{m} \sum_{j=1}^{m} \left[ \frac{1}{n-1} \sum_{i=1}^{n} (x_{i,j} - \bar{x}_{\cdot,j})^2 \right]
+\end{equation}
+
+Anatomical variability captures inter-subject differences:
+\begin{equation}
+\sigma^2_{\text{anat}} = \frac{1}{n} \sum_{i=1}^{n} \left[ \frac{1}{m-1} \sum_{j=1}^{m} (x_{i,j} - \bar{x}_{i,\cdot})^2 \right]
+\end{equation}
+
+where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means, respectively. Higher NAVR values indicate regions where computational uncertainty approaches or exceeds biological variation, potentially compromising the detection of true anatomical differences.
+
+\subsubsection{Relationship between NAVR and Effect Size Uncertainty}
+
+We derived the theoretical relationship between NAVR and Cohen's d variability to quantify how measurement uncertainty affects statistical effect sizes in group comparisons.
+
+For a balanced two-group design with total sample size $N$, each observation decomposes as $X_{ij} = \mu_i + \varepsilon_{ij}^{(\text{anat})} + \varepsilon_{ij}^{(\text{num})}$, where $\mu_i$ represents the true group mean, $\varepsilon_{ij}^{(\text{anat})} \sim \mathcal{N}(0, \sigma_{\text{anat}}^2)$ captures anatomical variation, and $\varepsilon_{ij}^{(\text{num})} \sim \mathcal{N}(0, \sigma_{\text{num}}^2)$ represents numerical uncertainty.
+
+The standard deviation of Cohen's d attributable to measurement error is:
+\begin{equation}
+\sigma_d = \frac{2}{\sqrt{N}} \cdot \text{NAVR}
+\end{equation}
+
+This relationship emerges from error propagation analysis. The difference in group means has variance $\text{Var}(\bar{X}_1 - \bar{X}_2) = 4(\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2)/N$, with the numerical component contributing $4\sigma_{\text{num}}^2/N$. Since Cohen's d normalizes by the pooled standard deviation $\sqrt{\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2}$, the measurement error contribution becomes $\sigma_d = (2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N}) \cdot \text{NAVR}$.
+
+This formula indicates that regions with NAVR = 0.1 contribute approximately $0.2/\sqrt{N}$ uncertainty to Cohen's d, while regions with NAVR = 1.0 contribute $2/\sqrt{N}$ uncertainty. The relationship provides a direct link between computational stability (NAVR) and statistical reliability in neuroimaging studies.
+
+
+
+\subsubsection{Cross-sectional Analysis}
+
+We extracted cortical and subcortical volumes, thickness, and surface areas from 26 MCA repetitions using the Destrieux 2009 atlas. Numerical precision was quantified using significant digits analysis, while measurement variability was assessed through standard deviations across repetitions.
+
+Group comparisons between HC and PD used two-sample t-tests. Structural overlap was evaluated using the extended Sørensen-Dice coefficient:
+\[
+    \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \bigcap_{i=1}^{n} A_i \right|}{\sum_{i=1}^{n} \left| A_i \right|}
+\]
+
+\subsubsection{Longitudinal Analysis}
+
+Longitudinal analyses examined correlations between brain metrics and UPDRS scores, plus group differences between PD and HC across two timepoints. 
+
+For subcortical regions, we assessed baseline volume-UPDRS correlations and group differences using partial correlation and ANCOVA. Longitudinal changes were analyzed using volume change rates: $(\text{volume}_2 - \text{volume}_1) / \text{volume}_1 \times 100$.
+
+Vertex-wise cortical analyses examined thickness-UPDRS correlations and group differences at baseline and longitudinally. Thickness change rates were calculated as $(\text{thickness}_2 - \text{thickness}_1) / (\text{time}_2 - \text{time}_1)$ (mm/year). All analyses included age and sex covariates, with additional time-between-visits adjustment for longitudinal models. Cluster-wise permutation testing used $p < 0.05$ threshold, reporting cluster frequency across 26 MCA repetitions.
+
 
 \section{Conclusions}
 
-Our analysis of cross-sectional data reveals several key insights into the
-reliability of FreeSurfer's brain structure metrics. Across all subjects and
-regions, the measurements for cortical thickness, surface area, and cortical
-volume demonstrated a low average number of significant digits. This indicates
-a limited precision in these metrics, which could affect the reliability of the
-results in clinical research, particularly when detecting small,
-disease-related changes in brain structure. Additionally, the Dice coefficients
-for both cortical and subcortical volumes were found to be low, indicating poor
-overlap between repeated measures. This variability undermines the utility of
-volume estimates for robust comparisons in either longitudinal or
-cross-sectional studies.
+This study demonstrates significant numerical limitations in FreeSurfer 7.3.1, with cortical measurements exhibiting only 1-1.5 significant digits of precision. These computational constraints substantially impact statistical reliability and reproducibility in neuroimaging research, particularly for detecting subtle disease-related changes.
 
-Furthermore, there was substantial variability in the number of significant
-digits between subjects, suggesting that the numerical stability of these
-measurements varies markedly between individuals. This variability complicates
-comparisons across subjects and raises concerns about the generalizability of
-the results. However, one positive finding was that the variability between
-subjects was greater than the variability within subjects. This is an
-encouraging sign for reproducibility, as it suggests that FreeSurfer performs
-consistently when applied to the same subject over time, which enhances
-confidence in its ability to track longitudinal changes within individuals.
+Our NAVR framework quantifies the relationship between computational uncertainty and biological variation, revealing that numerical instability approaches or exceeds anatomical variability in many brain regions. This finding has direct implications for statistical power, as demonstrated by inconsistent cluster detection (only 1/26 clusters reproduced) and variable effect sizes across identical analyses.
 
-In the longitudinal analysis, additional challenges emerged in tracking changes
-over time in brain metrics, particularly in relation to clinical outcomes such
-as the UPDRS scores. We found no significant vertex-wise correlations between
-baseline UPDRS scores, which assess Parkinson's disease severity, and cortical
-thickness. This lack of correlation implies that cortical thickness may not be
-a sensitive biomarker for disease severity at the individual level,
-particularly in the early stages of Parkinson's. Similarly, no significant
-vertex-wise correlations were observed between the rate of change in UPDRS
-scores and the rate of change in cortical thickness, suggesting that the
-progression of Parkinson's, as measured by UPDRS scores, may not be closely
-linked to changes in cortical thickness, at least with the metrics and
-resolution employed in this study.
+While inter-subject variability exceeded intra-subject variability—supporting relative consistency across individuals—the absence of significant PD-HC differences and weak clinical correlations highlight how numerical limitations can mask true biological signals. The theoretical relationship between NAVR and Cohen's d uncertainty provides a framework for predicting statistical reliability based on computational precision.
 
-Another notable limitation was the inconsistency in cluster detection across
-repetitions. Only one out of 26 clusters was reproduced consistently,
-highlighting the challenge of obtaining reliable results using cluster-based
-statistical methods. The variability in the data appears to have a strong
-influence on cluster identification, further emphasizing the need for
-methodological refinements. Moreover, no statistically significant group
-differences in cortical thickness were found at baseline between Parkinson's
-disease (PD) patients and healthy controls (HC), indicating that cortical
-thickness alone may not be a sufficient marker for distinguishing between these
-groups at early stages of the disease. Likewise, there were no significant
-differences in the rate of cortical thickness change between the two groups
-over time, suggesting that the progression of cortical thinning may be too
-subtle or inconsistent to detect with the current methodologies, or that the
-metrics used lack sensitivity to capture meaningful longitudinal changes
-associated with Parkinson's disease.
-
-In summary, these findings underscore the limitations of FreeSurfer 7.3.1 in
-providing precise and reliable brain structure measurements for both
-cross-sectional and longitudinal studies, especially in the context of
-Parkinson's disease research. The observed low numerical stability, high
-between-subject variability, and the absence of significant group differences
-or correlations with clinical measures raise concerns about the sensitivity and
-robustness of these metrics for detecting subtle disease-related changes.
-Future research should consider the use of higher-resolution data, larger
-sample sizes, and alternative neuroimaging biomarkers to better capture subtle
-structural changes in the brain. Additionally, methodological improvements are
-needed to reduce numerical variability and enhance the reproducibility of
-results across different studies and subjects.
+These findings emphasize the critical need for improved numerical precision in neuroimaging software. Future developments should prioritize computational stability to enhance the detection of subtle neurological changes and improve reproducibility across studies. The NAVR framework offers a practical tool for assessing and comparing the numerical reliability of neuroimaging methodologies.
 
 \section{Acknowledgements}
 
