@@ -16,7 +16,7 @@
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{multirow}
-
+\usepackage{subcaption}
 \usepackage{xcolor}
 \usepackage{tabularray}
 \usepackage{booktabs} % For \toprule, \midrule, \bottomrule
@@ -86,12 +86,12 @@ Statistical significance proportions across 26 MCA repetitions varied substantia
 Effect size distributions showed notable variability across MCA repetitions (Figure~\ref{fig:statstest_coefficients_distribution}). Partial correlation coefficients and F-statistics from ANCOVA analyses demonstrated spread around standard IEEE-754 results (red markers), indicating that numerical precision affects both statistical significance and effect size estimation. 
 
 \begin{figure}
-\includegraphics[width=\linewidth]{figures/subcortical_volume_significance_correlation.pdf}
+\includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
 \caption{Proportion of statistically significant tests ($p < 0.05$) across the 26 MCA repetitions for subcortical volume measures.\label{fig:significance_correlation}}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=\linewidth]{figures/subcortical_volume_coefficients_distribution.pdf}
+\includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
 \caption{Distribution of partial correlation coefficients (r-values) and F-statistics from ANCOVA across MCA repetitions for subcortical volume measures. Red dots represent the IEEE results. The top row shows r-values, while the bottom row shows F-values. The left column represents baseline analysis, and the right column represents longitudinal analysis.\label{fig:statstest_coefficients_distribution}}
 \end{figure}
 
@@ -100,7 +100,7 @@ Effect size distributions showed notable variability across MCA repetitions (Fig
 NAVR values varied substantially across brain regions, with some showing computational uncertainty comparable to or exceeding biological variation (Figure~\ref{fig:navr_subcortical}). Regions with high NAVR values indicate areas where numerical precision limitations may compromise the detection of true anatomical differences.
 
 \begin{figure}
-    \includegraphics[width=\linewidth]{figures/NAVR_subcortical_volume_all.png}
+    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_subcortical_volume_all.png}
         \caption{Numerical-Anatomical Variability Ratio (NAVR) for subcortical volumes across regions and groups. Higher NAVR values indicate greater computational uncertainty relative to biological variation.\label{fig:navr_subcortical}}
 \end{figure}
 
@@ -342,17 +342,9 @@ extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 
 \appendix
 
-\section{Cross-sectional Analysis}
+\section{Formula}
 
-As a side result, the cross-sectional analysis measures the impact of numerical
-variability in FreeSurfer version 7.3.1 on the PPMI (Parkinson's Progression
-Markers Initiative) cohort. This will involve comparing the estimation of
-structural MRI measures, including cortical and subcortical volumes, cortical
-thickness, and surface area. The goal is to assess the stability of these key
-metrics and determine how numerical variability may affect their reliability in
-clinical research.
-
-\section{Significant digits formula}
+\subsection{Significant digits formula}
 
 We compute the number of significant bits \(\hat{s}\) with probability
 \(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \emph{Significant
@@ -376,7 +368,17 @@ confidence level \(1-\alpha_s\) for a sample size \(n\). \(\Phi^{-1}\) is the
 inverse cumulative distribution of the standard normal distribution and
 \(\chi^2\) is the Chi-2 distribution with \(n\)-1 degrees of freedom.
 
-\section{Significant digits average across all subjects and regions}
+\section{Cross-sectional Analysis}
+
+As a side result, the cross-sectional analysis measures the impact of numerical
+variability in FreeSurfer version 7.3.1 on the PPMI (Parkinson's Progression
+Markers Initiative) cohort. This will involve comparing the estimation of
+structural MRI measures, including cortical and subcortical volumes, cortical
+thickness, and surface area. The goal is to assess the stability of these key
+metrics and determine how numerical variability may affect their reliability in
+clinical research.
+
+\subsection{Significant digits average across all subjects and regions}
 
 \begin{longtblr}[
         caption={Significant digits average across all subjects and regions.},
@@ -638,8 +640,10 @@ inverse cumulative distribution of the standard normal distribution and
     Optic-Chiasm                 & $13.11 \pm 6.56\0$  &                               &                      \\
 \end{longtblr}
 
-\section{Vertex-wise Analysis}
-\subsection{Z-Test Results}
+\section{Longitudinal Analysis}
+
+\subsection{Vertex-wise Analysis}
+\subsubsection{Z-Test Results}
 
 \subsubsection{Group analysis}
 The following table summarizes significant regions identified in the group
@@ -737,6 +741,83 @@ their estimated size and MNI coordinates.
     \textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS = Unified Parkinson's Disease Rating Scale; PD = Parkinson's disease. Descriptive statistics before and after quality control (QC). Values are expressed as mean $\pm$ standard deviation. PD-non-MCI longitudinal sample is a subsample of the PD-non-MCI original sample that had longitudinal data and disease severity scores available.
     \label{tab:cohort_stat_vertical}
 \end{table}
+
+\section{NAVR}
+
+\subsection{NAVR maps}
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_thickness_all.png}
+    \caption{NAVR maps for cortical thickness. The maps show the average NAVR values across all subjects for each cortical region. The color scale indicates the NAVR value, with warmer colors indicating higher NAVR values.}
+    \label{fig:NAVR_map_thickness}
+\end{figure}
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_area_all.png}
+    \caption{NAVR maps for cortical surface area. The maps show the average NAVR values across all subjects for each cortical region. The color scale indicates the NAVR value, with warmer colors indicating higher NAVR values.}
+    \label{fig:NAVR_map_area}
+\end{figure}
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_volume_all.png}
+    \caption{NAVR maps for cortical volume. The maps show the average NAVR values across all subjects for each cortical region. The color scale indicates the NAVR value, with warmer colors indicating higher NAVR values.}
+    \label{fig:NAVR_map_volume}
+\end{figure}
+
+\subsection{Consistency results}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{figures/consistency/cortical_thickness_coefficients_distribution-Left.pdf}
+        \caption{Left hemisphere}
+        \label{fig:NAVR_consistency_thickness_left}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{figures/consistency/cortical_thickness_coefficients_distribution-Right.pdf}
+        \caption{Right hemisphere}
+        \label{fig:NAVR_consistency_thickness_right}
+    \end{subfigure}
+    \caption{Distribution of partial correlation coefficients for cortical thickness across all subjects and regions. Red triangles indicate the IEEE-754 run for reference. The distribution shows the variability in the coefficients, with some regions exhibiting higher consistency than others.}
+    \label{fig:NAVR_consistency_thickness}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{figures/consistency/cortical_area_coefficients_distribution-Left.pdf}
+        \caption{Left hemisphere}
+        \label{fig:NAVR_consistency_area_left}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{figures/consistency/cortical_area_coefficients_distribution-Right.pdf}
+        \caption{Right hemisphere}
+        \label{fig:NAVR_consistency_area_right}
+    \end{subfigure}
+    \caption{Distribution of partial correlation coefficients for cortical area across all subjects and regions. Red triangles indicate the IEEE-754 run for reference. The distribution shows the variability in the coefficients, with some regions exhibiting higher consistency than others.}
+    \label{fig:NAVR_consistency_area}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{figures/consistency/cortical_volume_coefficients_distribution-Left.pdf}
+        \caption{Left hemisphere}
+        \label{fig:NAVR_consistency_volume_left}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{figures/consistency/cortical_volume_coefficients_distribution-Right.pdf}
+        \caption{Right hemisphere}
+        \label{fig:NAVR_consistency_volume_right}
+    \end{subfigure}
+    \caption{Distribution of partial correlation coefficients for cortical volume across all subjects and regions. Red triangles indicate the IEEE-754 run for reference. The distribution shows the variability in the coefficients, with some regions exhibiting higher consistency than others.}
+    \label{fig:NAVR_consistency_volume}
+\end{figure}
+
+
 
 \end{document}
 
