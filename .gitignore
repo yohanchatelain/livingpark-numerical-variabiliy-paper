@@ -1,0 +1,4 @@
+main.*
+!main.tex
+!main.bib
+!main.pdf
