@@ -21,6 +21,31 @@
 \usepackage{tabularray}
 \usepackage{booktabs} % For \toprule, \midrule, \bottomrule
 \usepackage{xspace} % For \xspace command
+\usepackage{tikz}
+\usetikzlibrary{shadings}
+\usepackage{xifthen}
+
+\newcommand{\colorbar}[6]% width,height,colors,label min,label max,label step
+{   \begin{tikzpicture}
+    \foreach \x [count=\c] in {#3}{ \xdef\numcolo{\c}}
+    \pgfmathsetmacro{\piecewidth}{#1/(\numcolo-1)}
+    \xdef\lowcolo{}
+    \foreach \x [count=\c] in {#3}
+    {   \ifthenelse{\c = 1}
+        {}
+        {   \fill[left color=\lowcolo,right color=\x] ({(\c-2)*\piecewidth},0) rectangle ({(\c-1)*\piecewidth},#2);
+        }
+        \xdef\lowcolo{\x}
+    }
+    \draw (0,0) rectangle (#1,#2);
+    \pgfmathsetmacro{\secondlabel}{#4+#6}
+    \pgfmathsetmacro{\lastlabel}{#5+0.01}
+    \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+    \foreach \x in {#4,\secondlabel,...,\lastlabel}
+    { \draw ({(\x-#4)/(#5-#4)*#1},0) -- ++ (0,-0.1) node[below=0.05,font=\tiny] {\pgfmathprintnumber{\x}};
+    }
+    \end{tikzpicture}
+}
 
 \newcommand{\YC}[1]{\textcolor{red}{YC: #1}}
 
@@ -39,25 +64,29 @@
 \begin{abstract}
     Reproducibility in neuroimaging is critically hampered by computational
     variability within analysis software. Here, we quantify the numerical
-    instability of FreeSurfer, a ubiquitous tool, using structural MRI data from the
-    Parkinson's Progression Markers Initiative. By introducing controlled
+    instability of FreeSurfer, a ubiquitous tool, using structural MRI data from
+    the Parkinson's Progression Markers Initiative. By introducing controlled
     perturbations with Monte Carlo Arithmetic, we assessed the variability of
-    cortical and subcortical measurements. We found that numerical variability in
-    FreeSurfer is substantial, with key structural metrics often precise to only a
-    single significant digit. This computational noise was frequently comparable to
-    or greater than the biological variation between Parkinson's disease patients
-    and healthy controls. Consequently, the statistical significance of group
-    differences and correlations with clinical severity fluctuated dramatically
-    across identical analyses. Our results demonstrate that subtle computational
-    errors can produce unreliable findings in clinical neuroimaging. Addressing such
-    numerical instability is essential for developing robust biomarkers for
-    neurological disorders like Parkinson's disease.
+    cortical and subcortical measurements. We found that numerical variability
+    in FreeSurfer is substantial, with key structural metrics often precise to
+    only a single significant digit. This computational noise was up to half of
+    the anatomical variation between Parkinson's disease patients and healthy
+    controls. Consequently, the statistical significance of group differences
+    and correlations with clinical severity fluctuated dramatically across
+    identical analyses. We design a tool to quantify the Numerical-Anatomical
+    Variability Ratio (\navr), which relates computational uncertainty to
+    biological variation as well as practical formula to determine the
+    population sample size required to achieve a desired variability on Cohen's
+    d effect size. Our results demonstrate that computational errors can produce
+    unreliable findings in clinical neuroimaging such as correlation and group
+    analyses. Addressing such numerical instability is essential for developing
+    robust biomarkers for neurological disorders like Parkinson's disease.
 \end{abstract}
 
 \section{Introduction}
 
-Neuroimaging reproducibility has emerged as a critical challenge in
-neuroscience research. While inter-software variability is
+Neuroimaging reproducibility has emerged as a critical challenge in neuroscience
+research. While inter-software variability is
 well-documented~\cite{botvinik2020variability,gronenschild2012effects,bhagwat2021understanding},
 within-version numerical variability—small output variations from identical
 software runs—remains underexplored despite potentially significant clinical
@@ -71,28 +100,27 @@ statistical reliability.
 Previous studies have demonstrated substantial between-version differences in
 FreeSurfer outputs~\cite{haddad2023multisite}, but the impact of computational
 uncertainty within single software versions on clinical associations remains
-unclear. This gap is particularly concerning for PD research, where
-establishing reliable brain-behavior relationships is essential for developing
-neuroimaging biomarkers. Despite promising associations between MRI-derived
-metrics and PD severity, no neuroimaging biomarkers are widely accepted for
-clinical diagnosis or monitoring. Measurement variability across studies
-undermines reliability and generalizability, hindering translation to clinical
-practice. This computational uncertainty could significantly impact PD research
-by: (1) masking subtle disease-related changes essential for early detection,
-(2) compromising statistical power for detecting group differences and clinical
-correlations, and (3) reducing reproducibility across studies using identical
-analysis pipelines.
+unclear. This gap is particularly concerning for PD research, where establishing
+reliable brain-behavior relationships is essential for developing neuroimaging
+biomarkers. Despite promising associations between MRI-derived metrics and PD
+severity, no neuroimaging biomarkers are widely accepted for clinical diagnosis
+or monitoring. Measurement variability across studies undermines reliability and
+generalizability, hindering translation to clinical practice. This computational
+uncertainty could significantly impact PD research by: (1) masking subtle
+disease-related changes essential for early detection, (2) compromising
+statistical power for detecting group differences and clinical correlations, and
+(3) reducing reproducibility across studies using identical analysis pipelines.
 
-Here, we investigate numerical variability in FreeSurfer 7.3.1 using Monte
-Carlo Arithmetic to simulate realistic computational perturbations. We
-introduce the Numerical-Anatomical Variability Ratio (\navr) to quantify
-computational uncertainty relative to biological variation and derive its
-theoretical relationship to statistical effect sizes. Using longitudinal data
-from the Parkinson's Progression Markers Initiative, we assess how numerical
-precision affects group comparisons and clinical correlations in PD research.
+Here, we investigate numerical variability in FreeSurfer 7.3.1 using Monte Carlo
+Arithmetic to simulate realistic computational perturbations. We introduce the
+Numerical-Anatomical Variability Ratio (\navr) to quantify computational
+uncertainty relative to biological variation and derive its theoretical
+relationship to statistical effect sizes. Using longitudinal data from the
+Parkinson's Progression Markers Initiative, we assess how numerical precision
+affects group comparisons and clinical correlations in PD research.
 Specifically, our aims include: (1) quantifying how computational uncertainty
-affects group difference detection between PD patients and healthy controls,
-(2) assessing numerical variability effects on brain-behavior correlations with
+affects group difference detection between PD patients and healthy controls, (2)
+assessing numerical variability effects on brain-behavior correlations with
 clinical measures (UPDRS scores), and (3) developing the \navr framework to
 predict statistical reliability from computational precision. Our findings will
 inform strategies for mitigating numerical variability effects and enhancing
@@ -100,10 +128,10 @@ reproducibility in clinical neuroimaging studies.
 
 \section{Results}
 
-PD and HC groups showed no significant age differences ($p > 0.05$) but
-differed in education ($t = -2.05$, $p = 0.04$) and sex distribution ($\chi^2 =
-    4.15$, $p = 0.04$). The longitudinal cohort showed no significant demographic
-differences between groups (Table~\ref{tab:cohort_stat}).
+PD and HC groups showed no significant age differences ($p > 0.05$) but differed
+in education ($t = -2.05$, $p = 0.04$) and sex distribution ($\chi^2 = 4.15$, $p
+    = 0.04$). The longitudinal cohort showed no significant demographic differences
+between groups (Table~\ref{tab:cohort_stat}).
 
 \subsection{Numerical variability impacts MRI derived findings}
 
@@ -119,29 +147,29 @@ for each subject's MRI data, simulating 26 numerical states. Using
 \texttt{recon-all} we collected cortical thickness, surface area, and
 subcortical volumes for each subject. We present results cortical thickness and
 subcortical volumes, surface area and cortical volume are reported in the
-appendix. We selected 103 healthy controls (HC) and 121 Parkinson's disease
-(PD) patients from the Parkinson's Progression Markers Initiative (PPMI)
-database.
+appendix. We selected 103 healthy controls (HC) and 121 Parkinson's disease (PD)
+patients from the Parkinson's Progression Markers Initiative (PPMI) database.
 
 We tested the statistical significance of group differences and correlations
-with clinical measures (UPDRS scores) across the 26 MCA repetitions. We
-reported the fraction of statistically significant tests ($p < 0.05$) for each
-metric and region. Statistical significance proportions varied substantially
-for cortical thickness (Figure~\ref{fig:significance_correlation_thickness})
-and subcortical volumes
-(Figure~\ref{fig:significance_correlation_subcortical_volume}). Ratios near 0.5
-indicated maximal uncertainty, while values approaching 0 or 1 suggested
-consistent results across computational variations.
+with clinical measures (UPDRS scores) across the 26 MCA repetitions. We reported
+the fraction of statistically significant tests ($p < 0.05$) for each metric and
+region. Statistical significance proportions varied substantially for cortical
+thickness (Figure~\ref{fig:significance_correlation_thickness}) and subcortical
+volumes (Figure~\ref{fig:significance_correlation_subcortical_volume}). Ratios
+near 0.5 indicated maximal uncertainty, while values approaching 0 or 1
+suggested consistent results across computational variations.
 
 This variability reflects in the partial correlation coefficients and
 F-statistics from ANCOVA analyses, which showed substantial spread around
 unperturbed IEEE-754 results used as reference (red markers). This indicates
-that numerical variability affects both statistical significance and effect
-size estimation. We note that IEEE results are most of the time included in the
-distribution of coefficients \YC{assert with t-test?} but not necessarily at
-the center of the distribution. We note that the spread of coefficients varies
+that numerical variability affects both statistical significance and effect size
+estimation. We note that IEEE results are most of the time included in the
+distribution of coefficients \YC{assert with t-test?} but not necessarily at the
+center of the distribution. We note that the spread of coefficients varies
 between regions but stay within the same order of magnitude, but some regions
 show a large spread of coefficients across MCA repetitions.
+
+
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
@@ -190,15 +218,10 @@ show a large spread of coefficients across MCA repetitions.
     \label{fig:navr_consistency_thickness}
 \end{figure}
 
+
 \subsection{\navr reveals region-specific numerical instabilities}
 % Keep cortical thickness and subcortical volumes.
 % Add NARPS figures for both.
-
-% design a tool that measure numerical variability on already published paper.
-% -> we can check the consistency of the results.
-% -> we have applied to ENIGMA
-% -> when you have a large N, the effect of numerical variability is average by this large N
-% -> but when N is small, the effect of numerical variability is more pronounced.
 
 A common issue with neuroimaging analysis is the difficulty in assessing
 numerical precision and its impact on downstream statistical tests like effect
@@ -211,37 +234,40 @@ anatomical variability.
     \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
 \]
 
-Figures~\ref{fig:navr_thickness} and \ref{fig:navr_subcortical} present the
-\navr for cortical thickness and subcortical volumes across all brain regions.
-Regions with high \navr values indicate areas where numerical variability may
-compromise the detection of true anatomical differences.
+Figures~\ref{fig:navr_thickness} and \ref{fig:navr_subcortical} present the \navr for
+cortical thickness and subcortical volumes across all brain regions.
+Regions with high \navr values indicate areas where numerical variability
+may compromise the detection of true anatomical differences.
 
 One common measure used in clinical neuroimaging studies is the Cohen's d
 coefficient that quantifies the effect size of group differences. The \navr can
 be used to predict the uncertainty in Cohen's d due to numerical variability.
-The theoretical relationship between \navr and Cohen's d uncertainty is given
-by:
+The theoretical relationship between \navr and Cohen's d uncertainty is given by:
 \[
     \sigma_d = \frac{2}{\sqrt{N}} \text{\navr}
 \]
 where $\sigma_d$ is the standard deviation of Cohen's d and $N$ is the
 population sample size. We showed in section~\ref{sec:navr_effect_size} that
-this relationship holds true for our data, allowing us to quantify the impact
-of numerical variability on effect size estimation.
+this relationship holds true for our data, allowing us to quantify the impact of
+numerical variability on effect size estimation.
 
 The strength of this relationship is that one can then predict the uncertainty
-in effect size estimation based on the \navr value and thus threshold the
-Cohen's d value based on the \navr value. Hence, given a paper with Cohen's d
-values, we can remove values $|\sigma_d|\leq \frac{2}{\sqrt{N}} \text{\navr}$
-as they will be lower than the numerical variability threshold. This allows us
-to assess the reliability of the reported effect sizes in the paper. The
-advantage of this approach is that it can be applied to any neuroimaging study,
-regardless of the software used, and has a specific value per region, which
-allows for a more fine-grained analysis of the numerical variability impact on
-effect size estimation.
+in effect size estimation based on the \navr value and thus threshold the Cohen's
+d value based on the \navr value. Hence, given a paper with Cohen's d values, we
+can remove values $|\sigma_d|\leq 2/\sqrt{N} \text{\navr}$ as they
+will be lower than the numerical variability threshold. This allows us to assess
+the reliability of the reported effect sizes in the paper. The advantage of this
+approach is that it can be applied to any neuroimaging study, regardless of the
+software used, and has a specific value per region, which allows for a more
+fine-grained analysis of the numerical variability impact on effect size
+estimation.
 
-\begin{figure}
-    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_subcortical_volume_all.png}
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_subcortical_volume_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
+    \end{tikzpicture}
     \caption{ Numerical-Anatomical Variability Ratio (\navr) for subcortical
         volumes across regions and groups. Higher \navr values indicate
         greater computational uncertainty relative to biological
@@ -249,7 +275,12 @@ effect size estimation.
 \end{figure}
 
 \begin{figure}[h]
-    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_thickness_all.png}
+    \centering
+    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)', 'rgb(250,0,0)', 'rgb(128,0,0)']
+    \begin{tikzpicture}
+        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_thickness_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
+    \end{tikzpicture}
     \caption{ Numerical-Anatomical Variability Ratio (\navr) for cortical
         thickness across regions and groups. Higher \navr values indicate
         greater computational uncertainty relative to biological
@@ -257,35 +288,13 @@ effect size estimation.
         indicating higher \navr values.\label{fig:navr_thickness}}
 \end{figure}
 
-The formula also gives a practical way to design experimental studies to ensure
-a reliable effect size estimation. Figure~\ref{fig:sigma_d_prediction} shows
-the relationship between \navr and population sample size \(N\) for predicting
-the uncertainty in Cohen's d effect size estimation $\sigma_d$. The contour
-lines represent different $\sigma_d$ order of magnitude, showing how numerical
-variability scales with sample size. User can hence refers to this to select
-the sample size \(N\) to ensure a reliable effect size estimation. For example,
-with a typical \navr value of 0.2, to maintain reliable effect size estimates
-$\sigma_d \leq 0.01$, the plot suggests to use $N \geq 1500$. This provides a
-practical guideline for researchers to ensure that their sample size is large
-enough to obtain reliable effect size estimates, taking into account the
-numerical variability introduced by the analysis software.
-
-\begin{figure}
-    \includegraphics[width=\textwidth]{figures/sigma_d_contour.pdf}
-    \caption{ Relationship between \navr and population sample size  \(N\) for
-        predicting the uncertainty in Cohen's d effect size estimation $\sigma_d$. The contour
-        lines represent different \navr values, showing how numerical variability
-        scales with sample size. With a typical \navr value of 0.2,
-        to maintain reliable effect size estimates $\sigma_d \leq 0.01$,
-        the plot suggests to use $N \geq 1500$.\label{fig:sigma_d_prediction}}
-\end{figure}
 
 \subsection{\navr helps thresholding effect size uncertainty}
 
-We applied the \navr framework to assess the reliability of reported effect on
-ENIGMA studies~\cite{thompson2014enigma}. We extracted the Cohen's d using the
-\texttt{enigmatoolbox} Python package~\cite{lariviere2021enigma} colored in
-black regions where the Cohen's d is below the numerical variability threshold.
+We applied the \navr framework to assess the reliability of reported effect
+on ENIGMA studies~\cite{thompson2014enigma}. We extracted the Cohen's d
+using the \texttt{enigmatoolbox} Python package~\cite{lariviere2021enigma}
+colored in black regions where the Cohen's d is below the numerical variability threshold.
 Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
 \begin{figure}[h]
@@ -300,12 +309,12 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_thickness_all.png}
-                \label{fig:enigma_22q_unthresholded}
+                \label{fig:enigma_22q_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_thickness_all_thresholded.png}
-                \label{fig:enigma_22q_thresholded}
+                \label{fig:enigma_22q_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -320,12 +329,12 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_thickness_adult.png}
-                \label{fig:enigma_adhd_unthresholded}
+                \label{fig:enigma_adhd_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_thickness_adult_thresholded.png}
-                \label{fig:enigma_adhd_thresholded}
+                \label{fig:enigma_adhd_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -340,12 +349,12 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis.png}
-                \label{fig:enigma_asd_unthresholded}
+                \label{fig:enigma_asd_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis_thresholded.png}
-                \label{fig:enigma_asd_thresholded}
+                \label{fig:enigma_asd_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -359,12 +368,12 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult.png}
-                \label{fig:enigma_bipolar_unthresholded}
+                \label{fig:enigma_bipolar_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult_thresholded.png}
-                \label{fig:enigma_bipolar_thresholded}
+                \label{fig:enigma_bipolar_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -377,13 +386,13 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \end{minipage}%
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_area_adult.png}
-                \label{fig:enigma_depression_unthresholded}
+                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_thickness_adult.png}
+                \label{fig:enigma_depression_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_area_adult_thresholded.png}
-                \label{fig:enigma_depression_thresholded}
+                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_thickness_adult_thresholded.png}
+                \label{fig:enigma_depression_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -397,12 +406,12 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy.png}
-                \label{fig:enigma_epilepsy_unthresholded}
+                \label{fig:enigma_epilepsy_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy_thresholded.png}
-                \label{fig:enigma_epilepsy_thresholded}
+                \label{fig:enigma_epilepsy_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -416,12 +425,12 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_thickness_adult.png}
-                \label{fig:enigma_ocd_unthresholded}
+                \label{fig:enigma_ocd_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_thickness_adult_thresholded.png}
-                \label{fig:enigma_ocd_thresholded}
+                \label{fig:enigma_ocd_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -435,18 +444,22 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all.png}
-                \label{fig:enigma_schizophrenia_unthresholded}
+                \label{fig:enigma_schizophrenia_thickness_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all_thresholded.png}
-                \label{fig:enigma_schizophrenia_thresholded}
+                \label{fig:enigma_schizophrenia_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
 
-    \caption{ENIGMA cortical thickness Cohen's d maps showing unthresholded effect sizes (left) and effect sizes thresholded by the \(\nu_{\mathrm{NA}}\) framework (right) for different disorders. Black regions indicate areas where Cohen's d values fall below the numerical variability threshold, demonstrating regions where reported effect sizes may be unreliable due to computational uncertainty.}
-    \label{fig:navr_enigma}
+    \caption{ENIGMA cortical thickness Cohen's d maps showing unthresholded
+        effect sizes (left) and effect sizes thresholded by the
+        \navr framework (right) for different disorders. Black
+        regions indicate areas where Cohen's d values fall below the numerical
+        variability threshold, demonstrating regions where reported effect sizes may
+        be unreliable due to computational uncertainty.\label{fig:navr_enigma_thickness}}
 \end{figure}
 
 \begin{figure}[h]
@@ -610,67 +623,98 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \label{fig:navr_enigma}
 \end{figure}
 
+
+
+% design a tool that measure numerical variability on already published paper.
+% -> we can check the consistency of the results.
+% -> we have applied to ENIGMA
+% -> when you have a large N, the effect of numerical variability is average by this large N
+% -> but when N is small, the effect of numerical variability is more pronounced.
+
 % Add the formula. \navr (Numerical Anatomical Variability Ratio)
 
 % ENIGMA
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{figures/sigma_d_contour.pdf}
+    \caption{ Relationship between \navr and population sample size  \(N\) for
+        predicting the uncertainty in Cohen's d effect size estimation. The contour
+        lines represent different \navr values, showing how numerical variability
+        scales with sample size. With a typical \navr value of 0.2,
+        to maintain reliable effect size estimates $\sigma_d \leq 0.01$,
+        the plot suggests to use $N \geq 1500$.}
+\end{figure}
 
 \section{Discussion}
 
 % if N is small, be careful about numerical variability
 % if N is large, numerical variability is averaged out
-% rough estimate of what N is good to have 
-% our cohort is homogeneous in age so sigma_anat is low but .. 
-
-Our analysis reveals significant numerical instability in FreeSurfer 7.3.1,
-with cortical measurements showing limited precision (1-1.5 significant digits)
-that substantially impacts statistical reliability in neuroimaging studies.
-These precision limitations pose particular challenges for detecting subtle
+% rough estimate of what N is good to have
+% our cohort is homogeneous in age so sigma_anat is low but ..
+Our analysis reveals significant numerical instability in FreeSurfer 7.3.1, with
+cortical measurements showing limited precision (1-2 significant digits) that
+substantially impacts statistical reliability in neuroimaging studies. These
+precision limitations pose particular challenges for detecting subtle
 disease-related changes in conditions like Parkinson's disease.
 
-The absence of significant baseline differences between PD and HC groups,
-combined with inconsistent cluster detection (only 1/26 clusters reproduced
-across repetitions), demonstrates how numerical variability can compromise
-reproducibility. The \navr framework quantifies this relationship, showing that
-computational uncertainty approaches or exceeds biological variation in many
-brain regions.
+The absence of significant baseline differences between PD and HC groups
+demonstrates how numerical variability can compromise reproducibility.
+Effect size distributions showed substantial spread around standard
+IEEE-754 results, indicating that numerical precision directly affects both
+significance testing and effect size estimation.
 
-Statistical test consistency varied markedly across MCA repetitions, with
-methodological choices (Z-test vs. permutation test) further influencing
-outcome reliability. Effect size distributions showed substantial spread around
-standard IEEE-754 results, indicating that numerical precision directly affects
-both significance testing and effect size estimation.
+This study demonstrates significant numerical
+limitations in FreeSurfer 7.3.1, with cortical measurements exhibiting only
+1-1.5 significant digits of precision. These computational constraints
+substantially impact statistical reliability and reproducibility in neuroimaging
+research, particularly for detecting subtle disease-related changes.
 
-Importantly, inter-subject variability exceeded intra-subject variability,
-suggesting that FreeSurfer maintains relative consistency across different
-individuals despite numerical limitations. This supports continued use while
-highlighting the need for improved computational precision in future
-neuroimaging software development. This study demonstrates significant
-numerical limitations in FreeSurfer 7.3.1, with cortical measurements
-exhibiting only 1-1.5 significant digits of precision. These computational
-constraints substantially impact statistical reliability and reproducibility in
-neuroimaging research, particularly for detecting subtle disease-related
-changes.
+Our \navr framework quantifies the relationship between computational uncertainty
+and anatomical variation, revealing that numerical instability approaches half of
+the anatomical variability in certain brain regions.
 
-Our \navr framework quantifies the relationship between computational
-uncertainty and biological variation, revealing that numerical instability
-approaches or exceeds anatomical variability in many brain regions. This
-finding has direct implications for statistical power, as demonstrated by
-inconsistent cluster detection (only 1/26 clusters reproduced) and variable
-effect sizes across identical analyses.
+The theoretical relationship between \navr and Cohen's d uncertainty provides a
+framework for predicting statistical reliability based on computational
+precision. The relationship with sample size suggests that larger cohorts can
+mitigate numerical variability effects, but sample sizes must be sufficiently
+large to ensure reliable effect size estimates. This is particularly relevant
+for studies with small sample sizes, where numerical variability can
+significantly distort results. Our cohort is homogeneous in age, which minimizes
+anatomical variability, a cohort using a broader age range would likely show
+higher anatomical variability, hence reducing the impact of numerical
+variability on effect size estimation. Moreover, the \navr values have been
+obtained using FreeSurfer 7.3.1, which is known to have numerical precision
+issues. Future versions of FreeSurfer may improve numerical stability,
+potentially altering the \navr values and their relationship with effect size
+uncertainty. Other neuroimaging software packages may exhibit different
+numerical precision characteristics, and the \navr framework can be adapted to
+assess their reliability. A more comprehensive evaluation of multiple
+neuroimaging tools would provide a broader understanding of numerical precision
+issues in the field, and hence extending the \navr framework scope.
 
-While inter-subject variability exceeded intra-subject variability—supporting
-relative consistency across individuals—the absence of significant PD-HC
-differences and weak clinical correlations highlight how numerical limitations
-can mask true biological signals. The theoretical relationship between \navr
-and Cohen's d uncertainty provides a framework for predicting statistical
-reliability based on computational precision.
+The previous results thresholded with the \navr framework
+demonstrate that many reported effect sizes in neuroimaging studies may be unreliable,
+although no statistical significant results were thresholded. We found a correlation
+between the Cohen's d values being thresholded and their significance, indicating that
+our thresholding method is effective in identifying unreliable effect sizes.
+This highlights the importance of considering numerical precision when interpreting
+neuroimaging results, particularly in studies with small sample sizes or subtle
+disease-related changes, which is not the case for ENIGMA studies, which
+typically have large sample sizes (many thousands of participants).
+
+The fuzzy-libm library used in this study provides a practical solution for
+assessing numerical precision in neuroimaging software and has demonstrated its
+effectiveness in several applications. However, it is important to note that
+other sources of instabilities may exist in neuroimaging software, such as
+algorithmic choices, numerical approximations, and data handling practices.
+Future work should explore these aspects to provide a more comprehensive
+understanding of numerical precision in neuroimaging analyses.
 
 These findings emphasize the critical need for improved numerical precision in
 neuroimaging software. Future developments should prioritize computational
 stability to enhance the detection of subtle neurological changes and improve
 reproducibility across studies. The \navr framework offers a practical tool for
-assessing and comparing the numerical reliability of neuroimaging
-methodologies.
+assessing and comparing the numerical reliability of neuroimaging methodologies.
 
 \section{Methods}
 
@@ -679,15 +723,15 @@ methodologies.
 We employed Monte Carlo Arithmetic (MCA)~\cite{parker1997monte} to quantify
 numerical instability in FreeSurfer computations. MCA introduces controlled
 random perturbations into floating-point operations, simulating rounding errors
-that occur across different computational environments. This stochastic
-approach enables systematic assessment of result stability by measuring
-variation across multiple runs of identical analyses.
+that occur across different computational environments. This stochastic approach
+enables systematic assessment of result stability by measuring variation across
+multiple runs of identical analyses.
 
 We used Fuzzy-libm~\cite{salari2021accurate}, which extends MCA to mathematical
 library functions (\texttt{exp}, \texttt{log}, \texttt{sin}, \texttt{cos})
-through Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler.
-Virtual precision parameters were set to 53 bits for double precision and 24
-bits for single precision to simulate realistic machine-level precision errors.
+through Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler. Virtual
+precision parameters were set to 53 bits for double precision and 24 bits for
+single precision to simulate realistic machine-level precision errors.
 
 \subsection{Participants}
 
@@ -698,11 +742,11 @@ Parkinson's disease patients without mild cognitive impairment (PD-non-MCI) and
 PD-MCI patients were excluded to avoid confounding effects of cognitive
 impairment.
 
-Inclusion criteria required: (1) primary PD diagnosis or healthy control
-status, (2) availability of two visits with T1-weighted scans, and (3) absence
-of other neurological diagnoses. PD severity was assessed using the Unified
-Parkinson's Disease Rating Scale (UPDRS). The study received ethics approval
-from participating institutions, and all participants provided written informed
+Inclusion criteria required: (1) primary PD diagnosis or healthy control status,
+(2) availability of two visits with T1-weighted scans, and (3) absence of other
+neurological diagnoses. PD severity was assessed using the Unified Parkinson's
+Disease Rating Scale (UPDRS). The study received ethics approval from
+participating institutions, and all participants provided written informed
 consent (Table~\ref{tab:cohort_stat}).
 
 \begin{table}[h!]
@@ -774,8 +818,8 @@ $\sigma_{\text{anat}}$ represents anatomical variability (inter-subject
 differences within each repetition).
 
 For each region of interest, measurements from $n$ MCA repetitions across $m$
-subject-visit pairs form a data matrix $\mathcal{M}_{n \times m}$, where
-element $x_{i,j}$ represents the measurement for subject $j$ in repetition $i$.
+subject-visit pairs form a data matrix $\mathcal{M}_{n \times m}$, where element
+$x_{i,j}$ represents the measurement for subject $j$ in repetition $i$.
 
 Numerical variability quantifies intra-subject measurement consistency:
 \begin{equation}
@@ -787,10 +831,7 @@ Anatomical variability captures inter-subject differences:
     \sigma^2_{\text{anat}} = \frac{1}{n} \sum_{i=1}^{n} \left[ \frac{1}{m-1} \sum_{j=1}^{m} (x_{i,j} - \bar{x}_{i,\cdot})^2 \right]
 \end{equation}
 
-where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means,
-respectively. Higher \navr values indicate regions where computational
-uncertainty approaches or exceeds biological variation, potentially
-compromising the detection of true anatomical differences.
+where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means, respectively. Higher \navr values indicate regions where computational uncertainty approaches or exceeds biological variation, potentially compromising the detection of true anatomical differences.
 
 \subsubsection{Relationship between \navr~and Effect Size Uncertainty}
 
@@ -807,16 +848,16 @@ captures anatomical variation, and $\varepsilon_{ij}^{(\text{num})} \sim
 
 The standard deviation of Cohen's d attributable to measurement error is:
 \begin{equation}
-    \sigma_d = \frac{2}{\sqrt{N}} \cdot \text{\navr}
+    \sigma_d = \frac{2}{\sqrt{N}} \text{\navr}
 \end{equation}
 
 This relationship emerges from error propagation analysis. The difference in
 group means has variance $\text{Var}(\bar{X}_1 - \bar{X}_2) =
     4(\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2)/N$, with the numerical
-component contributing $4\sigma_{\text{num}}^2/N$. Since Cohen's d normalizes
-by the pooled standard deviation $\sqrt{\sigma_{\text{anat}}^2 +
+component contributing $4\sigma_{\text{num}}^2/N$. Since Cohen's d normalizes by
+the pooled standard deviation $\sqrt{\sigma_{\text{anat}}^2 +
         \sigma_{\text{num}}^2}$, the measurement error contribution becomes $\sigma_d =
-    (2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N}) \cdot
+    (2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N})
     \text{\navr}$.
 
 This formula indicates that regions with \navr = 0.1 contribute approximately
@@ -825,13 +866,16 @@ contribute $2/\sqrt{N}$ uncertainty. The relationship provides a direct link
 between computational stability (\navr) and statistical reliability in
 neuroimaging studies.
 
+
+
+
 \section{Data Availability}
 The data that support the findings of this study are available from the
 Parkinson's Progression Markers Initiative (PPMI) database
 (www.ppmi-info.org/access-data-specimens/download-data), but restrictions apply
-to the availability of these data, which were used under license for the
-current study, and so are not publicly available. Data are however available
-from the authors upon reasonable request and with permission of the PPMI.
+to the availability of these data, which were used under license for the current
+study, and so are not publicly available. Data are however available from the
+authors upon reasonable request and with permission of the PPMI.
 
 \section{Code Availability}
 The code used to conduct the analyses is available at [URL to be added upon
@@ -856,8 +900,7 @@ extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 \subsection{Significant digits formula}
 
 We compute the number of significant bits \(\hat{s}\) with probability
-\(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the
-\texttt{significantdigits}
+\(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \texttt{significantdigits}
 package\footnote{\url{https://github.com/verificarlo/significantdigits}}
 (version 0.4.0). \texttt{significantdigits} implements the Centered Normality
 Hypothesis approach described in~\cite{sohier2021confidence}:
@@ -895,27 +938,27 @@ thickness, and surface area. The goal is to assess the stability of these key
 metrics and quantify the numerical variability.
 
 FreeSurfer 7.3.1 showed limited numerical precision across all cortical
-measures: $1.61 \pm 0.20$ significant digits for cortical thickness, $1.33 \pm
-    0.23$ for surface area, and $1.33 \pm 0.23$ for cortical volume
-(Figures~\ref{fig:sig_digits_cortical}). Subcortical volumes have a similar
-precision with $1.33 \pm 0.22$ significant digits on average
-(Figure~\ref{fig:sig_digits_subcortical}). These values indicate measurements
-are typically precise to only one decimal place, with some instances showing
-complete precision loss. Regional consistency was observed within each metric
-type, with cortical thickness showing the highest precision (range: $1.22-1.93$
-digits) compared to surface area ($0.82 - 1.72$ digits) and cortical volume
+measures: $1.61 \pm 0.20$ significant digits for cortical thickness, $1.33 \pm 0.23$ for
+surface area, and $1.33 \pm 0.23$ for  cortical volume
+(Figures~\ref{fig:sig_digits_cortical}). Subcortical volumes have a similar precision
+with $1.33 \pm 0.22$ significant digits on average (Figure~\ref{fig:sig_digits_subcortical}). These
+values indicate measurements are typically precise to only one decimal place,
+with some instances showing complete precision loss. Regional consistency was
+observed within each metric type, with cortical thickness showing the highest precision
+(range: $1.22-1.93$ digits) compared to surface area ($0.82 - 1.72$ digits) and cortical volume
 ($0.80 - 1.72$ digits). Subcortical volumes exhibited the highest precision
-(range: $0.88 - 1.57$ digits), with a mean of $1.33 \pm 0.22$ significant
-digits.
+(range: $0.88 - 1.57$ digits), with a mean of $1.33 \pm 0.22$ significant digits.
 
-To measure the structural overlap, we evaluated using the extended
-Sørensen-Dice coefficient: Dice coefficients revealed substantial inter-subject
-variability, particularly in temporal pole regions (Figure~\ref{fig:dice}). We
-also observed that the Dice coefficient varies across regions, with some
-regions showing higher variability than others with cortical volume ($0.00 -
-    0.91$) with a mean of $0.75 \pm 0.11$ and subcortical volume ($0.18 - 0.94$)
-with a mean of $0.82 \pm 0.08$. Finally, we noticed that subcortical volume
-measurements are more stable than cortical volume.
+To measure the structural overlap, we evaluated using the extended Sørensen-Dice coefficient:
+Dice coefficients revealed substantial inter-subject variability, particularly
+in temporal pole regions (Figure~\ref{fig:dice}). We also observed that the Dice
+coefficient varies across regions, with some regions showing higher variability
+than others with cortical volume ($0.00 - 0.91$) with a mean of $0.75 \pm 0.11$
+and subcortical volume ($0.18 - 0.94$) with a mean of $0.82 \pm 0.08$. Finally,
+we noticed that subcortical volume measurements are more stable than cortical
+volume.
+
+
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/dice.pdf}
@@ -1067,6 +1110,7 @@ measurements are more stable than cortical volume.
     Right-Accumbens-area & $0.99 \pm 0.15$    & $\020.50 \pm \07.72$ \\
 \end{longtblr}
 
+
 \begin{table}[h]
     \centering
     \caption{Summary of executions failure and excluded subjects. To standardize the sample, we keep 26 repetitions per subject/visits pair.
@@ -1129,8 +1173,8 @@ measurements are more stable than cortical volume.
 
 \subsection{\navr maps}
 
-Figures \ref{fig:navr_map_area} and \ref{fig:navr_map_volume} show the \navr
-maps for cortical surface area and volume, respectively. The maps show the
+Figures \ref{fig:navr_map_area} and \ref{fig:navr_map_volume} show the
+\navr maps for cortical surface area and volume, respectively. The maps show the
 average \navr values across all subjects for each cortical region. The color
 scale indicates the \navr value, with warmer colors indicating higher \navr
 values. The maps provide a visual representation of the variability in the
@@ -1138,34 +1182,41 @@ values. The maps provide a visual representation of the variability in the
 higher or lower \navr values.
 
 \begin{figure}[h]
-    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_area_all.png}
-    \caption{ \navr maps for cortical surface area. The maps show the average
-        \navr values across all subjects for each cortical region. The color
-        scale indicates the \navr value, with warmer colors indicating higher
-        \navr values.}
-    \label{fig:navr_map_area}
+    \centering
+    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)', 'rgb(250,0,0)', 'rgb(128,0,0)']
+    \begin{tikzpicture}
+        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_area_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};   \end{tikzpicture}
+    \caption{ Numerical-Anatomical Variability Ratio (\navr) for cortical
+        surface area across regions and groups. Higher \navr values indicate
+        greater computational uncertainty relative to biological
+        variation. The color scale indicates the \navr value, with warmer colors
+        indicating higher \navr values.\label{fig:navr_thickness}}
 \end{figure}
 
 \begin{figure}[h]
-    \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_volume_all.png}
-    \caption{ \navr maps for cortical volume. The maps show the average \navr
-        values across all subjects for each cortical region. The color scale
-        indicates the \navr value, with warmer colors indicating higher \navr
-        values.}
-    \label{fig:navr_map_volume}
+    \centering
+    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)', 'rgb(250,0,0)', 'rgb(128,0,0)']
+    \begin{tikzpicture}
+        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_volume_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};   \end{tikzpicture}
+    \caption{ Numerical-Anatomical Variability Ratio (\navr) for cortical
+        volume across regions and groups. Higher \navr values indicate
+        greater computational uncertainty relative to biological
+        variation. The color scale indicates the \navr value, with warmer colors
+        indicating higher \navr values.\label{fig:navr_thickness}}
 \end{figure}
 
 \subsection{Consistency results}
 
 \subsubsection{Consistency of statistical tests}
 
-Figures \ref{fig:navr_consistency_area_plot} and
-\ref{fig:navr_consistency_volume_plot} show the consistency of statistical
-tests for cortical area and volume, respectively, across all subjects and
-regions. The plots show the percentage of subjects for which the statistical
-test was significant ($\alpha = 0.05$) for each region. The consistency varies
-across regions, with some regions showing higher consistency than others. The
-red triangles indicate the IEEE-754 run for reference.
+Figures \ref{fig:navr_consistency_area_plot} and \ref{fig:navr_consistency_volume_plot} show the
+consistency of statistical tests for cortical area and volume, respectively,
+across all subjects and regions. The plots show the percentage of subjects for
+which the statistical test was significant ($\alpha = 0.05$) for each region. The
+consistency varies across regions, with some regions showing higher consistency
+than others. The red triangles indicate the IEEE-754 run for reference.
 
 \begin{figure}[h]
     \centering
@@ -1189,12 +1240,11 @@ red triangles indicate the IEEE-754 run for reference.
 
 \subsubsection{Distribution of statistical tests coefficients}
 
-Figures \ref{fig:navr_consistency_area} and \ref{fig:navr_consistency_volume}
-show the distribution of partial correlation coefficients for cortical area and
-volume, respectively, across all subjects and regions. The red triangles
-indicate the IEEE-754 run for reference. The distribution shows the variability
-in the coefficients, with some regions exhibiting higher consistency than
-others.
+Figures \ref{fig:navr_consistency_area} and \ref{fig:navr_consistency_volume} show the distribution of
+partial correlation coefficients for cortical area and volume, respectively,
+across all subjects and regions. The red triangles indicate the IEEE-754 run
+for reference. The distribution shows the variability in the coefficients, with
+some regions exhibiting higher consistency than others.
 
 \begin{figure}[h]
     \centering
@@ -1238,7 +1288,14 @@ others.
     \label{fig:navr_consistency_volume}
 \end{figure}
 
-\subsubsection{Thresholding existing results}
+\subsubsection{Thresholding existing Cohen's d values from the literature}
+
+We applied a thresholding approach to the Cohen's d values reported in the
+literature to identify the most relevant findings for our analysis. This
+involved setting a minimum effect size threshold, below which results were
+considered non-significant or uninformative. The threshold was determined based
+on the distribution of Cohen's d values across studies, with a focus on
+retaining only those effects that were robust and consistent.
 
 \begin{figure}[h]
     \centering
@@ -1252,12 +1309,12 @@ others.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_area_all.png}
-                \label{fig:enigma_22q_unthresholded_area}
+                \label{fig:enigma_22q_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_area_all_thresholded.png}
-                \label{fig:enigma_22q_thresholded_area}
+                \label{fig:enigma_22q_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -1272,35 +1329,16 @@ others.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_area_adult.png}
-                \label{fig:enigma_adhd_unthresholded_area}
+                \label{fig:enigma_adhd_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_area_adult_thresholded.png}
-                \label{fig:enigma_adhd_thresholded_area}
+                \label{fig:enigma_adhd_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
 
-    \vspace{-2cm}
-
-    % Autism spectrum disorder row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{ASD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_area_meta_analysis.png}
-                \label{fig:enigma_asd_unthresholded_area}
-            \end{subfigure}
-            \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_area_meta_analysis_thresholded.png}
-                \label{fig:enigma_asd_thresholded_area}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
     \vspace{-2cm}
 
     % bipolar disorder row
@@ -1311,12 +1349,12 @@ others.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_area_adult.png}
-                \label{fig:enigma_bipolar_unthresholded_area}
+                \label{fig:enigma_bipolar_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_area_adult_thresholded.png}
-                \label{fig:enigma_bipolar_thresholded_area}
+                \label{fig:enigma_bipolar_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -1330,31 +1368,12 @@ others.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_area_adult.png}
-                \label{fig:enigma_depression_unthresholded_area}
+                \label{fig:enigma_depression_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_area_adult_thresholded.png}
-                \label{fig:enigma_depression_thresholded_area}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-    % epilepsy
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Epilepsy}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_area_allepilepsy.png}
-                \label{fig:enigma_epilepsy_unthresholded_area}
-            \end{subfigure}
-            \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_area_allepilepsy_thresholded.png}
-                \label{fig:enigma_epilepsy_thresholded_area}
+                \label{fig:enigma_depression_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -1368,12 +1387,12 @@ others.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_area_adult.png}
-                \label{fig:enigma_ocd_unthresholded_area}
+                \label{fig:enigma_ocd_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_area_adult_thresholded.png}
-                \label{fig:enigma_ocd_thresholded_area}
+                \label{fig:enigma_ocd_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
@@ -1387,19 +1406,25 @@ others.
         \begin{minipage}[c]{0.95\textwidth}
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_area_all.png}
-                \label{fig:enigma_schizophrenia_unthresholded_area}
+                \label{fig:enigma_schizophrenia_unthresholded}
             \end{subfigure}
             \hfill
             \begin{subfigure}[c]{0.48\textwidth}
                 \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_area_all_thresholded.png}
-                \label{fig:enigma_schizophrenia_thresholded_area}
+                \label{fig:enigma_schizophrenia_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
 
-    \caption{ENIGMA cortical area Cohen's d maps showing unthresholded effect sizes (left) and effect sizes thresholded by the \(\nu_{\mathrm{NA}}\) framework (right) for different disorders. Black regions indicate areas where Cohen's d values fall below the numerical variability threshold, demonstrating regions where reported effect sizes may be unreliable due to computational uncertainty.}
-    \label{fig:navr_enigma_thresholded_area}
+    \caption{ENIGMA cortical area Cohen's d maps showing unthresholded effect
+        sizes (left) and effect sizes thresholded by the \navr
+        framework (right) for different disorders. Black regions indicate areas
+        where Cohen's d values fall below the numerical variability threshold,
+        demonstrating regions where reported effect sizes may be unreliable due to
+        computational uncertainty.}
+    \label{fig:navr_enigma}
 \end{figure}
+
 
 \end{document}
 
