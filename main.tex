@@ -10,7 +10,7 @@
 
 % Useful packages
 \usepackage{amsmath}
-\usepackage{graphicx}
+\usepackage[pdftex]{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{todonotes}
 \usepackage{longtable}
@@ -19,41 +19,32 @@
 \usepackage{subcaption}
 \usepackage{xcolor}
 \usepackage{tabularray}
-\usepackage{booktabs} % For \toprule, \midrule, \bottomrule
 \usepackage{xspace} % For \xspace command
 \usepackage{tikz}
 \usetikzlibrary{shadings}
 \usepackage{xifthen}
 
 \newcommand{\colorbar}[6]% width,height,colors,label min,label max,label step
-{   \begin{tikzpicture}
-    \foreach \x [count=\c] in {#3}{ \xdef\numcolo{\c}}
+{   \begin{tikzpicture} \foreach \x [count=\c] in {#3}{ \xdef\numcolo{\c}}
     \pgfmathsetmacro{\piecewidth}{#1/(\numcolo-1)}
-    \xdef\lowcolo{}
-    \foreach \x [count=\c] in {#3}
-    {   \ifthenelse{\c = 1}
-        {}
-        {   \fill[left color=\lowcolo,right color=\x] ({(\c-2)*\piecewidth},0) rectangle ({(\c-1)*\piecewidth},#2);
-        }
-        \xdef\lowcolo{\x}
-    }
-    \draw (0,0) rectangle (#1,#2);
+    \xdef\lowcolo{} \foreach \x [count=\c] in {#3} {   \ifthenelse{\c = 1} {} {
+    \fill[left color=\lowcolo,right color=\x] ({(\c-2)*\piecewidth},0) rectangle
+    ({(\c-1)*\piecewidth},#2); } \xdef\lowcolo{\x} } \draw (0,0) rectangle
+    (#1,#2);
     \pgfmathsetmacro{\secondlabel}{#4+#6}
     \pgfmathsetmacro{\lastlabel}{#5+0.01}
     \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
-    \foreach \x in {#4,\secondlabel,...,\lastlabel}
-    { \draw ({(\x-#4)/(#5-#4)*#1},0) -- ++ (0,-0.1) node[below=0.05,font=\tiny] {\pgfmathprintnumber{\x}};
-    }
+    \foreach \x in {#4,\secondlabel,...,\lastlabel} { \draw
+    ({(\x-#4)/(#5-#4)*#1},0) -- ++ (0,-0.1) node[below=0.05,font=\tiny]
+    {\pgfmathprintnumber{\x}}; }
     \end{tikzpicture}
 }
 
 \newcommand{\YC}[1]{\textcolor{red}{YC: #1}}
 
-\newcommand{\0}{\mspace{9mu}}
-\newcommand{\navr}{$\nu_{\text{nav}}$\xspace}
+\newcommand{\0}{\mspace{9mu}} \newcommand{\navr}{$\nu_{\text{nav}}$\xspace}
 
-\title{Numerical vs. Anatomical Variability: Impact on Numerical Reliability on MRI measures of Parkinson's Disease}
-% let's see if we put back Freesurfer
+\title{Computational uncertainty in neuroimaging mimics and masks brain disease signals}
 
 \author{Yohan Chatelain, Andrzej Sokołowski, Madeleine Sharp, Jean-Baptiste Poline, Tristan Glatard}
 
@@ -62,69 +53,66 @@
 \maketitle
 
 \begin{abstract}
-    Reproducibility in neuroimaging is critically hampered by computational
-    variability within analysis software. Here, we quantify the numerical
-    instability of FreeSurfer, a ubiquitous tool, using structural MRI data from
-    the Parkinson's Progression Markers Initiative. By introducing controlled
-    perturbations with Monte Carlo Arithmetic, we assessed the variability of
-    cortical and subcortical measurements. We found that numerical variability
-    in FreeSurfer is substantial, with key structural metrics often precise to
-    only a single significant digit. This computational noise was up to half of
-    the anatomical variation between Parkinson's disease patients and healthy
-    controls. Consequently, the statistical significance of group differences
-    and correlations with clinical severity fluctuated dramatically across
-    identical analyses. We design a tool to quantify the Numerical-Anatomical
-    Variability Ratio (\navr), which relates computational uncertainty to
-    biological variation as well as practical formula to determine the
-    population sample size required to achieve a desired variability on Cohen's
-    d effect size. Our results demonstrate that computational errors can produce
-    unreliable findings in clinical neuroimaging such as correlation and group
-    analyses. Addressing such numerical instability is essential for developing
-    robust biomarkers for neurological disorders like Parkinson's disease.
+    The reliability of scientific discovery is increasingly dependent on complex
+    computational tools. While overt software bugs are a known concern, a more
+    insidious threat is numerical variability—minute, stochastic differences in
+    output from identical analyses—which can undermine the reproducibility of
+    research findings. This issue is especially critical in medicine, where
+    faint biological signals are sought within noisy data. Here, we quantify the
+    impact of numerical variability in a ubiquitous neuroimaging tool,
+    FreeSurfer, on clinical research in Parkinson's disease. Using Monte Carlo
+    Arithmetic to introduce controlled computational perturbations, we analyzed
+    MRI data from the Parkinson's Progression Markers Initiative (PPMI). We
+    introduce the Numerical-Anatomical Variability Ratio (\navr), a framework to
+    measure computational noise relative to biological variation. We found that
+    numerical variability in key brain measurements is substantial, often
+    limiting their precision to a single significant digit. For some brain
+    regions, this computational noise was equivalent to half the genuine
+    anatomical variation between patients with Parkinson's disease and healthy
+    controls. Consequently, the statistical significance of clinical findings
+    fluctuated dramatically across computationally identical analyses. Our
+    results demonstrate that unquantified numerical variability can lead to
+    unreliable scientific conclusions, potentially explaining failures to
+    replicate findings in clinical neuroimaging. We establish a direct
+    mathematical relationship between \navr and the stability of statistical
+    effect sizes, providing a critical tool for assessing the reliability of
+    computational biomarkers. Addressing numerical instability is essential for
+    building robust and trustworthy models of human disease.
 \end{abstract}
 
 \section{Introduction}
 
-Neuroimaging reproducibility has emerged as a critical challenge in neuroscience
-research. While inter-software variability is
-well-documented~\cite{botvinik2020variability,gronenschild2012effects,bhagwat2021understanding},
-within-version numerical variability—small output variations from identical
-software runs—remains underexplored despite potentially significant clinical
-implications. Numerical variability arises from computational factors including
-floating-point precision, parallel processing, and random initializations. In
-Parkinson's disease (PD) research, where MRI-derived metrics like cortical
-thickness and subcortical volumes serve as potential biomarkers, such
-variability could obscure subtle disease-related changes and compromise
-statistical reliability.
+Modern science is built on a foundation of computational analysis. From climate
+modeling to genomics and neuroscience, complex software pipelines are
+indispensable for transforming raw data into discovery. While researchers are
+vigilant against software version changes and methodological errors, a more
+fundamental challenge is often overlooked: the numerical variability of the
+computations themselves. Seemingly deterministic algorithms can produce slightly
+different results on each run due to factors like floating-point arithmetic and
+parallelization, introducing a layer of computational uncertainty that is rarely
+quantified~\cite{botvinik2020variability,gronenschild2012effects,bhagwat2021understanding}.
 
-Previous studies have demonstrated substantial between-version differences in
-FreeSurfer outputs~\cite{haddad2023multisite}, but the impact of computational
-uncertainty within single software versions on clinical associations remains
-unclear. This gap is particularly concerning for PD research, where establishing
-reliable brain-behavior relationships is essential for developing neuroimaging
-biomarkers. Despite promising associations between MRI-derived metrics and PD
-severity, no neuroimaging biomarkers are widely accepted for clinical diagnosis
-or monitoring. Measurement variability across studies undermines reliability and
-generalizability, hindering translation to clinical practice. This computational
-uncertainty could significantly impact PD research by: (1) masking subtle
-disease-related changes essential for early detection, (2) compromising
-statistical power for detecting group differences and clinical correlations, and
-(3) reducing reproducibility across studies using identical analysis pipelines.
+This challenge is particularly acute in clinical research, where the goal is to
+detect subtle biological signals of disease. In neuroimaging, for instance,
+metrics such as cortical thickness are used as potential biomarkers to track
+neurological disorders like Parkinson's disease (PD)~\cite{haddad2023multisite}.
+If the computational noise in measuring these biomarkers is on the same order of
+magnitude as the subtle brain changes caused by the disease, any resulting
+scientific conclusions become inherently fragile. This may contribute to the
+well-documented "reproducibility crisis," where promising findings fail to
+translate into reliable clinical tools.
 
-Here, we investigate numerical variability in FreeSurfer 7.3.1 using Monte Carlo
-Arithmetic to simulate realistic computational perturbations. We introduce the
-Numerical-Anatomical Variability Ratio (\navr) to quantify computational
-uncertainty relative to biological variation and derive its theoretical
-relationship to statistical effect sizes. Using longitudinal data from the
-Parkinson's Progression Markers Initiative, we assess how numerical precision
-affects group comparisons and clinical correlations in PD research.
-Specifically, our aims include: (1) quantifying how computational uncertainty
-affects group difference detection between PD patients and healthy controls, (2)
-assessing numerical variability effects on brain-behavior correlations with
-clinical measures (UPDRS scores), and (3) developing the \navr framework to
-predict statistical reliability from computational precision. Our findings will
-inform strategies for mitigating numerical variability effects and enhancing
-reproducibility in clinical neuroimaging studies.
+Here, we dissect the impact of within-software numerical variability on the
+reliability of clinical neuroimaging research. We use Monte Carlo Arithmetic to
+systematically assess FreeSurfer, a cornerstone software package, and develop a
+novel framework—the Numerical-Anatomical Variability Ratio (\navr)—to directly
+compare the magnitude of computational uncertainty to biological variability.
+Using data from a major PD cohort, we (1) quantify how numerical instability
+impacts group comparisons and brain-behavior correlations, (2) derive the
+theoretical relationship between \navr and the reliability of statistical effect
+sizes, and (3) apply this framework to re-evaluate the robustness of landmark
+findings in the field.
+
 
 \section{Results}
 
@@ -133,56 +121,48 @@ in education ($t = -2.05$, $p = 0.04$) and sex distribution ($\chi^2 = 4.15$, $p
     = 0.04$). The longitudinal cohort showed no significant demographic differences
 between groups (Table~\ref{tab:cohort_stat}).
 
-\subsection{Numerical variability impacts MRI derived findings}
-
-% takes Greg paper example. Summarize the methods, so people understand the method
-% look at example fmriprep or experimental paper of Nature Communications
-% W: We simulate 26 numerical states, ...
+\subsection{Numerical instability leads to fluctuating scientific conclusions}
 
 We assessed numerical variability in FreeSurfer 7.3.1 using Monte Carlo
 Arithmetic (MCA)~\cite{parker1997monte}, more particularly the Fuzzy-libm
 extension~\cite{salari2021accurate} that applies random perturbations to
 mathematical library functions's output. We executed 26 \texttt{recon-all} runs
-for each subject's MRI data, simulating 26 numerical states. Using
-\texttt{recon-all} we collected cortical thickness, surface area, and
-subcortical volumes for each subject. We present results cortical thickness and
-subcortical volumes, surface area and cortical volume are reported in the
-appendix. We selected 103 healthy controls (HC) and 121 Parkinson's disease (PD)
-patients from the Parkinson's Progression Markers Initiative (PPMI) database.
+for each subject's MRI data from the Parkinson's Progression Markers Initiative
+(PPMI), simulating 26 numerical states.
 
-We tested the statistical significance of group differences and correlations
-with clinical measures (UPDRS scores) across the 26 MCA repetitions. We reported
-the fraction of statistically significant tests ($p < 0.05$) for each metric and
-region. Statistical significance proportions varied substantially for cortical
-thickness (Figure~\ref{fig:significance_correlation_thickness}) and subcortical
-volumes (Figure~\ref{fig:significance_correlation_subcortical_volume}). Ratios
-near 0.5 indicated maximal uncertainty, while values approaching 0 or 1
-suggested consistent results across computational variations.
+We first tested the statistical significance of group differences between
+Parkinson's disease (PD) patients and healthy controls (HC), and their
+correlations with clinical measures (UPDRS scores), across the 26 MCA
+repetitions. The proportion of statistically significant tests ($p < 0.05$)
+varied substantially for both cortical thickness
+(Figure~\ref{fig:significance_correlation_thickness}) and subcortical volumes
+(Figure~\ref{fig:significance_correlation_subcortical_volume}). For many brain
+regions, the significance of a finding was inconsistent, appearing in some
+computational runs but not others. Ratios near 0.5 indicate maximal uncertainty,
+where a reported result could be attributed to a lucky roll of the computational
+dice.
 
-This variability reflects in the partial correlation coefficients and
-F-statistics from ANCOVA analyses, which showed substantial spread around
-unperturbed IEEE-754 results used as reference (red markers). This indicates
-that numerical variability affects both statistical significance and effect size
-estimation. We note that IEEE results are most of the time included in the
-distribution of coefficients \YC{assert with t-test?} but not necessarily at the
-center of the distribution. We note that the spread of coefficients varies
-between regions but stay within the same order of magnitude, but some regions
-show a large spread of coefficients across MCA repetitions.
-
-
+This instability is also reflected in the effect sizes themselves. Partial
+correlation coefficients and F-statistics from ANCOVA analyses showed
+substantial spread around the unperturbed IEEE-754 results (red markers in
+Figure~\ref{fig:statstest_coefficients_distribution} and
+\ref{fig:navr_consistency_thickness}). This demonstrates that numerical
+variability affects not only the binary outcome of statistical significance but
+also the magnitude of the estimated effect, further complicating the
+interpretation of results.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
-    \caption{ Proportion of statistically significant tests ($p < 0.05$) across the
-        26 numerical states for subcortical volume
+    \caption{ Proportion of statistically significant tests ($p < 0.05$) across
+        the 26 numerical states for subcortical volume
         measures.\label{fig:significance_correlation_subcortical_volume}}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{figures/consistency/cortical_thickness_significance_correlation.pdf}
-    \caption{Proportion of statistically significant tests ($p < 0.05$) across the
-        26 numerical states for cortical thickness
+    \includegraphics[width=\linewidth]{figures/consistency/cortical_thickness_significance_correlation.pdf}
+    \caption{Proportion of statistically significant tests ($p < 0.05$) across
+        the 26 numerical states for cortical thickness
         measures.\label{fig:significance_correlation_thickness}}
     \label{fig:navr_consistency_thickness_plot}
 \end{figure}
@@ -191,22 +171,22 @@ show a large spread of coefficients across MCA repetitions.
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
     \caption{ Distribution of partial correlation coefficients (r-values) and
         F-statistics from ANCOVA across MCA repetitions for subcortical volume
-        measures. Red dots represent the IEEE results. The top row shows r-values,
-        while the bottom row shows F-values. The left column represents baseline
-        analysis, and the right column represents longitudinal
-        analysis.\label{fig:statstest_coefficients_distribution}}
+        measures. Red dots represent the IEEE results. The top row shows
+        r-values, while the bottom row shows F-values. The left column
+        represents baseline analysis, and the right column represents
+        longitudinal analysis.\label{fig:statstest_coefficients_distribution}}
 \end{figure}
 
 \begin{figure}
     \centering
-    \begin{subfigure}[b]{\textwidth}
-        \includegraphics[width=\textwidth]{figures/consistency/cortical_thickness_coefficients_distribution-Left.pdf}
+    \begin{subfigure}[b]{\linewidth}
+        \includegraphics[width=\linewidth]{figures/consistency/cortical_thickness_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:navr_consistency_thickness_left}
     \end{subfigure}
 
-    \begin{subfigure}[b]{\textwidth}
-        \includegraphics[width=\textwidth]{figures/consistency/cortical_thickness_coefficients_distribution-Right.pdf}
+    \begin{subfigure}[b]{\linewidth}
+        \includegraphics[width=\linewidth]{figures/consistency/cortical_thickness_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:navr_consistency_thickness_right}
     \end{subfigure}
@@ -219,101 +199,105 @@ show a large spread of coefficients across MCA repetitions.
 \end{figure}
 
 
-\subsection{\navr reveals region-specific numerical instabilities}
-% Keep cortical thickness and subcortical volumes.
-% Add NARPS figures for both.
+\subsection{A framework to quantify the impact of numerical variability}
 
-A common issue with neuroimaging analysis is the difficulty in assessing
-numerical precision and its impact on downstream statistical tests like effect
-sizes. To address this, we introduce the Numerical-Anatomical Variability Ratio
-(\navr), a metric designed to quantify the relationship between numerical
-variability and anatomical variability, computed as the ratio between the
-standard deviation of numerical variability and the standard deviation of
-anatomical variability.
+To address the challenge of assessing numerical precision, we introduce the
+Numerical-Anatomical Variability Ratio (\navr), a metric designed to quantify
+computational noise in relation to biological signal. It is computed as the
+ratio of the standard deviation of numerical variability ($\sigma_{\text{num}}$)
+to the standard deviation of anatomical variability ($\sigma_{\text{anat}}$).
 \[
     \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
 \]
 
-Figures~\ref{fig:navr_thickness} and \ref{fig:navr_subcortical} present the \navr for
-cortical thickness and subcortical volumes across all brain regions.
-Regions with high \navr values indicate areas where numerical variability
-may compromise the detection of true anatomical differences.
+Figures~\ref{fig:navr_thickness} and \ref{fig:navr_subcortical} present the
+\navr for cortical thickness and subcortical volumes. These brain maps visualize
+the regions where the problem of numerical variability is most severe. Regions
+with high \navr values (e.g., approaching 0.5, shown in warmer colors) indicate
+areas where up to half of the observed variability is due to computational noise
+rather than true anatomical differences, severely compromising the ability to
+detect genuine biological effects.
 
-One common measure used in clinical neuroimaging studies is the Cohen's d
-coefficient that quantifies the effect size of group differences. The \navr can
-be used to predict the uncertainty in Cohen's d due to numerical variability.
-The theoretical relationship between \navr and Cohen's d uncertainty is given by:
+Crucially, we derived the theoretical relationship between \navr and the
+uncertainty in Cohen's d, a standard measure of effect size:
 \[
     \sigma_d = \frac{2}{\sqrt{N}} \text{\navr}
 \]
-where $\sigma_d$ is the standard deviation of Cohen's d and $N$ is the
-population sample size. We showed in section~\ref{sec:navr_effect_size} that
-this relationship holds true for our data, allowing us to quantify the impact of
-numerical variability on effect size estimation.
-
-The strength of this relationship is that one can then predict the uncertainty
-in effect size estimation based on the \navr value and thus threshold the Cohen's
-d value based on the \navr value. Hence, given a paper with Cohen's d values, we
-can remove values $|\sigma_d|\leq 2/\sqrt{N} \text{\navr}$ as they
-will be lower than the numerical variability threshold. This allows us to assess
-the reliability of the reported effect sizes in the paper. The advantage of this
-approach is that it can be applied to any neuroimaging study, regardless of the
-software used, and has a specific value per region, which allows for a more
-fine-grained analysis of the numerical variability impact on effect size
-estimation.
+where $\sigma_d$ is the standard deviation of Cohen's d and $N$ is the total
+sample size. This formula provides a direct way to translate the numerical
+stability of a measurement into its impact on statistical power and reliability,
+offering a practical tool for researchers to gauge the robustness of their
+findings.
 
 \begin{figure}[h]
     \centering
     \begin{tikzpicture}
-        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_subcortical_volume_all.png}};
-        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
+        \node[anchor=base,inner sep=0] at (0,0)
+        {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_subcortical_volume_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1)
+        {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
     \end{tikzpicture}
     \caption{ Numerical-Anatomical Variability Ratio (\navr) for subcortical
-        volumes across regions and groups. Higher \navr values indicate
-        greater computational uncertainty relative to biological
+        volumes across regions and groups. Higher \navr values indicate greater
+        computational uncertainty relative to biological
         variation.\label{fig:navr_subcortical}}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)', 'rgb(250,0,0)', 'rgb(128,0,0)']
+    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)',
+    % 'rgb(250,0,0)', 'rgb(128,0,0)']
     \begin{tikzpicture}
-        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_thickness_all.png}};
-        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
+        \node[anchor=base,inner sep=0] at (0,0)
+        {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_thickness_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1)
+        {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
     \end{tikzpicture}
     \caption{ Numerical-Anatomical Variability Ratio (\navr) for cortical
         thickness across regions and groups. Higher \navr values indicate
-        greater computational uncertainty relative to biological
-        variation. The color scale indicates the \navr value, with warmer colors
-        indicating higher \navr values.\label{fig:navr_thickness}}
+        greater computational uncertainty relative to biological variation. The
+        color scale indicates the \navr value, with warmer colors indicating
+        higher \navr values.\label{fig:navr_map_area}}
 \end{figure}
 
 
-\subsection{\navr helps thresholding effect size uncertainty}
+\subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes}
 
-We applied the \navr framework to assess the reliability of reported effect
-on ENIGMA studies~\cite{thompson2014enigma}. We extracted the Cohen's d
-using the \texttt{enigmatoolbox} Python package~\cite{lariviere2021enigma}
-colored in black regions where the Cohen's d is below the numerical variability threshold.
-Figure~\ref{fig:navr_enigma} shows the results of this analysis.
+Armed with the \navr framework, we can now assess the reliability of published
+findings. We applied our method to re-evaluate the effect sizes reported by the
+ENIGMA consortium~\cite{thompson2014enigma}, a major initiative that has
+published landmark meta-analyses of brain disorders. We used our empirically
+derived \navr values to calculate the numerical uncertainty for each brain
+region and thresholded the reported Cohen's d values from ENIGMA.
+
+Figures~\ref{fig:navr_enigma_thickness} and \ref{fig:navr_enigma_subcortical}
+present the powerful results of this analysis. The left panels show the original
+Cohen's d maps for various disorders, while the right panels show the same maps
+after thresholding. Regions colored in black indicate where the reported effect
+size is smaller than the underlying computational noise of the measurement tool.
+While many of the core, highly significant findings of ENIGMA remain robust (as
+expected from their large sample sizes), a considerable number of secondary
+findings are shown to be potentially unreliable. This analysis demonstrates that
+our framework can be used as a critical tool to evaluate the robustness of
+findings in the literature and guide future research toward more reliable
+effects.
 
 \begin{figure}[h]
     \centering
     \vspace{0.2cm}
 
     % 22q11.2 deletion syndrome row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{22q11.2}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_thickness_all.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{22q11.2}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_thickness_all.png}
                 \label{fig:enigma_22q_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_thickness_all_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_thickness_all_thresholded.png}
                 \label{fig:enigma_22q_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -322,18 +306,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \vspace{-2cm}
 
     % ADHD row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{ADHD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_thickness_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{ADHD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_thickness_adult.png}
                 \label{fig:enigma_adhd_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_thickness_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_thickness_adult_thresholded.png}
                 \label{fig:enigma_adhd_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -342,18 +325,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \vspace{-2cm}
 
     % Autism spectrum disorder row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{ASD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{ASD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis.png}
                 \label{fig:enigma_asd_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis_thresholded.png}
                 \label{fig:enigma_asd_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -361,18 +343,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \vspace{-2cm}
 
     % bipolar disorder row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Bipolar}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Bipolar}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult.png}
                 \label{fig:enigma_bipolar_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult_thresholded.png}
                 \label{fig:enigma_bipolar_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -380,18 +361,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % depression
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Depression}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_thickness_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Depression}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_thickness_adult.png}
                 \label{fig:enigma_depression_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_thickness_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_thickness_adult_thresholded.png}
                 \label{fig:enigma_depression_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -399,18 +379,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % epilepsy
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Epilepsy}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Epilepsy}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy.png}
                 \label{fig:enigma_epilepsy_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy_thresholded.png}
                 \label{fig:enigma_epilepsy_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -418,18 +397,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % ocd 
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{OCD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_thickness_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{OCD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_thickness_adult.png}
                 \label{fig:enigma_ocd_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_thickness_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_thickness_adult_thresholded.png}
                 \label{fig:enigma_ocd_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -437,29 +415,28 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % schizophrenia
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Schizophrenia}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Schizophrenia}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all.png}
                 \label{fig:enigma_schizophrenia_thickness_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all_thresholded.png}
                 \label{fig:enigma_schizophrenia_thickness_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
 
     \caption{ENIGMA cortical thickness Cohen's d maps showing unthresholded
-        effect sizes (left) and effect sizes thresholded by the
-        \navr framework (right) for different disorders. Black
-        regions indicate areas where Cohen's d values fall below the numerical
-        variability threshold, demonstrating regions where reported effect sizes may
-        be unreliable due to computational uncertainty.\label{fig:navr_enigma_thickness}}
+        effect sizes (left) and effect sizes thresholded by the \navr framework
+        (right) for different disorders. Black regions indicate areas where
+        Cohen's d values fall below the numerical variability threshold,
+        demonstrating regions where reported effect sizes may be unreliable due
+        to computational uncertainty.\label{fig:navr_enigma_thickness}}
 \end{figure}
 
 \begin{figure}[h]
@@ -467,18 +444,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \vspace{0.2cm}
 
     % 22q11.2 deletion syndrome row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{22q11.2}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_subcortical_volume_all.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{22q11.2}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_subcortical_volume_all.png}
                 \label{fig:enigma_22q_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_subcortical_volume_all_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_subcortical_volume_all_thresholded.png}
                 \label{fig:enigma_22q_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
@@ -487,18 +463,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \vspace{-2cm}
 
     % ADHD row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{ADHD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_subcortical_volume_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{ADHD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_subcortical_volume_adult.png}
                 \label{fig:enigma_adhd_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_subcortical_volume_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_subcortical_volume_adult_thresholded.png}
                 \label{fig:enigma_adhd_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
@@ -507,18 +482,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \vspace{-2cm}
 
     % Autism spectrum disorder row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{ASD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_subcortical_volume_meta_analysis.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{ASD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/asd_subcortical_volume_meta_analysis.png}
                 \label{fig:enigma_asd_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/asd_subcortical_volume_meta_analysis_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/asd_subcortical_volume_meta_analysis_thresholded.png}
                 \label{fig:enigma_asd_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
@@ -526,18 +500,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
     \vspace{-2cm}
 
     % bipolar disorder row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Bipolar}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_subcortical_volume_typeII.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Bipolar}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_subcortical_volume_typeII.png}
                 \label{fig:enigma_bipolar_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_subcortical_volume_typeII_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_subcortical_volume_typeII_thresholded.png}
                 \label{fig:enigma_bipolar_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
@@ -545,18 +518,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % depression
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Depression}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_subcortical_volume_all.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Depression}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_subcortical_volume_all.png}
                 \label{fig:enigma_depression_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_subcortical_volume_all_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_subcortical_volume_all_thresholded.png}
                 \label{fig:enigma_depression_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
@@ -564,18 +536,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % epilepsy
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Epilepsy}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_subcortical_volume_allepilepsy.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Epilepsy}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/epilepsy_subcortical_volume_allepilepsy.png}
                 \label{fig:enigma_epilepsy_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/epilepsy_subcortical_volume_allepilepsy_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/epilepsy_subcortical_volume_allepilepsy_thresholded.png}
                 \label{fig:enigma_epilepsy_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
@@ -583,18 +554,17 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % ocd 
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{OCD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_subcortical_volume_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{OCD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_subcortical_volume_adult.png}
                 \label{fig:enigma_ocd_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_subcortical_volume_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_subcortical_volume_adult_thresholded.png}
                 \label{fig:enigma_ocd_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
@@ -602,119 +572,91 @@ Figure~\ref{fig:navr_enigma} shows the results of this analysis.
 
     \vspace{-2cm}
     % schizophrenia
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Schizophrenia}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_subcortical_volume_all.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Schizophrenia}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_subcortical_volume_all.png}
                 \label{fig:enigma_schizophrenia_unthresholded_subcortical}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_subcortical_volume_all_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_subcortical_volume_all_thresholded.png}
                 \label{fig:enigma_schizophrenia_thresholded_subcortical}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
 
-    \caption{ENIGMA subcortical volume Cohen's d maps showing unthresholded effect sizes (left) and effect sizes thresholded by the \(\nu_{\mathrm{NA}}\) framework (right) for different disorders. Black regions indicate areas where Cohen's d values fall below the numerical variability threshold, demonstrating regions where reported effect sizes may be unreliable due to computational uncertainty.}
-    \label{fig:navr_enigma}
+    \caption{ENIGMA subcortical volume Cohen's d maps showing unthresholded effect sizes (left) and effect sizes thresholded by the \navr framework (right) for different disorders. Black regions indicate areas where Cohen's d values fall below the numerical variability threshold, demonstrating regions where reported effect sizes may be unreliable due to computational uncertainty.}
+    \label{fig:navr_enigma_subcortical}
 \end{figure}
 
 
-
-% design a tool that measure numerical variability on already published paper.
-% -> we can check the consistency of the results.
-% -> we have applied to ENIGMA
-% -> when you have a large N, the effect of numerical variability is average by this large N
-% -> but when N is small, the effect of numerical variability is more pronounced.
-
-% Add the formula. \navr (Numerical Anatomical Variability Ratio)
-
-% ENIGMA
-
 \begin{figure}
-    \includegraphics[width=\textwidth]{figures/sigma_d_contour.pdf}
+    \includegraphics[width=\linewidth]{figures/sigma_d_contour.pdf}
     \caption{ Relationship between \navr and population sample size  \(N\) for
-        predicting the uncertainty in Cohen's d effect size estimation. The contour
-        lines represent different \navr values, showing how numerical variability
-        scales with sample size. With a typical \navr value of 0.2,
-        to maintain reliable effect size estimates $\sigma_d \leq 0.01$,
-        the plot suggests to use $N \geq 1500$.}
+        predicting the uncertainty in Cohen's d effect size estimation. The
+        contour lines represent different \navr values, showing how numerical
+        variability scales with sample size. With a typical \navr value of 0.2,
+        to maintain reliable effect size estimates $\sigma_d \leq 0.01$, the
+        plot suggests to use $N \geq 1500$.}
 \end{figure}
 
 \section{Discussion}
 
-% if N is small, be careful about numerical variability
-% if N is large, numerical variability is averaged out
-% rough estimate of what N is good to have
-% our cohort is homogeneous in age so sigma_anat is low but ..
-Our analysis reveals significant numerical instability in FreeSurfer 7.3.1, with
-cortical measurements showing limited precision (1-2 significant digits) that
-substantially impacts statistical reliability in neuroimaging studies. These
-precision limitations pose particular challenges for detecting subtle
-disease-related changes in conditions like Parkinson's disease.
+Our analysis of FreeSurfer reveals that its measurements possess a
+numerical precision of approximately one to two significant digits. This
+computational variability is not trivial; in some brain regions, it accounts for
+up to half of the observed anatomical variance between healthy individuals and
+patients with Parkinson's disease. Such a low signal-to-noise ratio has direct
+consequences for scientific reliability. We demonstrate that for the exact same
+dataset, the statistical significance of clinical correlations and group
+differences can appear or vanish simply due to numerical errors in
+the underlying computation.
 
-The absence of significant baseline differences between PD and HC groups
-demonstrates how numerical variability can compromise reproducibility.
-Effect size distributions showed substantial spread around standard
-IEEE-754 results, indicating that numerical precision directly affects both
-significance testing and effect size estimation.
+These findings offer a potential explanation for some of the reproducibility
+challenges in clinical neuroimaging. To move beyond simply identifying the
+problem, we introduced the Numerical-Anatomical Variability Ratio (\navr) as a
+framework to quantify the impact of this instability. By establishing a direct
+theoretical link between \navr and the uncertainty of Cohen's d effect sizes, we
+provide a practical tool for researchers. Our re-analysis of landmark ENIGMA
+findings illustrates this utility. While the large sample sizes of the
+consortium provide robustness to its primary findings, our framework can flag
+secondary effect sizes that are smaller than the computational noise floor,
+suggesting they may not be reliable, particularly in the context of the smaller
+sample sizes typical of exploratory studies.
 
-This study demonstrates significant numerical
-limitations in FreeSurfer 7.3.1, with cortical measurements exhibiting only
-1-1.5 significant digits of precision. These computational constraints
-substantially impact statistical reliability and reproducibility in neuroimaging
-research, particularly for detecting subtle disease-related changes.
+It is important to situate these findings within the specific context of our
+study. The \navr values we report are specific to FreeSurfer 7.3.1, and future
+software versions may exhibit improved numerical stability. Furthermore, our
+analysis used a cohort that was relatively homogeneous in age, which may
+decrease the total anatomical variance and thus inflate the \navr ratio. We
+therefore propose that the \navr framework is not a final judgment on any
+particular finding, but rather a methodology that should be applied across
+diverse software, datasets, and disease models to build a more complete picture
+of computational reliability. The fuzzy-libm library used here is a powerful
+tool for probing floating-point instability, but future work should also
+investigate other sources of variability, such as algorithmic choices and data
+handling practices.
 
-Our \navr framework quantifies the relationship between computational uncertainty
-and anatomical variation, revealing that numerical instability approaches half of
-the anatomical variability in certain brain regions.
+While our investigation is focused on neuroimaging, it serves as a case study
+for a broader issue in computational science. Many scientific fields rely on
+complex software to find faint signals in noisy data, and they are likely
+susceptible to similar issues of numerical instability. We suggest that ensuring
+the robustness of scientific results is a shared responsibility. Software
+developers can contribute by prioritizing and reporting on the numerical
+stability of their tools, while researchers can use methods like Monte Carlo
+Arithmetic to validate their analysis pipelines.
 
-The theoretical relationship between \navr and Cohen's d uncertainty provides a
-framework for predicting statistical reliability based on computational
-precision. The relationship with sample size suggests that larger cohorts can
-mitigate numerical variability effects, but sample sizes must be sufficiently
-large to ensure reliable effect size estimates. This is particularly relevant
-for studies with small sample sizes, where numerical variability can
-significantly distort results. Our cohort is homogeneous in age, which minimizes
-anatomical variability, a cohort using a broader age range would likely show
-higher anatomical variability, hence reducing the impact of numerical
-variability on effect size estimation. Moreover, the \navr values have been
-obtained using FreeSurfer 7.3.1, which is known to have numerical precision
-issues. Future versions of FreeSurfer may improve numerical stability,
-potentially altering the \navr values and their relationship with effect size
-uncertainty. Other neuroimaging software packages may exhibit different
-numerical precision characteristics, and the \navr framework can be adapted to
-assess their reliability. A more comprehensive evaluation of multiple
-neuroimaging tools would provide a broader understanding of numerical precision
-issues in the field, and hence extending the \navr framework scope.
+In conclusion, our findings emphasize the need to treat computational
+uncertainty with the same rigor as statistical uncertainty. The \navr framework
+offers a practical step in this direction, providing a means to assess and
+compare the numerical reliability of neuroimaging methodologies. By quantifying
+and accounting for computational noise, we can enhance the search for subtle
+neurological changes and build more robust and reproducible models of human
+health and disease.
 
-The previous results thresholded with the \navr framework
-demonstrate that many reported effect sizes in neuroimaging studies may be unreliable,
-although no statistical significant results were thresholded. We found a correlation
-between the Cohen's d values being thresholded and their significance, indicating that
-our thresholding method is effective in identifying unreliable effect sizes.
-This highlights the importance of considering numerical precision when interpreting
-neuroimaging results, particularly in studies with small sample sizes or subtle
-disease-related changes, which is not the case for ENIGMA studies, which
-typically have large sample sizes (many thousands of participants).
-
-The fuzzy-libm library used in this study provides a practical solution for
-assessing numerical precision in neuroimaging software and has demonstrated its
-effectiveness in several applications. However, it is important to note that
-other sources of instabilities may exist in neuroimaging software, such as
-algorithmic choices, numerical approximations, and data handling practices.
-Future work should explore these aspects to provide a more comprehensive
-understanding of numerical precision in neuroimaging analyses.
-
-These findings emphasize the critical need for improved numerical precision in
-neuroimaging software. Future developments should prioritize computational
-stability to enhance the detection of subtle neurological changes and improve
-reproducibility across studies. The \navr framework offers a practical tool for
-assessing and comparing the numerical reliability of neuroimaging methodologies.
 
 \section{Methods}
 
@@ -757,10 +699,9 @@ consent (Table~\ref{tab:cohort_stat}).
         \hline
         n                       & $103 $             & $121 $              \\
         Age (y)                 & $60.7 \pm 10.3 $   & $60.7 \pm \09.1 $   \\
-        Age
-        range                   & $30.6 - 84.3 $     & $39.2 - 78.3 $      \\
-        Gender (male, \%)       & $57 \; (55.3\%)
-        $                       & $80 \; (66.1\%) $                        \\
+        Age range               & $30.6 - 84.3 $     & $39.2 - 78.3 $      \\
+        Gender (male, \%)       & $57 \; (55.3\%) $  & $80 \; (66.1\%) $
+        \\
         Education (y)           & $16.6 \pm \03.3 $  & $16.1 \pm \03.0 $   \\
         UPDRS III OFF baseline  & $- $               & $23.4 \pm 10.1 $    \\
         UPDRS III OFF follow-up & $- $               & $25.8 \pm 11.1 $    \\
@@ -769,7 +710,11 @@ consent (Table~\ref{tab:cohort_stat}).
     \end{tabular}
     \vspace{1em}
 
-    \caption{\textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS = Unified Parkinson's Disease Rating Scale; PD = Parkinson's disease. Values are expressed as mean $\pm$ standard deviation. PD-non-MCI longitudinal sample is a subsample of the PD-non-MCI original sample that had longitudinal data and disease severity scores available.
+    \caption{\textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS =
+        Unified Parkinson's Disease Rating Scale; PD = Parkinson's disease.
+        Values are expressed as mean $\pm$ standard deviation. PD-non-MCI
+        longitudinal sample is a subsample of the PD-non-MCI original sample
+        that had longitudinal data and disease severity scores available.
         \label{tab:cohort_stat}}
 \end{table}
 
@@ -831,7 +776,10 @@ Anatomical variability captures inter-subject differences:
     \sigma^2_{\text{anat}} = \frac{1}{n} \sum_{i=1}^{n} \left[ \frac{1}{m-1} \sum_{j=1}^{m} (x_{i,j} - \bar{x}_{i,\cdot})^2 \right]
 \end{equation}
 
-where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means, respectively. Higher \navr values indicate regions where computational uncertainty approaches or exceeds biological variation, potentially compromising the detection of true anatomical differences.
+where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means,
+respectively. Higher \navr values indicate regions where computational
+uncertainty approaches or exceeds biological variation, potentially compromising
+the detection of true anatomical differences.
 
 \subsubsection{Relationship between \navr~and Effect Size Uncertainty}
 
@@ -900,7 +848,8 @@ extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 \subsection{Significant digits formula}
 
 We compute the number of significant bits \(\hat{s}\) with probability
-\(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the \texttt{significantdigits}
+\(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the
+\texttt{significantdigits}
 package\footnote{\url{https://github.com/verificarlo/significantdigits}}
 (version 0.4.0). \texttt{significantdigits} implements the Centered Normality
 Hypothesis approach described in~\cite{sohier2021confidence}:
@@ -932,31 +881,33 @@ sets, defined as follows:
 
 As a side result, the cross-sectional analysis measures the impact of numerical
 variability in FreeSurfer version 7.3.1 on the PPMI (Parkinson's Progression
-Markers Initiative) cohort. This involves comparing the estimation of
-structural MRI measures, including cortical and subcortical volumes, cortical
-thickness, and surface area. The goal is to assess the stability of these key
-metrics and quantify the numerical variability.
+Markers Initiative) cohort. This involves comparing the estimation of structural
+MRI measures, including cortical and subcortical volumes, cortical thickness,
+and surface area. The goal is to assess the stability of these key metrics and
+quantify the numerical variability.
 
 FreeSurfer 7.3.1 showed limited numerical precision across all cortical
-measures: $1.61 \pm 0.20$ significant digits for cortical thickness, $1.33 \pm 0.23$ for
-surface area, and $1.33 \pm 0.23$ for  cortical volume
-(Figures~\ref{fig:sig_digits_cortical}). Subcortical volumes have a similar precision
-with $1.33 \pm 0.22$ significant digits on average (Figure~\ref{fig:sig_digits_subcortical}). These
-values indicate measurements are typically precise to only one decimal place,
-with some instances showing complete precision loss. Regional consistency was
-observed within each metric type, with cortical thickness showing the highest precision
-(range: $1.22-1.93$ digits) compared to surface area ($0.82 - 1.72$ digits) and cortical volume
+measures: $1.61 \pm 0.20$ significant digits for cortical thickness, $1.33 \pm
+    0.23$ for surface area, and $1.33 \pm 0.23$ for  cortical volume
+(Figures~\ref{fig:sig_digits_cortical}). Subcortical volumes have a similar
+precision with $1.33 \pm 0.22$ significant digits on average
+(Figure~\ref{fig:sig_digits_subcortical}). These values indicate measurements
+are typically precise to only one decimal place, with some instances showing
+complete precision loss. Regional consistency was observed within each metric
+type, with cortical thickness showing the highest precision (range: $1.22-1.93$
+digits) compared to surface area ($0.82 - 1.72$ digits) and cortical volume
 ($0.80 - 1.72$ digits). Subcortical volumes exhibited the highest precision
-(range: $0.88 - 1.57$ digits), with a mean of $1.33 \pm 0.22$ significant digits.
+(range: $0.88 - 1.57$ digits), with a mean of $1.33 \pm 0.22$ significant
+digits.
 
-To measure the structural overlap, we evaluated using the extended Sørensen-Dice coefficient:
-Dice coefficients revealed substantial inter-subject variability, particularly
-in temporal pole regions (Figure~\ref{fig:dice}). We also observed that the Dice
-coefficient varies across regions, with some regions showing higher variability
-than others with cortical volume ($0.00 - 0.91$) with a mean of $0.75 \pm 0.11$
-and subcortical volume ($0.18 - 0.94$) with a mean of $0.82 \pm 0.08$. Finally,
-we noticed that subcortical volume measurements are more stable than cortical
-volume.
+To measure the structural overlap, we evaluated using the extended Sørensen-Dice
+coefficient: Dice coefficients revealed substantial inter-subject variability,
+particularly in temporal pole regions (Figure~\ref{fig:dice}). We also observed
+that the Dice coefficient varies across regions, with some regions showing
+higher variability than others with cortical volume ($0.00 - 0.91$) with a mean
+of $0.75 \pm 0.11$ and subcortical volume ($0.18 - 0.94$) with a mean of $0.82
+    \pm 0.08$. Finally, we noticed that subcortical volume measurements are more
+stable than cortical volume.
 
 
 
@@ -968,131 +919,346 @@ volume.
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/sig_digits.pdf}
-    \caption{Number of significant digits for each cortical region and metric.\label{fig:sig_digits_cortical}}
+    \caption{Number of significant digits for each cortical region and
+        metric.\label{fig:sig_digits_cortical}}
 \end{figure}
 
 \begin{figure}
     \includegraphics*[width=\linewidth]{figures/sig_digits_subcortical_volume.pdf}
-    \caption{Number of significant digits of subcortical volume for each subcortical region.\label{fig:sig_digits_subcortical}}
+    \caption{Number of significant digits of subcortical volume for each
+        subcortical region.\label{fig:sig_digits_subcortical}}
 \end{figure}
 
 \subsection{Significant digits average across all subjects}
 
-\begin{longtblr}[
-        caption={Significant digits average across all subjects.},
-        label={tab:sig-cortical},
-    ]{
-        colspec={lcc|cc|cc}, width=0.25\linewidth,
+\begin{longtblr}[ caption={Significant digits average across all subjects.},
+        label={tab:sig-cortical},]{ colspec={lcc|cc|cc}, width=0.25\linewidth,
         row{even}={white,font=\footnotesize},
-        row{odd}={gray9,font=\footnotesize},
-        rows = {rowsep=0pt},
-        rowhead=2,
-        row{1}={white,font=\bfseries},
-        row{2}={gray9}
-    }
-    \SetCell[c=1]{c}Region   & \SetCell[c=2]{c}{cortical thickness } &                 & \SetCell[c=2]{c}{surface area} &                 & \SetCell[c=2]{c}{cortical volume} &                 \\
-                             & lh                                    & rh              & lh                             & rh              & lh                                & rh              \\
+        row{odd}={gray9,font=\footnotesize}, rows = {rowsep=0pt}, rowhead=2,
+    row{1}={white,font=\bfseries}, row{2}={gray9}} \SetCell[c=1]{c}Region &
+    \SetCell[c=2]{c}{cortical thickness }                                 &                                   &
+    \SetCell[c=2]{c}{surface area}                                        &
+                                                                          & \SetCell[c=2]{c}{cortical volume} &
+    \\
+                                                                          & lh                                &
+    rh                                                                    & lh
+                                                                          & rh                                & lh
+                                                                          & rh                                                                    \\
     \hline
-    bankssts                 & $1.65 \pm 0.16$                       & $1.69 \pm 0.13$ & $1.15 \pm 0.18$                & $1.21 \pm 0.13$ & $1.08 \pm 0.17$                   & $1.14 \pm 0.13$ \\
-    caudalanteriorcingulate  & $1.38 \pm 0.14$                       & $1.40 \pm 0.14$ & $1.14 \pm 0.22$                & $1.19 \pm 0.18$ & $1.14 \pm 0.24$                   & $1.21 \pm 0.20$ \\
-    caudalmiddlefrontal      & $1.77 \pm 0.18$                       & $1.77 \pm 0.19$ & $1.40 \pm 0.21$                & $1.31 \pm 0.23$ & $1.40 \pm 0.22$                   & $1.30 \pm 0.23$ \\
-    cuneus                   & $1.52 \pm 0.19$                       & $1.54 \pm 0.19$ & $1.34 \pm 0.14$                & $1.33 \pm 0.14$ & $1.32 \pm 0.14$                   & $1.28 \pm 0.15$ \\
-    entorhinal               & $1.22 \pm 0.23$                       & $1.22 \pm 0.23$ & $0.82 \pm 0.19$                & $0.87 \pm 0.18$ & $0.80 \pm 0.19$                   & $0.81 \pm 0.18$ \\
-    fusiform                 & $1.66 \pm 0.17$                       & $1.71 \pm 0.16$ & $1.41 \pm 0.18$                & $1.43 \pm 0.19$ & $1.33 \pm 0.18$                   & $1.37 \pm 0.20$ \\
-    inferiorparietal         & $1.81 \pm 0.15$                       & $1.82 \pm 0.13$ & $1.53 \pm 0.18$                & $1.59 \pm 0.20$ & $1.50 \pm 0.17$                   & $1.56 \pm 0.17$ \\
-    inferiortemporal         & $1.66 \pm 0.17$                       & $1.70 \pm 0.16$ & $1.37 \pm 0.25$                & $1.38 \pm 0.21$ & $1.37 \pm 0.23$                   & $1.41 \pm 0.19$ \\
-    isthmuscingulate         & $1.46 \pm 0.12$                       & $1.43 \pm 0.13$ & $1.27 \pm 0.15$                & $1.24 \pm 0.15$ & $1.27 \pm 0.14$                   & $1.27 \pm 0.15$ \\
-    lateraloccipital         & $1.75 \pm 0.18$                       & $1.77 \pm 0.17$ & $1.58 \pm 0.15$                & $1.57 \pm 0.16$ & $1.49 \pm 0.16$                   & $1.50 \pm 0.15$ \\
-    lateralorbitofrontal     & $1.65 \pm 0.17$                       & $1.51 \pm 0.15$ & $1.44 \pm 0.23$                & $0.95 \pm 0.13$ & $1.51 \pm 0.16$                   & $1.12 \pm 0.14$ \\
-    lingual                  & $1.54 \pm 0.22$                       & $1.52 \pm 0.21$ & $1.47 \pm 0.18$                & $1.46 \pm 0.17$ & $1.50 \pm 0.18$                   & $1.49 \pm 0.18$ \\
-    medialorbitofrontal      & $1.50 \pm 0.15$                       & $1.53 \pm 0.15$ & $1.09 \pm 0.16$                & $1.15 \pm 0.14$ & $1.15 \pm 0.17$                   & $1.21 \pm 0.13$ \\
-    middletemporal           & $1.74 \pm 0.16$                       & $1.81 \pm 0.14$ & $1.42 \pm 0.23$                & $1.52 \pm 0.19$ & $1.44 \pm 0.21$                   & $1.55 \pm 0.18$ \\
-    parahippocampal          & $1.54 \pm 0.14$                       & $1.56 \pm 0.12$ & $1.13 \pm 0.13$                & $1.09 \pm 0.13$ & $1.11 \pm 0.13$                   & $1.07 \pm 0.13$ \\
-    paracentral              & $1.59 \pm 0.22$                       & $1.60 \pm 0.22$ & $1.40 \pm 0.17$                & $1.40 \pm 0.19$ & $1.36 \pm 0.18$                   & $1.36 \pm 0.20$ \\
-    parsopercularis          & $1.74 \pm 0.17$                       & $1.71 \pm 0.16$ & $1.38 \pm 0.19$                & $1.30 \pm 0.18$ & $1.38 \pm 0.19$                   & $1.30 \pm 0.20$ \\
-    parsorbitalis            & $1.53 \pm 0.20$                       & $1.51 \pm 0.20$ & $1.21 \pm 0.14$                & $1.21 \pm 0.18$ & $1.19 \pm 0.16$                   & $1.22 \pm 0.18$ \\
-    parstriangularis         & $1.68 \pm 0.17$                       & $1.63 \pm 0.19$ & $1.33 \pm 0.16$                & $1.30 \pm 0.22$ & $1.30 \pm 0.16$                   & $1.28 \pm 0.21$ \\
-    pericalcarine            & $1.33 \pm 0.21$                       & $1.30 \pm 0.22$ & $1.23 \pm 0.20$                & $1.21 \pm 0.22$ & $1.18 \pm 0.17$                   & $1.18 \pm 0.17$ \\
-    postcentral              & $1.84 \pm 0.24$                       & $1.81 \pm 0.26$ & $1.68 \pm 0.23$                & $1.69 \pm 0.28$ & $1.64 \pm 0.20$                   & $1.63 \pm 0.24$ \\
-    posteriorcingulate       & $1.57 \pm 0.13$                       & $1.56 \pm 0.14$ & $1.37 \pm 0.20$                & $1.35 \pm 0.21$ & $1.39 \pm 0.19$                   & $1.39 \pm 0.22$ \\
-    precentral               & $1.79 \pm 0.26$                       & $1.76 \pm 0.28$ & $1.71 \pm 0.24$                & $1.64 \pm 0.27$ & $1.72 \pm 0.22$                   & $1.66 \pm 0.28$ \\
-    precuneus                & $1.83 \pm 0.13$                       & $1.84 \pm 0.13$ & $1.65 \pm 0.21$                & $1.66 \pm 0.21$ & $1.61 \pm 0.18$                   & $1.62 \pm 0.19$ \\
-    rostralanteriorcingulate & $1.34 \pm 0.14$                       & $1.39 \pm 0.15$ & $1.00 \pm 0.16$                & $1.07 \pm 0.17$ & $1.11 \pm 0.19$                   & $1.11 \pm 0.18$ \\
-    rostralmiddlefrontal     & $1.77 \pm 0.19$                       & $1.74 \pm 0.19$ & $1.44 \pm 0.24$                & $1.41 \pm 0.28$ & $1.49 \pm 0.21$                   & $1.48 \pm 0.25$ \\
-    superiorfrontal          & $1.87 \pm 0.17$                       & $1.85 \pm 0.18$ & $1.61 \pm 0.23$                & $1.56 \pm 0.27$ & $1.64 \pm 0.21$                   & $1.62 \pm 0.25$ \\
-    superiorparietal         & $1.92 \pm 0.18$                       & $1.93 \pm 0.17$ & $1.72 \pm 0.24$                & $1.65 \pm 0.28$ & $1.66 \pm 0.22$                   & $1.60 \pm 0.26$ \\
-    superiortemporal         & $1.83 \pm 0.17$                       & $1.85 \pm 0.15$ & $1.57 \pm 0.22$                & $1.58 \pm 0.18$ & $1.52 \pm 0.21$                   & $1.57 \pm 0.18$ \\
-    supramarginal            & $1.83 \pm 0.16$                       & $1.85 \pm 0.15$ & $1.57 \pm 0.22$                & $1.59 \pm 0.26$ & $1.56 \pm 0.20$                   & $1.56 \pm 0.24$ \\
-    frontalpole              & $1.26 \pm 0.23$                       & $1.23 \pm 0.20$ & $0.94 \pm 0.11$                & $0.91 \pm 0.11$ & $0.88 \pm 0.17$                   & $0.87 \pm 0.14$ \\
-    temporalpole             & $1.24 \pm 0.26$                       & $1.28 \pm 0.25$ & $0.94 \pm 0.16$                & $0.99 \pm 0.19$ & $0.86 \pm 0.20$                   & $0.91 \pm 0.22$ \\
-    transversetemporal       & $1.47 \pm 0.20$                       & $1.46 \pm 0.18$ & $1.17 \pm 0.13$                & $1.13 \pm 0.11$ & $1.20 \pm 0.15$                   & $1.15 \pm 0.13$ \\
-    insula                   & $1.47 \pm 0.16$                       & $1.42 \pm 0.14$ & $1.13 \pm 0.18$                & $1.00 \pm 0.18$ & $1.29 \pm 0.16$                   & $1.19 \pm 0.19$ \\
+    bankssts                                                              & $1.65 \pm 0.16$                   &
+    $1.69 \pm 0.13$                                                       & $1.15 \pm 0.18$
+                                                                          & $1.21 \pm 0.13$                   & $1.08 \pm 0.17$ & $1.14 \pm 0.13$
+    \\
+    caudalanteriorcingulate                                               & $1.38 \pm 0.14$                   &
+    $1.40 \pm 0.14$                                                       & $1.14 \pm 0.22$
+                                                                          & $1.19 \pm 0.18$                   & $1.14 \pm 0.24$ & $1.21 \pm 0.20$
+    \\
+    caudalmiddlefrontal                                                   & $1.77 \pm 0.18$                   &
+    $1.77 \pm 0.19$                                                       & $1.40 \pm 0.21$
+                                                                          & $1.31 \pm 0.23$                   & $1.40 \pm 0.22$ & $1.30 \pm 0.23$
+    \\
+    cuneus                                                                & $1.52 \pm 0.19$                   &
+    $1.54 \pm 0.19$                                                       & $1.34 \pm 0.14$
+                                                                          & $1.33 \pm 0.14$                   & $1.32 \pm 0.14$ & $1.28 \pm 0.15$
+    \\
+    entorhinal                                                            & $1.22 \pm 0.23$                   &
+    $1.22 \pm 0.23$                                                       & $0.82 \pm 0.19$
+                                                                          & $0.87 \pm 0.18$                   & $0.80 \pm 0.19$ & $0.81 \pm 0.18$
+    \\
+    fusiform                                                              & $1.66 \pm 0.17$                   &
+    $1.71 \pm 0.16$                                                       & $1.41 \pm 0.18$
+                                                                          & $1.43 \pm 0.19$                   & $1.33 \pm 0.18$ & $1.37 \pm 0.20$
+    \\
+    inferiorparietal                                                      & $1.81 \pm 0.15$                   &
+    $1.82 \pm 0.13$                                                       & $1.53 \pm 0.18$
+                                                                          & $1.59 \pm 0.20$                   & $1.50 \pm 0.17$ & $1.56 \pm 0.17$
+    \\
+    inferiortemporal                                                      & $1.66 \pm 0.17$                   &
+    $1.70 \pm 0.16$                                                       & $1.37 \pm 0.25$
+                                                                          & $1.38 \pm 0.21$                   & $1.37 \pm 0.23$ & $1.41 \pm 0.19$
+    \\
+    isthmuscingulate                                                      & $1.46 \pm 0.12$                   &
+    $1.43 \pm 0.13$                                                       & $1.27 \pm 0.15$
+                                                                          & $1.24 \pm 0.15$                   & $1.27 \pm 0.14$ & $1.27 \pm 0.15$
+    \\
+    lateraloccipital                                                      & $1.75 \pm 0.18$                   &
+    $1.77 \pm 0.17$                                                       & $1.58 \pm 0.15$
+                                                                          & $1.57 \pm 0.16$                   & $1.49 \pm 0.16$ & $1.50 \pm 0.15$
+    \\
+    lateralorbitofrontal                                                  & $1.65 \pm 0.17$                   &
+    $1.51 \pm 0.15$                                                       & $1.44 \pm 0.23$
+                                                                          & $0.95 \pm 0.13$                   & $1.51 \pm 0.16$ & $1.12 \pm 0.14$
+    \\
+    lingual                                                               & $1.54 \pm 0.22$                   &
+    $1.52 \pm 0.21$                                                       & $1.47 \pm 0.18$
+                                                                          & $1.46 \pm 0.17$                   & $1.50 \pm 0.18$ & $1.49 \pm 0.18$
+    \\
+    medialorbitofrontal                                                   & $1.50 \pm 0.15$                   &
+    $1.53 \pm 0.15$                                                       & $1.09 \pm 0.16$
+                                                                          & $1.15 \pm 0.14$                   & $1.15 \pm 0.17$ & $1.21 \pm 0.13$
+    \\
+    middletemporal                                                        & $1.74 \pm 0.16$                   &
+    $1.81 \pm 0.14$                                                       & $1.42 \pm 0.23$
+                                                                          & $1.52 \pm 0.19$                   & $1.44 \pm 0.21$ & $1.55 \pm 0.18$
+    \\
+    parahippocampal                                                       & $1.54 \pm 0.14$                   &
+    $1.56 \pm 0.12$                                                       & $1.13 \pm 0.13$
+                                                                          & $1.09 \pm 0.13$                   & $1.11 \pm 0.13$ & $1.07 \pm 0.13$
+    \\
+    paracentral                                                           & $1.59 \pm 0.22$                   &
+    $1.60 \pm 0.22$                                                       & $1.40 \pm 0.17$
+                                                                          & $1.40 \pm 0.19$                   & $1.36 \pm 0.18$ & $1.36 \pm 0.20$
+    \\
+    parsopercularis                                                       & $1.74 \pm 0.17$                   &
+    $1.71 \pm 0.16$                                                       & $1.38 \pm 0.19$
+                                                                          & $1.30 \pm 0.18$                   & $1.38 \pm 0.19$ & $1.30 \pm 0.20$
+    \\
+    parsorbitalis                                                         & $1.53 \pm 0.20$                   &
+    $1.51 \pm 0.20$                                                       & $1.21 \pm 0.14$
+                                                                          & $1.21 \pm 0.18$                   & $1.19 \pm 0.16$ & $1.22 \pm 0.18$
+    \\
+    parstriangularis                                                      & $1.68 \pm 0.17$                   &
+    $1.63 \pm 0.19$                                                       & $1.33 \pm 0.16$
+                                                                          & $1.30 \pm 0.22$                   & $1.30 \pm 0.16$ & $1.28 \pm 0.21$
+    \\
+    pericalcarine                                                         & $1.33 \pm 0.21$                   &
+    $1.30 \pm 0.22$                                                       & $1.23 \pm 0.20$
+                                                                          & $1.21 \pm 0.22$                   & $1.18 \pm 0.17$ & $1.18 \pm 0.17$
+    \\
+    postcentral                                                           & $1.84 \pm 0.24$                   &
+    $1.81 \pm 0.26$                                                       & $1.68 \pm 0.23$
+                                                                          & $1.69 \pm 0.28$                   & $1.64 \pm 0.20$ & $1.63 \pm 0.24$
+    \\
+    posteriorcingulate                                                    & $1.57 \pm 0.13$                   &
+    $1.56 \pm 0.14$                                                       & $1.37 \pm 0.20$
+                                                                          & $1.35 \pm 0.21$                   & $1.39 \pm 0.19$ & $1.39 \pm 0.22$
+    \\
+    precentral                                                            & $1.79 \pm 0.26$                   &
+    $1.76 \pm 0.28$                                                       & $1.71 \pm 0.24$
+                                                                          & $1.64 \pm 0.27$                   & $1.72 \pm 0.22$ & $1.66 \pm 0.28$
+    \\
+    precuneus                                                             & $1.83 \pm 0.13$                   &
+    $1.84 \pm 0.13$                                                       & $1.65 \pm 0.21$
+                                                                          & $1.66 \pm 0.21$                   & $1.61 \pm 0.18$ & $1.62 \pm 0.19$
+    \\
+    rostralanteriorcingulate                                              & $1.34 \pm 0.14$                   &
+    $1.39 \pm 0.15$                                                       & $1.00 \pm 0.16$
+                                                                          & $1.07 \pm 0.17$                   & $1.11 \pm 0.19$ & $1.11 \pm 0.18$
+    \\
+    rostralmiddlefrontal                                                  & $1.77 \pm 0.19$                   &
+    $1.74 \pm 0.19$                                                       & $1.44 \pm 0.24$
+                                                                          & $1.41 \pm 0.28$                   & $1.49 \pm 0.21$ & $1.48 \pm 0.25$
+    \\
+    superiorfrontal                                                       & $1.87 \pm 0.17$                   &
+    $1.85 \pm 0.18$                                                       & $1.61 \pm 0.23$
+                                                                          & $1.56 \pm 0.27$                   & $1.64 \pm 0.21$ & $1.62 \pm 0.25$
+    \\
+    superiorparietal                                                      & $1.92 \pm 0.18$                   &
+    $1.93 \pm 0.17$                                                       & $1.72 \pm 0.24$
+                                                                          & $1.65 \pm 0.28$                   & $1.66 \pm 0.22$ & $1.60 \pm 0.26$
+    \\
+    superiortemporal                                                      & $1.83 \pm 0.17$                   &
+    $1.85 \pm 0.15$                                                       & $1.57 \pm 0.22$
+                                                                          & $1.58 \pm 0.18$                   & $1.52 \pm 0.21$ & $1.57 \pm 0.18$
+    \\
+    supramarginal                                                         & $1.83 \pm 0.16$                   &
+    $1.85 \pm 0.15$                                                       & $1.57 \pm 0.22$
+                                                                          & $1.59 \pm 0.26$                   & $1.56 \pm 0.20$ & $1.56 \pm 0.24$
+    \\
+    frontalpole                                                           & $1.26 \pm 0.23$                   &
+    $1.23 \pm 0.20$                                                       & $0.94 \pm 0.11$
+                                                                          & $0.91 \pm 0.11$                   & $0.88 \pm 0.17$ & $0.87 \pm 0.14$
+    \\
+    temporalpole                                                          & $1.24 \pm 0.26$                   &
+    $1.28 \pm 0.25$                                                       & $0.94 \pm 0.16$
+                                                                          & $0.99 \pm 0.19$                   & $0.86 \pm 0.20$ & $0.91 \pm 0.22$
+    \\
+    transversetemporal                                                    & $1.47 \pm 0.20$                   &
+    $1.46 \pm 0.18$                                                       & $1.17 \pm 0.13$
+                                                                          & $1.13 \pm 0.11$                   & $1.20 \pm 0.15$ & $1.15 \pm 0.13$
+    \\
+    insula                                                                & $1.47 \pm 0.16$                   &
+    $1.42 \pm 0.14$                                                       & $1.13 \pm 0.18$
+                                                                          & $1.00 \pm 0.18$                   & $1.29 \pm 0.16$ & $1.19 \pm 0.19$
+    \\
 \end{longtblr}
 
-\begin{longtblr}[
-        caption={Standard-deviation average across all subjects for cortical metrics.},
-        label={tab:std-cortical},
-    ]{
+\begin{longtblr}[ caption={Standard-deviation average across all subjects for
+                cortical metrics.}, label={tab:std-cortical}, ]{
         colspec={lcc|cc|cc}, width=\linewidth,
         row{even}={white,font=\footnotesize},
-        row{odd}={gray9,font=\footnotesize},
-        rows = {rowsep=0pt},
-        rowhead=2,
-        row{1}={white,font=\bfseries},
-        row{2}={gray9}
-    }
-    \SetCell[c=1]{c}Region   & \SetCell[c=2]{c}{cortical thickness                                                                                                                       \\ (mm)} &                 & \SetCell[c=2]{c}{surface area \\ ($\text{mm}^2$)} &                    & \SetCell[c=2]{c}{cortical volume \\ ($\text{mm}^3$)} &                     \\
-                             & lh                                  & rh              & lh                     & rh                      & lh                    & rh                     \\
+        row{odd}={gray9,font=\footnotesize}, rows = {rowsep=0pt},
+        rowhead=2, row{1}={white,font=\bfseries}, row{2}={gray9}}
+    \SetCell[c=1]{c}Region   & \SetCell[c=2]{c}{cortical thickness                                      \\
+    (mm)}                    &                                     & \SetCell[c=2]{c}{surface area      \\
+    ($\text{mm}^2$)}         &                                     &
+    \SetCell[c=2]{c}{cortical volume                                                                    \\ ($\text{mm}^3$)} &
+    \\
+                             & lh                                  & rh                            & lh
+                             & rh                                  & lh                            & rh
+    \\
     \hline
-    bankssts                 & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\028.65 \pm \015.97$  & $\021.73 \pm \0\08.68$  & $\077.25 \pm \037.44$ & $\059.87 \pm \020.45$  \\
-    caudalanteriorcingulate  & $0.04 \pm 0.01$                     & $0.04 \pm 0.01$ & $\019.98 \pm \013.83$  & $\021.01 \pm \014.96$   & $\051.33 \pm \037.32$ & $\051.67 \pm \041.74$  \\
-    caudalmiddlefrontal      & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\038.58 \pm \036.77$  & $\046.65 \pm \044.68$   & $104.41 \pm 108.02$   & $124.11 \pm 112.10$    \\
-    cuneus                   & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\028.45 \pm \011.50$  & $\031.25 \pm \015.67$   & $\060.72 \pm \025.52$ & $\074.77 \pm \034.16$  \\
-    entorhinal               & $0.08 \pm 0.05$                     & $0.08 \pm 0.05$ & $\027.41 \pm \016.67$  & $\022.37 \pm \011.70$   & $125.48 \pm \071.07$  & $115.94 \pm \057.21$   \\
-    fusiform                 & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\050.70 \pm \025.16$  & $\047.86 \pm \028.19$   & $182.92 \pm \092.31$  & $170.22 \pm 103.05$    \\
-    inferiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm 0.01$ & $\053.01 \pm \029.19$  & $\059.90 \pm \050.62$   & $145.66 \pm \072.95$  & $159.55 \pm 110.14$    \\
-    inferiortemporal         & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\064.73 \pm \042.27$  & $\058.75 \pm \034.04$   & $198.15 \pm 127.44$   & $168.38 \pm \084.67$   \\
-    isthmuscingulate         & $0.03 \pm 0.01$                     & $0.03 \pm 0.01$ & $\023.74 \pm \011.07$  & $\023.35 \pm \013.99$   & $\057.43 \pm \029.59$ & $\053.05 \pm \034.34$  \\
-    lateraloccipital         & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\053.82 \pm \024.63$  & $\056.35 \pm \028.61$   & $156.83 \pm \066.16$  & $160.98 \pm \076.00$   \\
-    lateralorbitofrontal     & $0.02 \pm 0.01$                     & $0.03 \pm 0.01$ & $\043.31 \pm \030.16$  & $117.14 \pm \033.75$    & $\092.60 \pm \056.29$ & $217.89 \pm \069.06$   \\
-    lingual                  & $0.03 \pm 0.01$                     & $0.03 \pm 0.01$ & $\044.26 \pm \022.65$  & $\046.73 \pm \023.96$   & $\089.19 \pm \046.24$ & $\095.82 \pm \049.65$  \\
-    medialorbitofrontal      & $0.03 \pm 0.01$                     & $0.03 \pm 0.01$ & $\066.04 \pm \024.11$  & $\058.06 \pm \019.00$   & $147.37 \pm \057.84$  & $134.52 \pm \042.26$   \\
-    middletemporal           & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\053.01 \pm \034.97$  & $\044.87 \pm \028.36$   & $165.49 \pm 108.52$   & $135.26 \pm \077.98$   \\
-    parahippocampal          & $0.03 \pm 0.01$                     & $0.03 \pm 0.01$ & $\019.55 \pm \0\08.42$ & $\020.45 \pm \0\07.81$  & $\064.22 \pm \025.29$ & $\065.43 \pm \024.59$  \\
-    paracentral              & $0.03 \pm 0.02$                     & $0.03 \pm 0.01$ & $\022.94 \pm \012.98$  & $\026.94 \pm \019.80$   & $\063.71 \pm \040.74$ & $\073.88 \pm \056.66$  \\
-    parsopercularis          & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\028.65 \pm \028.77$  & $\029.46 \pm \026.82$   & $\080.67 \pm \092.87$ & $\082.38 \pm \089.16$  \\
-    parsorbitalis            & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $\017.82 \pm \0\09.77$ & $\021.41 \pm \010.66$   & $\060.63 \pm \045.20$ & $\068.18 \pm \036.64$  \\
-    parstriangularis         & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\025.67 \pm \014.65$  & $\034.86 \pm \037.79$   & $\071.73 \pm \045.49$ & $\096.87 \pm 102.22$   \\
-    pericalcarine            & $0.03 \pm 0.02$                     & $0.04 \pm 0.02$ & $\036.04 \pm \020.18$  & $\042.02 \pm \024.82$   & $\059.64 \pm \029.98$ & $\068.61 \pm \034.89$  \\
-    postcentral              & $0.01 \pm 0.02$                     & $0.02 \pm 0.02$ & $\043.47 \pm \067.12$  & $\045.98 \pm \083.10$   & $100.26 \pm 121.35$   & $104.53 \pm 156.51$    \\
-    posteriorcingulate       & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\021.93 \pm \013.05$  & $\024.39 \pm \019.52$   & $\052.42 \pm \033.33$ & $\056.27 \pm \052.59$  \\
-    precentral               & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$ & $\046.92 \pm \053.54$  & $\057.46 \pm \070.35$   & $118.04 \pm 157.21$   & $148.21 \pm 233.10$    \\
-    precuneus                & $0.01 \pm 0.01$                     & $0.01 \pm 0.00$ & $\038.04 \pm \042.87$  & $\038.95 \pm \040.96$   & $100.91 \pm 111.15$   & $102.24 \pm \096.62$   \\
-    rostralanteriorcingulate & $0.05 \pm 0.02$                     & $0.04 \pm 0.02$ & $\034.80 \pm \015.03$  & $\022.00 \pm \010.59$   & $\081.04 \pm \041.59$ & $\061.95 \pm \033.93$  \\
-    rostralmiddlefrontal     & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$ & $\092.87 \pm \096.23$  & $108.40 \pm 132.97$     & $213.81 \pm 259.58$   & $252.00 \pm 358.20$    \\
-    superiorfrontal          & $0.01 \pm 0.01$                     & $0.01 \pm 0.01$ & $\085.23 \pm \086.47$  & $\098.14 \pm 120.75$    & $223.91 \pm 234.89$   & $243.75 \pm 304.56$    \\
-    superiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm 0.01$ & $\049.49 \pm \080.81$  & $\062.89 \pm \096.86$   & $132.77 \pm 207.97$   & $161.39 \pm 235.01$    \\
-    superiortemporal         & $0.02 \pm 0.01$                     & $0.01 \pm 0.01$ & $\047.70 \pm \033.64$  & $\041.38 \pm \023.84$   & $156.30 \pm 101.85$   & $129.01 \pm \078.70$   \\
-    supramarginal            & $0.01 \pm 0.01$                     & $0.01 \pm 0.01$ & $\050.87 \pm \058.82$  & $\050.06 \pm \083.24$   & $136.23 \pm 168.28$   & $133.99 \pm 207.69$    \\
-    frontalpole              & $0.07 \pm 0.04$                     & $0.07 \pm 0.04$ & $\012.99 \pm \0\04.02$ & $\016.42 \pm \0\04.47$  & $\056.49 \pm \032.17$ & $\067.84 \pm \028.93$  \\
-    temporalpole             & $0.09 \pm 0.05$                     & $0.08 \pm 0.05$ & $\025.08 \pm \010.71$  & $\022.16 \pm \011.78$   & $154.60 \pm \079.32$  & $138.28 \pm \078.33$   \\
-    transversetemporal       & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$ & $\012.73 \pm \0\05.33$ & $\0\09.98 \pm \0\03.33$ & $\029.55 \pm \012.34$ & $\024.91 \pm \0\08.79$ \\
-    insula                   & $0.04 \pm 0.02$                     & $0.04 \pm 0.01$ & $\073.45 \pm \030.66$  & $\095.70 \pm \037.63$   & $146.49 \pm \064.11$  & $183.39 \pm \081.47$   \\
+    bankssts                 & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\028.65 \pm \015.97$               & $\021.73
+    \pm \0\08.68$            & $\077.25 \pm \037.44$               & $\059.87
+        \pm \020.45$
+    \\
+    caudalanteriorcingulate  & $0.04 \pm 0.01$                     & $0.04 \pm
+    0.01$                    & $\019.98 \pm \013.83$               & $\021.01
+    \pm \014.96$             & $\051.33 \pm \037.32$               & $\051.67
+        \pm \041.74$
+    \\
+    caudalmiddlefrontal      & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\038.58 \pm \036.77$               & $\046.65
+    \pm \044.68$             & $104.41 \pm 108.02$                 & $124.11 \pm
+    112.10$                                                                                             \\
+    cuneus                   & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\028.45 \pm \011.50$               & $\031.25
+    \pm \015.67$             & $\060.72 \pm \025.52$               & $\074.77
+        \pm \034.16$
+    \\
+    entorhinal               & $0.08 \pm 0.05$                     & $0.08 \pm
+    0.05$                    & $\027.41 \pm \016.67$               & $\022.37
+    \pm \011.70$             & $125.48 \pm \071.07$                & $115.94 \pm
+    \057.21$                                                                                            \\
+    fusiform                 & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\050.70 \pm \025.16$               & $\047.86
+    \pm \028.19$             & $182.92 \pm \092.31$                & $170.22 \pm
+    103.05$                                                                                             \\
+    inferiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm
+    0.01$                    & $\053.01 \pm \029.19$               & $\059.90
+    \pm \050.62$             & $145.66 \pm \072.95$                & $159.55 \pm
+    110.14$                                                                                             \\
+    inferiortemporal         & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\064.73 \pm \042.27$               & $\058.75
+    \pm \034.04$             & $198.15 \pm 127.44$                 & $168.38 \pm
+    \084.67$                                                                                            \\
+    isthmuscingulate         & $0.03 \pm 0.01$                     & $0.03 \pm
+    0.01$                    & $\023.74 \pm \011.07$               & $\023.35
+    \pm \013.99$             & $\057.43 \pm \029.59$               & $\053.05
+        \pm \034.34$
+    \\
+    lateraloccipital         & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\053.82 \pm \024.63$               & $\056.35
+    \pm \028.61$             & $156.83 \pm \066.16$                & $160.98 \pm
+    \076.00$                                                                                            \\
+    lateralorbitofrontal     & $0.02 \pm 0.01$                     & $0.03 \pm
+    0.01$                    & $\043.31 \pm \030.16$               & $117.14 \pm
+    \033.75$                 & $\092.60 \pm \056.29$               & $217.89 \pm
+    \069.06$                                                                                            \\
+    lingual                  & $0.03 \pm 0.01$                     & $0.03 \pm
+    0.01$                    & $\044.26 \pm \022.65$               & $\046.73
+    \pm \023.96$             & $\089.19 \pm \046.24$               & $\095.82
+        \pm \049.65$
+    \\
+    medialorbitofrontal      & $0.03 \pm 0.01$                     & $0.03 \pm
+    0.01$                    & $\066.04 \pm \024.11$               & $\058.06
+    \pm \019.00$             & $147.37 \pm \057.84$                & $134.52 \pm
+    \042.26$                                                                                            \\
+    middletemporal           & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\053.01 \pm \034.97$               & $\044.87
+    \pm \028.36$             & $165.49 \pm 108.52$                 & $135.26 \pm
+    \077.98$                                                                                            \\
+    parahippocampal          & $0.03 \pm 0.01$                     & $0.03 \pm
+    0.01$                    & $\019.55 \pm \0\08.42$              & $\020.45
+    \pm \0\07.81$            & $\064.22 \pm \025.29$               & $\065.43
+        \pm \024.59$
+    \\
+    paracentral              & $0.03 \pm 0.02$                     & $0.03 \pm
+    0.01$                    & $\022.94 \pm \012.98$               & $\026.94
+    \pm \019.80$             & $\063.71 \pm \040.74$               & $\073.88
+        \pm \056.66$
+    \\
+    parsopercularis          & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\028.65 \pm \028.77$               & $\029.46
+    \pm \026.82$             & $\080.67 \pm \092.87$               & $\082.38
+        \pm \089.16$
+    \\
+    parsorbitalis            & $0.03 \pm 0.02$                     & $0.03 \pm
+    0.02$                    & $\017.82 \pm \0\09.77$              & $\021.41
+    \pm \010.66$             & $\060.63 \pm \045.20$               & $\068.18
+        \pm \036.64$
+    \\
+    parstriangularis         & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\025.67 \pm \014.65$               & $\034.86
+    \pm \037.79$             & $\071.73 \pm \045.49$               & $\096.87
+        \pm 102.22$
+    \\
+    pericalcarine            & $0.03 \pm 0.02$                     & $0.04 \pm
+    0.02$                    & $\036.04 \pm \020.18$               & $\042.02
+    \pm \024.82$             & $\059.64 \pm \029.98$               & $\068.61
+        \pm \034.89$
+    \\
+    postcentral              & $0.01 \pm 0.02$                     & $0.02 \pm
+    0.02$                    & $\043.47 \pm \067.12$               & $\045.98
+    \pm \083.10$             & $100.26 \pm 121.35$                 & $104.53 \pm
+    156.51$                                                                                             \\
+    posteriorcingulate       & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\021.93 \pm \013.05$               & $\024.39
+    \pm \019.52$             & $\052.42 \pm \033.33$               & $\056.27
+        \pm \052.59$
+    \\
+    precentral               & $0.02 \pm 0.02$                     & $0.02 \pm
+    0.02$                    & $\046.92 \pm \053.54$               & $\057.46
+    \pm \070.35$             & $118.04 \pm 157.21$                 & $148.21 \pm
+    233.10$                                                                                             \\
+    precuneus                & $0.01 \pm 0.01$                     & $0.01 \pm
+    0.00$                    & $\038.04 \pm \042.87$               & $\038.95
+    \pm \040.96$             & $100.91 \pm 111.15$                 & $102.24 \pm
+    \096.62$                                                                                            \\
+    rostralanteriorcingulate & $0.05 \pm 0.02$                     & $0.04 \pm
+    0.02$                    & $\034.80 \pm \015.03$               & $\022.00
+    \pm \010.59$             & $\081.04 \pm \041.59$               & $\061.95
+        \pm \033.93$
+    \\
+    rostralmiddlefrontal     & $0.02 \pm 0.01$                     & $0.02 \pm
+    0.01$                    & $\092.87 \pm \096.23$               & $108.40 \pm
+    132.97$                  & $213.81 \pm 259.58$                 & $252.00 \pm
+    358.20$                                                                                             \\
+    superiorfrontal          & $0.01 \pm 0.01$                     & $0.01 \pm
+    0.01$                    & $\085.23 \pm \086.47$               & $\098.14
+    \pm 120.75$              & $223.91 \pm 234.89$                 & $243.75 \pm
+    304.56$                                                                                             \\
+    superiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm
+    0.01$                    & $\049.49 \pm \080.81$               & $\062.89
+    \pm \096.86$             & $132.77 \pm 207.97$                 & $161.39 \pm
+    235.01$                                                                                             \\
+    superiortemporal         & $0.02 \pm 0.01$                     & $0.01 \pm
+    0.01$                    & $\047.70 \pm \033.64$               & $\041.38
+    \pm \023.84$             & $156.30 \pm 101.85$                 & $129.01 \pm
+    \078.70$                                                                                            \\
+    supramarginal            & $0.01 \pm 0.01$                     & $0.01 \pm
+    0.01$                    & $\050.87 \pm \058.82$               & $\050.06
+    \pm \083.24$             & $136.23 \pm 168.28$                 & $133.99 \pm
+    207.69$                                                                                             \\
+    frontalpole              & $0.07 \pm 0.04$                     & $0.07 \pm
+    0.04$                    & $\012.99 \pm \0\04.02$              & $\016.42
+    \pm \0\04.47$            & $\056.49 \pm \032.17$               & $\067.84
+        \pm \028.93$
+    \\
+    temporalpole             & $0.09 \pm 0.05$                     & $0.08 \pm
+    0.05$                    & $\025.08 \pm \010.71$               & $\022.16
+    \pm \011.78$             & $154.60 \pm \079.32$                & $138.28 \pm
+    \078.33$                                                                                            \\
+    transversetemporal       & $0.03 \pm 0.02$                     & $0.03 \pm
+    0.02$                    & $\012.73 \pm \0\05.33$              & $\0\09.98
+    \pm \0\03.33$            & $\029.55 \pm \012.34$               & $\024.91
+        \pm \0\08.79$
+    \\
+    insula                   & $0.04 \pm 0.02$                     & $0.04 \pm
+    0.01$                    & $\073.45 \pm \030.66$               & $\095.70
+    \pm \037.63$             & $146.49 \pm \064.11$                & $183.39 \pm
+    \081.47$                                                                                            \\
 \end{longtblr}
 
-\begin{longtblr}[
-        caption={Significant digits and standard-deviation average across all subjects for subcortical volumes.},
-        label={tab:sig-std-subcortical-volume},
-    ]{
-        colspec={lc|c},
+\begin{longtblr}[ caption={Significant digits and standard-deviation average
+                across all subjects for subcortical volumes.},
+        label={tab:sig-std-subcortical-volume},]{ colspec={lc|c},
         row{even}={gray9,font=\footnotesize},
-        row{odd}={white,font=\footnotesize},
-        rows = {rowsep=0pt},
-        row{Z}={font=\small},
-        rowhead=1,
-        row{1}={font=\bfseries}
-    }
-    Region               & Significant digits & {Standard deviation  \\ ($\text{mm}^3$)} \\
+        row{odd}={white,font=\footnotesize}, rows = {rowsep=0pt},
+        row{Z}={font=\small}, rowhead=1, row{1}={font=\bfseries}} Region
+                         & Significant digits & {Standard deviation  \\ ($\text{mm}^3$)}
+    \\
     \hline
     Left-Thalamus        & $1.42 \pm 0.21$    & $120.08  \pm 69.61$  \\
     Left-Caudate         & $1.57 \pm 0.20$    & $\038.83 \pm 25.11$  \\
@@ -1113,16 +1279,19 @@ volume.
 
 \begin{table}[h]
     \centering
-    \caption{Summary of executions failure and excluded subjects. To standardize the sample, we keep 26 repetitions per subject/visits pair.
-        Subject/visit pairs with less than 26 repetitions were excluded which is 12 subjects.}
+    \caption{Summary of executions failure and excluded subjects. To standardize
+        the sample, we keep 26 repetitions per subject/visits pair.
+        Subject/visit pairs with less than 26 repetitions were excluded which is
+        12 subjects.}
     \begin{tabular}{l c c}
         \toprule
-        \textbf{Stage}     & \textbf{Number of rejected repetitions} & \textbf{Total number of repetitions} \\
+        \textbf{Stage}     & \textbf{Number of rejected repetitions} &
+        \textbf{Total number of repetitions}                                 \\
         \midrule
-        Cluster failure    & 1246 (5.80\%)                           & 21488                                \\
-        FreeSurfer failure & 68 (0.33\%)                             & 21488                                \\
-        QC failure         & 319 (1.48\%)                            & 21488                                \\
-        Total              & 1633 (7.60\%)                           & 21488                                \\
+        Cluster failure    & 1246 (5.80\%)                           & 21488 \\
+        FreeSurfer failure & 68 (0.33\%)                             & 21488 \\
+        QC failure         & 319 (1.48\%)                            & 21488 \\
+        Total              & 1633 (7.60\%)                           & 21488 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -1131,31 +1300,63 @@ volume.
     \centering
     \begin{tabular}{c|lccc}
         \toprule
-        \textbf{Status} & \textbf{Cohort}         & \textbf{HC}         & \textbf{PD-non-MCI}         & \textbf{PD-MCI}   \\
+        \textbf{Status} & \textbf{Cohort}             & \textbf{HC}
+                        & \textbf{PD-non-MCI}         & \textbf{PD-MCI}
+        \\
         \hline
-        \multirow{5}{*}{\textbf{\shortstack{Before                                                                        \\QC}}}
-                        & n                       & 106                 & 181                         & 29                \\
-                        & Age (y)                 & $60.6 \pm 10.2   $  & $61.7 \pm \09.6$            & $67.7 \pm \07.7$  \\
-                        & Age range               & $30.6 - 84.3  $     & $36.3 - 83.3$               & $49.9 - 80.5$     \\
-                        & Gender (male, \%)       & $58 \; (54.7\%)   $ & $119 \; (65.7\%)          $ & $-          $     \\
-                        & Education (y)           & $16.6 \pm \03.3  $  & $15.9 \pm \02.9$            & $-          $     \\
+        \multirow{5}{*}{\textbf{\shortstack{Before                                    \\QC}}} & n
+                        & 106                         & 181                      & 29 \\
+                        & Age (y)                     & $60.6 \pm 10.2   $
+                        & $61.7 \pm \09.6$            & $67.7 \pm \07.7$
+        \\
+                        & Age range                   & $30.6 - 84.3  $
+                        & $36.3 - 83.3$               & $49.9 - 80.5$
+        \\
+                        & Gender (male, \%)           & $58 \; (54.7\%)   $
+                        & $119 \; (65.7\%)          $ & $-          $
+        \\
+                        & Education (y)               & $16.6 \pm \03.3  $
+                        & $15.9 \pm \02.9$            & $-          $
+        \\
         \hline
-        \multirow{5}{*}{\textbf{\shortstack{After                                                                         \\QC}}}
-                        & n                       & 103                 & 175                         & 27                \\
-                        & Age (y)                 & $60.7 \pm 10.3   $  & $61.4 \pm \09.5          $  & $67.8 \pm \07.9$  \\
-                        & Age range               & $30.6 - 84.3  $     & $36.3 - 79.9           $    & $49.9 - 80.5$     \\
-                        & Gender (male, \%)       & $57 \; (55.3\%)   $ & $114 \; (65.1\%)       $    & $20 \; (74.1\%) $ \\
-                        & Education (y)           & $16.6 \pm \03.3  $  & $15.9 \pm \02.9        $    & $15.0 \pm \03.5$  \\
+        \multirow{5}{*}{\textbf{\shortstack{After                                     \\QC}}} & n
+                        & 103                         & 175                      & 27 \\
+                        & Age (y)                     & $60.7 \pm 10.3   $
+                        & $61.4 \pm \09.5          $  & $67.8 \pm \07.9$
+        \\
+                        & Age range                   & $30.6 - 84.3  $
+                        & $36.3 - 79.9           $    & $49.9 - 80.5$
+        \\
+                        & Gender (male, \%)           & $57 \; (55.3\%)   $
+                        & $114 \; (65.1\%)       $    & $20 \; (74.1\%) $
+        \\
+                        & Education (y)               & $16.6 \pm \03.3  $
+                        & $15.9 \pm \02.9        $    & $15.0 \pm \03.5$
+        \\
         \hline
-        \multirow{8}{*}{\textbf{\shortstack{After                                                                         \\MCI\\exclusion}}}
-                        & n                       & $103           $    & $121                   $    & --                \\
-                        & Age (y)                 & $60.7 \pm 10.3   $  & $60.7 \pm \09.1        $    & --                \\
-                        & Age range               & $30.6 - 84.3  $     & $39.2 - 78.3           $    & --                \\
-                        & Gender (male, \%)       & $57 \; (55.3\%)   $ & $80 \; (66.1\%)        $    & --                \\
-                        & Education (y)           & $16.6 \pm \03.3  $  & $16.1 \pm \03.0        $    & --                \\
-                        & UPDRS III OFF baseline  & $-            $     & $23.4 \pm 10.1         $    & --                \\
-                        & UPDRS III OFF follow-up & $-            $     & $25.8 \pm 11.1         $    & --                \\
-                        & Duration T2 - T1 (y)    & $\01.4 \pm \00.5 $  & $\01.4 \pm \00.7       $    & --                \\
+        \multirow{8}{*}{\textbf{\shortstack{After                                     \\MCI\\exclusion}}} & n
+                        & $103 $                      & $121                   $ & -- \\
+                        & Age (y)                     & $60.7 \pm 10.3   $
+                        & $60.7 \pm \09.1        $    & --
+        \\
+                        & Age range                   & $30.6 - 84.3  $
+                        & $39.2 - 78.3           $    & --
+        \\
+                        & Gender (male, \%)           & $57 \; (55.3\%)   $
+                        & $80 \; (66.1\%)        $    & --
+        \\
+                        & Education (y)               & $16.6 \pm \03.3  $
+                        & $16.1 \pm \03.0        $    & --
+        \\
+                        & UPDRS III OFF baseline      & $-            $
+                        & $23.4 \pm 10.1         $    & --
+        \\
+                        & UPDRS III OFF follow-up     & $-            $
+                        & $25.8 \pm 11.1         $    & --
+        \\
+                        & Duration T2 - T1 (y)        & $\01.4 \pm \00.5 $
+                        & $\01.4 \pm \00.7       $    & --
+        \\
         \bottomrule
     \end{tabular}
     \vspace{1em}
@@ -1173,89 +1374,99 @@ volume.
 
 \subsection{\navr maps}
 
-Figures \ref{fig:navr_map_area} and \ref{fig:navr_map_volume} show the
-\navr maps for cortical surface area and volume, respectively. The maps show the
+Figures \ref{fig:navr_map_area} and \ref{fig:navr_map_volume} show the \navr
+maps for cortical surface area and volume, respectively. The maps show the
 average \navr values across all subjects for each cortical region. The color
 scale indicates the \navr value, with warmer colors indicating higher \navr
-values. The maps provide a visual representation of the variability in the
-\navr values across different cortical regions, highlighting regions with
-higher or lower \navr values.
+values. The maps provide a visual representation of the variability in the \navr
+values across different cortical regions, highlighting regions with higher or
+lower \navr values.
 
 \begin{figure}[h]
     \centering
-    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)', 'rgb(250,0,0)', 'rgb(128,0,0)']
+    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)',
+    % 'rgb(250,0,0)', 'rgb(128,0,0)']
     \begin{tikzpicture}
-        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_area_all.png}};
-        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};   \end{tikzpicture}
-    \caption{ Numerical-Anatomical Variability Ratio (\navr) for cortical
-        surface area across regions and groups. Higher \navr values indicate
-        greater computational uncertainty relative to biological
-        variation. The color scale indicates the \navr value, with warmer colors
-        indicating higher \navr values.\label{fig:navr_thickness}}
+        \node[anchor=base,inner sep=0] at (0,0)
+        {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_area_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1)
+        {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
+    \end{tikzpicture} \caption{ Numerical-Anatomical Variability Ratio
+        (\navr) for cortical surface area across regions and groups. Higher
+        \navr values indicate greater computational uncertainty relative to
+        biological variation. The color scale indicates the \navr value, with
+        warmer colors indicating higher \navr values.\label{fig:navr_map_area}}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)', 'rgb(250,0,0)', 'rgb(128,0,0)']
+    % Jet: ['rgb(0,0,131)', 'rgb(0,60,170)', 'rgb(5,255,255)', 'rgb(255,255,0)',
+    % 'rgb(250,0,0)', 'rgb(128,0,0)']
     \begin{tikzpicture}
-        \node[anchor=base,inner sep=0] at (0,0) {\includegraphics[width=\textwidth]{figures/NAVR_map/NAVR_volume_all.png}};
-        \node[anchor=base,inner sep=0] at (0,-1) {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};   \end{tikzpicture}
-    \caption{ Numerical-Anatomical Variability Ratio (\navr) for cortical
-        volume across regions and groups. Higher \navr values indicate
-        greater computational uncertainty relative to biological
+        \node[anchor=base,inner sep=0] at (0,0)
+        {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_volume_all.png}};
+        \node[anchor=base,inner sep=0] at (0,-1)
+        {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
+    \end{tikzpicture} \caption{ Numerical-Anatomical Variability Ratio
+        (\navr) for cortical volume across regions and groups. Higher \navr
+        values indicate greater computational uncertainty relative to biological
         variation. The color scale indicates the \navr value, with warmer colors
-        indicating higher \navr values.\label{fig:navr_thickness}}
+        indicating higher \navr values.\label{fig:navr_map_volume}}
 \end{figure}
 
 \subsection{Consistency results}
 
 \subsubsection{Consistency of statistical tests}
 
-Figures \ref{fig:navr_consistency_area_plot} and \ref{fig:navr_consistency_volume_plot} show the
-consistency of statistical tests for cortical area and volume, respectively,
-across all subjects and regions. The plots show the percentage of subjects for
-which the statistical test was significant ($\alpha = 0.05$) for each region. The
-consistency varies across regions, with some regions showing higher consistency
-than others. The red triangles indicate the IEEE-754 run for reference.
+Figures \ref{fig:navr_consistency_area_plot} and
+\ref{fig:navr_consistency_volume_plot} show the consistency of statistical tests
+for cortical area and volume, respectively, across all subjects and regions. The
+plots show the percentage of subjects for which the statistical test was
+significant ($\alpha = 0.05$) for each region. The consistency varies across
+regions, with some regions showing higher consistency than others. The red
+triangles indicate the IEEE-754 run for reference.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{figures/consistency/cortical_area_significance_correlation.pdf}
+    \includegraphics[width=\linewidth]{figures/consistency/cortical_area_significance_correlation.pdf}
     \caption{Consistency of statistical tests for cortical area across all
-        subjects and regions. The plot shows the percentage of subjects for which
-        the statistical test was significant ($\alpha = 0.05$) for each region. The consistency varies
-        across regions, with some regions showing higher consistency than others.}
+        subjects and regions. The plot shows the percentage of subjects for
+        which the statistical test was significant ($\alpha = 0.05$) for each
+        region. The consistency varies across regions, with some regions showing
+        higher consistency than others.}
     \label{fig:navr_consistency_area_plot}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{figures/consistency/cortical_volume_significance_correlation.pdf}
+    \includegraphics[width=\linewidth]{figures/consistency/cortical_volume_significance_correlation.pdf}
     \caption{Consistency of statistical tests for cortical volume across all
-        subjects and regions. The plot shows the percentage of subjects for which
-        the statistical test was significant ($\alpha = 0.05$) for each region. The consistency varies
-        across regions, with some regions showing higher consistency than others.}
+        subjects and regions. The plot shows the percentage of subjects for
+        which the statistical test was significant ($\alpha = 0.05$) for each
+        region. The consistency varies across regions, with some regions showing
+        higher consistency than others.}
     \label{fig:navr_consistency_volume_plot}
 \end{figure}
 
 \subsubsection{Distribution of statistical tests coefficients}
 
-Figures \ref{fig:navr_consistency_area} and \ref{fig:navr_consistency_volume} show the distribution of
-partial correlation coefficients for cortical area and volume, respectively,
-across all subjects and regions. The red triangles indicate the IEEE-754 run
-for reference. The distribution shows the variability in the coefficients, with
-some regions exhibiting higher consistency than others.
+Figures \ref{fig:navr_consistency_area} and \ref{fig:navr_consistency_volume}
+show the distribution of partial correlation coefficients for cortical area and
+volume, respectively, across all subjects and regions. The red triangles
+indicate the IEEE-754 run for reference. The distribution shows the variability
+in the coefficients, with some regions exhibiting higher consistency than
+others.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{\textwidth}
-        \includegraphics[width=\textwidth]{figures/consistency/cortical_area_coefficients_distribution-Left.pdf}
+    \begin{subfigure}[b]{\linewidth}
+        \includegraphics[width=\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:navr_consistency_area_left}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{\textwidth}
-        \includegraphics[width=\textwidth]{figures/consistency/cortical_area_coefficients_distribution-Right.pdf}
+    \begin{subfigure}[b]{\linewidth}
+        \includegraphics[width=\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:navr_consistency_area_right}
     \end{subfigure}
@@ -1269,14 +1480,14 @@ some regions exhibiting higher consistency than others.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{\textwidth}
-        \includegraphics[width=\textwidth]{figures/consistency/cortical_volume_coefficients_distribution-Left.pdf}
+    \begin{subfigure}[b]{\linewidth}
+        \includegraphics[width=\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:navr_consistency_volume_left}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{\textwidth}
-        \includegraphics[width=\textwidth]{figures/consistency/cortical_volume_coefficients_distribution-Right.pdf}
+    \begin{subfigure}[b]{\linewidth}
+        \includegraphics[width=\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:navr_consistency_volume_right}
     \end{subfigure}
@@ -1302,18 +1513,17 @@ retaining only those effects that were robust and consistent.
     \vspace{0.2cm}
 
     % 22q11.2 deletion syndrome row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{22q11.2}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_area_all.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{22q11.2}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_area_all.png}
                 \label{fig:enigma_22q_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/22q_area_all_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_area_all_thresholded.png}
                 \label{fig:enigma_22q_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -1322,18 +1532,17 @@ retaining only those effects that were robust and consistent.
     \vspace{-2cm}
 
     % ADHD row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{ADHD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_area_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{ADHD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_area_adult.png}
                 \label{fig:enigma_adhd_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/adhd_area_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_area_adult_thresholded.png}
                 \label{fig:enigma_adhd_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -1342,18 +1551,17 @@ retaining only those effects that were robust and consistent.
     \vspace{-2cm}
 
     % bipolar disorder row
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Bipolar}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_area_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Bipolar}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_area_adult.png}
                 \label{fig:enigma_bipolar_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/bipolar_area_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_area_adult_thresholded.png}
                 \label{fig:enigma_bipolar_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -1361,18 +1569,17 @@ retaining only those effects that were robust and consistent.
 
     \vspace{-2cm}
     % depression
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Depression}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_area_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Depression}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_area_adult.png}
                 \label{fig:enigma_depression_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/depression_area_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_area_adult_thresholded.png}
                 \label{fig:enigma_depression_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -1380,18 +1587,17 @@ retaining only those effects that were robust and consistent.
 
     \vspace{-2cm}
     % ocd 
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{OCD}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_area_adult.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{OCD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_area_adult.png}
                 \label{fig:enigma_ocd_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/ocd_area_adult_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_area_adult_thresholded.png}
                 \label{fig:enigma_ocd_thresholded}
             \end{subfigure}
         \end{minipage}
@@ -1399,38 +1605,30 @@ retaining only those effects that were robust and consistent.
 
     \vspace{-2cm}
     % schizophrenia
-    \begin{minipage}[b]{\textwidth}
-        \begin{minipage}[c]{0.05\textwidth}
-            \centering\rotatebox{90}{\textbf{Schizophrenia}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\textwidth}
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_area_all.png}
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Schizophrenia}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_area_all.png}
                 \label{fig:enigma_schizophrenia_unthresholded}
             \end{subfigure}
             \hfill
-            \begin{subfigure}[c]{0.48\textwidth}
-                \includegraphics[width=\textwidth]{figures/cohen_d_map/enigma/schizophrenia_area_all_thresholded.png}
+            \begin{subfigure}[c]{0.48\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_area_all_thresholded.png}
                 \label{fig:enigma_schizophrenia_thresholded}
             \end{subfigure}
         \end{minipage}
     \end{minipage}
 
     \caption{ENIGMA cortical area Cohen's d maps showing unthresholded effect
-        sizes (left) and effect sizes thresholded by the \navr
-        framework (right) for different disorders. Black regions indicate areas
-        where Cohen's d values fall below the numerical variability threshold,
-        demonstrating regions where reported effect sizes may be unreliable due to
+        sizes (left) and effect sizes thresholded by the \navr framework (right)
+        for different disorders. Black regions indicate areas where Cohen's d
+        values fall below the numerical variability threshold, demonstrating
+        regions where reported effect sizes may be unreliable due to
         computational uncertainty.}
-    \label{fig:navr_enigma}
+    \label{fig:navr_enigma_area}
 \end{figure}
 
 
 \end{document}
-
-% 2nd table describing the raw -> removed subjects 
-% main table describing 
-% 
-% which part of the code is responsible for the instabilities
-% include that in the discussion 
-%
