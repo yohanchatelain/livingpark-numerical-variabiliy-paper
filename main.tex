@@ -44,7 +44,7 @@
 
 \newcommand{\0}{\mspace{9mu}} \newcommand{\navr}{$\nu_{\text{nav}}$\xspace}
 
-\title{Computational uncertainty in neuroimaging mimics and masks brain disease signals}
+\title{Computational uncertainty in neuroimaging may masks brain disease signals}
 
 \author{Yohan Chatelain, Andrzej Sokołowski, Madeleine Sharp, Jean-Baptiste Poline, Tristan Glatard}
 
@@ -59,7 +59,7 @@
     output from identical analyses—which can undermine the reproducibility of
     research findings. This issue is especially critical in medicine, where
     faint biological signals are sought within noisy data. Here, we quantify the
-    impact of numerical variability in a ubiquitous neuroimaging tool,
+    impact of numerical variability in a widely used neuroimaging software,
     FreeSurfer, on clinical research in Parkinson's disease. Using Monte Carlo
     Arithmetic to introduce controlled computational perturbations, we analyzed
     MRI data from the Parkinson's Progression Markers Initiative (PPMI). We
@@ -98,7 +98,7 @@ metrics such as cortical thickness are used as potential biomarkers to track
 neurological disorders like Parkinson's disease (PD)~\cite{haddad2023multisite}.
 If the computational noise in measuring these biomarkers is on the same order of
 magnitude as the subtle brain changes caused by the disease, any resulting
-scientific conclusions become inherently fragile. This may contribute to the
+scientific conclusions become inherently less robust. This may contribute to the
 well-documented "reproducibility crisis," where promising findings fail to
 translate into reliable clinical tools.
 
@@ -116,7 +116,7 @@ findings in the field.
 
 \section{Results}
 
-PD and HC groups showed no significant age differences ($p > 0.05$) but differed
+Parkinson's Disease (PD) and Healthy Control (HC) groups showed no significant age differences ($p > 0.05$) but differed
 in education ($t = -2.05$, $p = 0.04$) and sex distribution ($\chi^2 = 4.15$, $p
     = 0.04$). The longitudinal cohort showed no significant demographic differences
 between groups (Table~\ref{tab:cohort_stat}).
@@ -139,8 +139,7 @@ varied substantially for both cortical thickness
 (Figure~\ref{fig:significance_correlation_subcortical_volume}). For many brain
 regions, the significance of a finding was inconsistent, appearing in some
 computational runs but not others. Ratios near 0.5 indicate maximal uncertainty,
-where a reported result could be attributed to a lucky roll of the computational
-dice.
+where a reported result could be attributed to arbitrary computational outcomes.
 
 This instability is also reflected in the effect sizes themselves. Partial
 correlation coefficients and F-statistics from ANCOVA analyses showed
@@ -153,16 +152,14 @@ interpretation of results.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
-    \caption{ Proportion of statistically significant tests ($p < 0.05$) across
-        the 26 numerical states for subcortical volume
+    \caption{ Proportion of significant tests ($p<0.05$) for subcortical volumes across 26 numerical perturbations.
         measures.\label{fig:significance_correlation_subcortical_volume}}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/consistency/cortical_thickness_significance_correlation.pdf}
-    \caption{Proportion of statistically significant tests ($p < 0.05$) across
-        the 26 numerical states for cortical thickness
+    \caption{Proportion of significant tests ($p<0.05$) for cortical thickness across 26 numerical perturbations.
         measures.\label{fig:significance_correlation_thickness}}
     \label{fig:navr_consistency_thickness_plot}
 \end{figure}
@@ -277,7 +274,7 @@ after thresholding. Regions colored in black indicate where the reported effect
 size is smaller than the underlying computational noise of the measurement tool.
 While many of the core, highly significant findings of ENIGMA remain robust (as
 expected from their large sample sizes), a considerable number of secondary
-findings are shown to be potentially unreliable. This analysis demonstrates that
+findings may lack reliability. This analysis demonstrates that
 our framework can be used as a critical tool to evaluate the robustness of
 findings in the literature and guide future research toward more reliable
 effects.
@@ -644,7 +641,7 @@ While our investigation is focused on neuroimaging, it serves as a case study
 for a broader issue in computational science. Many scientific fields rely on
 complex software to find faint signals in noisy data, and they are likely
 susceptible to similar issues of numerical instability. We suggest that ensuring
-the robustness of scientific results is a shared responsibility. Software
+the robustness of scientific results is a collective responsibility. Software
 developers can contribute by prioritizing and reporting on the numerical
 stability of their tools, while researchers can use methods like Monte Carlo
 Arithmetic to validate their analysis pipelines.
@@ -697,15 +694,15 @@ consent (Table~\ref{tab:cohort_stat}).
         \toprule
         \textbf{Cohort}         & \textbf{HC}        & \textbf{PD-non-MCI} \\
         \hline
-        n                       & $103 $             & $121 $              \\
-        Age (y)                 & $60.7 \pm 10.3 $   & $60.7 \pm \09.1 $   \\
-        Age range               & $30.6 - 84.3 $     & $39.2 - 78.3 $      \\
-        Gender (male, \%)       & $57 \; (55.3\%) $  & $80 \; (66.1\%) $
+        n                       & $90 $              & $118 $              \\
+        Age (y)                 & $60.7 \pm 9.7 $    & $61.1 \pm \09.2 $   \\
+        Age range               & $30.6 - 79.8 $     & $39.2 - 78.3 $      \\
+        Gender (male, \%)       & $48 \; (53.3\%) $  & $77 \; (65.3\%) $
         \\
-        Education (y)           & $16.6 \pm \03.3 $  & $16.1 \pm \03.0 $   \\
-        UPDRS III OFF baseline  & $- $               & $23.4 \pm 10.1 $    \\
-        UPDRS III OFF follow-up & $- $               & $25.8 \pm 11.1 $    \\
-        Duration T2 - T1 (y)    & $\01.4 \pm \00.5 $ & $\01.4 \pm \00.7 $  \\
+        Education (y)           & $16.7 \pm \03.3 $  & $16.2 \pm \02.9 $   \\
+        UPDRS III OFF baseline  & $- $               & $23.6 \pm 10.3 $    \\
+        UPDRS III OFF follow-up & $- $               & $25.6 \pm 11.2 $    \\
+        Duration T2 - T1 (y)    & $\01.4 \pm \00.5 $ & $\01.4 \pm \00.6 $  \\
         \bottomrule
     \end{tabular}
     \vspace{1em}
