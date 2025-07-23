@@ -21,7 +21,7 @@
 \usepackage{tabularray}
 \usepackage{xspace} % For \xspace command
 \usepackage{tikz}
-\usetikzlibrary{shadings}
+\usetikzlibrary{shadings,positioning,overlay-beamer-styles}
 \usepackage{xifthen}
 
 \newcommand{\colorbar}[6]% width,height,colors,label min,label max,label step
@@ -53,72 +53,106 @@
 \maketitle
 
 \begin{abstract}
-    Numerical variability, computational differences arising from floating-point
-    arithmetic, poses a critical yet overlooked threat to reproducibility in
-    clinical neuroimaging. We systematically quantify the impact of numerical
-    variability in FreeSurfer, a widely-used MRI analysis tool, by analyzing how it
-    processes identical brain scans under slightly different computational
-    conditions—mimicking real-world variations across computers and software
-    versions. To quantify this problem, we developed a metric that reveals when
-    computational noise drowns out real biological signals. In Parkinson's disease
-    patients, we found that up to half the measured brain differences could be
-    computational artifacts rather than disease effects. This computational
-    instability can flip research conclusions: the same data analyzed on different
-    computers can yield opposite results about whether a brain region shows
-    disease-related changes. When we applied our framework to landmark brain imaging
-    studies, including ENIGMA consortium findings, many reported effects fell below
-    the computational noise threshold, particularly in smaller studies. By
-    quantifying and addressing numerical uncertainty, our study presents essential
-    guidelines to enhance computational reliability and reproducibility in clinical
-    neuroscience.
+    Numerical variability, arising from floating-point rounding and computational
+    effects, is rarely quantified in neuroimaging despite many biomarkers relying on
+    subtle morphometric differences. We instrumented FreeSurfer, a widely used
+    neuroimaging pipeline, with Monte Carlo Arithmetic to emulate numerical
+    differences across computational environments, processing identical MRI scans
+    from Parkinson's disease patients and controls multiple times. We introduce the
+    Numerical-Anatomical Variability Ratio (NAVR), quantifying numerical variation
+    within subjects relative to anatomical differences between subjects. In multiple
+    cortical and subcortical regions, numerical variation reached nearly one-third
+    of the anatomical signal, altering statistical conclusions about group
+    differences and clinical correlations across repeated analyses. Applying
+    NAVR-based thresholding to published ENIGMA consortium brain maps revealed that
+    numerous small regional effects lie below the numerical noise threshold for
+    typical study sizes. Quantifying numerical uncertainty prevents spurious
+    biomarker claims and enhances reproducibility in computational neuroscience.
 \end{abstract}
 
 \section{Introduction}
 
-Modern science is built on a foundation of computational analysis. From climate
-modeling to genomics and neuroscience, complex software pipelines are
-indispensable for transforming raw data into discovery. While researchers are
-vigilant against software version changes and methodological errors, a more
-fundamental challenge is often overlooked: the numerical variability of the
-computations themselves. Seemingly deterministic algorithms can produce
-slightly different results on each run due to factors like floating-point
-arithmetic and parallelization, introducing a layer of computational
-uncertainty that is rarely
-quantified~\cite{botvinik2020variability,gronenschild2012effects,bhagwat2021understanding}.
+Complex neuroimaging pipelines transform raw MRI data into putative biomarkers
+such as cortical thickness and subcortical volume. Because disease-related effects may
+be subtle, the reliability of these metrics depends critically on computational stability.
+However, numerical variability arising from software computations is rarely quantified.
 
-This challenge is particularly acute in clinical research, where the goal is to
-detect subtle biological signals of disease. In neuroimaging, for instance,
-metrics such as cortical thickness are used as potential biomarkers to track
-neurological disorders like Parkinson's disease
-(PD)~\cite{haddad2023multisite}. If the computational noise in measuring these
-biomarkers is on the same order of magnitude as the subtle brain changes caused
-by the disease, any resulting scientific conclusions become inherently fragile.
-This may contribute to the well-documented ``reproducibility crisis'' where
-promising findings fail to translate into reliable clinical tools.
+Floating-point arithmetic can cause ostensibly deterministic algorithms to yield
+subtly different outputs. Whether such numerical noise significantly impacts
+biological conclusions remains unclear. Preliminary studies suggest substantial
+effects~\cite{des2023reproducibility,kiar2020comparing,gronenschild2012effects,bhagwat2021understanding,sokolowski2024impact,salari2021accurate},
+yet systematic quantification within clinical datasets is lacking.
 
-Here, we dissect the impact of within-software numerical variability on the
-reliability of clinical neuroimaging research. We use Monte Carlo Arithmetic to
-systematically assess FreeSurfer, a cornerstone software package, and develop a
-novel framework—the Numerical-Anatomical Variability Ratio (\navr)—to directly
-compare the magnitude of computational uncertainty to biological variability.
-Using data from a major PD cohort, we (1) quantify how numerical instability
-impacts group comparisons and brain-behavior correlations, (2) derive the
-theoretical relationship between \navr and the reliability of statistical
-effect sizes, and (3) apply this framework to re-evaluate the robustness of
-landmark findings in the field.
+Parkinson's disease (PD) represents an ideal context to investigate numerical
+variability, as the identification of reliable structural biomarkers is highly
+desirable for diagnosis, tracking disease progression, and developing targeted
+therapies. Structural MRI is particularly attractive for biomarker discovery due
+to its non-invasive nature, but subtle anatomical changes associated with PD
+pose significant analytical challenges. Consequently, ensuring that MRI-derived
+measures are robust to numerical variability is essential to the successful
+translation of these biomarkers into clinical practice.
+
+We instrumented FreeSurfer 7.3.1~\cite{fischl2012freesurfer} with Monte Carlo
+arithmetic~\cite{parker1997monte}, reprocessing identical MRI scans of PD
+patients and healthy controls across multiple perturbed numerical states. To
+systematically quantify the impact, we introduce the Numerical-Anatomical
+Variability Ratio (NAVR), directly comparing numerical variation within
+individuals to anatomical differences between individuals.
+
+We find that in several cortical and subcortical regions, NAVR approaches 0.3,
+indicating that numerical noise can represent nearly one-third of the measured
+biological variation. Consequently, statistical inferences regarding group
+differences and clinical correlations can fluctuate significantly. Applying
+NAVR-based thresholding to published ENIGMA~\cite{thompson2014enigma} consortium
+brain maps reveals that numerous previously reported small regional effects
+likely fall below computational noise thresholds.
+
+Our findings demonstrate that numerical variability is a significant,
+quantifiable source of uncertainty in neuroimaging studies. The NAVR framework
+we propose offers researchers a practical approach to quantify and report
+computational uncertainty, enhancing reproducibility and reliability in clinical
+neuroscience.
 
 \section{Impacts of numerical variability}
 
-Numerical variability can have significant consequences for scientific
-research, particularly in fields like neuroimaging where precise measurements
-are crucial. In this section, we explore the various ways in which numerical
-variability can impact research outcomes. We first demonstrate how numerical
-instability can lead to fluctuating scientific conclusions. Next, we introduce
-a framework to quantify the impact of numerical variability. Finally, we apply
-this framework to re-evaluate landmark studies in the field, revealing
-widespread potential for unreliable effect sizes.
+Floating-point rounding errors, although individually small, can collectively
+introduce substantial numerical variability. Monte Carlo Arithmetic (MCA)
+systematically assesses this variability by perturbing floating-point operations
+with random, zero-mean offsets that preserve mathematical expectations.
+Repeatedly executing an analysis pipeline with MCA enables us to estimate the
+variability of results that could arise from routine differences across
+hardware, software libraries, or computational environments. Unlike ad-hoc
+comparisons across platforms, MCA specifically isolates numerical effects, free
+from algorithmic or software-version confounders.
 
-\subsection{Numerical instability leads to fluctuating scientific conclusions}
+Parkinson's disease provides an ideal scenario for testing numerical stability,
+as structural MRI-derived measurements such as cortical thickness and
+subcortical volume typically show subtle group differences ($|d|\approx
+    0.2-0.4$), yet hold significant promise as potential biomarkers for clinical
+progression. Furthermore, the availability of large multi-site datasets (e.g.,
+PPMI) and established region-of-interest analyses ensure PD is a thoroughly
+characterized context for evaluating the impacts of numerical variability. Thus,
+PD allows us to directly assess whether numerical noise is sufficiently large to
+obscure clinically meaningful anatomical signals.
+
+We instrumented FreeSurfer 7.3.1 with MCA (virtual precision set to 53 bits for
+double precision, 24 bits for single precision), and re-analyzed each
+T1-weighted MRI scan 26 times. The within-subject variability due to numerical
+differences reached approximately 30\% of the observed between-subject anatomical
+variance in critical cortical and subcortical regions ($\text{NAVR} \simeq 0.3$; Extended Data
+Fig. ED1). The median NAVR of approximately 0.18 across all cortical areas
+underscores that numerical uncertainty significantly affects typical
+neuroimaging analyses.
+
+This numerical instability fundamentally arises from floating-point
+arithmetic—where subtle rounding errors accumulate over complex calculations. By
+repeatedly processing the same MRI scans under perturbed computational
+conditions, we found significant variations directly impacting statistical
+conclusions. These fluctuations pose a major concern for interpreting subtle
+anatomical changes in PD, underscoring the need for robust numerical precision
+in biomarker discovery.
+
+\subsection{Numerical variability alters statistical inference}
 % Comments
 % - Extend the results section
 % - First result on a page
@@ -134,89 +168,79 @@ widespread potential for unreliable effect sizes.
 % - Add more interpretation of the results
 % - Get inspiration from the NARPS paper for the writing results section
 
-Numerical instability is a pervasive issue in scientific computing,
-particularly in neuroimaging, where complex algorithms process large datasets
-to extract biologically relevant features.
+We leveraged Monte Carlo Arithmetic (MCA) to simulate realistic variations that
+occur naturally between computational environments (e.g., hardware, libraries).
+Parkinson's disease, characterized by subtle anatomical differences detectable
+through structural MRI, provides a stringent scenario to evaluate whether
+numerical instability meaningfully impacts clinical inferences.
 
-The culprit is floating-point arithmetic—the way computers handle real numbers.
-Just as 1÷3 cannot be perfectly represented in decimal (0.333\ldots), most
-calculations produce tiny rounding errors. In a pipeline with millions of
-calculations, these errors snowball into meaningful differences. Although the
-IEEE-754 standard provides a consistent framework for representing and
-manipulating floating-point numbers, their non-associativity leads to
-variability in results when computations are performed in different
-orders—determined by the underlying hardware and software forming a so-called
-computational environment.
+We instrumented FreeSurfer 7.3.1 with MCA and reprocessed each MRI scan 26
+times. Within-subject numerical variability in cortical thickness and
+subcortical volume reached [XX] mm and [YY] mm³, respectively, representing
+approximately 30\% of the total anatomical variability observed between subjects
+in key regions ($\text{NAVR} \simeq 0.3$; Extended Data Fig. ED1).
 
-To measure this instability, we processed each brain scan 26 times while
-introducing controlled computational perturbations—simulating the natural
-variations that occur across different computers. We found that the numerical
-variability significantly impacted the reproducibility of our findings. In many
-cases, the same analysis performed on slightly different numerical states
-produced divergent results, calling into question the reliability of the
-original conclusions.
+Figure [2a] shows that statistical significance in group comparisons between
+Parkinson's disease patients and controls fluctuated notably across MCA
+replicates. Some cortical regions alternated between significant and
+non-significant outcomes ($p < 0.05$), illustrating how numerical instability
+directly affects clinical interpretation. Similarly, the correlation between
+regional cortical thickness and disease severity (UPDRS scores) also varied
+substantially across numerical perturbations (Fig. [2b]), suggesting that
+apparent biomarker relationships might emerge or vanish purely due to numerical
+noise.
 
-We assessed numerical variability in FreeSurfer 7.3.1 using Monte Carlo
-Arithmetic (MCA)~\cite{parker1997monte} to simulate how will behave the
-software under different execution environments (e.g. different hardware
-configurations, operating systems, scientific computational libraries), more
-particularly the Fuzzy-libm extension~\cite{salari2021accurate} that applies
-random perturbations to mathematical library functions's output. MCA has
-demonstrated its ability to simulate numerical variability in several
-scientific domains, including
-neuroimaging~\cite{kiar2020comparing,des2023reproducibility,chatelain2024numerical,vila2024impact}.
-We executed 26 \texttt{recon-all} runs for each subject's MRI data from the
-Parkinson's Progression Markers Initiative (PPMI), simulating 26 numerical
-states.
+This variability mirrors multi-team analytical differences seen in previous
+neuroimaging reproducibility challenges (e.g.,
+NARPS~\cite{botvinik2020variability}). Importantly, the original IEEE-754
+results consistently lie within the range sampled by MCA, confirming that
+observed variability represents realistic computational scenarios rather than
+methodological artifacts.
 
-For the same brain scans, statistical tests gave different answers depending on
-computational conditions. A brain region showing 'significant' disease effects
-in one run showed no effect in another—purely due to rounding errors.
+% We first tested the statistical significance of group differences between
+% Parkinson's disease (PD) patients and healthy controls (HC), and their
+% correlations with clinical measures (UPDRS scores), across the 26 MCA
+% repetitions. Similar to the NARPS study~\cite{botvinik2020variability} that
+% highlighted the impact of analytical variability in neuroimaging, we observed
+% substantial fluctuations in the results due to numerical variability. We used a
+% similar layout to NARPS paper to report the results, with the proportion of
+% statistically significant tests ($p < 0.05$) varied substantially for both
+% cortical thickness (Figure~\ref{fig:significance_correlation_thickness}) and
+% subcortical volumes
+% (Figure~\ref{fig:significance_correlation_subcortical_volume}). For many brain
+% regions, the significance of a finding was inconsistent, appearing in some
+% computational runs but not others. Ratios near 0.5 indicate maximal uncertainty,
+% where a reported result could be attributed to a lucky roll of the computational
+% dice. This variability in statistical significance suggests that the conclusions
+% drawn from these analyses are not robust and may be influenced by the specific
+% numerical state of the computation. This is specific to brain regions, some
+% regions showing high consistency across numerical states, while others exhibit
+% substantial variability. This instability is particularly concerning when
+% finding biomarkers for the Parkinson's disease progression, as it suggests that
+% the biological signals of interest may be obscured by computational noise.
+% Sokołowski et al.~\cite{sokolowski2024impact} highlighted similar issues when
+% playing with different FreeSurfer versions, showing that the results can vary
+% significantly between versions 5, 6 and 7. Biomarkers are crucial for
+% understanding disease mechanisms and tracking progression. Having reliable
+% biomarkers is essential to better understand the nature of the disease which
+% remains not well understood~\cite{bloem2021parkinson}.
 
-We first tested the statistical significance of group differences between
-Parkinson's disease (PD) patients and healthy controls (HC), and their
-correlations with clinical measures (UPDRS scores), across the 26 MCA
-repetitions. Similar to the NARPS study~\cite{botvinik2020variability} that
-highlighted the impact of analytical variability in neuroimaging, we observed
-substantial fluctuations in the results due to numerical variability. We used a
-similar layout to NARPS paper to report the results, with the proportion of
-statistically significant tests ($p < 0.05$) varied substantially for both
-cortical thickness (Figure~\ref{fig:significance_correlation_thickness}) and
-subcortical volumes
-(Figure~\ref{fig:significance_correlation_subcortical_volume}). For many brain
-regions, the significance of a finding was inconsistent, appearing in some
-computational runs but not others. Ratios near 0.5 indicate maximal
-uncertainty, where a reported result could be attributed to a lucky roll of the
-computational dice. This variability in statistical significance suggests that
-the conclusions drawn from these analyses are not robust and may be influenced
-by the specific numerical state of the computation. This is specific to brain
-regions, some regions showing high consistency across numerical states, while
-others exhibit substantial variability. This instability is particularly
-concerning when finding biomarkers for the Parkinson's disease progression, as
-it suggests that the biological signals of interest may be obscured by
-computational noise. Sokołowski et al.~\cite{sokolowski2024impact} highlighted
-similar issues when playing with different FreeSurfer versions, showing that
-the results can vary significantly between versions 5, 6 and 7. Biomarkers are
-crucial for understanding disease mechanisms and tracking progression. Having
-reliable biomarkers is essential to better understand the nature of the disease
-which remains not well understood~\cite{bloem2021parkinson}.
-
-This instability is also reflected in the effect sizes themselves. Partial
-correlation coefficients and F-statistics from ANCOVA analyses showed
-substantial spread around the unperturbed IEEE-754 results (red markers in
-Figure~\ref{fig:statstest_coefficients_distribution} and
-\ref{fig:navr_consistency_thickness}). This demonstrates that numerical
-variability affects not only the binary outcome of statistical significance but
-also the magnitude of the estimated effect, further complicating the
-interpretation of results. We can notice that the unperturbed results (red
-dots) are contained within the distribution of coefficients and F-statistics,
-which indicates that our methodology is sound, but the variability in the
-results highlights the need for caution in interpretation. In particular, when
-interpreting results for possible clinical applications, it is important to
-consider the potential impact of numerical variability on the robustness of
-findings. Yellow dots around red ones can be seen as many potential results
-that could be obtained by running the same analysis under computational
-environments.
+% This instability is also reflected in the effect sizes themselves. Partial
+% correlation coefficients and F-statistics from ANCOVA analyses showed
+% substantial spread around the unperturbed IEEE-754 results (red markers in
+% Figure~\ref{fig:statstest_coefficients_distribution} and
+% \ref{fig:navr_consistency_thickness}). This demonstrates that numerical
+% variability affects not only the binary outcome of statistical significance but
+% also the magnitude of the estimated effect, further complicating the
+% interpretation of results. We can notice that the unperturbed results (red
+% dots) are contained within the distribution of coefficients and F-statistics,
+% which indicates that our methodology is sound, but the variability in the
+% results highlights the need for caution in interpretation. In particular, when
+% interpreting results for possible clinical applications, it is important to
+% consider the potential impact of numerical variability on the robustness of
+% findings. Yellow dots around red ones can be seen as many potential results
+% that could be obtained by running the same analysis under computational
+% environments.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
@@ -276,15 +300,9 @@ environments.
 % - To be general, we developped an analytical model
 % - Refers to the online tool on yohanchatelain.github.io/brain-render
 
-How much computational noise is too much? We developed the Numerical-Anatomical
-Variability Ratio (\navr), a metric that answers this question by comparing
-computational uncertainty to real biological differences between people. We
-built this tool to be broadly applicable to any neuroimaging analysis, allowing
-researchers to easily assess the impact of numerical variability on their
-findings. Our metric works like a signal-to-noise ratio in reverse: when \navr
-= 0.5, half the observed 'biological variation' is actually computational
-noise. When \navr approaches 1, we're measuring noise, not brains. \navr is
-defined as:
+To quantify when numerical variability becomes scientifically concerning, we
+introduce the Numerical-Anatomical Variability Ratio (NAVR), defined as the
+ratio of numerical uncertainty to between-subject anatomical variability:
 \[
     \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
 \]
@@ -292,54 +310,62 @@ where $\sigma_{\text{num}}$ is the numerical variability
 (see~\ref{eq:sigma_num}) and $\sigma_{\text{anat}}$ is the anatomical
 variability (see~\ref{eq:sigma_anat}).
 
-Having a tool to quantify numerical variability is crucial for several reasons.
-First, it allows researchers to assess the reliability of their findings and
-reveal meaningful signals from noise. Second, it provides a framework for
-comparing the impact of the numerical variability versus the anatomical
-variability, enabling more informed decisions about study design and data
-interpretation. Finally, it allows for the rapid assessment of numerical
-variability in existing neuroimaging studies, facilitating the identification
-of potentially unreliable results. Indeed, measuring numerical variability can
-be a time-consuming process, especially when dealing with large datasets and
-complex analyses. By providing an analytical model of \navr, we enable
-researchers to apply this tool to any neuroimaging paper or existing results,
-significantly speeding up the process of assessing numerical precision. We
-developed an online
-tool\footnote{\url{https://yohanchatelain.github.io/brain_render/}} that allows
-researchers to threshold their results based on \navr values, providing a
-practical way to identify potentially unreliable findings.
+Quantifying numerical variability systematically is crucial for reliably
+interpreting neuroimaging results. NAVR enables researchers to rapidly assess
+the stability of their measurements relative to biological variation,
+facilitating the identification of findings potentially obscured by
+computational noise.
 
-Figures~\ref{fig:navr_thickness} and \ref{fig:navr_subcortical} present the
-\navr for cortical thickness and subcortical volumes. These brain maps
-visualize the regions where the problem of numerical variability is most
-severe. Regions with high \navr values (e.g., approaching 0.5, shown in warmer
-colors) indicate areas where up to half of the observed variability is due to
-computational noise rather than true anatomical differences, severely
-compromising the ability to detect genuine biological effects.
+Figures~\ref{fig:navr_thickness} and~\ref{fig:navr_subcortical} visualize NAVR
+across cortical thickness and subcortical volume regions, highlighting areas
+particularly susceptible to numerical instability. Higher NAVR values indicate
+greater vulnerability of observed results to computational noise rather than
+true biological variability.
 
-We derived the theoretical relationship between \navr and the uncertainty in
-Cohen's d, a standard measure of effect size:
+As exhaustive numerical variability assessments can be computationally
+demanding, we developed an analytical approach for estimating NAVR. This
+accelerates evaluations of numerical precision and enables rapid re-analysis of
+existing findings.
+
+We also derived an analytical formula linking NAVR directly to uncertainty in
+Cohen's d, a widely-used statistical effect size measure:
 \[
     \sigma_d = \frac{2}{\sqrt{N}} \text{\navr}
 \]
-where $\sigma_d$ is the standard deviation of Cohen's d and $N$ is the total
-sample size. This formula provides a direct way to translate the numerical
-stability of a measurement into its impact on statistical power and
-reliability, offering a practical tool for researchers to gauge the robustness
-of their findings.
+
+This relationship allows direct estimation of the sample size required for
+reliable effect size estimation given specific numerical variability. For
+example, a NAVR of 0.2 implies that a sample size of approximately 1500
+participants would be necessary to ensure that numerical variability contributes
+no more than 0.01 uncertainty to Cohen's d.
+
+To facilitate broad adoption, we provide an online
+tool\footnote{\url{https://yohanchatelain.github.io/brain_render/}} to rapidly
+assess and threshold neuroimaging results based on NAVR values, supporting
+identification of potentially unreliable findings.
 
 \begin{figure}[h]
     \centering
-    \begin{tikzpicture}
-        \node[anchor=base,inner sep=10] at (0,0)
-        {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_subcortical_volume_all.png}\label{fig:navr_subcortical}};
-    \end{tikzpicture}
-    \subcaption{Subcortical volumes\label{fig:navr_subcortical}}
-    \begin{tikzpicture}
-        \node[anchor=base,inner sep=10] at (0,0)
-        {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_thickness_all.png}\label{fig:navr_thickness}};
-    \end{tikzpicture}
-    \subcaption{Cortical thickness\label{fig:navr_thickness}}
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \begin{tikzpicture}
+            \node[anchor=base,inner sep=10] at (0,0)
+            {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_subcortical_volume_all.png}};
+        \end{tikzpicture}
+        \subcaption{Subcortical volumes}
+        \label{fig:navr_subcortical}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \begin{tikzpicture}
+            \node[anchor=base,inner sep=10] at (0,0)
+            {\includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_thickness_all.png}};
+        \end{tikzpicture}
+        \subcaption{Cortical thickness}
+        \label{fig:navr_thickness}
+    \end{subfigure}
+
     \begin{tikzpicture}
         \node[anchor=base,inner sep=10] at (0,0)
         {\colorbar{12}{0.35}{blue!50!black,blue,teal,cyan,green,yellow,orange,red,red!50!black}{0}{0.5}{0.1}};
@@ -353,34 +379,242 @@ of their findings.
 
 \subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes}
 
-The true test of our discovery: what happens when we apply this metric to the
-field's most influential findings? ENIGMA~\cite{thompson2014enigma}—the world's
-largest neuroimaging consortium—has shaped our understanding of psychiatric
-disorders by analyzing tens of thousands of brain scans. When we applied our
-computational noise threshold to their published brain maps, large regions went
-black: the reported effects were smaller than measurement noise.
+To assess the broader implications of numerical variability, we applied NAVR to
+re-evaluate influential findings from the ENIGMA consortium, which has
+substantially shaped our understanding of psychiatric and neurological
+disorders. Applying NAVR-based thresholding to ENIGMA's published brain maps
+identified multiple regions where reported effect sizes fell below the
+computational noise floor, potentially calling into question their reliability.
 
-This finding raises important questions about the reliability of existing
-neuroimaging literature. Are we overestimating the effects of certain brain
-regions? Are there systematic biases in how we report and interpret these
-findings?
+Figures~\ref{fig:navr_enigma_thickness} and~\ref{fig:navr_enigma_subcortical}
+illustrate the impact of applying NAVR thresholds to cortical thickness and
+subcortical volume maps from ENIGMA. Regions rendered in black indicate areas
+where reported effect sizes were smaller than numerical variability, suggesting
+these findings should be interpreted with caution.
 
-Figures~\ref{fig:navr_enigma_thickness} and \ref{fig:navr_enigma_subcortical}
-present the powerful results of this analysis. The left panels show the
-original Cohen's d maps for various disorders, while the right panels show the
-same maps after thresholding. Regions colored in black indicate where the
-reported effect size is smaller than the underlying computational noise of the
-measurement tool. While many of the core, highly significant findings of ENIGMA
-remain robust (as expected from their large sample sizes), a considerable
-number of secondary findings are shown to be potentially unreliable. This
-analysis demonstrates that our framework can be used as a critical tool to
-evaluate the robustness of findings in the literature and guide future research
-toward more reliable effects.
+This observation highlights potential risks of overestimating small effects and
+underscores the importance of systematically accounting for numerical
+uncertainty in neuroimaging research. While ENIGMA's primary findings generally
+remained robust due to large sample sizes, our analysis indicates that numerous
+secondary, smaller-scale effects reported in the literature could be compromised
+by numerical instability.
 
 \begin{figure}[h]
     \centering
     \vspace{0.2cm}
 
+    % Header row with column labels
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            % Empty space for alignment with condition labels
+        \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{minipage}[c]{0.47\linewidth}
+                \centering\textbf{Unthresholded}
+            \end{minipage}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                % Vertical line separator
+            \end{minipage}%
+            \hfill
+            \begin{minipage}[c]{0.47\linewidth}
+                \centering\textbf{Thresholded}
+            \end{minipage}
+        \end{minipage}
+    \end{minipage}
+
+    % Horizontal line
+    \noindent\rule{\linewidth}{0.5pt}
+    \vspace{-1.5cm}
+
+    % 22q11.2 deletion syndrome row
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{22q11.2}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_thickness_all.png}
+                \label{fig:enigma_22q_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_thickness_all_thresholded.png}
+                \label{fig:enigma_22q_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+
+    % ADHD row
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{ADHD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_thickness_adult.png}
+                \label{fig:enigma_adhd_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_thickness_adult_thresholded.png}
+                \label{fig:enigma_adhd_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+
+    % Autism spectrum disorder row
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{ASD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis.png}
+                \label{fig:enigma_asd_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/asd_thickness_meta_analysis_thresholded.png}
+                \label{fig:enigma_asd_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+    \vspace{-2cm}
+
+    % bipolar disorder row
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Bipolar}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult.png}
+                \label{fig:enigma_bipolar_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_thickness_adult_thresholded.png}
+                \label{fig:enigma_bipolar_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+    % depression
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Depression}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_thickness_adult.png}
+                \label{fig:enigma_depression_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_thickness_adult_thresholded.png}
+                \label{fig:enigma_depression_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+    % epilepsy
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Epilepsy}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy.png}
+                \label{fig:enigma_epilepsy_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/epilepsy_thickness_allepilepsy_thresholded.png}
+                \label{fig:enigma_epilepsy_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+    % ocd 
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{OCD}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_thickness_adult.png}
+                \label{fig:enigma_ocd_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_thickness_adult_thresholded.png}
+                \label{fig:enigma_ocd_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+    % schizophrenia
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{Schizophrenia}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all.png}
+                \label{fig:enigma_schizophrenia_thickness_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_thickness_all_thresholded.png}
+                \label{fig:enigma_schizophrenia_thickness_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \caption{ENIGMA cortical thickness Cohen's d maps showing unthresholded
+        effect sizes (left) and effect sizes thresholded by the \navr framework
+        (right) for different disorders. Black regions indicate areas where
+        Cohen's d values fall below the numerical variability threshold,
+        demonstrating regions where reported effect sizes may be unreliable due
+        to computational uncertainty.\label{fig:navr_enigma_thickness}}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \vspace{0.2cm}
     % 22q11.2 deletion syndrome row
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
@@ -537,6 +771,29 @@ toward more reliable effects.
 \begin{figure}[h]
     \centering
     \vspace{0.2cm}
+    % Header row with column labels
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            % Empty space for alignment with condition labels
+        \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{minipage}[c]{0.47\linewidth}
+                \centering\textbf{Unthresholded}
+            \end{minipage}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                % Vertical line separator
+            \end{minipage}%
+            \hfill
+            \begin{minipage}[c]{0.47\linewidth}
+                \centering\textbf{Thresholded}
+            \end{minipage}
+        \end{minipage}
+    \end{minipage}
+
+    % Horizontal line
+    \noindent\rule{\linewidth}{0.5pt}
+    \vspace{-1.5cm}
 
     % 22q11.2 deletion syndrome row
     \begin{minipage}[b]{\linewidth}
@@ -704,50 +961,58 @@ toward more reliable effects.
 % 2. Extension beyond FreeSurfer and expectation to generalize the findings to other neuroimaging software
 % 3. Discuss the potential sources of numerical variability (minimal local, minimal precision, etc.)
 
-Our analysis of FreeSurfer reveals that its measurements possess a numerical
-precision of approximately one to two significant digits. This computational
-variability is not trivial; in some brain regions, it accounts for up to half
-of the observed anatomical variance between healthy individuals and patients
-with Parkinson's disease. Such a low signal-to-noise ratio has direct
-consequences for scientific reliability. We demonstrate that for the exact same
-dataset, the statistical significance of clinical correlations and group
-differences can appear or vanish simply due to numerical errors in the
-underlying computation.
+Our systematic perturbation of FreeSurfer revealed that numerical variability
+alone can account for up to 30\% of the anatomical variability observed in
+structural MRI measurements. This level of uncertainty can significantly impact
+statistical outcomes, leading to the appearance or disappearance of clinically
+relevant group differences or correlations depending solely on computational
+conditions. These findings offer a mechanistic explanation for some of the
+reproducibility challenges reported in clinical neuroimaging.
 
-These findings offer a potential explanation for some of the reproducibility
-challenges in clinical neuroimaging. To move beyond simply identifying the
-problem, we introduced the Numerical-Anatomical Variability Ratio (\navr) as a
-framework to quantify the impact of this instability. By establishing a direct
-theoretical link between \navr and the uncertainty of Cohen's d effect sizes,
-we provide a practical tool for researchers. Our re-analysis of landmark ENIGMA
-findings illustrates this utility. While the large sample sizes of the
-consortium provide robustness to its primary findings, our framework can flag
-secondary effect sizes that are smaller than the computational noise floor,
-suggesting they may not be reliable, particularly in the context of the smaller
-sample sizes typical of exploratory studies.
+To move beyond identifying the problem, we introduced the Numerical-Anatomical
+Variability Ratio (NAVR), a quantitative framework for assessing the relative
+magnitude of computational noise. By establishing a theoretical link between
+NAVR and the uncertainty in Cohen's d effect sizes, we provide researchers with
+a practical tool to assess the robustness of their findings. Our re-analysis of
+published ENIGMA results illustrates this utility: while large sample sizes
+confer robustness to core findings, many secondary effects fall below the
+computational noise floor. This suggests that in smaller exploratory studies,
+numerical instability may undermine the reliability of reported effects.
 
-While we focused on FreeSurfer and Parkinson's disease as a test case, the
-problem is universal. Floating-point arithmetic affects all software, and
-preliminary tests suggest other neuroimaging packages suffer similar
-instabilities. The \navr values we report are specific to FreeSurfer 7.3.1, and
-future software versions may exhibit improved numerical stability. Furthermore,
-our analysis used a cohort that was relatively homogeneous in age, which may
-decrease the total anatomical variance and thus inflate the \navr ratio. We
-therefore propose that the \navr framework is not a final judgment on any
-particular finding, but rather a methodology that should be applied across
-diverse software, datasets, and disease models to build a more complete picture
-of computational reliability. The fuzzy-libm library used here is a powerful
-tool for probing floating-point instability, but future work should also
-investigate other sources of variability, such as algorithmic choices and data
-handling practices.
+Although our primary analysis focused on FreeSurfer 7.3.1 and Parkinson's
+disease, the underlying numerical issues are general. Floating-point arithmetic
+is inherently non-associative and sensitive to compiler behavior, hardware
+architecture, and thread scheduling. As a result, neuroimaging pipelines—though
+deterministic in design—can produce divergent results across computational
+environments. Preliminary analyses of FSL~\YC{cite Niusha} and ANTs~\YC{cite
+    Mathieu} indicate that such instability is not unique to FreeSurfer, but likely
+pervades the field. SPM however seems to be less impacted by numerical variability.
+Moreover, our PD cohort was relatively homogeneous in age and phenotype,
+potentially reducing anatomical variance and inflating NAVR values. This
+highlights the need to apply NAVR across diverse datasets, software packages,
+and disease contexts to build a comprehensive understanding of computational
+reliability.
 
-In conclusion, our findings emphasize the need to treat computational
-uncertainty with the same rigor as statistical uncertainty. The \navr framework
-offers a practical step in this direction, providing a means to assess and
-compare the numerical reliability of neuroimaging methodologies. By quantifying
-and accounting for computational noise, we can enhance the search for subtle
-neurological changes and build more robust and reproducible models of human
-health and disease.
+Crucially, this instability is not confined to low-level rounding operations.
+Image processing workflows involve nonlinear optimization procedures that may
+converge to different local minima under small perturbations, resulting in
+substantive changes to derived measures. The situation is analogous to deep
+learning, where different weight initializations or precision settings can yield
+distinct model outcomes. In neuroimaging, such instability means that even
+identical inputs can lead to divergent interpretations—raising serious concerns
+for both research reproducibility and clinical translation.
+
+NAVR offers a scalable and interpretable metric to quantify this hidden
+variability. While floating-point rounding is a major source of instability,
+future work should extend this analysis to other contributors, including
+algorithmic decisions, preprocessing choices, and data handling practices. A
+comprehensive understanding of these factors is essential for developing
+numerically robust software tools.
+
+In conclusion, our results demonstrate that computational uncertainty is as
+critical as statistical uncertainty in neuroimaging. Incorporating systematic
+assessments of numerical variability, through tools like NAVR, is necessary to
+ensure the reproducibility and reliability of neuroimaging-based biomarkers.
 
 \section{Methods}
 
@@ -766,14 +1031,33 @@ through Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler.
 Virtual precision parameters were set to 53 bits for double precision and 24
 bits for single precision to simulate realistic machine-level precision errors.
 
+We processed each visit with FreeSurfer 7.3.1. To sample numerical variability
+we compiled FreeSurfer with Fuzzy-libm an implementation of Monte Carlo
+arithmetic (MCA) that injects zero-mean rounding noise into every elementary
+function call. Virtual precision was set to 53 bits for operations promoted to
+double and 24 bits for single precision, thereby preserving IEEE-754
+expectations but exposing the variance of alternative execution paths. Each
+subject-visit pair was processed 26 times; failed or quality-control-flagged
+runs were discarded, and exactly 26 successful runs per pair were retained for
+analysis.
+
 \subsection{Participants}
 
-We analyzed data from the Parkinson's Progression Markers Initiative (PPMI), a
-multi-site longitudinal study. From 316 initial participants, we selected 125
-Parkinson's disease patients without mild cognitive impairment (PD-non-MCI) and
-106 healthy controls (HC) with complete longitudinal T1-weighted MRI data.
-PD-MCI patients were excluded to avoid confounding effects of cognitive
-impairment.
+We used structural MRI data from the Parkinson's Progression
+Markers Initiative (PPMI). Participants included 125 Parkinson's disease
+patients without mild cognitive impairment (PD-non-MCI) and 106 healthy
+controls, each providing longitudinal T1-weighted MRI data across two visits.
+Patients with mild cognitive impairment were excluded to reduce confounding
+influences.
+
+T1-weighted images were drawn from the Parkinson’s Progression Markers
+Initiative (PPMI) database (www.ppmi-info.org). Inclusion required (i) diagnosis
+of idiopathic Parkinson's disease (PD-non-MCI) or healthy control (HC); (ii) two
+usable visits separated by 0.9-2.0 years; and (iii) absence of other
+neurological disorders. The final dataset comprised 90 healthy
+controls and 118 PD-non-MCI participants (Extended Data Table 1).
+The study was approved by the local research ethics boards of all contributing
+centres, and written informed consent was obtained from every participant.
 
 Inclusion criteria required: (1) primary PD diagnosis or healthy control
 status, (2) availability of two visits with T1-weighted scans, and (3) absence
@@ -816,18 +1100,15 @@ differences between groups (Table~\ref{tab:cohort_stat}).
 
 \subsection{Image acquisition and preprocessing}
 
-T1-weighted MRI images were obtained from PPMI that uses standardized
-acquisition parameters: repetition time = 2.3 s, echo time = 2.98 s, inversion
-time = 0.9 s, slice thickness = 1 mm, number of slices = 192, field of view =
-256 mm, and matrix size = 256 $\times$ 256. However, since PPMI is a multisite
-project there may be slight differences in the sites' setup.
-
-We processed images using FreeSurfer 7.3.1 instrumented with Fuzzy-libm to
-introduce controlled numerical perturbations. Each participant underwent 34
-\texttt{recon-all} executions, extracting cortical thickness, surface area, and
-volumes. After quality control and exclusion of failed runs, we randomly
-selected 26 successful repetitions per subject to ensure balanced datasets for
-statistical analysis.
+T1-weighted MRI scans from PPMI were acquired using standardized protocols
+(repetition time=2.3 s, echo time=2.98 ms, inversion time=0.9 s, 1 mm isotropic
+resolution, number of slices = 192, field of view = 256 mm, and matrix size =
+256 $\times$ 256). However, since PPMI is a multisite project there may be
+slight differences in the sites' setup. Images underwent standard preprocessing
+using FreeSurfer 7.3.1 instrumented with Fuzzy-libm. Each participant's MRI data
+were processed 26 times under different numerical perturbations to quantify
+numerical variability. Failed runs were discarded, ensuring exactly 26
+successful repetitions per subject.
 
 Longitudinal processing followed the standard FreeSurfer
 stream~\cite{reuter2012within}: cross-sectional processing of both timepoints,
@@ -838,13 +1119,18 @@ FreeSurfer to prevent additional numerical perturbations.
 
 \subsection{Numerical Variability Assessment}
 
-We assessed FreeSurfer 7.3.1 numerical stability in cross-sectional and
-longitudinal contexts using the Numerical-Anatomical Variability Ratio (\navr)
-and its relationship to statistical effect sizes.
+Numerical variability was quantified using Monte Carlo Arithmetic (MCA), which
+systematically introduces controlled rounding perturbations to floating-point
+operations, simulating differences in computational environments. Perturbations
+were applied using Fuzzy-libm, an MCA implementation that introduces rounding
+variability into standard mathematical functions (\texttt{exp}, \texttt{log},
+\texttt{sin}, \texttt{cos}, \ldots), integrated through the Verificarlo compiler.
+Virtual precision was set at 53 bits for double precision and 24 bits for single
+precision, closely simulating real-world computational variability.
 
 \subsubsection{Numerical-Anatomical Variability Ratio (\navr)}
 
-To quantify computational stability relative to biological variation, we
+To quantify computational stability relative to anatomical variation, we
 developed the Numerical-Anatomical Variability Ratio (\navr). For each brain
 region, \navr measures the ratio of measurement uncertainty arising from
 computational processes to natural inter-subject anatomical variation:
@@ -883,14 +1169,13 @@ compromising the detection of true anatomical differences.
 
 We derived the theoretical relationship between \navr~and Cohen's d variability
 to quantify how measurement uncertainty affects statistical effect sizes in
-group comparisons.
-
-For a balanced two-group design with total sample size $N$, each observation
-decomposes as $X_{ij} = \mu_i + \varepsilon_{ij}^{(\text{anat})} +
-    \varepsilon_{ij}^{(\text{num})}$, where $\mu_i$ represents the true group mean,
-$\varepsilon_{ij}^{(\text{anat})} \sim \mathcal{N}(0, \sigma_{\text{anat}}^2)$
-captures anatomical variation, and $\varepsilon_{ij}^{(\text{num})} \sim
-    \mathcal{N}(0, \sigma_{\text{num}}^2)$ represents numerical uncertainty.
+group comparisons. For a balanced two-group design with total sample size $N$,
+each observation decomposes as $X_{ij} = \mu_i +
+    \varepsilon_{ij}^{(\text{anat})} + \varepsilon_{ij}^{(\text{num})}$, where
+$\mu_i$ represents the true group mean, $\varepsilon_{ij}^{(\text{anat})} \sim
+    \mathcal{N}(0, \sigma_{\text{anat}}^2)$ captures anatomical variation, and
+$\varepsilon_{ij}^{(\text{num})} \sim \mathcal{N}(0, \sigma_{\text{num}}^2)$
+represents numerical uncertainty.
 
 The standard deviation of Cohen's d attributable to measurement error is:
 \begin{equation}
@@ -921,8 +1206,10 @@ current study, and so are not publicly available. Data are however available
 from the authors upon reasonable request and with permission of the PPMI.
 
 \section{Code Availability}
-The code used to conduct the analyses is available at [URL to be added upon
-        publication].
+
+All MCA instrumentation scripts, FreeSurfer build instructions and analysis
+notebooks are available at [GitHub URL to be inserted]. Exact commit hashes are
+archived on Zenodo (DOI [to be added]) to ensure bit-level reproducibility.
 
 \section{Acknowledgements}
 
@@ -931,7 +1218,7 @@ Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
 Biomed virtual organization within the European Grid Infrastructure (EGI). We
 extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 
-\bibliographystyle{alpha}
+\bibliographystyle{plain}
 \bibliography{main}
 
 \clearpage
