@@ -441,6 +441,113 @@ compromised by numerical instability.
     \noindent\rule{\linewidth}{0.5pt}
     \vspace{-1.5cm}
 
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{L1}}
+        \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY3-vs-HY4+5.png}
+                \label{fig:Laansma_2021_parkinson_area_HY3_vs_HY45_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY3-vs-HY4+5_thresholded.png}
+                \label{fig:Laansma_2021_parkinson_area_HY3_vs_HY45_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{L2}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-HY2.png}
+                \label{fig:Laansma_2021_parkinson_area_HY1_vs_HY2_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-HY2_thresholded.png}
+                \label{fig:Laansma_2021_parkinson_area_HY1_vs_HY2_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+
+    \vspace{-2cm}
+
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            \centering\rotatebox{90}{\textbf{L3}} \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-PD.png}
+                \label{fig:Laansma_2021_parkinson_area_HY1_vs_PD_unthresholded}
+            \end{subfigure}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                \centering\rule{0.5pt}{4cm}
+            \end{minipage}%
+            \hfill
+            \begin{subfigure}[c]{0.47\linewidth}
+                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-PD_thresholded.png}
+                \label{fig:Laansma_2021_parkinson_area_HY1_vs_PD_thresholded}
+            \end{subfigure}
+        \end{minipage}
+    \end{minipage}
+    % \vspace{-2cm}
+
+    \caption{ENIGMA Parkinson group. LSA* Laansma et
+        al.~\cite{laansma2021international}, Cortical Surface Area. L1: HY 3 vs
+        HY 4\%5; L2: HY 1 vs HY 2; L3: HY 1 vs PD. Cohen's d maps showing
+        unthresholded effect sizes (left) and effect sizes thresholded by the
+        \navr framework (right). Black regions indicate areas where Cohen's d
+        values fall below the numerical variability threshold, demonstrating
+        regions where reported effect sizes may be unreliable due to
+        computational uncertainty.\label{fig:navr_laansma}}
+\end{figure}
+
+
+% ---
+
+\begin{figure}[h]
+    \centering
+    \vspace{0.2cm}
+
+    % Header row with column labels
+    \begin{minipage}[b]{\linewidth}
+        \begin{minipage}[c]{0.05\linewidth}
+            % Empty space for alignment with condition labels
+        \end{minipage}%
+        \begin{minipage}[c]{0.95\linewidth}
+            \begin{minipage}[c]{0.47\linewidth}
+                \centering\textbf{Unthresholded}
+            \end{minipage}%
+            \hfill
+            \begin{minipage}[c]{0.005\linewidth}
+                % Vertical line separator
+            \end{minipage}%
+            \hfill
+            \begin{minipage}[c]{0.47\linewidth}
+                \centering\textbf{Thresholded}
+            \end{minipage}
+        \end{minipage}
+    \end{minipage}
+
+    % Horizontal line
+    \noindent\rule{\linewidth}{0.5pt}
+    \vspace{-1.5cm}
+
     % 22q11.2 deletion syndrome row
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
@@ -1666,14 +1773,14 @@ the reliability of neuroimaging-based inferences.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{0.48\linewidth}
+    \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_area_all.png}
         \caption{Cortical surface area}
         \label{fig:navr_map_area}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.48\linewidth}
+    \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_volume_all.png}
         \caption{Cortical volume}
@@ -1682,7 +1789,7 @@ the reliability of neuroimaging-based inferences.
 
     \vspace{0.5cm}
     \centering
-    \includegraphics[width=0.6\linewidth]{figures/NAVR_map/jet_colorbar.pdf}
+    \includegraphics[width=0.8\linewidth]{figures/NAVR_map/jet_colorbar.pdf}
 
     \caption{Numerical-Anatomical Variability Ratio (\navr) for cortical surface
         area (Fig.~\ref{fig:navr_map_area}) and volume
