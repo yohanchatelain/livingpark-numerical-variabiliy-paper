@@ -41,11 +41,13 @@
 }
 
 \newcommand{\YC}[1]{\textcolor{red}{YC: #1}}
+\newcommand{\TG}[1]{\textcolor{blue}{\textsc{From Tristan:} #1}}
+
 
 \newcommand{\0}{\mspace{9mu}}
 \newcommand{\navr}[0]{$\nu_{\text{nav}}$\xspace}
 
-\title{Numerical variability in structural MRI measurements on Parkinson's disease}
+\title{Numerical variability in structural MRI measures of Parkinson's disease}
 
 \author{Yohan Chatelain, Andrzej Sokołowski, Madeleine Sharp, Jean-Baptiste Poline, Tristan Glatard}
 
@@ -54,21 +56,24 @@
 \maketitle
 
 \begin{abstract}
-    Numerical variability, arising from floating-point rounding and computational
-    effects, is rarely quantified in neuroimaging despite many biomarkers relying on
-    subtle morphometric differences. We instrumented FreeSurfer, a widely used
-    neuroimaging pipeline, with Monte Carlo Arithmetic to emulate numerical
-    differences across computational environments, processing identical MRI scans
-    from Parkinson's disease patients and controls multiple times. We introduce the
-    Numerical-Anatomical Variability Ratio (NAVR), quantifying numerical variation
-    within subjects relative to anatomical differences between subjects. In multiple
-    cortical and subcortical regions, numerical variation reached nearly one-third
-    of the anatomical signal, altering statistical conclusions about group
-    differences and clinical correlations across repeated analyses. Applying
-    NAVR-based thresholding to published ENIGMA consortium brain maps revealed that
-    numerous small regional effects lie below the numerical noise threshold for
-    typical study sizes. Quantifying numerical uncertainty prevents spurious
-    biomarker claims and enhances reproducibility in computational neuroscience.
+    Numerical variability is rarely quantified in neuroimaging despite many
+    biomarkers relying on subtle morphometric differences across individuals. We
+    instrumented FreeSurfer, a widely used neuroimaging pipeline, to simulate
+    numerical differences across computational environments, and used it to
+    measure numerical variability in MRI analyses of Parkinson's disease
+    patients and controls. In multiple cortical and subcortical regions,
+    numerical variation reached nearly one-third of the anatomical signal,
+    altering statistical conclusions about group differences and clinical
+    associations. To address this, we developed a practical tool that estimates
+    the Numerical-Anatomical Variability Ratio (NAVR), enabling researchers to
+    assess the impact of numerical noise in existing studies. Applying
+    NAVR-based thresholding to ENIGMA brain maps showed that many small regional
+    effects fall below typical numerical noise thresholds \TG{Note to self:
+    re-evaluate this (strong) claim after reading the results} for standard
+    study sizes \TG{not sure why study sizes are mentioned here since ENIGMA
+    maps were obtained for specific sample sizes}. Our tool provides a practical
+    approach to quantify the effect of numerical variability, improving the
+    robustness and reproducibility of neuroimaging analyses.
 \end{abstract}
 
 \section{Introduction}
