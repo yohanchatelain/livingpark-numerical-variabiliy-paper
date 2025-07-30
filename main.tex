@@ -78,6 +78,19 @@
 
 \section{Introduction}
 
+\TG{Rewrite using the following structure:
+\begin{itemize}
+\item The reliability of structural MRI measures critically depends on the estimation of sources of analytical variability.
+\item In particular when effect sizes are moderate, such as in Parkinson's disease.
+\item Among these sources, numerical variability has been shown to have a measurable impact on analyses across multiple pipeline tools.
+\item Numerical variability arises from rounding and truncation errors associated with the use of limited-precision numerical formats. 
+\item Due to the complexity of MRI analyses, and in particular their reliance on high-dimensional optimization, such errors propagate and sometimes lead to measurable differences.
+\item However, numerical variability is understudied, mainly due to practical challenges. 
+\item In particular, the implications of numerical variability on clinical findings is unknown. 
+\item What we have done
+\end{itemize}
+}
+
 Complex neuroimaging pipelines transform raw MRI data into putative biomarkers
 such as cortical thickness and subcortical volume. Because disease-related
 effects may be subtle, the reliability of these metrics depends critically on
@@ -129,7 +142,7 @@ clinical neuroscience.
 
 Numerical instability fundamentally arises from floating-point arithmetic—where
 subtle rounding errors accumulate over complex calculations. By repeatedly
-processing the same MRI scans under perturbed computational conditions, we
+processing the same MRI scans under realistic random numerical perturbations, we
 found significant variations directly impacting statistical conclusions. These
 fluctuations pose a major concern for interpreting subtle anatomical changes in
 PD, underscoring the need for robust numerical precision in biomarker
