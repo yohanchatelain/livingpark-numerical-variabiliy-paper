@@ -138,48 +138,60 @@ we propose offers researchers a practical approach to quantify and report
 computational uncertainty, enhancing reproducibility and reliability in
 clinical neuroscience.
 
-\section{Impacts of numerical variability}
+\section{Impact of numerical variability on MRI measures of Parkinson's disease}
 
-Numerical instability fundamentally arises from floating-point arithmetic—where
-subtle rounding errors accumulate over complex calculations. By repeatedly
-processing the same MRI scans under realistic random numerical perturbations, we
-found significant variations directly impacting statistical conclusions. These
-fluctuations pose a major concern for interpreting subtle anatomical changes in
-PD, underscoring the need for robust numerical precision in biomarker
-discovery.
+Numerical instability arises from floating-point arithmetic, where subtle
+rounding errors accumulate over complex calculations. Floating-point rounding
+errors, although individually small, can collectively introduce substantial
+numerical variability. By repeatedly processing the same MRI scans under random
+numerical perturbations representative of  differences across hardware systems,
+software libraries, or other computational parameters, we found significant
+variations directly impacting statistical conclusions. We introduced
+perturbations using Monte Carlo Arithmetic (MCA) \TG{add ref to Parker and Ali's
+fuzzy libmath}, a technique to perturb floating-point operations with random,
+zero-mean offsets that preserve mathematical expectations \TG{operations?}.
+Repeatedly executing an analysis pipeline with MCA enables us to estimate the
+variability of results that could arise from different computational
+environments.
 
-Floating-point rounding errors, although individually small, can collectively
-introduce substantial numerical variability. Monte Carlo Arithmetic (MCA)
-systematically assesses this variability by perturbing floating-point
-operations with random, zero-mean offsets that preserve mathematical
-expectations. Repeatedly executing an analysis pipeline with MCA enables us to
-estimate the variability of results that could arise from routine differences
-across hardware, software libraries, or computational environments.
 
-Parkinson's disease provides an ideal scenario for testing numerical stability,
-as structural MRI-derived measurements such as cortical thickness and
-subcortical volume hold significant promise as potential biomarkers for
-clinical progression due to their non-invasive nature. Furthermore, the
-availability of large multi-site datasets (e.g., PPMI) and established
-region-of-interest analyses ensure PD is a thoroughly characterized context for
-evaluating the impacts of numerical variability. Thus, PD allows us to directly
-assess whether numerical noise is sufficiently large to obscure clinically
-meaningful anatomical signals.
+%These fluctuations pose a major concern for
+%interpreting subtle anatomical changes in PD, underscoring the need for robust
+%numerical precision in biomarker discovery.
 
-We instrumented FreeSurfer 7.3.1 with MCA (virtual precision set to 53 bits for
-double precision, 24 bits for single precision), and re-analyzed each
-T1-weighted MRI scan 26 times. Testing for PD progression partial correlations
-and group differences between PD patients and healthy controls, 27\% of
-statistical tests are non-reproducible for subcortical volumes and 19\% for
-cortical thickness (Extended Data
+We evaluated the impact of numerical variability on MRI measures of Parkinson's
+disease using \TG{x} subjects and \TG{y} healthy controls with T1 MRI
+acquisitions available in the Parkinson's Progression Markers Initiative (PPMI)
+\TG{add ref}. \TG{Rewrite the remainder of this paragraph to explain the type of
+analyses that was done on the data, and why these analyses were selected.}
+Parkinson's disease provides an ideal scenario for testing numerical stability
+\TG{this sentence comes back a few times in the writing but it's not the right
+logic: our goal is not to find a use case to evaluate numerical stability;
+instead, we are genuinely interested in PD}, as structural MRI-derived
+measurements such as cortical thickness and subcortical volume hold significant
+promise as potential biomarkers for clinical progression due to their
+non-invasive nature. Furthermore, the availability of large multi-site datasets
+(e.g., PPMI) and established region-of-interest analyses ensure PD is a
+thoroughly characterized context for evaluating the impacts of numerical
+variability. Thus, PD allows us to directly assess whether numerical noise is
+sufficiently large to obscure clinically meaningful anatomical signals.
+
+We instrumented FreeSurfer 7.3.1 with MCA (virtual precision set to mimic
+realistic perturbations), and re-analyzed each T1-weighted MRI scan 26 times,
+each time with a different random state. \TG{The remainder of this paragraph
+refers to supplementary data, which doesn't read well as we're expecting to read
+the key (main) results first. It should be reworked.} Testing for PD progression
+partial correlations and group differences between PD patients and healthy
+controls, 27\% of statistical tests are non-reproducible for subcortical volumes
+and 19\% for cortical thickness (Extended Data
 Fig.~\ref{fig:significance_correlation_subcortical_volume}
 and~\ref{fig:significance_correlation_thickness}). The within-subject
-variability due to numerical differences peaked at 37\% and 40\% of the
-observed between-subject anatomical variance in critical cortical and
-subcortical regions (Extended Data Fig.~\ref{fig:navr_subcortical}
-and~\ref{fig:navr_thickness}). The median NAVR of approximately 0.20 and 0.16
-across all cortical regions and subcortical regions underscores that numerical
-uncertainty significantly affects typical neuroimaging analyses.
+variability due to numerical differences peaked at 37\% and 40\% of the observed
+between-subject anatomical variance in critical cortical and subcortical regions
+(Extended Data Fig.~\ref{fig:navr_subcortical} and~\ref{fig:navr_thickness}).
+The median NAVR of approximately 0.20 and 0.16 across all cortical regions and
+subcortical regions underscores that numerical uncertainty significantly affects
+typical neuroimaging analyses.
 % NAVR stats
 % metric    | mean | std  | median | min  | max
 % thickness | 0.21 | 0.06 | 0.20   | 0.11 | 0.37
@@ -188,7 +200,7 @@ uncertainty significantly affects typical neuroimaging analyses.
 % cortical  | 0.19 | 0.08 | 0.17   | 0.09 | 0.42
 % subvolume | 0.15 | 0.07 | 0.16   | 0.01 | 0.27
 
-\subsection{Numerical variability alters statistical inference}
+\subsection{Numerical variability alters statistical inference for MRI measures of Parkinson's disease}
 % Comments
 % - Extend the results section
 % - First result on a page
@@ -205,19 +217,25 @@ uncertainty significantly affects typical neuroimaging analyses.
 % - Get inspiration from the NARPS paper for the writing results section
 
 To test the impact of numerical variability on statistical inference, we
-performed group comparisons and partial correlations between regional cortical
-thickness and subcortical volumes with clinical measures (UPDRS scores).
-Figure~\ref{fig:significance_correlation_subcortical_volume} shows that
-statistical significance between Parkinson's disease patients and controls for
-subcortical volumes fluctuated notably across MCA replicates. Eight subcortical
-regions alternated between significant and non-significant outcomes ($p <
-    0.05$), illustrating how numerical instability directly affects clinical
-interpretation. In total, 27\% of the comparisons yielded inconsistent results.
-Similarly, statistical tests for cortical thickness varied substantially across
-numerical states (Fig.~\ref{fig:significance_correlation_thickness}) with 19\%
-of the comparisons yielding inconsistent results, suggesting that possible
-biomarker relationships might emerge or vanish purely due to numerical noise.
-This variability mirrors multi-team analytical differences seen in previous
+performed group comparisons and partial \TG{why partial?} correlations between
+regional cortical thickness and subcortical volumes with clinical measures of
+Parkinson's disease (UPDRS scores). \TG{Rewrite the remainder of this paragraph
+with the following outline: (1) key message: "for both cortical and subcortical
+regions, substantial discrepancies..., (2) focus on subcortical volumes
+specifically, discussing the different analyses, (3) focus on cortical volumes,
+(4) conclusion and reference to NARPS.} Statistical significance between
+Parkinson's disease patients and controls for subcortical volumes fluctuated
+notably across MCA replicates
+(Figure~\ref{fig:significance_correlation_subcortical_volume}) \TG{correlations
+are not discussed.}. Eight subcortical regions alternated between significant
+and non-significant outcomes ($p < 0.05$), illustrating how numerical
+instability directly affects clinical interpretation. Overall, 27\% of the
+comparisons yielded inconsistent results across numerical states. Similarly,
+statistical tests for cortical thickness varied substantially across numerical
+states (Fig.~\ref{fig:significance_correlation_thickness}) with 19\% of the
+comparisons yielding inconsistent results, suggesting that possible biomarker
+relationships might emerge or vanish purely due to numerical noise. This
+variability mirrors multi-team analytical differences seen in previous
 neuroimaging reproducibility challenges (e.g.,
 NARPS~\cite{botvinik2020variability}).
 
@@ -239,11 +257,12 @@ When looking at the distribution of partial correlation coefficients and
 F-statistics from ANCOVA analyses
 (Fig.~\ref{fig:statstest_coefficients_distribution}), we observe that the
 unperturbed IEEE-754 results (red markers) consistently lie within the range
-sampled by MCA. This confirms that the observed variability represents
-realistic computational scenarios rather than methodological artifacts. We can
-also notice that the spread of the r coefficients and F-statistics is higher
-for longitudinal analyses than for baseline analyses, indicating that numerical
-variability has a more pronounced impact on longitudinal studies.
+sampled by MCA. This confirms that the observed variability represents realistic
+computational scenarios \TG{not really, the variability could be larger than the
+real one, reformulate to say that it ``supports the validity of the instrumentation''} rather than methodological artifacts. We
+can also notice that the spread of the r coefficients and F-statistics is higher
+for longitudinal analyses than for baseline analyses \TG{it's quite apparent for r coefficients but not so much for F-statistics. A statistical test would help.}, indicating that numerical
+variability has a more pronounced impact on longitudinal studies. \TG{reviewers will wonder about a similar graph for cortical regions}
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
@@ -314,18 +333,29 @@ variability has a more pronounced impact on longitudinal studies.
 % - To be general, we developped an analytical model
 % - Refers to the online tool on yohanchatelain.github.io/brain-render
 
-Quantifying the influence of numerical variability is essential for
+\TG{Instead of re-stating the importance of numerical variability in this
+paragraph, which supposedly should be understood from the end of the
+introduction, here you could explain the need for a tool to quickly and
+practically evaluate its impact in a given study, explain and justify your
+assumptions (e.g., numerical variability is a feature of the pipeline rather
+than the population---refer to previous works). In doing so, you could explain
+how running MCA is currently not realistic due to computational requirements
+(although new architectures may enable it in the coming years), and explain the
+need for a statistical correction.} Quantifying the influence of numerical variability is essential for
 establishing the reliability of neuroimaging findings. While anatomical
 variability reflects genuine differences across individuals, numerical
 variability arises from the instabilities inherent in floating-point
 computations and changes in the computational environment. To systematically
-assess their relative impact, we introduce the Numerical-Anatomical Variability
-Ratio (NAVR), defined as the ratio between numerical uncertainty
+assess their relative impact, we define the Numerical-Anatomical Variability
+Ratio (NAVR) as the ratio between numerical uncertainty
 ($\sigma_{\text{num}}$; Eq.\ref{eq:sigma_num}) and between-subject anatomical
 variability ($\sigma_{\text{anat}}$; Eq.\ref{eq:sigma_anat}):
 \[
     \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
 \]
+\TG{I think I would rather present the $\sigma_d$ result first, then explain
+NAV. When introducing sigma d, you could better explain that numerical
+variability has to be evaluated in the context of a particular effect size, and its impact will be dependent on sample size.}
 
 NAVR provides a general, interpretable metric to evaluate the robustness of
 neuroimaging measurements. Across cortical and subcortical regions, numerical
