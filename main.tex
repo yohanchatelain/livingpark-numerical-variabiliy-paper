@@ -200,7 +200,7 @@ typical neuroimaging analyses.
 % cortical  | 0.19 | 0.08 | 0.17   | 0.09 | 0.42
 % subvolume | 0.15 | 0.07 | 0.16   | 0.01 | 0.27
 
-\subsection{Numerical variability alters statistical inference}
+\subsection{Numerical variability alters statistical inference for MRI measures of Parkinson's disease}
 % Comments
 % - Extend the results section
 % - First result on a page
@@ -333,18 +333,29 @@ variability has a more pronounced impact on longitudinal studies. \TG{reviewers 
 % - To be general, we developped an analytical model
 % - Refers to the online tool on yohanchatelain.github.io/brain-render
 
-Quantifying the influence of numerical variability is essential for
+\TG{Instead of re-stating the importance of numerical variability in this
+paragraph, which supposedly should be understood from the end of the
+introduction, here you could explain the need for a tool to quickly and
+practically evaluate its impact in a given study, explain and justify your
+assumptions (e.g., numerical variability is a feature of the pipeline rather
+than the population---refer to previous works). In doing so, you could explain
+how running MCA is currently not realistic due to computational requirements
+(although new architectures may enable it in the coming years), and explain the
+need for a statistical correction.} Quantifying the influence of numerical variability is essential for
 establishing the reliability of neuroimaging findings. While anatomical
 variability reflects genuine differences across individuals, numerical
 variability arises from the instabilities inherent in floating-point
 computations and changes in the computational environment. To systematically
-assess their relative impact, we introduce the Numerical-Anatomical Variability
-Ratio (NAVR), defined as the ratio between numerical uncertainty
+assess their relative impact, we define the Numerical-Anatomical Variability
+Ratio (NAVR) as the ratio between numerical uncertainty
 ($\sigma_{\text{num}}$; Eq.\ref{eq:sigma_num}) and between-subject anatomical
 variability ($\sigma_{\text{anat}}$; Eq.\ref{eq:sigma_anat}):
 \[
     \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
 \]
+\TG{I think I would rather present the $\sigma_d$ result first, then explain
+NAV. When introducing sigma d, you could better explain that numerical
+variability has to be evaluated in the context of a particular effect size, and its impact will be dependent on sample size.}
 
 NAVR provides a general, interpretable metric to evaluate the robustness of
 neuroimaging measurements. Across cortical and subcortical regions, numerical
