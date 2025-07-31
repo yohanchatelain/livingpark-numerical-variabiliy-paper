@@ -415,7 +415,7 @@ fast, scalable evaluations.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/sigma_d_contour.pdf}
-    \caption{ Relationship between \navr and population sample size  \(N\) for
+    \caption{\TG{could you show some of the papers in this figure? } Relationship between \navr and population sample size  \(N\) for
         predicting the uncertainty in Cohen's d effect size estimation. The
         contour lines represent different \navr values, showing how numerical
         variability scales with sample size. With a typical \navr value of 0.2,
@@ -439,7 +439,7 @@ general tool that can be applied retroactively to any neuroimaging
 result—regardless of software or study design—thereby improving transparency,
 aiding peer review, and supporting more trustworthy scientific inference.
 
-\subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes}
+\subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
 
 To assess the broader implications of numerical variability, we applied NAVR to
 re-evaluate influential findings from the ENIGMA consortium, which has
@@ -447,19 +447,24 @@ substantially shaped our understanding of psychiatric and neurological
 disorders. Applying NAVR-based thresholding to ENIGMA's published brain maps
 identified multiple regions where reported effect sizes fell below the
 computational noise floor, potentially calling into question their reliability.
+\TG{Assuming that you're referring to figure 6, this is not so clear. All the
+masked areas are areas with low effect sizes compared to the other ones. On the
+contrary, it seems to me that this is a case where numerical variability
+wouldn't impact the findings much, most likely because N was high. I would
+suggest to include another example, possibly with a lower N, showing a larger impact of numerical variability.}
 
 Figures~\ref{fig:navr_enigma_thickness} and~\ref{fig:navr_enigma_subcortical}
 illustrate the impact of applying NAVR thresholds to cortical thickness and
 subcortical volume maps from ENIGMA. Regions rendered in black indicate areas
 where reported effect sizes were smaller than numerical variability, suggesting
-these findings should be interpreted with caution.
+these findings should be interpreted with caution. \TG{same comment as in the previous figure}
 
-This observation highlights potential risks of overestimating small effects and
+This observation highlights potential risks of overestimating small effects \TG{I don't think that the results presented show that clearly} and
 underscores the importance of systematically accounting for numerical
 uncertainty in neuroimaging research. While ENIGMA's primary findings generally
 remained robust due to large sample sizes, our analysis indicates that numerous
 secondary, smaller-scale effects reported in the literature could be
-compromised by numerical instability.
+compromised by numerical instability \TG{I think you should show examples of such studies}.
 
 \begin{figure}[h]
     \centering
@@ -555,7 +560,7 @@ compromised by numerical instability.
     \end{minipage}
     % \vspace{-2cm}
 
-    \caption{ENIGMA Parkinson group. LSA* Laansma et
+    \caption{\TG{can you add a color bar to the figure?} ENIGMA Parkinson group \TG{wdym?}. LSA* \TG{what's LSA*?} Laansma et
         al.~\cite{laansma2021international}, Cortical Surface Area. L1: HY 3 vs
         HY 4\%5; L2: HY 1 vs HY 2; L3: HY 1 vs PD. Cohen's d maps showing
         unthresholded effect sizes (left) and effect sizes thresholded by the
