@@ -1004,7 +1004,7 @@ compromised by numerical instability \TG{I think you should show examples of suc
 Our systematic perturbation of FreeSurfer revealed that numerical variability
 alone can account for up to 30\% of the anatomical variability observed in
 structural MRI measurements. This level of uncertainty can significantly impact
-statistical outcomes, leading to the appearance or disappearance of clinically
+statistical outcomes \TG{in Parkinson's disease analyses}, leading to the appearance or disappearance of clinically
 relevant group differences or correlations depending solely on computational
 conditions. These findings offer a mechanistic explanation for some of the
 reproducibility challenges reported in clinical neuroimaging.
@@ -1012,34 +1012,43 @@ reproducibility challenges reported in clinical neuroimaging.
 To move beyond identifying the problem, we introduced the Numerical-Anatomical
 Variability Ratio (NAVR), a quantitative framework for assessing the relative
 magnitude of computational noise. By establishing a theoretical link between
-NAVR and the uncertainty in Cohen's d effect sizes, we provide researchers with
-a practical tool to assess the robustness of their findings. Our re-analysis of
-published ENIGMA results illustrates this utility: while large sample sizes
-confer robustness to core findings, many secondary effects fall below the
-computational noise floor. This suggests that in smaller exploratory studies,
-numerical instability may undermine the reliability of reported effects.
+NAVR and the uncertainty in Cohen's d effect sizes, we provide a practical tool
+to assess the robustness of findings. Our re-analysis of published ENIGMA
+results illustrates this utility: while large sample sizes confer robustness to
+core findings, many secondary effects fall below the computational noise floor.
+This suggests that in smaller exploratory \TG{why exploratory?} studies, numerical instability may
+undermine the reliability of reported effects. \TG{see previous comments: it
+would be nice to include analyses for some of such smaller studies}
 
 Although our primary analysis focused on FreeSurfer 7.3.1 and Parkinson's
 disease, the underlying numerical issues are general. Floating-point arithmetic
-is inherently non-associative and sensitive to compiler behavior, hardware
-architecture, and thread scheduling. As a result, neuroimaging pipelines—though
-deterministic in design—can produce divergent results across computational
-environments. Preliminary analyses of FSL~\YC{cite Niusha} and ANTs~\YC{cite
-    Mathieu} indicate that such instability is not unique to FreeSurfer, but likely
-pervades the field. SPM however seems to be less impacted by numerical
-variability. Moreover, our PD cohort was relatively homogeneous in age and
-phenotype, potentially reducing anatomical variance and inflating NAVR values.
-This highlights the need to apply NAVR across diverse datasets, software
-packages, and disease contexts to build a comprehensive understanding of
-computational reliability.
+is inherently non-associative \TG{what does this mean? Additions of
+floating-point numbers is not associative? If so, this is out of context} and
+sensitive to compiler behavior, hardware architecture, and thread scheduling. As
+a result, neuroimaging pipelines—though deterministic in design—can produce
+divergent results across computational environments. Previous analyses of
+FSL~\YC{cite Niusha} and ANTs~\YC{cite Mathieu} indicate that such instability
+is not unique to FreeSurfer, but likely pervades the field. SPM however seems to
+be less impacted by numerical variability \TG{cite Niusha}. \TG{I think you'd
+need to refer to DL methods here, including FS8.} \TG{start a new paragraph
+here, on the generalizability across data cohorts. You could include a mention
+that numerical variability didn't differ between PD and HC, and possibly link to
+a supplementary figure to support the claim.} Moreover, our PD cohort was
+relatively homogeneous in age and phenotype, potentially reducing anatomical
+variance and inflating NAVR values. This highlights the need to \TG{I would
+moderate this statement a little bit. I think it would be interesting the
+measure the NAV in different pipelines and datasets, but I don't think there's a
+very strong need for that.} apply \TG{apply or measure?} NAVR across diverse
+datasets, software packages, and disease contexts to build a comprehensive
+understanding of computational reliability.
 
-Crucially, this instability is not confined to low-level rounding operations.
+Crucially, this instability is not confined to low-level rounding operations \TG{instead what?}.
 Image processing workflows involve nonlinear optimization procedures that may
 converge to different local minima under small perturbations, resulting in
 substantive changes to derived measures. The situation is analogous to deep
 learning, where different weight initializations or precision settings can
-yield distinct model outcomes. In neuroimaging, such instability means that
-even identical inputs can lead to divergent interpretations—raising serious
+yield distinct model outcomes \TG{see previous comment on DL, I think we should refer to Ines' work here}. In neuroimaging, such instability means that
+even identical inputs can lead to divergent interpretations, raising 
 concerns for both research reproducibility and clinical translation.
 
 NAVR offers a scalable and interpretable metric to quantify this hidden
@@ -1053,6 +1062,9 @@ In conclusion, our results demonstrate that computational uncertainty is as
 critical as statistical uncertainty in neuroimaging. Incorporating systematic
 assessments of numerical variability, through tools like NAVR, is necessary to
 ensure the reproducibility and reliability of neuroimaging-based biomarkers.
+\TG{I would merge this paragraph with the previous one, and highlight specific
+next steps regarding numerical variability in neuroimaging.}
+
 
 \section{Methods}
 
