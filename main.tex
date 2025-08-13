@@ -1165,6 +1165,10 @@ ensure the reproducibility and reliability of neuroimaging-based biomarkers.
 
 \section{Methods}
 
+\TG{include a summary of your methods here.}
+
+\TG{Overall the methods are quite brief, you should add more details so that people get a better sense of what you did, see detailed suggestions in the text}
+
 \subsection{Participants}
 
 We used structural MRI data from the Parkinson's Progression Markers Initiative
@@ -1178,20 +1182,21 @@ Initiative (PPMI) database (www.ppmi-info.org). Inclusion required (i)
 diagnosis of idiopathic Parkinson's disease (PD-non-MCI) or healthy control
 (HC); (ii) two usable visits separated by $0.9-2.0$ years; and (iii) absence of
 other neurological disorders. The final dataset comprised 90 healthy controls
-and 118 PD-non-MCI participants (Extended Data Table 1). The study was approved
+and 118 PD-non-MCI participants (Extended Data \TG{why extended data?} Table 1). The study was approved
 by the local research ethics boards of all contributing centres, and written
 informed consent was obtained from every participant.
 
-Inclusion criteria required: (1) primary PD diagnosis or healthy control
-status, (2) availability of two visits with T1-weighted scans, and (3) absence
-of other neurological diagnoses. PD severity was assessed using the Unified
-Parkinson's Disease Rating Scale (UPDRS). The study received ethics approval
-from participating institutions, and all participants provided written informed
+Inclusion criteria required \TG{this is redundant and not fully consistent with
+the previous paragraph}: (1) primary PD diagnosis or healthy control status, (2)
+availability of two visits with T1-weighted scans, and (3) absence of other
+neurological diagnoses. PD severity was assessed using the Unified Parkinson's
+Disease Rating Scale (UPDRS). The study received ethics approval from
+participating institutions, and all participants provided written informed
 consent (Table~\ref{tab:cohort_stat}).
 
 PD and HC groups showed no significant age differences ($p > 0.05$) but
 differed in education ($t = -2.05$, $p = 0.04$) and sex distribution ($\chi^2 =
-    4.15$, $p = 0.04$). The longitudinal cohort showed no significant demographic
+    4.15$, $p = 0.04$). The longitudinal cohort \TG{not sure what "longitudinal cohort" means here.} showed no significant demographic
 differences between groups (Table~\ref{tab:cohort_stat}).
 
 \begin{table}[h!]
@@ -1228,10 +1233,10 @@ T1-weighted MRI scans from PPMI were acquired using standardized protocols
 resolution, number of slices = 192, field of view = 256 mm, and matrix size =
 256 $\times$ 256). However, since PPMI is a multisite project there may be
 slight differences in the sites' setup. Images underwent standard preprocessing
-using FreeSurfer 7.3.1 instrumented with Fuzzy-libm. Each participant's MRI
+using FreeSurfer 7.3.1 instrumented with Fuzzy-libm (see next section). Each participant's MRI
 data were processed 26 times under different numerical perturbations to
-quantify numerical variability. Failed runs were discarded, ensuring exactly 26
-successful repetitions per subject.
+quantify numerical variability. Failed runs \TG{defined failed: failed due to technical reasons or failed QC?} were discarded, ensuring exactly 26
+successful repetitions per subject. \TG{you should mention QC too}
 
 Longitudinal processing followed the standard FreeSurfer
 stream~\cite{reuter2012within}: cross-sectional processing of both timepoints,
@@ -1249,6 +1254,8 @@ that occur across different computational environments. This stochastic
 approach enables systematic assessment of result stability by measuring
 variation across multiple runs of identical analyses.
 
+\TG{I think you should give more details about MCA, including the equations and also your improvements to fuzzy-libm}
+
 We used Fuzzy-libm~\cite{salari2021accurate}, which extends MCA to mathematical
 library functions (\texttt{exp}, \texttt{log}, \texttt{sin}, \texttt{cos})
 through Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler.
@@ -1256,10 +1263,10 @@ Virtual precision parameters were set to 53 bits for double precision and 24
 bits for single precision to simulate realistic machine-level precision errors.
 
 We processed each visit with FreeSurfer 7.3.1. To sample numerical variability
-we compiled FreeSurfer with Fuzzy-libm an implementation of Monte Carlo
+we compiled FreeSurfer \TG{did you really compile Freesurfer?} with Fuzzy-libm an implementation of Monte Carlo
 arithmetic (MCA) that injects zero-mean rounding noise into every elementary
 function call. Virtual precision was set to 53 bits for operations promoted to
-double and 24 bits for single precision, thereby preserving IEEE-754
+double and 24 bits for single precision, \TG{there's quite some redundancy with the previous paragraph} thereby preserving IEEE-754
 expectations but exposing the variance of alternative execution paths. Each
 subject-visit pair was processed 26 times; failed or quality-control-flagged
 runs were discarded, and exactly 26 successful runs per pair were retained for
@@ -1268,7 +1275,7 @@ analysis.
 \subsubsection{Numerical-Anatomical Variability Ratio (\navr)}
 
 To quantify computational stability relative to anatomical variation, we
-developed the Numerical-Anatomical Variability Ratio (\navr). For each brain
+introduce the Numerical-Anatomical Variability Ratio (\navr). For each brain
 region, \navr measures the ratio of measurement uncertainty arising from
 computational processes to natural inter-subject anatomical variation:
 
@@ -1283,7 +1290,7 @@ differences within each repetition).
 
 For each region of interest, measurements from $n$ MCA repetitions across $m$
 subject-visit pairs form a data matrix $\mathcal{M}_{n \times m}$, where
-element $x_{i,j}$ represents the measurement for subject $j$ in repetition $i$.
+element $x_{i,j}$ represents the measurement for subject $j$ in MCA repetition $i$.
 
 Numerical variability quantifies intra-subject measurement consistency:
 \begin{equation}
@@ -1300,7 +1307,7 @@ Anatomical variability captures inter-subject differences:
 where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means,
 respectively. Higher \navr values indicate regions where computational
 uncertainty approaches or exceeds biological variation, potentially
-compromising the detection of true anatomical differences.
+compromising the detection of true anatomical differences.\TG{didn't you pool sigma anat across PD and HC?}
 
 \subsubsection{Relationship between \navr~and Effect Size Uncertainty}
 
@@ -1319,14 +1326,16 @@ The standard deviation of Cohen's d attributable to measurement error is:
     \sigma_d = \frac{2}{\sqrt{N}} \text{\navr}
 \end{equation}
 
-This relationship emerges from error propagation analysis. The difference in
-group means has variance $\text{Var}(\bar{X}_1 - \bar{X}_2) =
-    4(\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2)/N$, with the numerical
-component contributing $4\sigma_{\text{num}}^2/N$. Since Cohen's d normalizes
-by the pooled standard deviation $\sqrt{\sigma_{\text{anat}}^2 +
-        \sigma_{\text{num}}^2}$, the measurement error contribution becomes $\sigma_d =
-    (2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N})
-    \text{\navr}$.
+This relationship emerges from error propagation analysis. \TG{The remainder of
+this paragraph is quite informal, could you tidy up the equations to start from
+the definition of Cohen's d and clearly derive its standard deviation? You should also clarify the assumptions that are made.} The
+difference in group means has variance $\text{Var}(\bar{X}_1 - \bar{X}_2) =
+4(\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2)/N$, with the numerical
+component contributing $4\sigma_{\text{num}}^2/N$. Since Cohen's d normalizes by
+the pooled standard deviation $\sqrt{\sigma_{\text{anat}}^2 +
+\sigma_{\text{num}}^2}$, the measurement error contribution becomes $\sigma_d =
+(2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N})
+\text{\navr}$.
 
 This formula indicates that regions with \navr = 0.1 contribute approximately
 $0.2/\sqrt{N}$ uncertainty to Cohen's d, while regions with \navr = 1.0
@@ -1354,6 +1363,7 @@ The analyses were conducted on the Virtual Imaging
 Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
 Biomed virtual organization within the European Grid Infrastructure (EGI). We
 extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
+\TG{acknowledge MJFF project LivingPark}
 
 \bibliographystyle{plain}
 \bibliography{main}
