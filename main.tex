@@ -287,49 +287,29 @@ performed group comparisons and partial \TG[done]{why partial?} \YC{Because we
 and subcortical volumes with clinical measures of Parkinson's disease (UPDRS
 scores).
 
-\TG{Rewrite the remainder of this paragraph with the following outline:
+\TG[done]{Rewrite the remainder of this paragraph with the following outline:
     (1) key message: "for both cortical and subcortical regions, substantial
     discrepancies..., (2) focus on subcortical volumes specifically, discussing the
     different analyses, (3) focus on cortical volumes, (4) conclusion and reference
     to NARPS.}
 
-For both cortical and subcortical regions, we found substantial
-discrepancies in statistical outcomes across the 26 numerically perturbed
-analyses with $\simeq 20\%$ of tests yielding inconsistent results in average ($p<0.05$).
-
-For subcortical volumes, statistical significance fluctuated notably across MCA
-repetitions (Figure~\ref{fig:significance_correlation_subcortical_volume}). For
-group comparisons alone, six subcortical regions ($21\%$ of tests) alternated between
-significant and non-significant outcomes, illustrating how numerical instability
-can directly affect clinical interpretation. For partial correlation, seven
-subcortical regions ($25\%$ of tests) presented inconsistent results across numerical states.
-Overall, 27\% of all statistical comparisons, including both group differences
-and clinical correlations, yielded inconsistent results across numerical states.
-
-For cortical thickness, statistical significance fluctuated across MCA
-repetitions (Figure~\ref{fig:significance_correlation_thickness}). For group
-comparisons alone, 14 cortical regions ($10\%$) alternated between significant and
-non-significant outcomes, illustrating how numerical instability can directly
-affect clinical interpretation. For partial correlation, 34 cortical regions
-($25\%$) presented inconsistent results across numerical states. Overall, 19\% of all
-statistical comparisons, including both group differences and clinical
-correlations, yielded inconsistent results across numerical states.
-
-Statistical significance between Parkinson's disease patients and controls for
-subcortical volumes and cortical thickness fluctuated notably across MCA
-replicates (Figures~\ref{fig:significance_correlation_subcortical_volume}
-and~\ref{fig:significance_correlation_thickness}) \TG[done]{correlations are not
-    discussed.}. Eight (out of 14; $57\%$) subcortical regions and 40 (out of 68;
-$59\%$) cortical regions alternated between significant and non-significant
-outcomes ($p < 0.05$),  illustrating how numerical instability directly affects
-clinical interpretation. Overall, $20\%$ of the comparisons yielded inconsistent
-results across numerical states, reaching $28\%$ when including all cortical
-(thickness, area and volume) and subcortical measurements
-(see Appendix Table~\ref{tab:fluctuating_regions}), suggesting that possible biomarker
-relationships might emerge or vanish purely due to numerical noise. This
-variability mirrors multi-team analytical differences seen in previous
-neuroimaging reproducibility challenges (e.g.,
-NARPS~\cite{botvinik2020variability}).
+For both cortical and subcortical regions, statistical outcomes varied
+substantially across the 26 Monte Carlo Arithmetic (MCA) replicates: $20\%$ of
+comparisons (66/328) changed significance at the $p<0.05$ threshold. In
+subcortical volumes (14 regions;
+Figure~\ref{fig:significance_correlation_subcortical_volume}), $21\%$ of
+group comparisons and $25\%$ of partial correlations were inconsistent across
+MCA replicates, and 8 of 14 regions ($57\%$) exhibited at least one flip in
+significance. Cortical thickness showed a similar pattern (68 regions;
+Figure~\ref{fig:significance_correlation_thickness}), with $10\%$ of group
+comparisons and $25\%$ of partial correlations inconsistent, affecting 40 of 68
+regions ($59\%$) in at least one test. Expanding to all cortical measures
+(thickness, area, and volume) and subcortical metrics, the proportion of
+inconsistent results increased to $28\%$ (241/872; Appendix
+Table~\ref{tab:fluctuating_regions}). These fluctuations indicate that
+candidate biomarker relationships may appear or vanish due to numerical noise,
+echoing multi-analyst variability reported in
+NARPS~\cite{botvinik2020variability}.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
@@ -345,21 +325,25 @@ NARPS~\cite{botvinik2020variability}).
     \label{fig:navr_consistency_thickness_plot}
 \end{figure}
 
-When looking at the distribution of partial correlation coefficients and
-F-statistics from ANCOVA analyses for subcortical volumes
-(Figure~\ref{fig:statstest_coefficients_distribution}) and cortical thickness
-(Appendix Figure~\ref{fig:consistency_thickness_coefficients}), we observe that the
-unperturbed IEEE-754 results (red markers) consistently lie within the range
-sampled by MCA. This confirms that the observed variability supports the
-validity of the instrumentation \TG[done]{not really, the variability could be
-    larger than the real one, reformulate to say that it ``supports the validity of
-    the instrumentation''} rather than methodological artifacts. We can also notice
-that the spread of the r coefficients and F-statistics is higher for
-longitudinal analyses than for baseline analyses \TG{it's quite apparent for r
-    coefficients but not so much for F-statistics. A statistical test would help.},
-indicating that numerical variability has a more pronounced impact on
-longitudinal studies. \TG{reviewers will wonder about a similar graph for
-    cortical regions}
+For subcortical volumes, the distributions of partial-correlation coefficients
+(r) and ANCOVA F-statistics
+(Figure~\ref{fig:statstest_coefficients_distribution}) show that the unperturbed
+IEEE-754 estimates (red markers) consistently fall within the MCA-sampled range.
+This supports the validity of the instrumentation rather than indicating a
+methodological artifact \TG[done]{not really, the variability could be larger
+    than the real one, reformulate to say that it ``supports the validity of the
+    instrumentation''}. The spread of the r coefficients is larger in longitudinal
+than in baseline analyses (Ansari-Bradley one-sided test at $p<0.05$ corrected
+with Bonferroni; detailed results in Appendix
+Table~\ref{tab:stats-coef-var-subcortical}), whereas no significant difference
+in spread is detected for F-statistics using the same test
+(Bonferroni-corrected, $p<0.05$). \TG[done]{it's quite apparent for r
+    coefficients but not so much for F-statistics. A statistical test would help.}.
+This indicates that numerical variability has a more pronounced impact on
+longitudinal studies. \TG[done]{reviewers will wonder about a similar graph for
+    cortical regions} An analogous analysis for cortical thickness leads to similar
+conclusions (Appendix Figure~\ref{fig:consistency_thickness_coefficients},
+Table~\ref{tab:stats-coef-var-cortical}).
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
@@ -1187,7 +1171,7 @@ by the local research ethics boards of all contributing centres, and written
 informed consent was obtained from every participant.
 
 Inclusion criteria required \TG{this is redundant and not fully consistent with
-the previous paragraph}: (1) primary PD diagnosis or healthy control status, (2)
+    the previous paragraph}: (1) primary PD diagnosis or healthy control status, (2)
 availability of two visits with T1-weighted scans, and (3) absence of other
 neurological diagnoses. PD severity was assessed using the Unified Parkinson's
 Disease Rating Scale (UPDRS). The study received ethics approval from
@@ -1327,15 +1311,15 @@ The standard deviation of Cohen's d attributable to measurement error is:
 \end{equation}
 
 This relationship emerges from error propagation analysis. \TG{The remainder of
-this paragraph is quite informal, could you tidy up the equations to start from
-the definition of Cohen's d and clearly derive its standard deviation? You should also clarify the assumptions that are made.} The
+    this paragraph is quite informal, could you tidy up the equations to start from
+    the definition of Cohen's d and clearly derive its standard deviation? You should also clarify the assumptions that are made.} The
 difference in group means has variance $\text{Var}(\bar{X}_1 - \bar{X}_2) =
-4(\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2)/N$, with the numerical
+    4(\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2)/N$, with the numerical
 component contributing $4\sigma_{\text{num}}^2/N$. Since Cohen's d normalizes by
 the pooled standard deviation $\sqrt{\sigma_{\text{anat}}^2 +
-\sigma_{\text{num}}^2}$, the measurement error contribution becomes $\sigma_d =
-(2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N})
-\text{\navr}$.
+        \sigma_{\text{num}}^2}$, the measurement error contribution becomes $\sigma_d =
+    (2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N})
+    \text{\navr}$.
 
 This formula indicates that regions with \navr = 0.1 contribute approximately
 $0.2/\sqrt{N}$ uncertainty to Cohen's d, while regions with \navr = 1.0
@@ -2023,6 +2007,148 @@ typical neuroimaging analyses.
     \end{tabular}
 \end{table}
 
+\begin{table*}[h]
+    \centering
+    \begin{tblr}[
+            caption={ Ansari-Bradley Test Results for Subcortical Structures.
+                    * indicates FDR-corrected
+                    significance ($p < 0.05$). L/R = Left/Right. Stat = Statistic,
+                    p-val = p-value, Partial Corr = Partial Correlation.},
+            label={tab:stats-coef-var-subcortical},
+        ]
+        {
+            width = \textwidth,
+            colspec = {l | Q[c,m] Q[c,m] | Q[c,m] Q[c,m]},
+            row{odd} = {gray9},
+            row{even} = {white},
+            row{1} = {font=\bfseries, white},
+            row{2} = {font=\bfseries, gray9},
+            rows = {rowsep=0pt},
+            rowhead = 2,
+        }
+        \hline
+        \SetCell[r=2]{m} Region & \SetCell[c=2]{c} ANCOVA &          & \SetCell[c=2]{c} Partial Corr &         \\
+        \hline
+                                & W                       & p        & W                             & p       \\
+        \hline
+        L-Thalamus              & 207                     & 1.00     & 463                           & 9.1e-6* \\
+        L-Caudate               & 513                     & 1.1e-12* & 480                           & 2.0e-7* \\
+        L-Putamen               & 343                     & 0.62     & 437                           & 6.8e-4* \\
+        L-Pallidum              & 292                     & 0.99     & 441                           & 3.9e-4* \\
+        L-Hippocampus           & 309                     & 0.94     & 384                           & 0.12    \\
+        L-Amygdala              & 300                     & 0.97     & 419                           & 6.3e-3* \\
+        L-Accumbens             & 226                     & 1.00     & 459                           & 2.0e-5* \\
+        R-Thalamus              & 266                     & 1.00     & 487                           & 3.1e-8* \\
+        R-Caudate               & 501                     & 3.1e-10* & 496                           & 1.9e-9* \\
+        R-Putamen               & 326                     & 0.82     & 419                           & 6.3e-3* \\
+        R-Pallidum              & 273                     & 1.00     & 432                           & 1.3e-3* \\
+        R-Hippocampus           & 354                     & 0.46     & 462                           & 1.1e-5* \\
+        R-Amygdala              & 376                     & 0.19     & 420                           & 5.6e-3* \\
+        R-Accumbens             & 216                     & 1.00     & 430                           & 1.7e-3* \\
+        \hline
+    \end{tblr}
+    \caption{ Ansari-Bradley Test Results for Subcortical Structures:
+        ANCOVA vs Partial Correlation. * indicates FDR-corrected
+        significance ($p < 0.05$). L/R = Left/Right. W = statistic,
+        p = p-value, Partial Corr = Partial Correlation.}
+    \label{tab:stats-coef-var-subcortical}
+\end{table*}
+
+\begin{longtblr}[
+        caption={Ansari-Bradley Test Results for Cortical Regions: ANCOVA vs Partial
+                Correlation. * indicates FDR-corrected significance ($p < 0.05$). lh/rh =
+                left/right hemisphere. ACC = anterior cingulate cortex, MF = middle
+                frontal. W = statistic, p = p-value, Partial Corr = Partial
+                Correlation.},
+        label={tab:stats-coef-var-cortical},
+    ]{
+        width=\linewidth,
+        colspec = {l | *{4}{Q[c,m]} | *{4}{Q[c,m]} | *{4}{Q[c,m]}},
+        row{odd} = {gray9},
+        row{even} = {white},
+        row{1} = {font=\bfseries, white},
+        row{2} = {font=\bfseries, gray9},
+        row{3} = {font=\bfseries, white},
+        rows = {font=\footnotesize, rowsep=0pt},
+        rowhead = 3,
+    }
+    \hline
+    \SetCell[r=3]{m} Region   & \SetCell[c=4]{c} Cortical Volume &         &                               &          & \SetCell[c=4]{c} Cortical Thickness &          &                               &         & \SetCell[c=4]{c} Cortical Area &         &                               &          \\
+    \hline
+                              & \SetCell[c=2]{c} ANCOVA          &         & \SetCell[c=2]{c} Partial Corr &          & \SetCell[c=2]{c} ANCOVA             &          & \SetCell[c=2]{c} Partial Corr &         & \SetCell[c=2]{c} ANCOVA        &         & \SetCell[c=2]{c} Partial Corr &          \\
+    \hline
+                              & W                                & p       & W                             & p        & W                                   & p        & W                             & p       & W                              & p       & W                             & p        \\
+    \hline
+    bankssts (lh)             & 426                              & 2.8e-3* & 516                           & 1.5e-13* & 497                                 & 1.4e-9*  & 427                           & 2.5e-3* & 446                            & 1.8e-4* & 498                           & 9.5e-10* \\
+    bankssts (rh)             & 382                              & 0.13    & 432                           & 1.3e-3*  & 479                                 & 2.6e-7*  & 457                           & 2.8e-5* & 453                            & 5.8e-5* & 457                           & 2.8e-5*  \\
+    caudalACC (lh)            & 400                              & 3.8e-2  & 506                           & 4.0e-11* & 293                                 & 0.98     & 441                           & 3.9e-4* & 374                            & 0.21    & 507                           & 2.6e-11* \\
+    caudalACC (rh)            & 240                              & 1.00    & 494                           & 3.7e-9*  & 505                                 & 6.2e-11* & 437                           & 6.8e-4* & 371                            & 0.24    & 477                           & 4.3e-7*  \\
+    caudalMF (lh)             & 445                              & 2.1e-4* & 447                           & 1.6e-4*  & 470                                 & 2.1e-6*  & 367                           & 0.29    & 315                            & 0.91    & 469                           & 2.7e-6*  \\
+    caudalMF (rh)             & 284                              & 0.99    & 440                           & 4.5e-4*  & 282                                 & 0.99     & 432                           & 1.3e-3* & 360                            & 0.36    & 439                           & 5.1e-4*  \\
+    cuneus (lh)               & 389                              & 8.9e-2  & 480                           & 2.0e-7*  & 375                                 & 0.20     & 401                           & 3.4e-2  & 385                            & 0.12    & 488                           & 2.7e-8*  \\
+    cuneus (rh)               & 341                              & 0.64    & 485                           & 6.8e-8*  & 362                                 & 0.33     & 409                           & 1.7e-2  & 327                            & 0.81    & 493                           & 4.8e-9*  \\
+    entorhinal (lh)           & 375                              & 0.20    & 449                           & 1.1e-4*  & 348                                 & 0.56     & 438                           & 5.6e-4* & 404                            & 2.7e-2  & 463                           & 9.1e-6*  \\
+    entorhinal (rh)           & 388                              & 9.7e-2  & 440                           & 4.5e-4*  & 366                                 & 0.30     & 416                           & 8.1e-3* & 376                            & 0.19    & 441                           & 3.9e-4*  \\
+    fusiform (lh)             & 357                              & 0.41    & 462                           & 1.1e-5*  & 343                                 & 0.62     & 427                           & 2.5e-3* & 397                            & 4.6e-2  & 481                           & 1.8e-7*  \\
+    fusiform (rh)             & 397                              & 4.6e-2  & 461                           & 1.3e-5*  & 386                                 & 0.10     & 438                           & 5.6e-4* & 410                            & 1.6e-2  & 475                           & 6.9e-7*  \\
+    inferiorparietal (lh)     & 344                              & 0.61    & 451                           & 8.1e-5*  & 422                                 & 4.5e-3*  & 410                           & 1.6e-2  & 333                            & 0.75    & 475                           & 6.9e-7*  \\
+    inferiorparietal (rh)     & 347                              & 0.58    & 453                           & 5.8e-5*  & 424                                 & 3.6e-3*  & 423                           & 4.2e-3* & 318                            & 0.89    & 469                           & 2.7e-6*  \\
+    inferiortemporal (lh)     & 390                              & 8.4e-2  & 471                           & 1.8e-6*  & 358                                 & 0.39     & 432                           & 1.3e-3* & 396                            & 5.0e-2  & 495                           & 2.4e-9*  \\
+    inferiortemporal (rh)     & 397                              & 4.6e-2  & 466                           & 5.3e-6*  & 394                                 & 5.9e-2   & 427                           & 2.5e-3* & 390                            & 8.4e-2  & 484                           & 9.1e-8*  \\
+    isthmuscingulate (lh)     & 398                              & 4.1e-2  & 456                           & 3.4e-5*  & 436                                 & 7.9e-4*  & 426                           & 2.8e-3* & 385                            & 0.12    & 473                           & 1.1e-6*  \\
+    isthmuscingulate (rh)     & 400                              & 3.8e-2  & 450                           & 9.7e-5*  & 427                                 & 2.5e-3*  & 430                           & 1.7e-3* & 392                            & 7.1e-2  & 461                           & 1.3e-5*  \\
+    lateraloccipital (lh)     & 343                              & 0.62    & 463                           & 9.1e-6*  & 342                                 & 0.63     & 422                           & 4.5e-3* & 329                            & 0.79    & 481                           & 1.8e-7*  \\
+    lateraloccipital (rh)     & 327                              & 0.81    & 470                           & 2.1e-6*  & 372                                 & 0.23     & 439                           & 5.1e-4* & 312                            & 0.92    & 488                           & 2.7e-8*  \\
+    lateralorbitofrontal (lh) & 364                              & 0.31    & 436                           & 7.9e-4*  & 350                                 & 0.52     & 388                           & 9.7e-2  & 346                            & 0.59    & 444                           & 2.6e-4*  \\
+    lateralorbitofrontal (rh) & 341                              & 0.64    & 441                           & 3.9e-4*  & 349                                 & 0.54     & 414                           & 1.0e-2* & 320                            & 0.87    & 449                           & 1.1e-4*  \\
+    lingual (lh)              & 355                              & 0.44    & 460                           & 1.5e-5*  & 308                                 & 0.95     & 414                           & 1.0e-2* & 345                            & 0.60    & 474                           & 8.6e-7*  \\
+    lingual (rh)              & 364                              & 0.31    & 467                           & 4.2e-6*  & 305                                 & 0.96     & 424                           & 3.6e-3* & 350                            & 0.52    & 484                           & 9.1e-8*  \\
+    medialorbitofrontal (lh)  & 359                              & 0.38    & 442                           & 3.3e-4*  & 328                                 & 0.80     & 409                           & 1.7e-2  & 347                            & 0.58    & 452                           & 6.9e-5*  \\
+    medialorbitofrontal (rh)  & 384                              & 0.12    & 444                           & 2.6e-4*  & 336                                 & 0.72     & 422                           & 4.5e-3* & 379                            & 0.16    & 453                           & 5.8e-5*  \\
+    middletemporal (lh)       & 376                              & 0.19    & 456                           & 3.4e-5*  & 354                                 & 0.46     & 425                           & 3.3e-3* & 370                            & 0.25    & 479                           & 2.6e-7*  \\
+    middletemporal (rh)       & 389                              & 8.9e-2  & 453                           & 5.8e-5*  & 373                                 & 0.22     & 435                           & 9.1e-4* & 382                            & 0.13    & 474                           & 8.6e-7*  \\
+    parahippocampal (lh)      & 396                              & 5.0e-2  & 455                           & 4.1e-5*  & 380                                 & 0.15     & 439                           & 5.1e-4* & 404                            & 2.7e-2  & 471                           & 1.8e-6*  \\
+    parahippocampal (rh)      & 402                              & 3.2e-2  & 446                           & 1.8e-4*  & 393                                 & 6.4e-2   & 426                           & 2.8e-3* & 391                            & 7.8e-2  & 458                           & 2.4e-5*  \\
+    paracentral (lh)          & 359                              & 0.38    & 450                           & 9.7e-5*  & 327                                 & 0.81     & 402                           & 3.0e-2  & 344                            & 0.61    & 464                           & 8.1e-6*  \\
+    paracentral (rh)          & 371                              & 0.24    & 456                           & 3.4e-5*  & 334                                 & 0.74     & 417                           & 7.8e-3* & 359                            & 0.38    & 469                           & 2.7e-6*  \\
+    parsopercularis (lh)      & 380                              & 0.15    & 452                           & 6.9e-5*  & 402                                 & 3.2e-2   & 407                           & 2.1e-2  & 363                            & 0.32    & 468                           & 3.3e-6*  \\
+    parsopercularis (rh)      & 366                              & 0.29    & 455                           & 4.1e-5*  & 418                                 & 7.4e-3*  & 426                           & 2.8e-3* & 350                            & 0.52    & 471                           & 1.8e-6*  \\
+    parsorbitalis (lh)        & 374                              & 0.21    & 435                           & 9.1e-4*  & 352                                 & 0.49     & 398                           & 4.1e-2  & 359                            & 0.38    & 448                           & 1.3e-4*  \\
+    parsorbitalis (rh)        & 382                              & 0.13    & 443                           & 2.9e-4*  & 379                                 & 0.16     & 414                           & 1.0e-2* & 364                            & 0.31    & 456                           & 3.4e-5*  \\
+    parstriangularis (lh)     & 371                              & 0.24    & 449                           & 1.1e-4*  & 382                                 & 0.13     & 406                           & 2.3e-2  & 352                            & 0.49    & 462                           & 1.1e-5*  \\
+    parstriangularis (rh)     & 371                              & 0.24    & 452                           & 6.9e-5*  & 398                                 & 4.1e-2   & 423                           & 4.2e-3* & 349                            & 0.54    & 465                           & 6.8e-6*  \\
+    pericalcarine (lh)        & 367                              & 0.29    & 447                           & 1.6e-4*  & 323                                 & 0.85     & 410                           & 1.6e-2  & 356                            & 0.42    & 463                           & 9.1e-6*  \\
+    pericalcarine (rh)        & 364                              & 0.31    & 457                           & 2.8e-5*  & 329                                 & 0.79     & 422                           & 4.5e-3* & 352                            & 0.49    & 472                           & 1.4e-6*  \\
+    postcentral (lh)          & 354                              & 0.45    & 453                           & 5.8e-5*  & 341                                 & 0.64     & 407                           & 2.1e-2  & 341                            & 0.64    & 467                           & 4.2e-6*  \\
+    postcentral (rh)          & 363                              & 0.32    & 456                           & 3.4e-5*  & 374                                 & 0.21     & 423                           & 4.2e-3* & 339                            & 0.68    & 471                           & 1.8e-6*  \\
+    posteriorcingulate (lh)   & 393                              & 6.4e-2  & 461                           & 1.3e-5*  & 421                                 & 5.1e-3*  & 423                           & 4.2e-3* & 378                            & 0.17    & 476                           & 5.6e-7*  \\
+    posteriorcingulate (rh)   & 397                              & 4.6e-2  & 458                           & 2.4e-5*  & 419                                 & 6.3e-3*  & 427                           & 2.5e-3* & 384                            & 0.12    & 473                           & 1.1e-6*  \\
+    precentral (lh)           & 356                              & 0.42    & 453                           & 5.8e-5*  & 338                                 & 0.69     & 404                           & 2.7e-2  & 339                            & 0.68    & 465                           & 6.8e-6*  \\
+    precentral (rh)           & 364                              & 0.31    & 455                           & 4.1e-5*  & 371                                 & 0.24     & 421                           & 5.1e-3* & 345                            & 0.60    & 468                           & 3.3e-6*  \\
+    precuneus (lh)            & 378                              & 0.17    & 465                           & 6.8e-6*  & 389                                 & 8.9e-2   & 418                           & 7.4e-3* & 363                            & 0.32    & 478                           & 3.4e-7*  \\
+    precuneus (rh)            & 388                              & 9.7e-2  & 466                           & 5.3e-6*  & 408                                 & 1.8e-2   & 426                           & 2.8e-3* & 373                            & 0.22    & 481                           & 1.8e-7*  \\
+    rostralACC (lh)           & 374                              & 0.21    & 445                           & 2.1e-4*  & 343                                 & 0.62     & 410                           & 1.6e-2  & 368                            & 0.27    & 456                           & 3.4e-5*  \\
+    rostralACC (rh)           & 383                              & 0.12    & 449                           & 1.1e-4*  & 355                                 & 0.44     & 418                           & 7.4e-3* & 377                            & 0.18    & 459                           & 2.0e-5*  \\
+    rostralmiddlefrontal (lh) & 368                              & 0.27    & 449                           & 1.1e-4*  & 357                                 & 0.41     & 402                           & 3.0e-2  & 349                            & 0.54    & 461                           & 1.3e-5*  \\
+    rostralmiddlefrontal (rh) & 372                              & 0.23    & 453                           & 5.8e-5*  & 373                                 & 0.22     & 417                           & 7.8e-3* & 354                            & 0.45    & 464                           & 8.1e-6*  \\
+    superiorfrontal (lh)      & 367                              & 0.29    & 453                           & 5.8e-5*  & 358                                 & 0.39     & 406                           & 2.3e-2  & 349                            & 0.54    & 464                           & 8.1e-6*  \\
+    superiorfrontal (rh)      & 375                              & 0.20    & 456                           & 3.4e-5*  & 384                                 & 0.12     & 419                           & 6.3e-3* & 356                            & 0.42    & 467                           & 4.2e-6*  \\
+    superiorparietal (lh)     & 370                              & 0.25    & 459                           & 2.0e-5*  & 362                                 & 0.33     & 409                           & 1.7e-2  & 356                            & 0.42    & 474                           & 8.6e-7*  \\
+    superiorparietal (rh)     & 375                              & 0.20    & 461                           & 1.3e-5*  & 382                                 & 0.13     & 418                           & 7.4e-3* & 361                            & 0.35    & 476                           & 5.6e-7*  \\
+    superiortemporal (lh)     & 385                              & 0.12    & 458                           & 2.4e-5*  & 378                                 & 0.17     & 420                           & 5.6e-3* & 366                            & 0.29    & 471                           & 1.8e-6*  \\
+    superiortemporal (rh)     & 394                              & 5.9e-2  & 456                           & 3.4e-5*  & 396                                 & 5.0e-2   & 425                           & 3.3e-3* & 374                            & 0.21    & 470                           & 2.1e-6*  \\
+    supramarginal (lh)        & 371                              & 0.24    & 458                           & 2.4e-5*  & 387                                 & 9.5e-2   & 416                           & 8.1e-3* & 356                            & 0.42    & 472                           & 1.4e-6*  \\
+    supramarginal (rh)        & 380                              & 0.15    & 462                           & 1.1e-5*  & 406                                 & 2.3e-2   & 424                           & 3.6e-3* & 362                            & 0.33    & 474                           & 8.6e-7*  \\
+    frontalpole (lh)          & 376                              & 0.19    & 440                           & 4.5e-4*  & 337                                 & 0.70     & 409                           & 1.7e-2  & 363                            & 0.32    & 452                           & 6.9e-5*  \\
+    frontalpole (rh)          & 387                              & 9.5e-2  & 444                           & 2.6e-4*  & 352                                 & 0.49     & 416                           & 8.1e-3* & 374                            & 0.21    & 456                           & 3.4e-5*  \\
+    temporalpole (lh)         & 267                              & 1.00    & 424                           & 3.6e-3*  & 377                                 & 0.18     & 425                           & 3.3e-3* & 249                            & 1.00    & 410                           & 1.6e-2   \\
+    temporalpole (rh)         & 237                              & 1.00    & 436                           & 7.9e-4*  & 416                                 & 8.6e-3*  & 429                           & 2.0e-3* & 242                            & 1.00    & 404                           & 2.7e-2   \\
+    transversetemporal (lh)   & 427                              & 2.5e-3* & 459                           & 2.0e-5*  & 265                                 & 1.00     & 451                           & 8.1e-5* & 427                            & 2.5e-3* & 475                           & 6.9e-7*  \\
+    transversetemporal (rh)   & 402                              & 3.2e-2  & 468                           & 3.3e-6*  & 303                                 & 0.96     & 429                           & 2.0e-3* & 417                            & 7.8e-3* & 462                           & 1.1e-5*  \\
+    insula (lh)               & 310                              & 0.94    & 496                           & 1.9e-9*  & 329                                 & 0.79     & 449                           & 1.1e-4* & 237                            & 1.00    & 422                           & 4.5e-3*  \\
+    insula (rh)               & 292                              & 0.99    & 438                           & 6.0e-4*  & 468                                 & 3.3e-6*  & 420                           & 5.6e-3* & 269                            & 1.00    & 413                           & 1.2e-2*  \\
+    \hline
+\end{longtblr}
 
 \subsubsection{Consistency of statistical tests}
 
