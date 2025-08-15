@@ -414,7 +414,7 @@ Table~\ref{tab:stats-coef-var-cortical}).
 % - To be general, we developped an analytical model
 % - Refers to the online tool on yohanchatelain.github.io/brain-render
 
-\TG{Instead of re-stating the importance of numerical variability in this
+\TG[done]{Instead of re-stating the importance of numerical variability in this
     paragraph, which supposedly should be understood from the end of the
     introduction, here you could explain the need for a tool to quickly and
     practically evaluate its impact in a given study, explain and justify your
@@ -422,31 +422,58 @@ Table~\ref{tab:stats-coef-var-cortical}).
     than the population---refer to previous works). In doing so, you could explain
     how running MCA is currently not realistic due to computational requirements
     (although new architectures may enable it in the coming years), and explain the
-    need for a statistical correction.} Quantifying the influence of numerical variability is essential for
-establishing the reliability of neuroimaging findings. While anatomical
-variability reflects genuine differences across individuals, numerical
-variability arises from the instabilities inherent in floating-point
-computations and changes in the computational environment. To systematically
-assess their relative impact, we define the Numerical-Anatomical Variability
-Ratio (NAVR) as the ratio between numerical uncertainty
-($\sigma_{\text{num}}$; Eq.\ref{eq:sigma_num}) and between-subject anatomical
-variability ($\sigma_{\text{anat}}$; Eq.\ref{eq:sigma_anat}):
-\[
-    \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
-\]
-\TG{I think I would rather present the $\sigma_d$ result first, then explain
+    need for a statistical correction.}
+
+While the importance of numerical variability is established, its practical
+impact on individual studies remains difficult to quantify. Methods like Monte
+Carlo Arithmetic (MCA) can measure this variability, but their computational
+cost makes them hard for routine use with complex neuroimaging pipelines,
+although new architectures may democratize this in the
+future~\cite{elarar2025ms2a}. This creates a critical need for a fast,
+analytical framework to estimate numerical uncertainty. Our approach is built on
+the assumption that numerical variability is a property of the computational
+pipeline rather than the underlying anatomical population
+specificity~\cite{bhagwat2021understanding,vila2024impact,chatelain2024numerical,sokolowski2024impact}.
+This allows us to develop a generalizable statistical model for widespread
+application. To be meaningful, any assessment of numerical variability must be
+contextualized by the statistical effect size under investigation and the
+study's sample size. We, therefore, first developed a model to estimate the
+uncertainty ($\sigma_d$) that numerical variability introduces into a standard
+measure of group difference, Cohen's d (Eq.~\ref{eq:cohen_d}). To model
+$\sigma_d$, we defined a standardized metric to characterize a pipeline's
+intrinsic numerical instability: the Numerical-Anatomical Variability Ratio
+(NAVR). NAVR is the ratio between the standard deviation of numerical
+variability ($\sigma_{\text{num}}$; Eq.\ref{eq:sigma_num}) and the
+between-subject anatomical variability ($\sigma_{\text{anat}}$;
+Eq.\ref{eq:sigma_anat}):
+
+$$\nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}$$
+\TG[done]{I think I would rather present the $\sigma_d$ result first, then explain
     NAV. When introducing sigma d, you could better explain that numerical
     variability has to be evaluated in the context of a particular effect size, and its impact will be dependent on sample size.}
 
+This metric allowed us to establish a direct, closed-form relationship between
+the pipeline's instability (NAVR) and the resulting uncertainty in a study's
+effect size ($\sigma_d$):
+
+$$\sigma_d = \frac{2}{\sqrt{N}} \nu_{\text{nav}}$$
+
+where $N$ is the total sample size. This relationship allows researchers to
+estimate the numerical uncertainty in effect sizes from summary statistics
+alone, without requiring expensive recomputation or access to the original
+data.
+
 NAVR provides a general, interpretable metric to evaluate the robustness of
-neuroimaging measurements. Across cortical and subcortical regions, numerical
-variability accounted for up to $37-40\%$ of the observed anatomical variance
-(Fig.~\ref{fig:navr_subcortical},\ref{fig:navr_thickness}). Mean NAVR values
-reached 0.21 for cortical thickness and 0.15 for subcortical volumes,
-indicating that numerical imprecision constitutes a nontrivial portion of the
-biological signal. Even in regions with low NAVR ($0.01-0.11$), numerical
-uncertainty remains non-negligible, while the highest values (up to 0.42)
-suggest near-parity with anatomical variability.
+neuroimaging measurements. Across cortical and subcortical regions, we found
+numerical variability accounted for up to 37-40\% of the observed anatomical
+variance (Figures~\ref{fig:navr_subcortical},~\ref{fig:navr_thickness}). Mean NAVR
+values reached 0.21 for cortical thickness and 0.15 for subcortical volumes,
+indicating that numerical imprecision constitutes a portion of the
+anatomical signal. Our model provides immediate, practical insights from these
+values. For instance, with a typical NAVR of 0.2, a study would require over
+1,500 participants to reduce the numerical uncertainty in its effect size,
+$\sigma_d$, to a negligible level of 0.01 (Fig.~\ref{fig:sigma_d_contour}).
+\TG[done]{not sure what this means, reformulate}
 
 \begin{figure}[h]
     \centering
@@ -477,23 +504,6 @@ suggest near-parity with anatomical variability.
         warmer colors indicating higher \navr values.}
 \end{figure}
 
-To make NAVR broadly applicable, including to previously published studies, we
-developed a closed-form analytical model of effect size variability.
-Specifically, we linked NAVR to the uncertainty in Cohen's d coefficient ($d$;
-Eq.~\ref{eq:cohen_d})—a standard measure of group difference—through a simple
-expression:
-\[
-    \sigma_d = \frac{2}{\sqrt{N}} \text{\navr}
-\]
-where $N$ is the sample size. This relationship allows researchers to estimate
-the numerical uncertainty in effect sizes from summary statistics alone,
-without requiring expensive recomputation or perturbed reruns. For instance,
-with a typical NAVR of 0.2, suppressing numerical contributions \TG{not sure what this means, reformulate} below 0.01 in
-$\sigma_d$ would require at least 1500 participants
-(Fig.~\ref{fig:sigma_d_contour}). This modeling framework is especially
-valuable in settings where reproducibility audits or systematic reviews demand
-fast, scalable evaluations.
-
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/sigma_d_contour.pdf}
     \caption{\TG{could you show some of the papers in this figure? } Relationship between \navr and population sample size  \(N\) for
@@ -504,21 +514,19 @@ fast, scalable evaluations.
         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
 \end{figure}
 
-Speed is critical because existing methods such as Monte Carlo Arithmetic
-(MCA), though accurate, incur prohibitive overhead for complex pipelines like
-FreeSurfer. Our analytical approach circumvents this barrier, enabling routine
-assessments of numerical robustness at a fraction of the computational cost.
-Moreover, NAVR exposes how numerical instability can serve as a proxy for data
-quality: regions failing standard QC checks consistently exhibited higher NAVR,
-suggesting that this metric could flag unreliable inputs automatically.
+To facilitate the widespread adoption of this framework, we have implemented it
+as an interactive, public web tool available at
+\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render} (Appendix Figure~\ref{fig:brain_render_tool}).
+\TG[done]{you could add a screenshot of the tool}
+This tool enables researchers to perform rapid reproducibility audits, evaluate
+findings from published literature retroactively, and assess numerical
+robustness at a fraction of the cost of traditional methods. Furthermore, we
+observed that regions failing standard quality control (QC) checks consistently
+exhibited higher NAVR, suggesting the metric can also serve as a useful proxy
+for data quality. By making these assessments accessible, our framework helps
+improve transparency, support peer review, and ultimately foster more
+trustworthy scientific inference in neuroimaging.
 
-To facilitate adoption, we implemented this analytical framework as a public
-web tool\footnote{\url{https://yohanchatelain.github.io/brain_render/}} \TG{you could add a screenshot of the tool},
-allowing researchers to evaluate the numerical stability of neuroimaging
-findings interactively. By making these capabilities accessible, we provide a
-general tool that can be applied retroactively to any neuroimaging
-result—regardless of software or study design—thereby improving transparency,
-aiding peer review, and supporting more trustworthy scientific inference.
 
 \subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
 
@@ -1085,7 +1093,8 @@ compromised by numerical instability \TG{I think you should show examples of suc
 Our systematic perturbation of FreeSurfer revealed that numerical variability
 alone can account for up to 30\% of the anatomical variability observed in
 structural MRI measurements. This level of uncertainty can significantly impact
-statistical outcomes \TG{in Parkinson's disease analyses}, leading to the appearance or disappearance of clinically
+statistical outcomes in Parkinson's disease analyses \TG[done]{in Parkinson's
+    disease analyses}, leading to the appearance or disappearance of clinically
 relevant group differences or correlations depending solely on computational
 conditions. These findings offer a mechanistic explanation for some of the
 reproducibility challenges reported in clinical neuroimaging.
@@ -1097,54 +1106,79 @@ NAVR and the uncertainty in Cohen's d effect sizes, we provide a practical tool
 to assess the robustness of findings. Our re-analysis of published ENIGMA
 results illustrates this utility: while large sample sizes confer robustness to
 core findings, many secondary effects fall below the computational noise floor.
-This suggests that in smaller exploratory \TG{why exploratory?} studies, numerical instability may
-undermine the reliability of reported effects. \TG{see previous comments: it
-    would be nice to include analyses for some of such smaller studies}
+This suggests that in exploratory studies with lower sample size, numerical
+instability may undermine the reliability of reported effects. \TG{see previous
+    comments: it would be nice to include analyses for some of such smaller studies}
+
 
 Although our primary analysis focused on FreeSurfer 7.3.1 and Parkinson's
 disease, the underlying numerical issues are general. Floating-point arithmetic
-is inherently non-associative \TG{what does this mean? Additions of
-    floating-point numbers is not associative? If so, this is out of context} and
-sensitive to compiler behavior, hardware architecture, and thread scheduling. As
-a result, neuroimaging pipelines—though deterministic in design—can produce
-divergent results across computational environments. Previous analyses of
-FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite Mathieu} indicate that such instability
-is not unique to FreeSurfer, but likely pervades the field. SPM however seems to
-be less impacted by numerical variability \TG{cite Niusha}. \TG{I think you'd
-    need to refer to DL methods here, including FS8.} \TG{start a new paragraph
-    here, on the generalizability across data cohorts. You could include a mention
-    that numerical variability didn't differ between PD and HC, and possibly link to
-    a supplementary figure to support the claim.} Moreover, our PD cohort was
-relatively homogeneous in age and phenotype, potentially reducing anatomical
-variance and inflating NAVR values. This highlights the need to \TG{I would
-    moderate this statement a little bit. I think it would be interesting the
-    measure the NAV in different pipelines and datasets, but I don't think there's a
-    very strong need for that.} apply \TG{apply or measure?} NAVR across diverse
-datasets, software packages, and disease contexts to build a comprehensive
-understanding of computational reliability.
+\TG[done]{what does this mean? Additions of floating-point numbers is not
+    associative? If so, this is out of context} \YC{Yes, FP operations are not
+    associative but it is an implication of the finite precision. I just remove it
+    to simplify.} is sensitive to compiler behavior, hardware architecture, and
+thread scheduling. As a result, neuroimaging pipelines—though deterministic in
+design—can produce divergent results across computational environments. Previous
+analyses of FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite Mathieu}
+indicate that such instability is not unique to FreeSurfer but likely pervades
+the field. SPM however seems to be less impacted by numerical
+variability~\cite{mirhakimi2025numerical} \TG[done]{cite Niusha}.
 
-Crucially, this instability is not confined to low-level rounding operations \TG{instead what?}.
-Image processing workflows involve nonlinear optimization procedures that may
-converge to different local minima under small perturbations, resulting in
-substantive changes to derived measures. The situation is analogous to deep
-learning, where different weight initializations or precision settings can
-yield distinct model outcomes \TG{see previous comment on DL, I think we should refer to Ines' work here}. In neuroimaging, such instability means that
-even identical inputs can lead to divergent interpretations, raising
-concerns for both research reproducibility and clinical translation.
+Traditional image processing workflows rely on nonlinear optimization procedures
+that can converge to different local minima under small perturbations, resulting
+in substantive changes to derived measures. To address this problem and decrease
+the execution time, the neuroimaging field is increasingly shifting toward deep
+learning models. The latest FreeSurfer release (v8), for example, now
+incorporates neural networks such as FastSurfer~\cite{henschel2020fastsurfer}
+and Synthmorph~\cite{hoffmann2021synthmorph} to replace its classical
+segmentation and registration steps. However, this shift does not eliminate the
+problem of instability but rather reframes it. While these DL models have been shown
+stable during the inference stage~\cite{pepe2023numerical}, their training
+process is subject to its own sources of variability. Factors like weight
+initialization and floating-point precision can cause different training runs to
+yield distinct models with varying performance, and their quantification
+remains an open question in neuroimaging. This phenomenon is analogous to the
+local minima issue in classical optimization. Ultimately, whether arising from
+classical optimization or DL training, such instability means that even
+identical inputs can lead to divergent interpretations, raising critical
+concerns for research reproducibility and clinical translation.
 
-NAVR offers a scalable and interpretable metric to quantify this hidden
-variability. While floating-point rounding is a major source of instability,
-future work should extend this analysis to other contributors, including
-algorithmic decisions, preprocessing choices, and data handling practices. A
-comprehensive understanding of these factors is essential for developing
-numerically robust software tools.
+\TG[done]{start a new paragraph here, on the generalizability across data cohorts. You
+    could include a mention that numerical variability didn't differ between PD and
+    HC, and possibly link to a supplementary figure to support the claim.}
+To address the generalizability of our findings, we considered the
+characteristics of our data cohorts. A potential limitation is that our
+Parkinson's Disease cohort was relatively homogeneous in age and phenotype,
+which could reduce anatomical variance and consequently inflate NAVR values.
+However, direct statistical analyses revealed no significant differences in
+numerical variability between the PD and healthy control groups (see
+Supplementary Fig. X). This key finding supports the idea that the pipeline's
+instability is a consistent factor and that our results are likely to generalize
+across these populations.\TG[done]{I would moderate this statement a little bit.
+    I think it would be interesting the measure the NAV in different pipelines and
+    datasets, but I don't think there's a very strong need for that.} Measuring the
+NAVR across more diverse datasets, software packages, and disease contexts would
+nevertheless be a valuable step. Such work would help build a more comprehensive
+map of computational reliability across the entire neuroimaging landscape.
 
-In conclusion, our results demonstrate that computational uncertainty is as
-critical as statistical uncertainty in neuroimaging. Incorporating systematic
-assessments of numerical variability, through tools like NAVR, is necessary to
-ensure the reproducibility and reliability of neuroimaging-based biomarkers.
-\TG{I would merge this paragraph with the previous one, and highlight specific
-    next steps regarding numerical variability in neuroimaging.}
+NAVR provides a scalable, interpretable metric to quantify hidden numerical
+variability. Although floating-point rounding is a dominant source of
+instability, future work should broaden this analysis to other
+contributors, including algorithmic choices, preprocessing decisions, and data handling
+practices. A comprehensive understanding of these factors is essential for
+developing numerically robust software. Our results show that computational
+uncertainty is as critical as statistical uncertainty in neuroimaging;
+systematic assessments of numerical variability, exemplified by NAVR, are
+therefore necessary to ensure the reproducibility and reliability of
+neuroimaging-based biomarkers. Extending this quantification to the
+deep-learning training stage is equally important, given the field's central
+role in modern neuroimaging, and would support more robust and interpretable
+models. Likewise, evaluating numerical variability in the classical optimization
+schemes used in non-linear registration is a key milestone, as these traditional
+tools often provide the reference for training deep-learning models. Advancing
+both lines of analysis will benefit conventional and learning-based approaches
+alike. \TG[done]{I would merge this paragraph with the previous one, and highlight
+    specific next steps regarding numerical variability in neuroimaging.}
 
 
 \section{Methods}
@@ -1295,37 +1329,148 @@ compromising the detection of true anatomical differences.\TG{didn't you pool si
 
 \subsubsection{Relationship between \navr~and Effect Size Uncertainty}
 
-We derived the theoretical relationship between \navr~and Cohen's d variability
-to quantify how measurement uncertainty affects statistical effect sizes in
-group comparisons. For a balanced two-group design with total sample size $N$,
-each observation decomposes as $X_{ij} = \mu_i +
-    \varepsilon_{ij}^{(\text{anat})} + \varepsilon_{ij}^{(\text{num})}$, where
-$\mu_i$ represents the true group mean, $\varepsilon_{ij}^{(\text{anat})} \sim
-    \mathcal{N}(0, \sigma_{\text{anat}}^2)$ captures anatomical variation, and
-$\varepsilon_{ij}^{(\text{num})} \sim \mathcal{N}(0, \sigma_{\text{num}}^2)$
-represents numerical uncertainty.
-
-The standard deviation of Cohen's d attributable to measurement error is:
-\begin{equation}
-    \sigma_d = \frac{2}{\sqrt{N}} \text{\navr}
-\end{equation}
-
-This relationship emerges from error propagation analysis. \TG{The remainder of
+\TG{The remainder of
     this paragraph is quite informal, could you tidy up the equations to start from
-    the definition of Cohen's d and clearly derive its standard deviation? You should also clarify the assumptions that are made.} The
-difference in group means has variance $\text{Var}(\bar{X}_1 - \bar{X}_2) =
-    4(\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2)/N$, with the numerical
-component contributing $4\sigma_{\text{num}}^2/N$. Since Cohen's d normalizes by
-the pooled standard deviation $\sqrt{\sigma_{\text{anat}}^2 +
-        \sigma_{\text{num}}^2}$, the measurement error contribution becomes $\sigma_d =
-    (2\sigma_{\text{num}}/\sqrt{N})/\sigma_{\text{anat}} = (2/\sqrt{N})
-    \text{\navr}$.
+    the definition of Cohen's d and clearly derive its standard deviation? You should also clarify the assumptions that are made.}
 
-This formula indicates that regions with \navr = 0.1 contribute approximately
-$0.2/\sqrt{N}$ uncertainty to Cohen's d, while regions with \navr = 1.0
-contribute $2/\sqrt{N}$ uncertainty. The relationship provides a direct link
-between computational stability (\navr) and statistical reliability in
-neuroimaging studies.
+We relate \navr~to the variability of Cohen's $d$ to quantify how measurement
+uncertainty propagates to group-level effect sizes. Consider a balanced
+two-group design with total sample size $N$ (so $n_1=n_2=N/2$) and observations
+\[
+    X_{ij}=\mu_i+\varepsilon^{(\text{anat})}_{ij}+\varepsilon^{(\text{num})}_{ij},
+\]
+where
+$\varepsilon^{(\text{anat})}_{ij}\sim\mathcal{N}(0,\sigma_{\text{anat}}^2)$
+captures anatomical variation and
+$\varepsilon^{(\text{num})}_{ij}\sim\mathcal{N}(0,\sigma_{\text{num}}^2)$
+captures numerical uncertainty. We assume independence across subjects and
+between anatomical and numerical terms (homoscedastic, additive, zero-mean
+noise). Let \navr$:=\sigma_{\text{num}}/\sigma_{\text{anat}}$.
+
+Cohen's effect size using the population (pooled) standard deviation is
+\[
+    d \;=\; \frac{\bar X_1-\bar X_2}{\sigma_{\text{tot}}},\qquad
+    \sigma_{\text{tot}}^2:=\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2.
+\]
+Decompose the difference in sample means as
+\[
+    \bar X_1-\bar X_2
+    = (\mu_1-\mu_2)
+    + (\bar\varepsilon^{(\text{anat})}_1-\bar\varepsilon^{(\text{anat})}_2)
+    + (\bar\varepsilon^{(\text{num})}_1-\bar\varepsilon^{(\text{num})}_2).
+\]
+The part driven solely by numerical uncertainty has variance
+\[
+    \mathrm{Var}\!\left(\bar\varepsilon^{(\text{num})}_1-\bar\varepsilon^{(\text{num})}_2\right)
+    = \frac{\sigma_{\text{num}}^2}{n_1}+\frac{\sigma_{\text{num}}^2}{n_2}
+    = \frac{4\sigma_{\text{num}}^2}{N}.
+\]
+Propagating this to $d$ while treating $\sigma_{\text{tot}}$ as fixed (to
+isolate the numerator’s contribution) yields
+\begin{equation}
+    \label{eq:sd_d_exact}
+    \sigma_{d,\text{num}}
+    := \sqrt{\mathrm{Var}(d\mid\text{num})}
+    = \frac{2}{\sqrt{N}}\,
+    \frac{\sigma_{\text{num}}}{\sqrt{\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2}}
+    = \frac{2}{\sqrt{N}}\,
+    \frac{\nu_{\text{nav}}}{\sqrt{1+\nu_{\text{nav}}^2}}.
+\end{equation}
+For small numerical noise ($\nu_{\text{nav}}\ll 1$), \eqref{eq:sd_d_exact}
+admits the first-order approximation
+\begin{equation}
+    \label{eq:sd_d_approx}
+    \sigma_{d,\text{num}} \approx \frac{2}{\sqrt{N}}\,\nu_{\text{nav}}
+\end{equation}
+which is the regime relevant to well-conditioned pipelines.
+
+\paragraph{Unbalanced groups (population denominator).}
+For general $n_1,n_2$, the numerical-noise contribution to the standard deviation of $d$ is
+\begin{equation}
+    \label{eq:sd_d_exact_unbalanced}
+    \sigma_{d,\text{num}}
+    = \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}
+    \;\frac{\sigma_{\text{num}}}{\sqrt{\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2}}
+    \;=\;
+    \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}\,
+    \frac{\nu_{\text{nav}}}{\sqrt{1+\nu_{\text{nav}}^2}},
+\end{equation}
+which reduces to \eqref{eq:sd_d_exact} when $n_1=n_2=N/2$.
+
+\paragraph{Sample (pooled) denominator via the delta method.}
+Let $d=(\bar X_1-\bar X_2)/S_p$ with
+$S_p^2=\big((n_1-1)S_1^2+(n_2-1)S_2^2\big)/(n_1+n_2-2)$ and $\nu:=n_1+n_2-2$.
+Treat the anatomical component as fixed across numerical re-runs and assume
+Gaussian, independent numerical noise. The leading contribution (first order in
+$1/\nu$) to the variance of $d$ across numerical re-runs is
+\begin{equation}
+    \label{eq:var_d_num_sampleden}
+    \mathrm{Var}(d)_{\text{num}}
+    \;\approx\;
+    \underbrace{\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}_{\text{numerator term}}
+    \;+\;
+    \underbrace{\frac{\delta^2}{2\,\nu}\left(\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\right)^{\!2}}_{\text{denominator term}},
+    \qquad
+    \sigma_{\text{tot}}^2:=\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2,\;\;
+    \delta:=\frac{\mu_1-\mu_2}{\sigma_{\text{tot}}}.
+\end{equation}
+Hence
+\begin{equation}
+    \label{eq:sd_d_num_sampleden}
+    \sigma_{d,\text{num}}
+    \;\approx\;
+    \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)\frac{\nu_{\text{nav}}^2}{1+\nu_{\text{nav}}^2}
+        \;+\;
+        \frac{\delta^2}{2\,\nu}\frac{\nu_{\text{nav}}^4}{(1+\nu_{\text{nav}}^2)^2}}.
+\end{equation}
+For $\nu_{\text{nav}}\ll1$ the denominator term is $O(\nu_{\text{nav}}^2/\nu)$
+and \eqref{eq:sd_d_num_sampleden} collapses to \eqref{eq:sd_d_exact_unbalanced}.
+
+\paragraph{Heteroscedastic numerical noise.}
+If the numerical variance differs by group
+($\sigma_{\text{num},1}^2\neq\sigma_{\text{num},2}^2$), define
+\[
+    V_0
+    := \frac{(n_1-1)(\sigma_{\text{anat},1}^2+\sigma_{\text{num},1}^2)
+        +(n_2-1)(\sigma_{\text{anat},2}^2+\sigma_{\text{num},2}^2)}{\nu},
+    \qquad
+    d_*:=\frac{\mu_1-\mu_2}{\sqrt{V_0}}.
+\]
+Using independence of sample means and within-group sample variances for
+Gaussian noise,
+\begin{equation}
+    \label{eq:var_d_num_hetero}
+    \mathrm{Var}(d)_{\text{num}}
+    \;\approx\;
+    \frac{\sigma_{\text{num},1}^2/n_1+\sigma_{\text{num},2}^2/n_2}{V_0}
+    \;+\;
+    \frac{d_*^{\,2}}{2}\,
+    \frac{(n_1-1)\sigma_{\text{num},1}^4+(n_2-1)\sigma_{\text{num},2}^4}{V_0^{\,2}\,\nu},
+\end{equation}
+so $\sigma_{d,\text{num}}=\sqrt{\mathrm{Var}(d)_{\text{num}}}$. Setting
+$\sigma_{\text{num},1}=\sigma_{\text{num},2}$ and
+$\sigma_{\text{anat},1}=\sigma_{\text{anat},2}$ recovers
+\eqref{eq:var_d_num_sampleden}.
+
+\paragraph{Interpretation.}
+Equation~\eqref{eq:sd_d_exact} links computational stability (\navr) to
+uncertainty in $d$. For \navr$=0.1$, $\sigma_{d,\text{num}}\approx
+    \tfrac{2}{\sqrt{N}}\cdot \tfrac{0.1}{\sqrt{1+0.01}}\approx 0.199/\sqrt{N}$
+(effectively $0.2/\sqrt{N}$). For \navr$=1.0$,
+$\sigma_{d,\text{num}}=\tfrac{2}{\sqrt{N}}\cdot \tfrac{1}{\sqrt{2}}\approx
+    1.41/\sqrt{N}$.
+
+\paragraph{Assumptions and scope.}
+(i) Additive, zero-mean numerical noise independent of anatomical variation and
+across subjects. (ii) Approximate normality (used for independence of sample
+mean and variance and for $\mathrm{Var}(S_g^2)\approx
+    2\sigma_{\text{num},g}^4/(n_g-1)$; with excess kurtosis $\kappa_g-3$, replace
+$2$ by a kurtosis-adjusted factor, yielding the same structure). (iii)
+First-order delta-method linearization for the sample denominator. (iv) If one
+instead normalizes by the anatomical variability alone (an “oracle” denominator
+$\sigma_{\text{anat}}$), then
+$\sigma_{d,\text{num}}=(2/\sqrt{N})\,\nu_{\text{nav}}$. (v) For unbalanced
+designs, replace $2/\sqrt{N}$ by $\sqrt{1/n_1+1/n_2}$ throughout.
 
 \section{Data Availability}
 The data that support the findings of this study are available from the
@@ -1898,6 +2043,17 @@ measurements are more stable than cortical volume.
 
 \section{Numerical-Anatomical Variability Ratio (\navr)}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/screenshot_light.png}
+    \caption{Interactive web tool for estimating NAVR and assessing numerical
+        variability in neuroimaging studies. Users can input summary statistics
+        to obtain NAVR values and visualize the impact of numerical variability
+        on effect size estimates. The tool is available at
+        \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.}
+    \label{fig:brain_render_tool}
+\end{figure}
+
 \subsection{\navr maps}
 
 Figures \ref{fig:navr_map_area} and \ref{fig:navr_map_volume} show the \navr
@@ -1957,6 +2113,7 @@ the reliability of neuroimaging-based inferences.
 \end{figure}
 
 \subsection{Consistency results}
+
 
 \YC{Moved from section~\ref{sec:results}. Rewrite to fit here.}
 
