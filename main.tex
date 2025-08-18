@@ -84,18 +84,20 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
 \TG[done]{Rewrite using the following structure:
     \begin{itemize}
-        \item The reliability of structural MRI measures critically depends on
-              the estimation of sources of analytical variability.
+        \item The reliability of structural MRI measures critically depends on the estimation
+              of sources of analytical variability.
         \item In particular when effect sizes are moderate, such as in Parkinson's disease.
-        \item Among these sources, numerical variability has been shown to have
-              a measurable impact on analyses across multiple pipeline tools.
-        \item Numerical variability arises from rounding and truncation errors
-              associated with the use of limited-precision numerical formats.
-        \item Due to the complexity of MRI analyses, and in particular their
-              reliance on high-dimensional optimization, such errors propagate and
-              sometimes lead to measurable differences.
-        \item However, numerical variability is understudied, mainly due to practical challenges.
-        \item In particular, the implications of numerical variability on clinical findings is unknown.
+        \item Among these sources, numerical variability has been shown to have a measurable
+              impact on analyses across multiple pipeline tools.
+        \item Numerical variability arises from rounding and truncation errors associated
+              with the use of limited-precision numerical formats.
+        \item Due to the complexity of MRI analyses, and in particular their reliance on
+              high-dimensional optimization, such errors propagate and sometimes lead to
+              measurable differences.
+        \item However, numerical variability is understudied, mainly due to practical
+              challenges.
+        \item In particular, the implications of numerical variability on clinical findings
+              is unknown.
         \item What we have done
     \end{itemize}
 }
@@ -103,34 +105,35 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 The reliability of structural MRI measures critically depends on the estimation
 of all sources of analytical variability. This is particularly important when
 effect sizes are moderate, as it is the case in studies of Parkinson's disease
-(PD)~\cite{he2020progressive}. Among these sources, numerical variability—subtle
-differences in computational results arising from factors like hardware,
-operating systems, or software library versions—has been shown to have a
-measurable impact on analyses across multiple pipeline
+(PD)~\cite{he2020progressive}. Among these sources, numerical
+variability—subtle differences in computational results arising from factors
+like hardware, operating systems, or software library versions—has been shown
+to have a measurable impact on analyses across multiple pipeline
 tools~\cite{glatard2012virtual,gronenschild2012effects,sokolowski2024impact,des2023reproducibility,vila2024impact}.
 
-Numerical variability arises from rounding and truncation errors associated with
-the use of limited-precision numerical formats, such as the IEEE-754 standard
-for floating-point arithmetic~\cite{markstein2008new}. Due to the complexity of
-MRI analyses, particularly their reliance on high-dimensional optimization, such
-errors can propagate and accumulate, sometimes leading to measurable differences
-in final outputs~\cite{salari2021accurate,kiar2021numerical,chatelain2024numerical,mirhakimi2025numerical}.
-However, numerical variability remains understudied, mainly due to the practical
-challenges of quantifying its effects. Consequently, the implications of
-numerical variability for clinical findings are largely unknown.
+Numerical variability arises from rounding and truncation errors associated
+with the use of limited-precision numerical formats, such as the IEEE-754
+standard for floating-point arithmetic~\cite{markstein2008new}. Due to the
+complexity of MRI analyses, particularly their reliance on high-dimensional
+optimization, such errors can propagate and accumulate, sometimes leading to
+measurable differences in final
+outputs~\cite{salari2021accurate,kiar2021numerical,chatelain2024numerical,mirhakimi2025numerical}.
+However, numerical variability remains understudied, mainly due to the
+practical challenges of quantifying its effects. Consequently, the implications
+of numerical variability for clinical findings are largely unknown.
 
 In this study, we systematically investigated the impact of numerical
 variability on structural MRI analyses in a clinical context. We instrumented
 FreeSurfer 7.3.1~\cite{fischl2012freesurfer} with Monte Carlo
-Arithmetic~\cite{parker1997monte} to simulate a range of realistic computational
-environments. We then processed a dataset of Parkinson's disease (PD) patients
-and healthy controls (HC) from the Parkinson's Progression Markers Initiative
-(PPMI) to quantify how numerical noise affects derived biomarkers, such as
-cortical thickness and subcortical volume. We introduce the Numerical-Anatomical
-Variability Ratio (NAVR) to compare the magnitude of numerical noise to that of
-anatomical variability and demonstrate its use in evaluating the robustness of
-statistical findings, both in our dataset and in large-scale meta-analyses from
-the ENIGMA consortium~\cite{thompson2014enigma}.
+Arithmetic~\cite{parker1997monte} to simulate a range of realistic
+computational environments. We then processed a dataset of Parkinson's disease
+(PD) patients and healthy controls (HC) from the Parkinson's Progression
+Markers Initiative (PPMI) to quantify how numerical noise affects derived
+biomarkers, such as cortical thickness and subcortical volume. We introduce the
+Numerical-Anatomical Variability Ratio (NAVR) to compare the magnitude of
+numerical noise to that of anatomical variability and demonstrate its use in
+evaluating the robustness of statistical findings, both in our dataset and in
+large-scale meta-analyses from the ENIGMA consortium~\cite{thompson2014enigma}.
 
 % Complex neuroimaging pipelines transform raw MRI data into putative biomarkers
 % such as cortical thickness and subcortical volume. Because disease-related
@@ -181,12 +184,11 @@ the ENIGMA consortium~\cite{thompson2014enigma}.
 
 \section{Impact of numerical variability on MRI measures of Parkinson's disease~\label{sec:results}}
 
-
 Numerical instability arises from floating-point arithmetic, where subtle
 rounding errors accumulate over complex calculations. Floating-point rounding
 errors, although individually small, can collectively introduce substantial
 numerical variability. By repeatedly processing the same MRI scans under random
-numerical perturbations representative of  differences across hardware systems,
+numerical perturbations representative of differences across hardware systems,
 software libraries, or other computational parameters, we found significant
 variations directly impacting statistical conclusions. We introduced
 perturbations using Monte Carlo Arithmetic
@@ -194,10 +196,9 @@ perturbations using Monte Carlo Arithmetic
     Ali's fuzzy libmath}, a technique to perturb floating-point operations with
 random, zero-mean offsets that preserve mathematical expectations.
 \TG[done]{operations?} \YC{$E[x \circ y] = x \circ y$. MCA preserves the
-    expectation for a single arithmetic operation.} Repeatedly executing an analysis
-pipeline with MCA enables us to estimate the variability of results that could
-arise from different computational environments.
-
+    expectation for a single arithmetic operation.} Repeatedly executing an
+analysis pipeline with MCA enables us to estimate the variability of results
+that could arise from different computational environments.
 
 %These fluctuations pose a major concern for
 %interpreting subtle anatomical changes in PD, underscoring the need for robust
@@ -205,20 +206,20 @@ arise from different computational environments.
 
 To test the impact of numerical variability on statistical inference, we
 performed group comparisons and partial correlations between regional brain
-volumes and clinical measures of Parkinson's disease (UPDRS scores), controlling
-for age and sex. For both cortical and subcortical regions, we found substantial
-discrepancies in statistical outcomes across the 26 numerically perturbed
-analyses.
+volumes and clinical measures of Parkinson's disease (UPDRS scores),
+controlling for age and sex. For both cortical and subcortical regions, we
+found substantial discrepancies in statistical outcomes across the 26
+numerically perturbed analyses.
 
 We analyzed T1-weighted MRI from Parkinson Progression Marker Initiative
 (PPMI)~\cite{marek2011parkinson}, including 118 PD without MCI (PD-non-MCI) and
 90 HC with two visits each (final cohort after QC and exclusions;
 Table~\ref{tab:cohort_stat}). \TG[done]{Rewrite the remainder of this paragraph
     to explain the type of analyses that was done on the data, and why these
-    analyses were selected.} We tested (a) PD-HC group differences using ANCOVA test
-and (b) associations with clinical severity using partial correlations between
-regional measures and UPDRS scores, adjusting for age and sex. These analyses
-were selected to evaluate the impact of numerical variability on both
+    analyses were selected.} We tested (a) PD-HC group differences using ANCOVA
+test and (b) associations with clinical severity using partial correlations
+between regional measures and UPDRS scores, adjusting for age and sex. These
+analyses were selected to evaluate the impact of numerical variability on both
 group-level differences and individual correlations, providing a comprehensive
 view of how computational noise may influence neuroimaging findings.
 
@@ -237,11 +238,10 @@ view of how computational noise may influence neuroimaging findings.
 
 We instrumented FreeSurfer 7.3.1 with MCA (virtual precision set to mimic
 realistic perturbations), and re-analyzed each T1-weighted MRI scan 26 times,
-each time with a different random state.
-\TG[done]{The remainder of this paragraph refers to supplementary data, which doesn't
-    read well as we're expecting to read the key (main) results first. It should be
-    reworked.}
-Across MCA replicates ($n=26$), statistical conclusions fluctuated for a non-trivial
+each time with a different random state. \TG[done]{The remainder of this
+    paragraph refers to supplementary data, which doesn't read well as we're
+    expecting to read the key (main) results first. It should be reworked.} Across
+MCA replicates ($n=26$), statistical conclusions fluctuated for a non-trivial
 fraction of regions. For subcortical volumes, 27\% of PD-HC comparisons changed
 significance across numerical states; for cortical thickness, 19\% did so
 (Figs.~\ref{fig:significance_correlation_subcortical_volume}-\ref{fig:significance_correlation_thickness}).
@@ -252,11 +252,8 @@ coefficients and ANCOVA F-statistics from MCA runs enveloped the unperturbed
 IEEE-754 results, supporting the validity of the instrumentation rather than
 indicating methodological artifacts
 (Fig.~\ref{fig:statstest_coefficients_distribution}). The spread tended to be
-larger in longitudinal than baseline analyses, indicating greater sensitivity of
-longitudinal effects to numerical noise.
-
-
-
+larger in longitudinal than baseline analyses, indicating greater sensitivity
+of longitudinal effects to numerical noise.
 
 % NAVR stats
 % metric    | mean | std  | median | min  | max
@@ -298,9 +295,9 @@ For both cortical and subcortical regions, statistical outcomes varied
 substantially across the 26 Monte Carlo Arithmetic (MCA) replicates: $20\%$ of
 comparisons (66/328) changed significance at the $p<0.05$ threshold. In
 subcortical volumes (14 regions;
-Figure~\ref{fig:significance_correlation_subcortical_volume}), $21\%$ of
-group comparisons and $25\%$ of partial correlations were inconsistent across
-MCA replicates, and 8 of 14 regions ($57\%$) exhibited at least one flip in
+Figure~\ref{fig:significance_correlation_subcortical_volume}), $21\%$ of group
+comparisons and $25\%$ of partial correlations were inconsistent across MCA
+replicates, and 8 of 14 regions ($57\%$) exhibited at least one flip in
 significance. Cortical thickness showed a similar pattern (68 regions;
 Figure~\ref{fig:significance_correlation_thickness}), with $10\%$ of group
 comparisons and $25\%$ of partial correlations inconsistent, affecting 40 of 68
@@ -328,14 +325,14 @@ NARPS~\cite{botvinik2020variability}.
 
 For subcortical volumes, the distributions of partial-correlation coefficients
 (r) and ANCOVA F-statistics
-(Figure~\ref{fig:statstest_coefficients_distribution}) show that the unperturbed
-IEEE-754 estimates (red markers) consistently fall within the MCA-sampled range.
-This supports the validity of the instrumentation rather than indicating a
-methodological artifact \TG[done]{not really, the variability could be larger
-    than the real one, reformulate to say that it ``supports the validity of the
-    instrumentation''}. The spread of the r coefficients is larger in longitudinal
-than in baseline analyses (Ansari-Bradley one-sided test at $p<0.05$ corrected
-with Bonferroni; detailed results in Appendix
+(Figure~\ref{fig:statstest_coefficients_distribution}) show that the
+unperturbed IEEE-754 estimates (red markers) consistently fall within the
+MCA-sampled range. This supports the validity of the instrumentation rather
+than indicating a methodological artifact \TG[done]{not really, the variability
+    could be larger than the real one, reformulate to say that it ``supports the
+    validity of the instrumentation''}. The spread of the r coefficients is larger
+in longitudinal than in baseline analyses (Ansari-Bradley one-sided test at
+$p<0.05$ corrected with Bonferroni; detailed results in Appendix
 Table~\ref{tab:stats-coef-var-subcortical}), whereas no significant difference
 in spread is detected for F-statistics using the same test
 (Bonferroni-corrected, $p<0.05$). \TG[done]{it's quite apparent for r
@@ -431,8 +428,8 @@ Carlo Arithmetic (MCA) can measure this variability, but their computational
 cost makes them hard for routine use with complex neuroimaging pipelines,
 although new architectures may democratize this in the
 future~\cite{elarar2025ms2a}. This creates a critical need for a fast,
-analytical framework to estimate numerical uncertainty. Our approach is built on
-the assumption that numerical variability is a property of the computational
+analytical framework to estimate numerical uncertainty. Our approach is built
+on the assumption that numerical variability is a property of the computational
 pipeline rather than the underlying anatomical population
 specificity~\cite{bhagwat2021understanding,vila2024impact,chatelain2024numerical,sokolowski2024impact}.
 This allows us to develop a generalizable statistical model for widespread
@@ -467,9 +464,9 @@ data.
 NAVR provides a general, interpretable metric to evaluate the robustness of
 neuroimaging measurements. Across cortical and subcortical regions, we found
 numerical variability accounted for up to 37-40\% of the observed anatomical
-variance (Figures~\ref{fig:navr_subcortical},~\ref{fig:navr_thickness}). Mean NAVR
-values reached 0.21 for cortical thickness and 0.15 for subcortical volumes,
-indicating that numerical imprecision constitutes a portion of the
+variance (Figures~\ref{fig:navr_subcortical},~\ref{fig:navr_thickness}). Mean
+NAVR values reached 0.21 for cortical thickness and 0.15 for subcortical
+volumes, indicating that numerical imprecision constitutes a portion of the
 anatomical signal. Our model provides immediate, practical insights from these
 values. For instance, with a typical NAVR of 0.2, a study would require over
 1,500 participants to reduce the numerical uncertainty in its effect size,
@@ -517,17 +514,17 @@ $\sigma_d$, to a negligible level of 0.01 (Fig.~\ref{fig:sigma_d_contour}).
 
 To facilitate the widespread adoption of this framework, we have implemented it
 as an interactive, public web tool available at
-\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render} (Appendix Figure~\ref{fig:brain_render_tool}).
-\TG[done]{you could add a screenshot of the tool}
-This tool enables researchers to perform rapid reproducibility audits, evaluate
-findings from published literature retroactively, and assess numerical
-robustness at a fraction of the cost of traditional methods. Furthermore, we
-observed that regions failing standard quality control (QC) checks consistently
-exhibited higher NAVR, suggesting the metric can also serve as a useful proxy
-for data quality. By making these assessments accessible, our framework helps
-improve transparency, support peer review, and ultimately foster more
-trustworthy scientific inference in neuroimaging.
-
+\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}
+(Appendix Figure~\ref{fig:brain_render_tool}). \TG[done]{you could add a
+    screenshot of the tool} This tool enables researchers to perform rapid
+reproducibility audits, evaluate findings from published literature
+retroactively, and assess numerical robustness at a fraction of the cost of
+traditional methods. Furthermore, we observed that regions failing standard
+quality control (QC) checks consistently exhibited higher NAVR, suggesting the
+metric can also serve as a useful proxy for data quality. By making these
+assessments accessible, our framework helps improve transparency, support peer
+review, and ultimately foster more trustworthy scientific inference in
+neuroimaging.
 
 \subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
 
@@ -541,20 +538,24 @@ computational noise floor, potentially calling into question their reliability.
     masked areas are areas with low effect sizes compared to the other ones. On the
     contrary, it seems to me that this is a case where numerical variability
     wouldn't impact the findings much, most likely because N was high. I would
-    suggest to include another example, possibly with a lower N, showing a larger impact of numerical variability.}
+    suggest to include another example, possibly with a lower N, showing a larger
+    impact of numerical variability.}
 
 Figures~\ref{fig:navr_enigma_thickness} and~\ref{fig:navr_enigma_subcortical}
 illustrate the impact of applying NAVR thresholds to cortical thickness and
 subcortical volume maps from ENIGMA. Regions rendered in black indicate areas
 where reported effect sizes were smaller than numerical variability, suggesting
-these findings should be interpreted with caution. \TG{same comment as in the previous figure}
+these findings should be interpreted with caution. \TG{same comment as in the
+    previous figure}
 
-This observation highlights potential risks of overestimating small effects \TG{I don't think that the results presented show that clearly} and
-underscores the importance of systematically accounting for numerical
-uncertainty in neuroimaging research. While ENIGMA's primary findings generally
-remained robust due to large sample sizes, our analysis indicates that numerous
+This observation highlights potential risks of overestimating small effects
+\TG{I don't think that the results presented show that clearly} and underscores
+the importance of systematically accounting for numerical uncertainty in
+neuroimaging research. While ENIGMA's primary findings generally remained
+robust due to large sample sizes, our analysis indicates that numerous
 secondary, smaller-scale effects reported in the literature could be
-compromised by numerical instability \TG{I think you should show examples of such studies}.
+compromised by numerical instability \TG{I think you should show examples of
+    such studies}.
 
 \begin{figure}[h]
     \centering
@@ -659,7 +660,6 @@ compromised by numerical instability \TG{I think you should show examples of suc
         regions where reported effect sizes may be unreliable due to
         computational uncertainty.\label{fig:navr_laansma}}
 \end{figure}
-
 
 % ---
 
@@ -1080,7 +1080,12 @@ compromised by numerical instability \TG{I think you should show examples of suc
         \end{minipage}
     \end{minipage}
 
-    \caption{ENIGMA subcortical volume Cohen's d maps showing unthresholded effect sizes (left) and effect sizes thresholded by the \navr framework (right) for different disorders. Black regions indicate areas where Cohen's d values fall below the numerical variability threshold, demonstrating regions where reported effect sizes may be unreliable due to computational uncertainty.}
+    \caption{ ENIGMA subcortical volume Cohen's d maps showing unthresholded
+        effect sizes (left) and effect sizes thresholded by the \navr framework
+        (right) for different disorders. Black regions indicate areas where
+        Cohen's d values fall below the numerical variability threshold,
+        demonstrating regions where reported effect sizes may be unreliable due
+        to computational uncertainty.}
     \label{fig:navr_enigma_subcortical}
 \end{figure}
 
@@ -1092,7 +1097,6 @@ compromised by numerical instability \TG{I think you should show examples of suc
 % 3. Discuss the potential sources of numerical variability (minimal local, minimal precision, etc.)
 
 % [] Mention using neuroimaging as biomarker (n=1 scenario), personalized medicine,
-
 
 Our systematic perturbation of FreeSurfer revealed that numerical variability
 alone can account for up to 30\% of the anatomical variability observed in
@@ -1112,8 +1116,8 @@ results illustrates this utility: while large sample sizes confer robustness to
 core findings, many secondary effects fall below the computational noise floor.
 This suggests that in exploratory studies with lower sample size, numerical
 instability may undermine the reliability of reported effects. \TG{see previous
-    comments: it would be nice to include analyses for some of such smaller studies}
-
+    comments: it would be nice to include analyses for some of such smaller
+    studies}
 
 Although our primary analysis focused on FreeSurfer 7.3.1 and Parkinson's
 disease, the underlying numerical issues are general. Floating-point arithmetic
@@ -1122,25 +1126,26 @@ disease, the underlying numerical issues are general. Floating-point arithmetic
     associative but it is an implication of the finite precision. I just remove it
     to simplify.} is sensitive to compiler behavior, hardware architecture, and
 thread scheduling. As a result, neuroimaging pipelines—though deterministic in
-design—can produce divergent results across computational environments. Previous
-analyses of FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite Mathieu}
-indicate that such instability is not unique to FreeSurfer but likely pervades
-the field. SPM however seems to be less impacted by numerical
+design—can produce divergent results across computational environments.
+Previous analyses of FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite
+    Mathieu} indicate that such instability is not unique to FreeSurfer but likely
+pervades the field. SPM however seems to be less impacted by numerical
 variability~\cite{mirhakimi2025numerical} \TG[done]{cite Niusha}.
 
-Traditional image processing workflows rely on nonlinear optimization procedures
-that can converge to different local minima under small perturbations, resulting
-in substantive changes to derived measures. To address this problem and decrease
-the execution time, the neuroimaging field is increasingly shifting toward deep
-learning models. The latest FreeSurfer release (v8), for example, now
-incorporates neural networks such as FastSurfer~\cite{henschel2020fastsurfer}
-and Synthmorph~\cite{hoffmann2021synthmorph} to replace its classical
-segmentation and registration steps. However, this shift does not eliminate the
-problem of instability but rather reframes it. While these DL models have been shown
+Traditional image processing workflows rely on nonlinear optimization
+procedures that can converge to different local minima under small
+perturbations, resulting in substantive changes to derived measures. To address
+this problem and decrease the execution time, the neuroimaging field is
+increasingly shifting toward deep learning models. The latest FreeSurfer
+release (v8), for example, now incorporates neural networks such as
+FastSurfer~\cite{henschel2020fastsurfer} and
+Synthmorph~\cite{hoffmann2021synthmorph} to replace its classical segmentation
+and registration steps. However, this shift does not eliminate the problem of
+instability but rather reframes it. While these DL models have been shown
 stable during the inference stage~\cite{pepe2023numerical}, their training
 process is subject to its own sources of variability. Factors like weight
-initialization and floating-point precision can cause different training runs to
-yield distinct models with varying performance, and their quantification
+initialization and floating-point precision can cause different training runs
+to yield distinct models with varying performance, and their quantification
 remains an open question in neuroimaging. This phenomenon is analogous to the
 local minima issue in classical optimization. Ultimately, whether arising from
 classical optimization or DL training, such instability means that even
@@ -1167,8 +1172,8 @@ map of computational reliability across the entire neuroimaging landscape.
 
 NAVR provides a scalable, interpretable metric to quantify hidden numerical
 variability. Although floating-point rounding is a dominant source of
-instability, future work should broaden this analysis to other
-contributors, including algorithmic choices, preprocessing decisions, and data handling
+instability, future work should broaden this analysis to other contributors,
+including algorithmic choices, preprocessing decisions, and data handling
 practices. A comprehensive understanding of these factors is essential for
 developing numerically robust software. Our results show that computational
 uncertainty is as critical as statistical uncertainty in neuroimaging;
@@ -1177,19 +1182,20 @@ therefore necessary to ensure the reproducibility and reliability of
 neuroimaging-based biomarkers. Extending this quantification to the
 deep-learning training stage is equally important, given the field's central
 role in modern neuroimaging, and would support more robust and interpretable
-models. Likewise, evaluating numerical variability in the classical optimization
-schemes used in non-linear registration is a key milestone, as these traditional
-tools often provide the reference for training deep-learning models. Advancing
-both lines of analysis will benefit conventional and learning-based approaches
-alike. \TG[done]{I would merge this paragraph with the previous one, and highlight
-    specific next steps regarding numerical variability in neuroimaging.}
-
+models. Likewise, evaluating numerical variability in the classical
+optimization schemes used in non-linear registration is a key milestone, as
+these traditional tools often provide the reference for training deep-learning
+models. Advancing both lines of analysis will benefit conventional and
+learning-based approaches alike. \TG[done]{I would merge this paragraph with
+    the previous one, and highlight specific next steps regarding numerical
+    variability in neuroimaging.}
 
 \section{Methods}
 
 \TG{include a summary of your methods here.}
 
-\TG{Overall the methods are quite brief, you should add more details so that people get a better sense of what you did, see detailed suggestions in the text}
+\TG{Overall the methods are quite brief, you should add more details so that
+    people get a better sense of what you did, see detailed suggestions in the text}
 
 \subsection{Participants}
 
@@ -1204,13 +1210,14 @@ Initiative (PPMI) database (www.ppmi-info.org). Inclusion required (i)
 diagnosis of idiopathic Parkinson's disease (PD-non-MCI) or healthy control
 (HC); (ii) two usable visits separated by $0.9-2.0$ years; and (iii) absence of
 other neurological disorders. The final dataset comprised 90 healthy controls
-and 118 PD-non-MCI participants (Extended Data \TG{why extended data?} Table 1). The study was approved
-by the local research ethics boards of all contributing centres, and written
-informed consent was obtained from every participant.
+and 118 PD-non-MCI participants (Extended Data \TG{why extended data?} Table
+1). The study was approved by the local research ethics boards of all
+contributing centres, and written informed consent was obtained from every
+participant.
 
 Inclusion criteria required \TG{this is redundant and not fully consistent with
-    the previous paragraph}: (1) primary PD diagnosis or healthy control status, (2)
-availability of two visits with T1-weighted scans, and (3) absence of other
+    the previous paragraph}: (1) primary PD diagnosis or healthy control status,
+(2) availability of two visits with T1-weighted scans, and (3) absence of other
 neurological diagnoses. PD severity was assessed using the Unified Parkinson's
 Disease Rating Scale (UPDRS). The study received ethics approval from
 participating institutions, and all participants provided written informed
@@ -1218,8 +1225,9 @@ consent (Table~\ref{tab:cohort_stat}).
 
 PD and HC groups showed no significant age differences ($p > 0.05$) but
 differed in education ($t = -2.05$, $p = 0.04$) and sex distribution ($\chi^2 =
-    4.15$, $p = 0.04$). The longitudinal cohort \TG{not sure what "longitudinal cohort" means here.} showed no significant demographic
-differences between groups (Table~\ref{tab:cohort_stat}).
+    4.15$, $p = 0.04$). The longitudinal cohort \TG{not sure what "longitudinal
+    cohort" means here.} showed no significant demographic differences between
+groups (Table~\ref{tab:cohort_stat}).
 
 \begin{table}[h!]
     \centering
@@ -1255,10 +1263,11 @@ T1-weighted MRI scans from PPMI were acquired using standardized protocols
 resolution, number of slices = 192, field of view = 256 mm, and matrix size =
 256 $\times$ 256). However, since PPMI is a multisite project there may be
 slight differences in the sites' setup. Images underwent standard preprocessing
-using FreeSurfer 7.3.1 instrumented with Fuzzy-libm (see next section). Each participant's MRI
-data were processed 26 times under different numerical perturbations to
-quantify numerical variability. Failed runs \TG{defined failed: failed due to technical reasons or failed QC?} were discarded, ensuring exactly 26
-successful repetitions per subject. \TG{you should mention QC too}
+using FreeSurfer 7.3.1 instrumented with Fuzzy-libm (see next section). Each
+participant's MRI data were processed 26 times under different numerical
+perturbations to quantify numerical variability. Failed runs \TG{defined
+    failed: failed due to technical reasons or failed QC?} were discarded, ensuring
+exactly 26 successful repetitions per subject. \TG{you should mention QC too}
 
 Longitudinal processing followed the standard FreeSurfer
 stream~\cite{reuter2012within}: cross-sectional processing of both timepoints,
@@ -1285,14 +1294,15 @@ Virtual precision parameters were set to 53 bits for double precision and 24
 bits for single precision to simulate realistic machine-level precision errors.
 
 We processed each visit with FreeSurfer 7.3.1. To sample numerical variability
-we compiled FreeSurfer \TG{did you really compile Freesurfer?} with Fuzzy-libm an implementation of Monte Carlo
-arithmetic (MCA) that injects zero-mean rounding noise into every elementary
-function call. Virtual precision was set to 53 bits for operations promoted to
-double and 24 bits for single precision, \TG{there's quite some redundancy with the previous paragraph} thereby preserving IEEE-754
-expectations but exposing the variance of alternative execution paths. Each
-subject-visit pair was processed 26 times; failed or quality-control-flagged
-runs were discarded, and exactly 26 successful runs per pair were retained for
-analysis.
+we compiled FreeSurfer \TG{did you really compile Freesurfer?} with Fuzzy-libm
+an implementation of Monte Carlo arithmetic (MCA) that injects zero-mean
+rounding noise into every elementary function call. Virtual precision was set
+to 53 bits for operations promoted to double and 24 bits for single precision,
+\TG{there's quite some redundancy with the previous paragraph} thereby
+preserving IEEE-754 expectations but exposing the variance of alternative
+execution paths. Each subject-visit pair was processed 26 times; failed or
+quality-control-flagged runs were discarded, and exactly 26 successful runs per
+pair were retained for analysis.
 
 \subsubsection{Numerical-Anatomical Variability Ratio (\navr)}
 
@@ -1312,7 +1322,8 @@ differences within each repetition).
 
 For each region of interest, measurements from $n$ MCA repetitions across $m$
 subject-visit pairs form a data matrix $\mathcal{M}_{n \times m}$, where
-element $x_{i,j}$ represents the measurement for subject $j$ in MCA repetition $i$.
+element $x_{i,j}$ represents the measurement for subject $j$ in MCA repetition
+$i$.
 
 Numerical variability quantifies intra-subject measurement consistency:
 \begin{equation}
@@ -1329,14 +1340,14 @@ Anatomical variability captures inter-subject differences:
 where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means,
 respectively. Higher \navr values indicate regions where computational
 uncertainty approaches or exceeds biological variation, potentially
-compromising the detection of true anatomical differences.\TG{didn't you pool sigma anat across PD and HC?}
+compromising the detection of true anatomical differences.\TG{didn't you pool
+    sigma anat across PD and HC?}
 
 \subsubsection{Relationship between \navr~and Effect Size Uncertainty}
 
 \TG[done]{The remainder of this paragraph is quite informal, could you tidy up the
     equations to start from the definition of Cohen's d and clearly derive its
     standard deviation? You should also clarify the assumptions that are made.}
-
 
 To establish a direct mathematical link between a method's computational
 reproducibility and the reliability of group-level statistical inferences, we
@@ -1351,24 +1362,25 @@ $\varepsilon_i$:
 \[
     X_i = \mu_i + \varepsilon_i
 \]
-Our derivation proceeds from a specific framework designed to isolate the impact
-of numerical variability. The key assumptions are: (1)  Null Hypothesis
+Our derivation proceeds from a specific framework designed to isolate the
+impact of numerical variability. The key assumptions are: (1) Null Hypothesis
 Scenario: we analyze the computational uncertainty for a fixed sample of $N$
 subjects, partitioned into two balanced groups ($n_1 = n_2 = N/2$). We assume
 the null hypothesis is true for this sample, meaning the mean of the true
-biological values is identical between the groups ($\bar{\mu}_1 = \bar{\mu}_2$).
-In this context, the true values $\{\mu_i\}$ are treated as constants, and the
-only source of randomness is the numerical error, which models the variability
-across repeated computations on the same data. (2)  Numerical Error Model: the
-numerical error for each subject is modeled as an independent, zero-mean
-Gaussian random variable $\varepsilon_i \sim \mathcal{N}(0,
-    \sigma_{\text{num},i}^2)$, with $\bar\varepsilon \sim \mathcal{N}(0,
-    \sigma_{\text{num}}^2/n)$. (3)  Anatomical variability: we assume the numerical
-variability ($\sigma_{\text{anat}}^2 = \mathrm{Var}(\{\mu_i\})$) is small
-compared to the biological variability within the sample. This condition
-($\sigma_{\text{num},i} \ll \sigma_{\text{anat}}$) allows the pooled standard
-deviation of the observed data, $s_p$, to be approximated by the standard
-deviation of the true biological values: $s_p \approx \sigma_{\text{anat}}$.
+biological values is identical between the groups ($\bar{\mu}_1 =
+    \bar{\mu}_2$). In this context, the true values $\{\mu_i\}$ are treated as
+constants, and the only source of randomness is the numerical error, which
+models the variability across repeated computations on the same data. (2)
+Numerical Error Model: the numerical error for each subject is modeled as an
+independent, zero-mean Gaussian random variable $\varepsilon_i \sim
+    \mathcal{N}(0, \sigma_{\text{num},i}^2)$, with $\bar\varepsilon \sim
+    \mathcal{N}(0, \sigma_{\text{num}}^2/n)$. (3) Anatomical variability: we assume
+the numerical variability ($\sigma_{\text{anat}}^2 = \mathrm{Var}(\{\mu_i\})$)
+is small compared to the biological variability within the sample. This
+condition ($\sigma_{\text{num},i} \ll \sigma_{\text{anat}}$) allows the pooled
+standard deviation of the observed data, $s_p$, to be approximated by the
+standard deviation of the true biological values: $s_p \approx
+    \sigma_{\text{anat}}$.
 
 Cohen's $d$ is defined as the difference in sample means normalized by the
 pooled standard deviation:
@@ -1379,25 +1391,24 @@ Based on assumption (3), we can approximate $d$ as:
 \[
     d \approx \frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}}}
 \]
-The uncertainty in $d$ arising from numerical noise, $\sigma_d$, is the standard
-deviation of this quantity. Its variance, $\sigma_d^2$, is therefore:
+The uncertainty in $d$ arising from numerical noise, $\sigma_d$, is the
+standard deviation of this quantity. Its variance, $\sigma_d^2$, is therefore:
 \[
     \sigma_d^2 = \mathrm{Var}(d) \approx \mathrm{Var}\left(\frac{\bar{X}_1 -
         \bar{X}_2}{\sigma_{\text{anat}}}\right) = \frac{1}{\sigma_{\text{anat}}^2}
     \mathrm{Var}(\bar{X}_1 - \bar{X}_2)
 \]
-The difference in observed sample means is $\bar{X}_1 - \bar{X}_2 = (\bar{\mu}_1
-    + \bar{\varepsilon}_1) - (\bar{\mu}_2 + \bar{\varepsilon}_2)$. Since the true
-values $\{\mu_i\}$ are constant for our fixed sample and we have assumed
-$\bar{\mu}_1 = \bar{\mu}_2$, the variance of this difference depends only on the
-variance of the mean numerical errors:
+The difference in observed sample means is $\bar{X}_1 - \bar{X}_2 =
+    (\bar{\mu}_1 + \bar{\varepsilon}_1) - (\bar{\mu}_2 + \bar{\varepsilon}_2)$.
+Since the true values $\{\mu_i\}$ are constant for our fixed sample and we have
+assumed $\bar{\mu}_1 = \bar{\mu}_2$, the variance of this difference depends
+only on the variance of the mean numerical errors:
 \[
     \mathrm{Var}(\bar{X}_1 - \bar{X}_2) = \mathrm{Var}(\bar{\varepsilon}_1 -
     \bar{\varepsilon}_2)
 \]
-As the numerical errors $\varepsilon_i$ are independent,
-the variance of the difference between the mean errors is the sum of their
-respective variances:
+As the numerical errors $\varepsilon_i$ are independent, the variance of the
+difference between the mean errors is the sum of their respective variances:
 \[
     \mathrm{Var}(\bar{\varepsilon}_1 - \bar{\varepsilon}_2) =
     \mathrm{Var}(\bar{\varepsilon}_1) + \mathrm{Var}(\bar{\varepsilon}_2) =
@@ -1529,7 +1540,6 @@ $\sigma_d$.
 %     \sigma_d = \frac{2}{\sqrt{N}} \nu_{\text{nav}}
 % \].
 
-
 \section{Data Availability}
 The data that support the findings of this study are available from the
 Parkinson's Progression Markers Initiative (PPMI) database
@@ -1594,8 +1604,6 @@ sets, defined as follows:
 \[
     \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \bigcap_{i=1}^{n} A_i \right|}{\sum_{i=1}^{n} \left| A_i \right|}
 \].
-
-
 
 \subsection{Delta Method}
 \label{eq:delta_method}
@@ -2175,7 +2183,6 @@ the reliability of neuroimaging-based inferences.
 
 \subsection{Consistency results}
 
-
 \YC{Moved from section~\ref{sec:results}. Rewrite to fit here.}
 
 We instrumented FreeSurfer 7.3.1 with MCA (virtual precision set to mimic
@@ -2186,9 +2193,9 @@ significance ($p < 0.05$) fluctuated notably across MCA repetitions
 comparisons alone, eight subcortical regions alternated between significant and
 non-significant outcomes, illustrating how numerical instability can directly
 affect clinical interpretation. Overall, 27\% of all statistical comparisons,
-including both group differences and clinical correlations, yielded inconsistent
-results across numerical states. Similarly, for cortical thickness, 19\% of the
-comparisons produced inconsistent results
+including both group differences and clinical correlations, yielded
+inconsistent results across numerical states. Similarly, for cortical
+thickness, 19\% of the comparisons produced inconsistent results
 (Fig.~\ref{fig:significance_correlation_thickness}), suggesting that potential
 biomarker relationships might emerge or vanish purely due to computational
 noise. This outcome-level variability mirrors the analytical variability
@@ -2196,17 +2203,17 @@ reported in large-scale reproducibility challenges like NARPS, where different
 analysis teams reached conflicting conclusions from the same
 dataset~\cite{botvinik2020variability}.
 
-Testing for PD progression partial correlations and group differences between PD
-patients and healthy controls, 27\% of statistical tests are non-reproducible
-for subcortical volumes and 19\% for cortical thickness (Extended Data
-Fig.~\ref{fig:significance_correlation_subcortical_volume}
+Testing for PD progression partial correlations and group differences between
+PD patients and healthy controls, 27\% of statistical tests are
+non-reproducible for subcortical volumes and 19\% for cortical thickness
+(Extended Data Fig.~\ref{fig:significance_correlation_subcortical_volume}
 and~\ref{fig:significance_correlation_thickness}). The within-subject
-variability due to numerical differences peaked at 37\% and 40\% of the observed
-between-subject anatomical variance in critical cortical and subcortical regions
-(Fig.~\ref{fig:navr_subcortical} and~\ref{fig:navr_thickness}).
-The median NAVR of approximately 0.20 and 0.16 across all cortical regions and
-subcortical regions underscores that numerical uncertainty significantly affects
-typical neuroimaging analyses.
+variability due to numerical differences peaked at 37\% and 40\% of the
+observed between-subject anatomical variance in critical cortical and
+subcortical regions (Fig.~\ref{fig:navr_subcortical}
+and~\ref{fig:navr_thickness}). The median NAVR of approximately 0.20 and 0.16
+across all cortical regions and subcortical regions underscores that numerical
+uncertainty significantly affects typical neuroimaging analyses.
 
 \begin{table}[htbp]
     \centering
@@ -2371,12 +2378,12 @@ typical neuroimaging analyses.
 \subsubsection{Consistency of statistical tests}
 
 Figures \ref{fig:navr_consistency_area_plot} and
-\ref{fig:consistency_volume_plot} show the consistency of statistical
-tests for cortical area and volume, respectively, across all subjects and
-regions. The plots show the percentage of subjects for which the statistical
-test was significant ($\alpha = 0.05$) for each region. The consistency varies
-across regions, with some regions showing higher consistency than others. The
-red triangles indicate the IEEE-754 run for reference.
+\ref{fig:consistency_volume_plot} show the consistency of statistical tests for
+cortical area and volume, respectively, across all subjects and regions. The
+plots show the percentage of subjects for which the statistical test was
+significant ($\alpha = 0.05$) for each region. The consistency varies across
+regions, with some regions showing higher consistency than others. The red
+triangles indicate the IEEE-754 run for reference.
 
 \begin{figure}[h]
     \centering
@@ -2402,12 +2409,11 @@ red triangles indicate the IEEE-754 run for reference.
 
 \subsubsection{Distribution of statistical tests coefficients}
 
-Figures \ref{fig:consistency_area} and \ref{fig:consistency_volume}
-show the distribution of partial correlation coefficients for cortical area and
-volume, respectively, across all subjects and regions. The red triangles
-indicate the IEEE-754 run for reference. The distribution shows the variability
-in the coefficients, with some regions exhibiting higher consistency than
-others.
+Figures \ref{fig:consistency_area} and \ref{fig:consistency_volume} show the
+distribution of partial correlation coefficients for cortical area and volume,
+respectively, across all subjects and regions. The red triangles indicate the
+IEEE-754 run for reference. The distribution shows the variability in the
+coefficients, with some regions exhibiting higher consistency than others.
 
 \begin{figure}
     \centering
@@ -2648,5 +2654,4 @@ retaining only those effects that were robust and consistent.
 \end{figure}
 
 \end{document}
-
 
