@@ -10,6 +10,7 @@
 
 % Useful packages
 \usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage[pdftex]{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
@@ -1329,9 +1330,114 @@ compromising the detection of true anatomical differences.\TG{didn't you pool si
 
 \subsubsection{Relationship between \navr~and Effect Size Uncertainty}
 
-\TG{The remainder of
-    this paragraph is quite informal, could you tidy up the equations to start from
-    the definition of Cohen's d and clearly derive its standard deviation? You should also clarify the assumptions that are made.}
+\TG{The remainder of this paragraph is quite informal, could you tidy up the
+    equations to start from the definition of Cohen's d and clearly derive its
+    standard deviation? You should also clarify the assumptions that are made.}
+
+In this section, we derive relationship between \navr~and the uncertainty of the
+effect size Cohen's $d$ coefficient. Our goal is to derive a direct mathematical
+relationship between a method's computational reproducibility and the
+reliability of group-level statistical inferences. Cohen's $d$ measures the
+standardized difference between two group means. To quantify how numerical
+variability impacts the uncertainty of Cohen's $d$ coefficient, we developed an
+analytical framework that connects numerical variability to the resulting
+standard deviation of Cohen's $d$ ($\sigma_d$). Cohen's $d$ quantifies the
+difference between two groups in terms of standard deviations. It is defined as:
+
+\begin{equation}
+    \label{eq:cohen_d}
+    d = \frac{\bar{X}_1 - \bar{X}_2}{s_p},\quad s_p =
+    \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}}
+\end{equation}
+
+where \(\bar{X}_1\) and \(\bar{X}_2\) are the means of the two groups, \(s_1\)
+and \(s_2\) are the standard deviations, and \(n_1\) and \(n_2\) are the sample
+sizes of the two groups. The numerator represents the difference in means, while
+the denominator is the pooled standard deviation with a degree of freedom $n =
+    n_1 + n_2 - 2$, which accounts for the variability within each group. For two
+balanced groups, we have $n_1 = n_2 = N/2$.
+
+We modeled the observed data for a subject in a standard two-group comparison as
+a sum of three components: the true group mean ($\mu_i$), the subject-specific
+anatomical variability ($\varepsilon^{(\text{anat})}$), and the numerical
+variability arising from the computational pipeline
+($\varepsilon^{(\text{num})}$). The model is given by:
+\[
+    X_{ij} = \mu_i + \varepsilon^{(\text{anat})}_{ij} + \varepsilon^{(\text{num})}_{ij}
+\]
+Here, $X_{ij}$ is the measurement for subject
+$j$ in group $i$. We assume that anatomical variability and numerical variability
+are independent, zero-mean Gaussian noise sources with variances
+$\sigma_{\text{anat}}^2$ and $\sigma_{\text{num}}^2$, respectively.
+Decompose the difference in sample means as
+\[
+    \bar X_1-\bar X_2
+    = (\mu_1-\mu_2)
+    + (\bar\varepsilon^{(\text{anat})}_1-\bar\varepsilon^{(\text{anat})}_2)
+    + (\bar\varepsilon^{(\text{num})}_1-\bar\varepsilon^{(\text{num})}_2).
+\]
+The part driven solely by numerical variability has variance
+\begin{equation}
+    \label{eq:var_num_numerator}
+    \mathrm{Var^{(num)}}\!\left(\bar X_1 - \bar X_2\right)
+    = \mathrm{Var^{(num)}}\!\left(\mu_1 - \mu_2 + \bar\varepsilon^{(\text{num})}_1-\bar\varepsilon^{(\text{num})}_2\right)
+    = \frac{\sigma_{\text{num}}^2}{n_1}+\frac{\sigma_{\text{num}}^2}{n_2}
+    = \frac{4\sigma_{\text{num}}^2}{N}.
+\end{equation}
+
+Across numerical states the anatomical sample is fixed, so only the
+numerical-noise component varies: for each group $i$, if $s^2_i \stackrel{\text{i.i.d.}}{\sim} \mathcal N(0,\sigma_{\text{num}}^2)$ noise, then
+$\text{Var}(s^2_i)=2\sigma_{\text{num}}^4/(n_i-1)$. The pooled variance satisfies
+$s_p^{2}=\big((n_1\!-\!1)(s_{1,\text{anat}}^{2}+s_1)+(n_2\!-\!1)(s_{2,\text{anat}}^{2}+s_2)\big)/n$;
+using independence of $s^2_1$ and $s^2_2$ and that anatomical sample is fixed yields
+$\text{Var}^{\text{(num)}}(s_p^{2})=2\sigma_{\text{num}}^{4}/n$. Passing from
+variance to standard deviation $s_p=\sqrt{s_p^{2}}$ via the delta method with
+$f(x)=\sqrt{x}$ and $f'(x)=1/(2x)$ evaluated at $\mathbb{E}[s_p^{2}]\simeq\sigma_{\text{tot}}^{2}$
+(where
+$\sigma_{\text{tot}}^{2}=\sigma_{\text{anat}}^{2}+\sigma_{\text{num}}^{2}$)
+gives
+
+\begin{equation}
+    \label{eq:var_num_denominator}
+    \text{Var}^{\text{(num)}}(s_p)\approx \bigl(f'(\sigma_{\text{tot}}^{2})\bigr)^2\,\text{Var}^{\text{(num)}}(s_p^{2})
+    =\frac{\sigma_{\text{num}}^{4}}{2\,(n_1+n_2-2)\,\sigma_{\text{tot}}^{2}}
+    =\frac{\sigma_{\text{num}}^{4}}{2\,(N-2)\,\sigma_{\text{tot}}^{2}}.
+\end{equation}
+
+Now we can derive the standard deviation of Cohen's $d$ using the delta method
+for the variance of ratio~\cite{cox2005delta}. Taking
+$X$ = $\bar{X}_1 - \bar{X}_2$ and
+$Y$ = $s_p$, $\mu_X = \mu_1 - \mu_2,\;
+    \mu_Y = s_p$ the expected values,
+$\sigma^2_X = 4\sigma_{\text{num}}^2/N,\;
+    \sigma^2_Y = \sigma_{\text{num}}^4/(2(N-2)\,\sigma_{\text{tot}}^2)$ the variances and
+$\sigma_{XY}=\text{Cov}(X,Y)$ we can express the variance of $d$ as:
+\[
+    \mathrm{Var}\!\left(\frac{X}{Y}\right)\approx
+    \left(\frac{\mu_X}{\mu_Y}\right)^{\!2}\!\!
+    \left(\frac{\sigma^2_X}{\mu^2_X}
+    +\frac{\sigma^2_Y}{\mu^2_Y}
+    -\frac{2\,\sigma_{XY}}{\mu_X\mu_Y}\right),
+\]
+with $\mathrm{Cov}(X,Y)=0$ and $d_\star:=(\mu_1-\mu_2)/\sigma_{\text{tot}}=\mu_X/\mu_Y$, gives.
+Plugging in the variances from \eqref{eq:var_num_numerator} and \eqref{eq:var_num_denominator} gives:
+\begin{equation}
+    \label{eq:var_d_num_sampleden}
+    \mathrm{Var}^{\text{(num)}}(d) \;\approx\;
+    \underbrace{\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}_{\text{numerator term}}
+    \;+\;
+    \underbrace{\frac{d_\star^2}{2\,n}\left(\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\right)^{\!2}}_{\text{denominator term}}\,,
+\end{equation}
+and taking a square root yields \eqref{eq:sd_d_num_sampleden}. The first term is
+exactly the population–denominator result; the second term quantifies the
+additional variability introduced by estimating the scale in the presence of
+numerical noise. For $\nu_{\text{nav}}\ll1$, the second term is
+$O(\nu_{\text{nav}}^2/n)$ and the population result is recovered to first order.
+
+\begin{equation}
+    \label{eq:sd_d_num_sampleden}
+    \sigma_{d,\text{num}} \approx \sqrt{\mathrm{Var}^{\text{(num)}}(d)}.
+\end{equation}
 
 We relate \navr~to the variability of Cohen's $d$ to quantify how measurement
 uncertainty propagates to group-level effect sizes. Consider a balanced
@@ -1382,7 +1488,56 @@ admits the first-order approximation
     \label{eq:sd_d_approx}
     \sigma_{d,\text{num}} \approx \frac{2}{\sqrt{N}}\,\nu_{\text{nav}}
 \end{equation}
-which is the regime relevant to well-conditioned pipelines.
+which is the regime relevant to our analysis.
+
+\paragraph{Derivation of \eqref{eq:sd_d_exact} (balanced, population denominator).}
+Assume a balanced design $n_1=n_2=N/2$ and write, for each group $g\in\{1,2\}$,
+\[
+    \bar\varepsilon^{(\text{num})}_g
+    := \frac{1}{n_g}\sum_{j=1}^{n_g}\varepsilon^{(\text{num})}_{gj}
+    \quad\text{with}\quad
+    \varepsilon^{(\text{num})}_{gj}\stackrel{\text{i.i.d.}}{\sim}\mathcal{N}(0,\sigma_{\text{num}}^2).
+\]
+By independence across subjects and normality,
+\[
+    \bar\varepsilon^{(\text{num})}_g \sim \mathcal{N}\!\Bigl(0,\frac{\sigma_{\text{num}}^2}{n_g}\Bigr),
+    \quad\text{and}\quad
+    \bar\varepsilon^{(\text{num})}_1\;\perp\;\bar\varepsilon^{(\text{num})}_2.
+\]
+Consider the numerical component of the difference in sample means
+\[
+    \Delta_{\text{num}}
+    := \bar\varepsilon^{(\text{num})}_1-\bar\varepsilon^{(\text{num})}_2
+    \sim \mathcal{N}\!\Bigl(0,\;\frac{\sigma_{\text{num}}^2}{n_1}+\frac{\sigma_{\text{num}}^2}{n_2}\Bigr)
+    = \mathcal{N}\!\Bigl(0,\;\frac{4\sigma_{\text{num}}^2}{N}\Bigr).
+\]
+When Cohen's $d$ is standardized by the \emph{population} total standard deviation
+$\sigma_{\text{tot}}:=\sqrt{\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2}$, the
+portion of $d$ driven solely by numerical noise is
+\[
+    d_{\text{num}} := \frac{\Delta_{\text{num}}}{\sigma_{\text{tot}}}
+    \sim \mathcal{N}\!\Bigl(0,\;\frac{4\sigma_{\text{num}}^2}{N\,\sigma_{\text{tot}}^2}\Bigr).
+\]
+Therefore, with \(\nu_{\text{nav}}:=\sigma_{\text{num}}/\sigma_{\text{anat}}\)
+and \(\sigma_{\text{anat}}>0\), then
+\(\sigma_{\text{num}}=\nu_{\text{nav}}\sigma_{\text{anat}}\), we have
+\begin{align*}
+    \sigma_{d,\text{num}}
+     & := \sqrt{\text{Var}(d_{\text{num}})}                                                                             \\
+     & =  \frac{2}{\sqrt{N}} \frac{\sigma_{\text{num}}}{\sqrt{\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2}}            \\[2pt]
+     & = \frac{2}{\sqrt{N}}
+    \frac{\nu_{\text{nav}}\sigma_{\text{anat}}}{\sqrt{\sigma_{\text{anat}}^2+(\nu_{\text{nav}}\sigma_{\text{anat}})^2}} \\
+     & = \frac{2}{\sqrt{N}}
+    \frac{\nu_{\text{nav}}\sigma_{\text{anat}}}{\sigma_{\text{anat}}\sqrt{1+\nu_{\text{nav}}^2}}                        \\
+     & = \frac{2}{\sqrt{N}} \frac{\nu_{\text{nav}}}{\sqrt{1+\nu_{\text{nav}}^2}}.
+\end{align*}
+which is exactly \eqref{eq:sd_d_exact}. \hfill$\square$
+
+\paragraph{Required $N$ to keep numerical uncertainty below $\tau$.}
+Given a target $\tau>0$, a sufficient and necessary condition is
+\[
+    N \;\ge\; \frac{4}{\tau^2}\cdot \frac{\nu_{\text{nav}}^2}{1+\nu_{\text{nav}}^2}.
+\]
 
 \paragraph{Unbalanced groups (population denominator).}
 For general $n_1,n_2$, the numerical-noise contribution to the standard deviation of $d$ is
@@ -1397,34 +1552,6 @@ For general $n_1,n_2$, the numerical-noise contribution to the standard deviatio
 \end{equation}
 which reduces to \eqref{eq:sd_d_exact} when $n_1=n_2=N/2$.
 
-\paragraph{Sample (pooled) denominator via the delta method.}
-Let $d=(\bar X_1-\bar X_2)/S_p$ with
-$S_p^2=\big((n_1-1)S_1^2+(n_2-1)S_2^2\big)/(n_1+n_2-2)$ and $\nu:=n_1+n_2-2$.
-Treat the anatomical component as fixed across numerical re-runs and assume
-Gaussian, independent numerical noise. The leading contribution (first order in
-$1/\nu$) to the variance of $d$ across numerical re-runs is
-\begin{equation}
-    \label{eq:var_d_num_sampleden}
-    \mathrm{Var}(d)_{\text{num}}
-    \;\approx\;
-    \underbrace{\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}_{\text{numerator term}}
-    \;+\;
-    \underbrace{\frac{\delta^2}{2\,\nu}\left(\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\right)^{\!2}}_{\text{denominator term}},
-    \qquad
-    \sigma_{\text{tot}}^2:=\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2,\;\;
-    \delta:=\frac{\mu_1-\mu_2}{\sigma_{\text{tot}}}.
-\end{equation}
-Hence
-\begin{equation}
-    \label{eq:sd_d_num_sampleden}
-    \sigma_{d,\text{num}}
-    \;\approx\;
-    \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)\frac{\nu_{\text{nav}}^2}{1+\nu_{\text{nav}}^2}
-        \;+\;
-        \frac{\delta^2}{2\,\nu}\frac{\nu_{\text{nav}}^4}{(1+\nu_{\text{nav}}^2)^2}}.
-\end{equation}
-For $\nu_{\text{nav}}\ll1$ the denominator term is $O(\nu_{\text{nav}}^2/\nu)$
-and \eqref{eq:sd_d_num_sampleden} collapses to \eqref{eq:sd_d_exact_unbalanced}.
 
 \paragraph{Heteroscedastic numerical noise.}
 If the numerical variance differs by group
@@ -1471,6 +1598,210 @@ instead normalizes by the anatomical variability alone (an “oracle” denomina
 $\sigma_{\text{anat}}$), then
 $\sigma_{d,\text{num}}=(2/\sqrt{N})\,\nu_{\text{nav}}$. (v) For unbalanced
 designs, replace $2/\sqrt{N}$ by $\sqrt{1/n_1+1/n_2}$ throughout.
+
+Great—since this sits in \emph{Methods}, here’s a more explanatory version that first states the results, then carefully develops the model, assumptions, derivations, and practical estimation/diagnostics. I’ve preserved your labels so cross-references remain intact.
+
+\subsubsection{Relationship between \navr~and Effect Size Uncertainty}
+
+\paragraph{Summary of main results.}
+Let $\nu_{\text{nav}}:=\sigma_{\text{num}}/\sigma_{\text{anat}}$ and $\sigma_{\text{tot}}^2:=\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2$.
+For a two–group comparison with sizes $n_1,n_2$ and Cohen’s $d := (\bar X_1-\bar X_2)/\sigma_{\text{tot}}$,
+\begin{align}
+    \label{eq:sd_d_exact}
+    \sigma_{d,\text{num}}
+     & = \sqrt{\mathrm{Var}(d\mid \text{num})}
+    = \frac{2}{\sqrt{N}}\,
+    \frac{\nu_{\text{nav}}}{\sqrt{1+\nu_{\text{nav}}^2}}
+    \quad\text{(balanced $n_1=n_2=N/2$)},                                               \\[4pt]
+    \label{eq:sd_d_approx}
+    \sigma_{d,\text{num}}
+     & \approx \frac{2}{\sqrt{N}}\,\nu_{\text{nav}}
+    \qquad\qquad\qquad\qquad\qquad\qquad\qquad\;\;\;\;\text{for }\nu_{\text{nav}}\ll 1, \\[4pt]
+    \label{eq:sd_d_exact_unbalanced}
+    \sigma_{d,\text{num}}
+     & = \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}\,
+    \frac{\nu_{\text{nav}}}{\sqrt{1+\nu_{\text{nav}}^2}}
+    \quad\text{(general $n_1,n_2$)}.
+\end{align}
+When $d$ uses the \emph{sample} pooled denominator $S_p$ instead of $\sigma_{\text{tot}}$, a first–order delta–method approximation yields
+\begin{equation}
+    \label{eq:sd_d_num_sampleden}
+    \sigma_{d,\text{num}}
+    \;\approx\;
+    \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)\frac{\nu_{\text{nav}}^2}{1+\nu_{\text{nav}}^2}
+        \;+\;
+        \frac{\delta^2}{2\,(n_1+n_2-2)}\,
+        \frac{\nu_{\text{nav}}^4}{(1+\nu_{\text{nav}}^2)^2}},
+    \qquad
+    \delta:=\frac{\mu_1-\mu_2}{\sigma_{\text{tot}}}.
+\end{equation}
+A necessary and sufficient condition to keep $\sigma_{d,\text{num}}\le \tau$ in the balanced, population–denominator case is
+\[
+    N \;\ge\; \frac{4}{\tau^2}\cdot \frac{\nu_{\text{nav}}^2}{1+\nu_{\text{nav}}^2}.
+\]
+
+\paragraph{Generative model and definitions.}
+We write the measurement for subject $j$ in group $i\in\{1,2\}$ as
+\[
+    X_{ij}=\mu_i+\varepsilon^{(\text{anat})}_{ij}+\varepsilon^{(\text{num})}_{ij},
+\]
+where $\varepsilon^{(\text{anat})}_{ij}\sim\mathcal{N}(0,\sigma_{\text{anat}}^2)$ represents across-subject biological/anatomical variability and $\varepsilon^{(\text{num})}_{ij}\sim\mathcal{N}(0,\sigma_{\text{num}}^2)$ represents run-to-run numerical variability induced by the computational pipeline (e.g., rounding, algorithmic branching). We assume additivity, homoscedasticity within each component, zero mean, and mutual independence across subjects and between components. The dimensionless ratio
+\[
+    \text{navr} := \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
+\]
+summarizes the magnitude of computational noise relative to the anatomical signal spread. We also define $\sigma_{\text{tot}}^2:=\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2$, the total marginal variance per subject under the model.
+
+\paragraph{Variance of the mean difference induced by numerical noise.}
+Let $\bar\varepsilon^{(\text{num})}_i := \frac{1}{n_i}\sum_{j=1}^{n_i}\varepsilon^{(\text{num})}_{ij}$. By independence and normality,
+$\bar\varepsilon^{(\text{num})}_i\sim\mathcal{N}\!\bigl(0,\sigma_{\text{num}}^2/n_i\bigr)$
+and $\bar\varepsilon^{(\text{num})}_1\perp\bar\varepsilon^{(\text{num})}_2$. Hence the purely numerical component of the group-mean difference,
+\[
+    \Delta_{\text{num}} := \bar\varepsilon^{(\text{num})}_1-\bar\varepsilon^{(\text{num})}_2,
+\]
+satisfies
+\[
+    \mathrm{Var}(\Delta_{\text{num}})=\frac{\sigma_{\text{num}}^2}{n_1}+\frac{\sigma_{\text{num}}^2}{n_2}.
+\]
+Intuitively, numerical noise averages down within each group ($\propto1/n_i$), and independent group averages add their variances.
+
+\paragraph{From the mean difference to Cohen's $d$ (population denominator).}
+When standardizing by the population spread $\sigma_{\text{tot}}$, the numerical contribution to $d$ is $d_{\text{num}}=\Delta_{\text{num}}/\sigma_{\text{tot}}$ and therefore
+\[
+    \sigma_{d,\text{num}}=\sqrt{\mathrm{Var}(d_{\text{num}})}
+    = \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}\,
+    \frac{\sigma_{\text{num}}}{\sigma_{\text{tot}}}
+    = \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}\,
+    \frac{\nu_{\text{nav}}}{\sqrt{1+\nu_{\text{nav}}^2}},
+\]
+which is \eqref{eq:sd_d_exact_unbalanced}; the balanced special case gives \eqref{eq:sd_d_exact}. For $\nu_{\text{nav}}\ll 1$, the denominator $\sigma_{\text{tot}}=\sigma_{\text{anat}}\sqrt{1+\nu_{\text{nav}}^2}$ expands as $\sigma_{\text{anat}}(1+\tfrac{1}{2}\nu_{\text{nav}}^2+o(\nu_{\text{nav}}^2))$, yielding the linear approximation in \eqref{eq:sd_d_approx}. This “small-\navr” regime is the practically relevant one in typical neuroimaging pipelines.
+
+\paragraph{Using the sample pooled denominator: delta-method derivation.}
+In practice, $d$ is often computed as $d=(\bar X_1-\bar X_2)/S_p$ with
+\[
+    S_p^2=\frac{(n_1-1)S_1^2+(n_2-1)S_2^2}{n_1+n_2-2},\qquad n:=n_1+n_2-2.
+\]
+Across numerical re-runs for a fixed cohort, both the numerator $X:=\bar X_1-\bar X_2$ and the denominator $Y:=S_p$ fluctuate due to $\varepsilon^{(\text{num})}$. To first order, the variance of a smooth ratio $g(X,Y)=X/Y$ around $(\mathbb{E}X,\mathbb{E}Y)$ is
+\[
+    \mathrm{Var}\bigl(g(X,Y)\bigr)\approx \nabla g^\top\,\mathrm{Cov}(X,Y)\,\nabla g,
+    \quad
+    \nabla g = \Bigl(\tfrac{1}{\mathbb{E}Y},\,-\tfrac{\mathbb{E}X}{\mathbb{E}Y^2}\Bigr)^\top,
+\]
+which is equivalent to the scalar form used below. Under Gaussianity, sample means are independent of within-group variances, so $\mathrm{Cov}(X,Y)=0$. Moreover, $\mathbb{E}(S_p)=\sigma_{\text{tot}}+O(1/n)$,
+\[
+    \mathrm{Var}(X)_{\text{num}}=\sigma_{\text{num}}^2\Bigl(\frac{1}{n_1}+\frac{1}{n_2}\Bigr),
+    \qquad
+    \mathrm{Var}(S_p)\approx \frac{\sigma_{\text{num}}^4}{2n\,\sigma_{\text{tot}}^2},
+\]
+where the last relation follows by applying the delta method to $S_p=\sqrt{S_p^2}$ and using $\mathrm{Var}(S_g^2)\approx 2\sigma_{\text{num}}^4/(n_g-1)$ for the numerical component. Plugging these ingredients into the ratio expansion
+\[
+    \mathrm{Var}\!\left(\frac{X}{Y}\right)\approx
+    \left(\frac{\mathbb{E}X}{\mathbb{E}Y}\right)^{\!2}\!\!
+    \left(\frac{\mathrm{Var}(X)}{[\mathbb{E}X]^2}
+    -\frac{2\,\mathrm{Cov}(X,Y)}{\mathbb{E}X\,\mathbb{E}Y}
+    +\frac{\mathrm{Var}(Y)}{[\mathbb{E}Y]^2}\right),
+\]
+with $\mathrm{Cov}(X,Y)=0$ and $\delta:=(\mu_1-\mu_2)/\sigma_{\text{tot}}=\mathbb{E}X/\mathbb{E}Y$, gives
+\begin{equation}
+    \label{eq:var_d_num_sampleden}
+    \mathrm{Var}(d)_{\text{num}}
+    \;\approx\;
+    \underbrace{\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}_{\text{numerator term}}
+    \;+\;
+    \underbrace{\frac{\delta^2}{2\,n}\left(\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\right)^{\!2}}_{\text{denominator term}}\,,
+\end{equation}
+and taking a square root yields \eqref{eq:sd_d_num_sampleden}. The first term is exactly the population–denominator result; the second term quantifies the additional variability introduced by estimating the scale in the presence of numerical noise. For $\nu_{\text{nav}}\ll1$, the second term is $O(\nu_{\text{nav}}^2/n)$ and the population result is recovered to first order.
+
+\paragraph{Heteroscedastic numerical noise.}
+If numerical variance differs by group ($\sigma_{\text{num},1}^2\neq\sigma_{\text{num},2}^2$), define the (fixed-anatomy) pooled baseline
+\[
+    V_0
+    := \frac{(n_1-1)(\sigma_{\text{anat},1}^2+\sigma_{\text{num},1}^2)
+        +(n_2-1)(\sigma_{\text{anat},2}^2+\sigma_{\text{num},2}^2)}{n_1+n_2-2},
+    \qquad
+    d_*:=\frac{\mu_1-\mu_2}{\sqrt{V_0}}.
+\]
+Proceeding as above and using independence of means and variances under Gaussianity, a delta–method calculation yields
+\begin{equation}
+    \label{eq:var_d_num_hetero}
+    \mathrm{Var}(d)_{\text{num}}
+    \;\approx\;
+    \frac{\sigma_{\text{num},1}^2/n_1+\sigma_{\text{num},2}^2/n_2}{V_0}
+    \;+\;
+    \frac{d_*^{\,2}}{2}\,
+    \frac{(n_1-1)\sigma_{\text{num},1}^4+(n_2-1)\sigma_{\text{num},2}^4}{V_0^{\,2}\,(n_1+n_2-2)}.
+\end{equation}
+Setting $\sigma_{\text{num},1}=\sigma_{\text{num},2}$ and $\sigma_{\text{anat},1}=\sigma_{\text{anat},2}$ recovers \eqref{eq:var_d_num_sampleden}.
+
+\paragraph{Practical estimation of \texorpdfstring{\navr}{NAVR}.}
+In experiments we estimate $\sigma_{\text{num}}$ and $\sigma_{\text{anat}}$ from repeated numerical runs per subject:
+\begin{enumerate}
+    \item For each subject $j$ (within a group), run the pipeline $R\ge 2$ times and compute the within-subject variance across runs, $W_j:=\mathrm{Var}\{X_{ij}^{(r)}: r=1,\dots,R\}$. Under homoscedastic numerical noise, $\widehat{\sigma}_{\text{num}}^2:=\frac{1}{m}\sum_{j=1}^{m}W_j$ is unbiased for $\sigma_{\text{num}}^2$ (here $m$ is the number of subjects in the group).
+    \item Compute the across-subject variance of the per-subject run means, $B:=\mathrm{Var}\{\bar X_{ij\cdot} := R^{-1}\sum_r X_{ij}^{(r)}\}$. Since $\mathrm{Var}(\bar X_{ij\cdot})=\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2/R$, an unbiased estimator for the anatomical component is
+          \[
+              \widehat{\sigma}_{\text{anat}}^2 := B - \frac{\widehat{\sigma}_{\text{num}}^2}{R}\,.
+          \]
+    \item Estimate NAVR by $\widehat{\nu}_{\text{nav}}:=\widehat{\sigma}_{\text{num}}/\widehat{\sigma}_{\text{anat}}$, and plug into \eqref{eq:sd_d_exact_unbalanced} or \eqref{eq:sd_d_num_sampleden} depending on whether $d$ uses the population or sample denominator.
+\end{enumerate}
+When both groups have replicates, the above is done within each group and then combined (e.g., by averaging group-wise $\widehat{\sigma}_{\text{num}}^2$ and $\widehat{\sigma}_{\text{anat}}^2$ if homoscedasticity is plausible, or keeping group-specific $\widehat{\nu}_{\text{nav},i}$ otherwise and using \eqref{eq:var_d_num_hetero}).
+
+\paragraph{Diagnostics and robustness checks.}
+We check model assumptions in three ways:
+(i) \emph{Additivity \& independence}: plot within-subject residuals across runs to detect drift or correlation; strong serial dependence inflates \eqref{eq:sd_d_num_sampleden}.
+(ii) \emph{Gaussianity}: examine run-to-run residual histograms and excess kurtosis; if heavy-tailed, adjust the constants multiplying $\sigma_{\text{num}}^4$ through a kurtosis factor while retaining the same functional form.
+(iii) \emph{Homoscedasticity}: compare $W_j$ across subjects and groups; if $\mathrm{IQR}(W_j)$ is large, prefer \eqref{eq:var_d_num_hetero}.
+
+\paragraph{Implications for design and reporting.}
+Equations~\eqref{eq:sd_d_exact}–\eqref{eq:sd_d_num_sampleden} link computational stability (\navr) to uncertainty in $d$. For instance, with \navr$=0.1$ and balanced groups, $\sigma_{d,\text{num}}\approx 0.199/\sqrt{N}$, while \navr$=1.0$ yields $\sigma_{d,\text{num}}\approx 1.41/\sqrt{N}$. Thus, quantifying \navr\ from replicate runs allows principled sample-size planning (via the bound on $N$ above) and transparent reporting of the numerical contribution to effect-size uncertainty alongside conventional statistical uncertainty.
+
+\paragraph{Scope and assumptions.}
+(i) Numerical noise is modeled as additive, zero-mean, and independent of anatomical variability and across subjects/runs.
+(ii) Gaussianity underlies the independence of sample means and variances and the variance formulas for $S_g^2$; non-Gaussian noise alters constants but not structure.
+(iii) The delta-method terms are first-order in $1/n$; for small samples or very large \navr, higher-order corrections may be non-negligible.
+(iv) If one normalizes by the (oracle) anatomical spread $\sigma_{\text{anat}}$ (rather than $\sigma_{\text{tot}}$), then $\sigma_{d,\text{num}}=\sqrt{1/n_1+1/n_2}\,\nu_{\text{nav}}$, i.e., \eqref{eq:sd_d_exact_unbalanced} with $\sigma_{\text{tot}}$ replaced by $\sigma_{\text{anat}}$.
+
+
+---
+\subsection{Quantifying Computational Uncertainty in Effect Size Estimation}
+
+
+
+From this, we define the **numerical-to-anatomical variance ratio
+($\nu_{\text{nav}}$)**, a key metric representing the magnitude of computational
+noise relative to the true biological variability in the data:
+$$\nu_{\text{nav}} := \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}$$ A small
+$\nu_{\text{nav}}$ indicates high computational stability. Based on this model,
+we derived the standard deviation of Cohen’s $d$ ($\sigma_{d,\text{num}}$) that
+is attributable *solely* to numerical uncertainty. For a balanced study with
+$N/2$ subjects per group (total sample size $N$), this relationship is:
+$$\sigma_{d,\text{num}} = \frac{2}{\sqrt{N}}
+    \frac{\nu_{\text{nav}}}{\sqrt{1+\nu_{\text{nav}}^2}} \quad (1)$$ This core
+equation (derived in Supplementary Methods) provides a direct, practical
+link between a property of the computational method ($\nu_{\text{nav}}$) and
+the stability of the scientific finding ($d$). It shows that the effect size
+uncertainty introduced by the method scales with $\nu_{\text{nav}}$ and
+decreases with the square root of the sample size.
+
+In the common regime where numerical uncertainty is much smaller than biological
+variability ($\nu_{\text{nav}} \ll 1$), Equation (1) is well-approximated by a
+simple linear relationship:
+$$\sigma_{d,\text{num}} \approx \frac{2}{\sqrt{N}}\,\nu_{\text{nav}} \quad (2)$$
+This approximation makes the relationship intuitive: for a computationally
+stable method, the uncertainty in the effect size is directly proportional to
+$\nu_{\text{nav}}$. For example, a method with $\nu_{\text{nav}} = 0.1$ applied
+to a study with $N=100$ participants will introduce a standard deviation of
+approximately $0.02$ into the final Cohen's $d$ value, purely from computational
+noise.
+
+This framework allows us to establish a priori requirements for computational
+methods. To ensure numerical uncertainty contributes no more than a target value
+$\tau$ to the standard deviation of $d$, the sample size must satisfy $N \ge
+    (4/\tau^2) \cdot \nu_{\text{nav}}^2 / (1+\nu_{\text{nav}}^2)$. This provides a
+quantitative basis for validating computational pipelines. While the main result
+is presented for balanced groups using the population standard deviation, this
+framework extends to unbalanced designs and the use of a sample-based pooled
+standard deviation, which introduces a small, second-order dependency on the
+true effect size (see Supplementary Methods for generalized equations and
+derivations).
 
 \section{Data Availability}
 The data that support the findings of this study are available from the
@@ -1537,20 +1868,23 @@ sets, defined as follows:
     \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \bigcap_{i=1}^{n} A_i \right|}{\sum_{i=1}^{n} \left| A_i \right|}
 \].
 
-\subsection{Cohen's d}
-\label{eq:cohen_d}
 
-Cohen's d is a measure of effect size that quantifies the difference between
-two groups in terms of standard deviations. It is defined as:
+
+\subsection{Delta Method}
+\label{eq:delta_method}
+
+The delta method~\cite{cox2005delta} is a method of deriving the asymptotic
+distribution of a random variable. It is applicable when the random variable
+being considered can be defined as a differentiable function of a random
+variable which is asymptotically Gaussian. The delta method is a first order
+approximation for a ratio $X/Y$,
 \[
-    d = \frac{\bar{X}_1 - \bar{X}_2}{\sigma_{pooled}},\; \sigma_{pooled} =
-    \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}}
+    \text{Var}\!\left(\frac{X}{Y}\right)\approx
+    \left(\frac{\mathbb{E}(X)}{\mathbb{E}(Y)}\right)^2\!
+    \left(\frac{\text{Var}(X)}{[\mathbb{E}(X)]^2}
+    -\frac{2\,\text{Cov}(X,Y)}{\mathbb{E}(X)\mathbb{E}(Y)}
+    +\frac{\text{Var}(Y)}{[\mathbb{E}(Y)]^2}\right),
 \]
-where \(\bar{X}_1\) and \(\bar{X}_2\) are the means of the two groups, \(s_1\)
-and \(s_2\) are the standard deviations, and \(n_1\) and \(n_2\) are the sample
-sizes of the two groups. The numerator represents the difference in means,
-while the denominator is the pooled standard deviation, which accounts for the
-variability within each group.
 
 \section{Cross-sectional Analysis}
 
@@ -2585,6 +2919,234 @@ retaining only those effects that were robust and consistent.
         computational uncertainty.}
     \label{fig:navr_enigma_area}
 \end{figure}
+
+\section{Derivation of Numerical-to-Anatomical Variance Ratio ($\nu_{\text{nav}}$)}
+
+\subsection{Derivation for Balanced Groups with Population Denominator}
+
+Here, we derive the core relationship (Equation 1 in the main text) between the
+numerical-to-anatomical variance ratio ($\nu_{\text{nav}}$) and the resulting
+uncertainty in Cohen's $d$ ($\sigma_{d,\text{num}}$).
+
+We begin with the statistical model for an observation $X_{ij}$ for subject $j$
+in group $i \in \{1, 2\}$:
+\[
+    X_{ij} = \mu_i + \varepsilon^{(\text{anat})}_{ij} + \varepsilon^{(\text{num})}_{ij}
+\]
+where $\varepsilon^{(\text{anat})}_{ij} \sim \mathcal{N}(0,
+    \sigma_{\text{anat}}^2)$ represents biological variation and
+$\varepsilon^{(\text{num})}_{ij} \sim \mathcal{N}(0, \sigma_{\text{num}}^2)$
+represents numerical uncertainty. We assume these error terms are independent.
+
+For a balanced design with $n_1 = n_2 = N/2$, the sample mean for the numerical
+error in group $i$ is:
+\[
+    \bar{\varepsilon}^{(\text{num})}_i = \frac{1}{n_i}\sum_{j=1}^{n_i}\varepsilon^{(\text{num})}_{ij} \quad \sim \quad \mathcal{N}\left(0, \frac{\sigma_{\text{num}}^2}{n_i}\right)
+\]
+The difference in these sample means, $\Delta_{\text{num}} =
+    \bar{\varepsilon}^{(\text{num})}_1 - \bar{\varepsilon}^{(\text{num})}_2$,
+captures the contribution of numerical noise to the difference in group means.
+Its distribution is:
+\[
+    \Delta_{\text{num}} \sim \mathcal{N}\left(0, \frac{\sigma_{\text{num}}^2}{n_1} + \frac{\sigma_{\text{num}}^2}{n_2}\right) = \mathcal{N}\left(0, \frac{4\sigma_{\text{num}}^2}{N}\right)
+\]
+Cohen's $d$ is defined as the difference in sample means divided by the pooled
+population standard deviation, $\sigma_{\text{tot}} =
+    \sqrt{\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2}$. The component of $d$
+driven solely by numerical noise, $d_{\text{num}}$, is:
+\[
+    d_{\text{num}} = \frac{\Delta_{\text{num}}}{\sigma_{\text{tot}}} \quad \sim \quad \mathcal{N}\left(0, \frac{4\sigma_{\text{num}}^2}{N \sigma_{\text{tot}}^2}\right)
+\]
+The standard deviation of $d_{\text{num}}$, which we denote
+$\sigma_{d,\text{num}}$, is therefore:
+\[
+    \sigma_{d,\text{num}} = \sqrt{\text{Var}(d_{\text{num}})} = \frac{2}{\sqrt{N}} \frac{\sigma_{\text{num}}}{\sigma_{\text{tot}}} = \frac{2}{\sqrt{N}} \frac{\sigma_{\text{num}}}{\sqrt{\sigma_{\text{anat}}^2 + \sigma_{\text{num}}^2}}
+\]
+By substituting $\sigma_{\text{num}} = \nu_{\text{nav}}\sigma_{\text{anat}}$, we
+arrive at the final expression:
+\begin{equation}
+    \sigma_{d,\text{num}} = \frac{2}{\sqrt{N}} \frac{\nu_{\text{nav}}\sigma_{\text{anat}}}{\sqrt{\sigma_{\text{anat}}^2 + (\nu_{\text{nav}}\sigma_{\text{anat}})^2}} = \frac{2}{\sqrt{N}} \frac{\nu_{\text{nav}}}{\sqrt{1 + \nu_{\text{nav}}^2}}
+\end{equation}
+
+
+\subsection{Generalization to Unbalanced Designs}
+
+The framework can be extended to unbalanced groups where group sizes $n_1$ and
+$n_2$ are not equal. The variance of the difference in numerical error means
+becomes:
+\[
+    \text{Var}(\Delta_{\text{num}}) = \sigma_{\text{num}}^2 \left(\frac{1}{n_1} + \frac{1}{n_2}\right)
+\]
+Propagating this variance to Cohen's $d$ (normalized by $\sigma_{\text{tot}}$)
+yields:
+\begin{equation}
+    \sigma_{d,\text{num}} = \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \cdot \frac{\sigma_{\text{num}}}{\sigma_{\text{tot}}} = \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \cdot \frac{\nu_{\text{nav}}}{\sqrt{1 + \nu_{\text{nav}}^2}}
+\end{equation}
+This equation reduces to Equation (S1) when $n_1 = n_2 = N/2$.
+
+\subsection{Derivation for the standard deviation of Cohen's $d$ coefficient}
+
+Let $d=(\bar X_1-\bar X_2)/S_p$ with $\bar X_1,\bar X_2$ the sample means for
+groups 1 and 2, respectively, and
+$S_p^2=\big((n_1-1)S_1^2+(n_2-1)S_2^2\big)/(n_1+n_2-2)$ the sample pooled
+variance and $n=n_1+n_2-2$.
+
+Cohen's $d$ is calculated using the sample pooled
+standard deviation $S_p$. We analyze the variance of $d = (\bar{X}_1 -
+    \bar{X}_2) / S_p$ due to numerical noise using the first-order delta method for
+a ratio of two random variables $g(X,Y) = X/Y$:
+\[
+    \text{Var}\left(\frac{X}{Y}\right) \approx \left(\frac{\mathbb{E}[X]}{\mathbb{E}[Y]}\right)^2 \left(\frac{\text{Var}(X)}{(\mathbb{E}[X])^2} - \frac{2\text{Cov}(X,Y)}{\mathbb{E}[X]\mathbb{E}[Y]} + \frac{\text{Var}(Y)}{(\mathbb{E}[Y])^2}\right)
+\]
+Let $X = \bar{X}_1 - \bar{X}_2$ and $Y = S_p$. Under Gaussianity, the sample
+mean and sample variance are independent, so $\text{Cov}(X,Y) = 0$. The relevant
+terms, considering only numerical sources of variance, are:
+\begin{itemize}
+    \item $\mathbb{E}[X] = \mu_1 - \mu_2$
+    \item $\text{Var}(X)_{\text{num}} = \sigma_{\text{num}}^2(1/n_1 + 1/n_2)$
+    \item $\mathbb{E}[Y] \approx \sigma_{\text{tot}}$
+    \item $\text{Var}(Y)_{\text{num}} \approx \text{Var}(S_p)_{\text{num}}
+              \approx \frac{\sigma_{\text{num}}^4}{2(n_1+n_2-2)\sigma_{\text{tot}}^2}$
+\end{itemize}
+Substituting these into the delta method approximation gives the variance of $d$
+due to numerical noise:
+\begin{equation}
+    \text{Var}(d)_{\text{num}} \approx \frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\left(\frac{1}{n_1}+\frac{1}{n_2}\right) + \frac{(\mu_1-\mu_2)^2}{\sigma_{\text{tot}}^2} \frac{\sigma_{\text{num}}^4}{2(n_1+n_2-2)\sigma_{\text{tot}}^4}
+\end{equation}
+Let $\delta = (\mu_1 - \mu_2)/\sigma_{\text{tot}}$ be the true effect size and
+$n = n_1+n_2-2$. The standard deviation is:
+\begin{equation}
+    \sigma_{d,\text{num}} \approx \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)\frac{\nu_{\text{nav}}^2}{1+\nu_{\text{nav}}^2} + \frac{\delta^2}{2n}\frac{\nu_{\text{nav}}^4}{(1+\nu_{\text{nav}}^2)^2}}
+\end{equation}
+The second term, arising from the denominator's variability, depends on the true
+effect size $\delta$ and is of order $O(\nu_{\text{nav}}^4)$. For small
+$\nu_{\text{nav}}$, this term is negligible, and the expression simplifies to
+Equation (S2).
+
+\paragraph{Sample pooled denominator via the delta method.}
+Let $d=(\bar X_1-\bar X_2)/S_p$ with
+$S_p^2=\big((n_1-1)S_1^2+(n_2-1)S_2^2\big)/(n_1+n_2-2)$ and $n=n_1+n_2-2$.
+Treat the anatomical component as fixed across numerical re-runs and assume
+Gaussian, independent numerical noise. The leading contribution (first order in
+$1/n$) to the variance of $d$ across numerical re-runs is obtained by the
+first-order delta method~\cite{cox2005delta} for a ratio $g(X,Y)=X/Y$,
+\[
+    \text{Var}\!\left(\frac{X}{Y}\right)\approx
+    \left(\frac{\mathbb{E}(X)}{\mathbb{E}(Y)}\right)^2\!
+    \left(\frac{\text{Var}(X)}{[\mathbb{E}(X)]^2}
+    -\frac{2\,\text{Cov}(X,Y)}{\mathbb{E}(X)\mathbb{E}(Y)}
+    +\frac{\text{Var}(Y)}{[\mathbb{E}(Y)]^2}\right),
+\]
+which, with $X=\bar X_1-\bar X_2$, $Y=S_p$, $\text{Cov}(X,Y)=0$ under
+Gaussianity (independence of sample means and within-group variances),
+$\mathbb{E}(S_p)=\sigma_{\text{tot}}+O(1/n)$,
+$\text{Var}(\bar X_1-\bar X_2)_{\text{num}}=\sigma_{\text{num}}^2(1/n_1+1/n_2)$,
+and $\text{Var}(S_p)\approx \sigma_{\text{num}}^4/(2n\,\sigma_{\text{tot}}^2)$,
+yields
+\begin{equation}
+    \label{eq:var_d_num_sampleden}
+    \text{Var}(d)_{\text{num}}
+    \;\approx\;
+    \underbrace{\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}_{\text{numerator term}}
+    \;+\;
+    \underbrace{\frac{\delta^2}{2\,n}\left(\frac{\sigma_{\text{num}}^2}{\sigma_{\text{tot}}^2}\right)^{\!2}}_{\text{denominator term}},
+    .
+\end{equation}
+with $\sigma_{\text{tot}}^2:=\sigma_{\text{anat}}^2+\sigma_{\text{num}}^2,\;\;
+    \delta:=\frac{\mu_1-\mu_2}{\sigma_{\text{tot}}}$. Hence
+\begin{equation}
+    \label{eq:sd_d_num_sampleden}
+    \sigma_{d,\text{num}}
+    \;\approx\;
+    \sqrt{\left(\frac{1}{n_1}+\frac{1}{n_2}\right)\frac{\nu_{\text{nav}}^2}{1+\nu_{\text{nav}}^2}
+        \;+\;
+        \frac{\delta^2}{2\,n}\frac{\nu_{\text{nav}}^4}{(1+\nu_{\text{nav}}^2)^2}}.
+\end{equation}
+For $\nu_{\text{nav}}\ll1$ the denominator term is $O(\nu_{\text{nav}}^2/n)$
+and \eqref{eq:sd_d_num_sampleden} collapses to \eqref{eq:sd_d_exact_unbalanced}.
+
+
+\subsection{Extension to Heteroscedastic Numerical Noise}
+
+Finally, we consider the case where the numerical variance may differ between
+groups ($\sigma_{\text{num},1}^2 \neq \sigma_{\text{num},2}^2$). Let the total
+variance in each group be $\sigma_{\text{tot},i}^2 = \sigma_{\text{anat},i}^2 +
+    \sigma_{\text{num},i}^2$. The expected value of the squared pooled standard
+deviation is:
+\[
+    V_0 = \mathbb{E}[S_p^2] = \frac{(n_1-1)\sigma_{\text{tot},1}^2 + (n_2-1)\sigma_{\text{tot},2}^2}{n_1+n_2-2}
+\]
+Applying the delta method as before, but accounting for different variances in
+each term, yields:
+\begin{equation}
+    \text{Var}(d)_{\text{num}} \approx \frac{\sigma_{\text{num},1}^2/n_1 + \sigma_{\text{num},2}^2/n_2}{V_0} + \frac{(\mu_1-\mu_2)^2}{V_0^2} \frac{(n_1-1)\sigma_{\text{num},1}^4 + (n_2-1)\sigma_{\text{num},2}^4}{2(n_1+n_2-2)^2}
+\end{equation}
+This general formula describes the effect size uncertainty under heteroscedastic
+numerical noise and reduces to Equation (S4) when variances are assumed to be
+equal across groups.
+
+\section{Numerical Variability and the Stability of Statistical Results}
+
+The following formula provides a crucial link between the tiny, invisible rounding errors inside a computer and the real-world reliability of your final statistical results. It quantifies how a small amount of ``computational wobble'' in your raw data translates into a much larger wobble in your conclusions.
+
+\subsection{Conceptual Explanation}
+
+At its core, the formula helps you understand the \textbf{stability} of your statistical findings. Imagine your dataset is a fixed photograph. Numerical variability is like looking at that same photo through different pairs of slightly imperfect glasses---each time, the image is subtly different. The formula calculates how much a key feature in that photo (the overall spread of the data, or \emph{pooled standard deviation}) changes with each pair of glasses.
+
+\paragraph{What the Formula Tells You}
+
+\begin{equation}
+    \text{Var}(S_p)_{\text{num}} \approx \frac{\sigma_{\text{num}}^4}{2(n_1+n_2-2)\sigma_{\text{tot}}^2}
+\end{equation}
+
+\begin{itemize}
+    \item \textbf{$\text{Var}(S_p)_{\text{num}}$ (The ``Output Wobble''):} This is what we want to measure. It’s the variance, or instability, of your final calculated pooled standard deviation ($S_p$) that is caused \emph{only by numerical errors}.
+    \item \textbf{$\sigma_{\text{num}}^4$ (The ``Input Noise'' Effect):} This is the standard deviation of the numerical noise in your original measurements, raised to the \emph{fourth power}. This means that the instability of your result grows much faster than the noise itself. Doubling the computational noise in your input data can make your output statistic \emph{16 times} more unstable!
+    \item \textbf{$(n_1 + n_2 - 2)$ (The ``Power of More Data''):} This term represents your sample size (specifically, the degrees of freedom). Because it's in the denominator, it shows that more data makes your results more stable.
+    \item \textbf{$\sigma_{\text{tot}}^2$ (The ``Signal vs. Noise'' Effect):} This is the total variance in your data, which includes both the true biological signal ($\sigma_{\text{anat}}^2$) and the numerical noise ($\sigma_{\text{num}}^2$). It's also in the denominator, which reveals a fascinating insight: a strong signal drowns out noise.
+\end{itemize}
+
+\textit{Analogy:} Imagine trying to hear a quiet whisper (the numerical noise). In a silent library, that whisper is very noticeable. But if you're at a loud rock concert (representing high biological variation), that same whisper becomes completely irrelevant. In the same way, if the real-world differences in your data are huge, the tiny computational errors have very little impact on the stability of your final statistics.
+
+\subsection{Mathematical Derivation}
+
+\paragraph{Goal and Assumptions}
+Our goal is to derive the expression for $\text{Var}(S_p)_{\text{num}}$. We start with a model where each data point, $x_i$, is the sum of a fixed true value, $t_i$, and a random numerical error, $e_i$:
+\begin{equation}
+    x_i = t_i + e_i
+\end{equation}
+We assume the errors $e_i$ are independent and drawn from a Normal distribution with mean $0$ and variance $\sigma_{\text{num}}^2$.
+
+\paragraph{Step 1: Variance of a Single Sample Variance}
+For a set of random variables drawn from a Normal distribution (like our errors, $e_i$), the variance of their sample variance ($S_e^2$) is:
+\begin{equation}
+    \text{Var}(S_e^2) = \frac{2\sigma_{\text{num}}^4}{n-1}
+\end{equation}
+We approximate the numerical variance of the full data's sample variance, $\text{Var}(S_x^2)_{\text{num}}$, with this value.
+
+\paragraph{Step 2: Extend to the Pooled Variance}
+The pooled variance, $S_p^2$, combines the variances from two independent groups ($n_1$ and $n_2$):
+\begin{equation}
+    S_p^2 = \frac{(n_1-1)S_1^2 + (n_2-1)S_2^2}{n_1+n_2-2}
+\end{equation}
+Let $df = n_1+n_2-2$. The variance of this weighted sum is:
+\begin{align}
+    \text{Var}(S_p^2)_{\text{num}} & \approx \frac{(n_1-1)^2}{(df)^2}\left(\frac{2\sigma_{\text{num}}^4}{n_1-1}\right) + \frac{(n_2-1)^2}{(df)^2}\left(\frac{2\sigma_{\text{num}}^4}{n_2-1}\right) \\
+                                   & = \frac{2\sigma_{\text{num}}^4}{(df)^2} \left[ (n_1-1) + (n_2-1) \right]                                                                                      \\
+                                   & = \frac{2\sigma_{\text{num}}^4}{n_1+n_2-2}
+\end{align}
+
+\paragraph{Step 3: Delta Method for $S_p$}
+To get from the variance of $S_p^2$ to the variance of $S_p$, use the delta method:
+\begin{equation}
+    \text{Var}(S_p)_{\text{num}} \approx \left(\frac{1}{2\sigma_{\text{tot}}}\right)^2 \text{Var}(S_p^2)_{\text{num}} = \frac{1}{4\sigma_{\text{tot}}^2} \text{Var}(S_p^2)_{\text{num}}
+\end{equation}
+
+\paragraph{Step 4: Final Result}
+Substitute the result for $\text{Var}(S_p^2)_{\text{num}}$:
+\begin{equation}
+    \text{Var}(S_p)_{\text{num}} \approx \frac{1}{4\sigma_{\text{tot}}^2} \left( \frac{2\sigma_{\text{num}}^4}{n_1+n_2-2} \right) = \frac{\sigma_{\text{num}}^4}{2(n_1+n_2-2)\sigma_{\text{tot}}^2}
+\end{equation}
 
 \end{document}
 
