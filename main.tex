@@ -1382,8 +1382,8 @@ standard deviation of the observed data, $s_p$, to be approximated by the
 standard deviation of the true biological values: $s_p \approx
     \sigma_{\text{anat}}$.
 
-Cohen's $d$ is defined as the difference in sample means normalized by the
-pooled standard deviation:
+\paragraph{Cohen's $d$} is defined as the difference in sample means normalized by the pooled standard
+deviation:
 \[
     d = \frac{\bar{X}_1 - \bar{X}_2}{s_p}
 \]
@@ -1434,111 +1434,56 @@ This provides a direct, quantitative link between the numerical variability
 (captured by $\nu_{\text{nav}}$) and the the uncertainty of the effect size,
 $\sigma_d$.
 
-% Cohen's $d$ measures the standardized effect size between two groups. To
-% quantify how numerical variability impacts the uncertainty of Cohen's $d$
-% coefficient, we developed an analytical framework that connects numerical
-% variability to the resulting standard deviation of Cohen's $d$ ($\sigma_d$). To
-% do so, we assume a homogenous population with a true effect size of zero. We
-% model the observed data as a combination of true measurement plus a random noise
-% component. By applying first-order Taylor expansions, we derive an expression
-% for $\sigma_d$ in terms of the Numerical-Anatomical Variability Ratio (\navr).
+\paragraph{The two-sample t-test statistic} is defined as:
+\[
+    t = \frac{\bar{X}_1 - \bar{X}_2}{s_p \sqrt{\frac{1}{n_1} +
+            \frac{1}{n_2}}}
+\]
+Assuming balanced groups ($n_1 = n_2 = n/2$) and using assumption (3) from the
+previous section, we can approximate the t-statistic as:
+\[
+    t \approx \frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}} \sqrt{\frac{4}{n}}}
+\]
+The uncertainty in $t$ arising from numerical noise, $\sigma_t$, is the
+standard deviation of this quantity. Its variance, $\sigma_t^2$, is therefore:
+\begin{equation*}
+    \begin{split}
+        \sigma_t^2 & = \mathrm{Var}(t)
+        \approx \mathrm{Var}\!\left(\frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}} \sqrt{\frac{4}{n}}}\right)
+        = \mathrm{Var}\!\left(\frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}}}\right) \frac{n}{4} \\[4pt]
+                   & = \frac{4}{n} \nu_{\text{nav}}^2 \frac{n}{4}                                   \\[4pt]
+                   & = \nu_{\text{nav}}^2.
+    \end{split}
+\end{equation*}
 
-% Cohen's $d$ is defined as:
-% \begin{equation}
-%     \label{eq:cohen_d}
-%     d = \frac{\bar{X}_1 - \bar{X}_2}{s_p},\quad s_p =
-%     \sqrt{\frac{(n_1 - 1) s_1^2 + (n_2 - 1) s_2^2}{n_1 + n_2 - 2}}
-% \end{equation}
+Taking the square root yields the final relationship for the standard deviation
+of the t-statistic:
+\[
+    \sigma_t = \nu_{\text{nav}}
+\]
 
-% where \(\bar{X}_1\) and \(\bar{X}_2\) are the means of the two groups, \(s_1\)
-% and \(s_2\) are the sampled standard deviations, and \(n_1\) and \(n_2\) are the
-% sample sizes of the two groups. The numerator represents the difference in
-% means, while the denominator is the pooled standard deviation with a degree of
-% freedom $n_1 + n_2 - 2$, which accounts for the variability within each group.
-% For two balanced groups, we have $n_1 = n_2 = n/2$.
-
-% To model the numerical variability, we want to measure the effect of the
-% numerical variability on the Cohen's d coefficient. To do so, we assume a
-% homogeneous population, so true effect is zero. Hence, the remaining variability
-% is due to noise. We model the numerical noise as a zero-mean Gaussian noise
-% $\varepsilon_{i} \sim \mathcal{N}(0,\sigma_{\text{num,i}}^2)$ for
-% each subject $i$. We assume that the anatomical variability of the population is
-% also Gaussian, with a variance $\sigma^2_{\text{anat}}$, with no differences
-% between sub-groups since the population is supposed to be homogeneous.
-% We modeled the observed data for a subject in a standard two-group comparison as
-% a sum of three components: the true subject's measurement ($\mu_i$), the subject-specific
-% numerical variability ($\varepsilon^{(\text{num,i})}$). The measurement $X_i$ for subject $i$ is given by:
-% \[
-%     X_{i} = \mu_i + \varepsilon_{i}
-% \]
-% We assume that anatomical variability and numerical variability are independent.
-
-% The variance of Cohen's d is given by:
-
-% \begin{equation}
-%     \mathrm{Var}(d) = \mathrm{Var}\left(\frac{\bar X_1 - \bar X_2}{s_p}\right)
-% \end{equation}
-
-% By applying the delta method, we can express the variance of the ratio as:
-% \begin{equation}
-%     \label{eq:var_d}
-%     \mathrm{Var}(d) = \left(\frac{\mathrm{E}\left[\bar X_1 - \bar X_2\right]}{\mathrm{E}[s_p]}\right)^2
-%     \left(   \frac{\mathrm{Var}\left[\bar X_1 - \bar X_2\right]}{(\mathrm{E}\left[\bar X_1 - \bar X_2\right])^2}
-%     + \frac{\mathrm{Var}\left[s_p\right]}{\mathrm{E}^2\left[s_p\right]}
-%     + \frac{2\mathrm{Cov}\left[\bar X_1 - \bar X_2, s_p\right]}{\mathrm{E}\left[\bar X_1 - \bar X_2\right] \mathrm{E}[s_p]}
-%     \right).
-% \end{equation}
-
-% Now, let's decompose each term.
-
-% Expectation of the difference in sample means is:
-% \[
-%     \mathrm{E}\left[\bar X_1 - \bar X_2\right] = \mathrm{E}\left[\mu_1 - \mu_2 + \bar\varepsilon_1 - \bar\varepsilon_2\right] = \mu_1 - \mu_2 = 0.
-% \]
-% since the population is assumed homogeneous and $\varepsilon_i$ is zero-mean.
-
-% Variance of the difference in sample means is:
-% \begin{equation}
-%     \begin{split}
-%         \mathrm{Var}\left[\bar X_1 - \bar X_2\right]
-%          & =  \mathrm{Var}\left[\mu_1 - \mu_2 + \bar\varepsilon_1 - \bar\varepsilon_2\right]                                             \\
-%          & =  \mathrm{Var}\left(\bar\varepsilon_1 - \bar\varepsilon_2\right)                                                             \\
-%          & =  \mathrm{Var}\left(\frac{1}{n_1}\sum_{i=1}^{n_1} \varepsilon_{i,1} - \frac{1}{n_2}\sum_{i=1}^{n_2} \varepsilon_{i,2}\right)
-%     \end{split}
-% \end{equation}
-% Assuming population is homogeneous and the two groups are balanced $n_1 = n_2 = n/2$, we have:
-% \begin{equation}
-%     \begin{split}
-%         \mathrm{Var}\left[\bar X_1 - \bar X_2\right]
-%          & =  \mathrm{Var}\left(\frac{2}{n}\sum_{i=1}^{n/2} \varepsilon_{i,1} - \frac{2}{n}\sum_{i=1}^{n/2} \varepsilon_{i,2}\right) \\
-%          & =  \frac{4}{n^2}\sum_{i=1}^{n/2}{\left(\mathrm{Var}(\varepsilon_{i,1}) + \mathrm{Var}(\varepsilon_{i,2})\right)}          \\
-%          & =  \frac{4}{n^2}\sum_{i=1}^{n/2}\left(\sigma_{\text{num},i}^2 + \sigma_{\text{num},i}^2\right)                            \\
-%          & =  \frac{4}{n^2}\sum_{i=1}^{n/2} 2\sigma_{\text{num}}^2                                                                   \\
-%          & =  \frac{4}{n^2}\frac{n}{2}2\sigma_{\text{num}}^2                                                                         \\
-%          & = \frac{4\sigma_{\text{num}}^2}{n}.
-%     \end{split}
-% \end{equation}
-
-% For the pooled standard deviation $s_p$, we have,  $\mathbb{E}[s_p] =
-%     \sigma_{\text{anat}}$ and $\mathrm{Var}(s_p) =
-%     2\sigma_{\text{num}}^{4}/n$ since $s_p$ follows a normal distribution.
-% Since numerical variability and anatomical variability are assumed independent,
-% then $Cov(\bar X_1 - \bar X_2, s_p) = 0$.
-
-% Pluging these into Equation~\eqref{eq:var_d}, we get:
-% \begin{equation}
-%     \begin{split}
-%         \mathrm{Var}(d) & = \left(\frac{\mu_1 - \mu_2}{\sigma_{\text{anat}}}\right)^2
-%         \left(\frac{4\sigma_{\text{num}}^2/n}{(\mu_1 - \mu_2)^2} + \frac{2\sigma_{\text{num}}^{4}/n}{\sigma_{\text{anat}}^2}\right)                                             \\
-%                         & = \frac{4}{n}\frac{\sigma_{\text{num}}^2}{\sigma_{\text{anat}}^2} + \frac{2}{n}\frac{(\mu_1-\mu_2)^2 \sigma_{\text{num}}^{4}}{\sigma_{\text{anat}}^4} \\
-%                         & = \frac{4}{n}\frac{\sigma_{\text{num}}^2}{\sigma_{\text{anat}}^2}                                                                                     \\
-%                         & = \frac{4}{N} \nu_{\text{nav}}^2,
-%     \end{split}
-% \end{equation}
-
-% So \[
-%     \sigma_d = \frac{2}{\sqrt{N}} \nu_{\text{nav}}
-% \].
+\paragraph{ANCOVA} is a general linear model that includes covariates to control for potential
+confounding factors. The model can be expressed as:
+\[
+    Y = X\beta + \varepsilon
+\]
+where $Y$ is the response variable (e.g., brain measurements), $X$ is the
+design matrix including group indicators and covariates, $\beta$ is the vector
+of regression coefficients, and $\varepsilon$ is the error term. To assess the
+impact of numerical variability on the estimated coefficients $\hat{\beta}$, we
+consider the variance of $\hat{\beta}$, which is given by:
+\[
+    \mathrm{Var}(\hat{\beta}) = \sigma_{\text{num}}^2 (X^TX)^{-1}
+\]
+Assuming that the numerical variability $\sigma_{\text{num}}^2$ is small
+compared to the variability explained by the model, we can approximate the
+variance of the estimated coefficients as:
+\[
+    \mathrm{Var}(\hat{\beta}) \approx \nu_{\text{nav}}^2 (X^TX)^{-1}
+\]
+This relationship indicates that the uncertainty in the estimated coefficients
+due to numerical variability is directly proportional to the \navr, scaled by
+the inverse of the design matrix's information content.
 
 \section{Data Availability}
 The data that support the findings of this study are available from the
