@@ -1413,13 +1413,13 @@ difference between the mean errors is the sum of their respective variances:
     \mathrm{Var}(\bar{\varepsilon}_1 - \bar{\varepsilon}_2) =
     \mathrm{Var}(\bar{\varepsilon}_1) + \mathrm{Var}(\bar{\varepsilon}_2) =
     \frac{\sigma_{\text{num}}^2}{n/2} + \frac{\sigma_{\text{num}}^2}{n/2} =
-    \frac{4\sigma_{\text{num}}^2}{n}
+    \frac{4}{n}\sigma_{\text{num}}^2
 \]
 Substituting this result back into the expression for $\sigma_d^2$, we find:
 \begin{equation*}
     \begin{split}
         \sigma_d^2 & \approx \frac{1}{\sigma_{\text{anat}}^2}
-        \left(\frac{4\sigma_{\text{num}}^2}{n}\right) = \frac{4}{n}
+        \left(\frac{4}{n}\sigma_{\text{num}}^2\right) = \frac{4}{n}
         \left(\frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}\right)^2 \\
         \sigma_d^2 & \approx \frac{4}{n} \nu_{\text{nav}}^2
     \end{split}
@@ -1442,17 +1442,16 @@ $\sigma_d$.
 Assuming balanced groups ($n_1 = n_2 = n/2$) and using assumption (3) from the
 previous section, we can approximate the t-statistic as:
 \[
-    t \approx \frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}} \sqrt{\frac{4}{n}}}
+    t \approx \frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}}}\sqrt{\frac{n}{4}}
 \]
 The uncertainty in $t$ arising from numerical noise, $\sigma_t$, is the
 standard deviation of this quantity. Its variance, $\sigma_t^2$, is therefore:
 \begin{equation*}
     \begin{split}
         \sigma_t^2 & = \mathrm{Var}(t)
-        \approx \mathrm{Var}\!\left(\frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}} \sqrt{\frac{4}{n}}}\right)
-        = \mathrm{Var}\!\left(\frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}}}\right) \frac{n}{4} \\[4pt]
-                   & = \frac{4}{n} \nu_{\text{nav}}^2 \frac{n}{4}                                   \\[4pt]
-                   & = \nu_{\text{nav}}^2.
+        \approx \mathrm{Var}\!\left(\frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}}}\sqrt{\frac{4}{n}}\right)
+        = \mathrm{Var}\!\left(\frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}}}\right) \frac{n}{4} = \left(\frac{4}{n} \nu_{\text{nav}}^2 \right)\frac{n}{4} \\[4pt]
+        \sigma_t^2 & = \nu_{\text{nav}}^2.
     \end{split}
 \end{equation*}
 
@@ -1462,28 +1461,66 @@ of the t-statistic:
     \sigma_t = \nu_{\text{nav}}
 \]
 
-\paragraph{ANCOVA} is a general linear model that includes covariates to control for potential
-confounding factors. The model can be expressed as:
+\paragraph{ANCOVA group effect.}
+Analysis of covariance (ANCOVA) evaluates group using a general linear model,
 \[
-    Y = X\beta + \varepsilon
+    y = X\beta + \varepsilon, \qquad \varepsilon \sim \mathcal{N}(0, \sigma^2 I),
 \]
-where $Y$ is the response variable (e.g., brain measurements), $X$ is the
-design matrix including group indicators and covariates, $\beta$ is the vector
-of regression coefficients, and $\varepsilon$ is the error term. To assess the
-impact of numerical variability on the estimated coefficients $\hat{\beta}$, we
-consider the variance of $\hat{\beta}$, which is given by:
+where $y$ is the vector of regional measurements across subjects and $X$
+contains an intercept, diagnostic group (PD vs.\ HC) and covariates (age and
+sex). The adjusted group difference corresponds to the 1-degree-of-freedom
+contrast $c^\top\beta$ with $c = [0,\, 1,\, 0,\, 0]^\top$. Let $\widehat{\beta}$
+be the ordinary least-squares estimator and $\widehat{\sigma}_{\mathrm{res}}^{2}
+    = SS_{\mathrm{res}}/df_2$ the residual mean square, where $df_2 = n -
+    \mathrm{rank}(X)$. The sum of squares associated with the group effect is
 \[
-    \mathrm{Var}(\hat{\beta}) = \sigma_{\text{num}}^2 (X^TX)^{-1}
+    SS_{\text{group}} =
+    \frac{(c^\top \widehat{\beta})^2}{c^\top (X^\top X)^{-1} c}, \qquad df_1 = 1,
 \]
-Assuming that the numerical variability $\sigma_{\text{num}}^2$ is small
-compared to the variability explained by the model, we can approximate the
-variance of the estimated coefficients as:
+yielding the ANCOVA $F$-statistic
 \[
-    \mathrm{Var}(\hat{\beta}) \approx \nu_{\text{nav}}^2 (X^TX)^{-1}
+    F = \frac{MS_{\text{group}}}{MS_{\text{res}}}
+    = \frac{(c^\top \widehat{\beta})^2}{
+    \widehat{\sigma}_{\mathrm{res}}^{2}\; c^\top (X^\top X)^{-1}c}
+    \sim F(df_1 = 1, df_2).
 \]
-This relationship indicates that the uncertainty in the estimated coefficients
-due to numerical variability is directly proportional to the \navr, scaled by
-the inverse of the design matrix's information content.
+Two-sided significance is evaluated using the central $F$-distribution under the null hypothesis,
+\[
+    p_{\sc{F}} = 1 - F_{\sc{F}}\!\left(F; df_1, df_2\right),
+\]
+where $F_{\sc{F}}$ is the cumulative distribution function of the $F$-distribution.
+This is equivalent to the classical two-sided $t$-test through $F = t^2$ when $df_1$=1 (cf~\cite{johnson1995continuous} p.403).
+
+Since $F=t^2$, the uncertainty in the $F$-statistic arising from numerical noise, $\sigma_F$,
+is related to the uncertainty in the $t$-statistic, $\sigma_t$, by
+\[
+    \mathrm{Var}(F)
+    = \mathrm{Var}(t^2) \approx (2t)^2 \mathrm{Var}(t)
+    = 4t^2 \nu_{\text{nav}}^2
+    = 4F \nu_{\text{nav}}^2,
+\]
+so that
+\[
+    \sigma_F = 2\sqrt{F} \nu_{\text{nav}}.
+\]
+
+For p-values derived from the $F$-statistic, we use the delta method
+(see~\ref{eq:delta_method}) to approximate the variance of $p$.
+Let $Z \sim F(df_1, df_2)$ be a random variable following the $F$-distribution with
+$df_1$ and $df_2$ degrees of freedom, $f_Z$ its probability density function, and
+$F_Z$ its cumulative distribution function. The p-value is a function
+of $Z$ defined as $p(z) = 1 - F_Z(z)$. Applying the delta method yields:
+\begin{equation*}
+    \begin{aligned}
+        \mathrm{Var}(p(z)) & = \mathrm{Var}(1 - F_Z(z))                     \\
+                           & \approx \left(-f_Z(z)\right)^2 \mathrm{Var}(z) \\
+                           & = 4 z (f_Z(z))^2 \nu_{\text{nav}}^2,
+    \end{aligned}
+\end{equation*}
+And thus
+\[
+    \sigma_p = 2 \sqrt{z} f_Z(z) \nu_{\text{nav}}.
+\]
 
 \section{Data Availability}
 The data that support the findings of this study are available from the
@@ -2599,4 +2636,3 @@ retaining only those effects that were robust and consistent.
 \end{figure}
 
 \end{document}
-
