@@ -50,6 +50,7 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
 \newcommand{\0}{\mspace{9mu}}
 \newcommand{\navr}[0]{$\nu_{\text{nav}}$\xspace}
+\newcommand{\Var}[0]{\mathrm{Var}}
 
 \title{Numerical variability in structural MRI measures of Parkinson's disease}
 
@@ -1461,6 +1462,24 @@ of the t-statistic:
     \sigma_t = \nu_{\text{nav}}
 \]
 
+We can now apply this result to derive the uncertainty in p-values derived from
+the t-statistic. Let $Z \sim t(df)$ be a random variable following the
+t-distribution with $df$ degrees of freedom, $f_Z$ its probability density
+function, and $F_Z$ its cumulative distribution function. The two-sided p-value
+is a function of $Z$ defined as $p(z) = 2(1 - F_Z(|z|))$. Applying the delta
+method yields:
+\begin{equation*}
+    \begin{aligned}
+        \mathrm{Var}(p(z)) & = \mathrm{Var}(2(1 - F_Z(|z|)))                                            \\
+                           & \approx \left(-2 f_Z(|z|) \cdot \mathrm{sign}(z)\right)^2 \mathrm{ Var}(z) \\
+                           & = 4 (f_Z(|z|))^2 \nu_{\text{nav}}^2,
+    \end{aligned}
+\end{equation*}
+And thus
+\[
+    \sigma_p = 2 f_Z(|z|) \nu_{\text{nav}}.
+\]
+
 \paragraph{ANCOVA group effect.}
 Analysis of covariance (ANCOVA) evaluates group using a general linear model,
 \[
@@ -1469,10 +1488,11 @@ Analysis of covariance (ANCOVA) evaluates group using a general linear model,
 where $y$ is the vector of regional measurements across subjects and $X$
 contains an intercept, diagnostic group (PD vs.\ HC) and covariates (age and
 sex). The adjusted group difference corresponds to the 1-degree-of-freedom
-contrast $c^\top\beta$ with $c = [0,\, 1,\, 0,\, 0]^\top$. Let $\widehat{\beta}$
-be the ordinary least-squares estimator and $\widehat{\sigma}_{\mathrm{res}}^{2}
-    = SS_{\mathrm{res}}/df_2$ the residual mean square, where $df_2 = n -
-    \mathrm{rank}(X)$. The sum of squares associated with the group effect is
+contrast $c^\top\beta$ with $c = [0,\, 1,\, 0,\, 0]^\top$. Let
+$\widehat{\beta}$ be the ordinary least-squares estimator and
+$\widehat{\sigma}_{\mathrm{res}}^{2} = SS_{\mathrm{res}}/df_2$ the residual
+mean square, where $df_2 = n - \mathrm{rank}(X)$. The sum of squares associated
+with the group effect is
 \[
     SS_{\text{group}} =
     \frac{(c^\top \widehat{\beta})^2}{c^\top (X^\top X)^{-1} c}, \qquad df_1 = 1,
@@ -1484,15 +1504,18 @@ yielding the ANCOVA $F$-statistic
     \widehat{\sigma}_{\mathrm{res}}^{2}\; c^\top (X^\top X)^{-1}c}
     \sim F(df_1 = 1, df_2).
 \]
-Two-sided significance is evaluated using the central $F$-distribution under the null hypothesis,
+Two-sided significance is evaluated using the central $F$-distribution under
+the null hypothesis,
 \[
     p_{\sc{F}} = 1 - F_{\sc{F}}\!\left(F; df_1, df_2\right),
 \]
-where $F_{\sc{F}}$ is the cumulative distribution function of the $F$-distribution.
-This is equivalent to the classical two-sided $t$-test through $F = t^2$ when $df_1$=1 (cf~\cite{johnson1995continuous} p.403).
+where $F_{\sc{F}}$ is the cumulative distribution function of the
+$F$-distribution. This is equivalent to the classical two-sided $t$-test
+through $F = t^2$ when $df_1$=1 (cf~\cite{johnson1995continuous} p.403).
 
-Since $F=t^2$, the uncertainty in the $F$-statistic arising from numerical noise, $\sigma_F$,
-is related to the uncertainty in the $t$-statistic, $\sigma_t$, by
+Since $F=t^2$, the uncertainty in the $F$-statistic arising from numerical
+noise, $\sigma_F$, is related to the uncertainty in the $t$-statistic,
+$\sigma_t$, by
 \[
     \mathrm{Var}(F)
     = \mathrm{Var}(t^2) \approx (2t)^2 \mathrm{Var}(t)
@@ -1504,22 +1527,153 @@ so that
     \sigma_F = 2\sqrt{F} \nu_{\text{nav}}.
 \]
 
-For p-values derived from the $F$-statistic, we use the delta method
-(see~\ref{eq:delta_method}) to approximate the variance of $p$.
-Let $Z \sim F(df_1, df_2)$ be a random variable following the $F$-distribution with
-$df_1$ and $df_2$ degrees of freedom, $f_Z$ its probability density function, and
-$F_Z$ its cumulative distribution function. The p-value is a function
-of $Z$ defined as $p(z) = 1 - F_Z(z)$. Applying the delta method yields:
+For p-values derived from the $F$-statistic, we use the delta method to
+approximate the variance of $p$. Let $Z \sim F(df_1, df_2)$ be a random
+variable following the $F$-distribution with $df_1$ and $df_2$ degrees of
+freedom, $f_Z$ its probability density function, and $F_Z$ its cumulative
+distribution function. The p-value is a function of $Z$ defined as $p(z) = 1 -
+    F_Z(z)$. Applying the delta method yields:
 \begin{equation*}
     \begin{aligned}
-        \mathrm{Var}(p(z)) & = \mathrm{Var}(1 - F_Z(z))                     \\
-                           & \approx \left(-f_Z(z)\right)^2 \mathrm{Var}(z) \\
-                           & = 4 z (f_Z(z))^2 \nu_{\text{nav}}^2,
+        \mathrm{Var}(p(z)) & = \mathrm{Var}(1 - F_Z(z))                                            \\
+                           & \approx \left(-f_Z(z) \cdot \mathrm{sign}(z)\right)^2 \mathrm{Var}(z) \\
+                           & = {f_Z(z)}^2 4z\nu_{\text{nav}}^2,
     \end{aligned}
 \end{equation*}
 And thus
 \[
     \sigma_p = 2 \sqrt{z} f_Z(z) \nu_{\text{nav}}.
+\]
+\paragraph{Partial correlation under numerical noise.}
+Partial correlation measures the relationship between two variables while
+controlling for the influence of one or more additional variables. For
+instance, in our case we compute the partial correlation between regional brain
+measures and UPDRS-III scores, controlling for age and sex. Let three centered
+variables $X$, $Y$, and $Z$ have pairwise correlations
+\[
+    a = r_{XY}, \qquad b = r_{XZ}, \qquad c = r_{YZ}.
+\]
+The partial correlation between $X$ and $Y$ controlling for $Z$ is
+\[
+    R \;\equiv\; r_{XY\cdot Z} \;=\;
+    \frac{a - bc}{\sqrt{(1 - b^2)(1 - c^2)}}.
+\]
+
+We assume that only $X$ is affected by small, independent numerical
+perturbations:
+\[
+    X_i = x_i + \varepsilon_i, \qquad
+    \mathbb{E}[\varepsilon_i] = 0, \qquad
+    \Var(\varepsilon_i) = \sigma_{\mathrm{num}}^2.
+\]
+Variables $Y$ and $Z$ are treated as fixed. The characteristic anatomical scale
+of $X$ is denoted $\sigma_{\mathrm{anat}}$.
+
+\paragraph{Step 1: First-order differential of the partial correlation.}
+Applying the chain rule to $R(a,b,c)$ gives
+\[
+    \frac{\partial R}{\partial a} = \frac{1}{D}, \qquad
+    \frac{\partial R}{\partial b} = \frac{(1 - c^2)(ab - c)}{D^3}, \qquad
+    \frac{\partial R}{\partial c} = \frac{(1 - b^2)(ac - b)}{D^3},
+\]
+where $D = \sqrt{(1 - b^2)(1 - c^2)}$.
+
+Because $Y$ and $Z$ are not perturbed, the only random terms are $r_{XY}$ and
+$r_{XZ}$, both depending on $X$. Therefore
+\[
+    \frac{\partial R}{\partial X_i}
+    = \frac{\partial R}{\partial a}\frac{\partial a}{\partial X_i}
+    + \frac{\partial R}{\partial b}\frac{\partial b}{\partial X_i}.
+\]
+
+The first-order sensitivities of the pairwise correlations with respect to
+$X_i$ are (using the standard correlation influence function)
+\[
+    \frac{\partial a}{\partial X_i}
+    = \frac{1}{n\,\sigma_X}\,(v_i - a\,u_i), \qquad
+    \frac{\partial b}{\partial X_i}
+    = \frac{1}{n\,\sigma_X}\,(w_i - b\,u_i),
+\]
+where $u_i$, $v_i$, and $w_i$ are the standardized, centered values of $X$,
+$Y$, and $Z$ respectively.
+
+Assuming independent numerical perturbations $\varepsilon_i$ with variance
+$\sigma_{\mathrm{num}}^2$, the delta method gives
+\[
+    \Var(R)
+    = \sum_{i=1}^n \left(\frac{\partial R}{\partial X_i}\right)^2 \Var(\varepsilon_i)
+    = \frac{\sigma_{\mathrm{num}}^2}{n^2 \sigma_X^2}
+    \sum_{i=1}^n \left[
+        \frac{(v_i - a u_i)}{D}
+        + (w_i - b u_i)\frac{(1 - c^2)(ab - c)}{D^3}
+        \right]^2.
+\]
+
+Using the baseline identities $\sum (v_i - a u_i)^2 = n(1 - a^2)$, $\sum (w_i -
+    b u_i)^2 = n(1 - b^2)$, and $\sum (v_i - a u_i)(w_i - b u_i) = n(ab - c)$, we
+obtain, after simplification,
+\begin{equation}
+    \label{eq:var_R}
+    \Var(R)
+    \;\approx\;
+    \frac{\sigma_{\mathrm{num}}^2}{n\,\sigma_X^2}
+    \left[
+        \frac{1}{(1 - b^2)(1 - c^2)}
+        + \frac{(ab - c)^2}{(1 - b^2)^2(1 - c^2)}
+        \right].
+\end{equation}
+
+Using $(ab-c)^2 = (c-ab)^2 = r_{ZY,X}^2(1 - a^2)(1 - b^2)$, we can rewrite the
+term in brackets as
+\[
+    \frac{1}{(1 - b^2)(1 - c^2)}
+    + \frac{(ab - c)^2}{(1 - b^2)^2(1 - c^2)}
+    = \frac{1 + r_{ZY,X}^2(1 - a^2)}{(1 - b^2)(1 - c^2)}.
+\]
+
+So equation~\eqref{eq:var_R} becomes
+\[
+    \Var(R)
+    \;\approx\;
+    \frac{\sigma_{\mathrm{num}}^2}{n\,\sigma_X^2}
+    \left[
+        \frac{1 + r_{ZY,X}^2(1 - a^2)}{(1 - b^2)(1 - c^2)}
+        \right].
+\]
+
+Given that $a, b, c$ are unknown, we have a lower bound on the variance:
+\[
+    \Var(R)
+    \;\geq\;
+    \frac{\sigma_{\mathrm{num}}^2}{n\,\sigma_X^2}.
+\]
+since $0 \leq r_{ZY,X}^2(1 - a^2) \leq 1$.
+
+so the lower bound becomes
+\[
+    \Var(R)
+    \;\geq\;
+    \frac{\sigma_{\mathrm{num}}^2}{n\,\sigma_X^2}
+    (1 - R^2)^{3}.
+\]
+
+Replacing $\sigma_X$ by $\sigma_{\mathrm{anat}}$, we have the final result:
+\[
+    \operatorname{sd}(r_{XY\cdot Z})
+    \;\leq\;
+    \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{anat}}}
+    \sqrt{\frac{(1 - r_{XY\cdot Z}^2)}{n}}
+\]
+
+\paragraph{Remarks.}
+1. When $Z$ is uncorrelated with either $X$ or $Y$
+($r_{XZ}=r_{YZ}=0$), the expression simplifies to the
+bivariate result
+\[
+    \operatorname{sd}(r_{XY})
+    \;\approx\;
+    \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{anat}}}
+    \sqrt{\frac{(1 - r_{XY}^2)}{n}}.
 \]
 
 \section{Data Availability}
