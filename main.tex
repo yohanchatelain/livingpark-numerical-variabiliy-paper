@@ -1364,7 +1364,7 @@ $\varepsilon_i$:
     X_i = \mu_i + \varepsilon_i
 \]
 Our derivation proceeds from a specific framework designed to isolate the
-impact of numerical variability. The key assumptions are: (1) Null Hypothesis
+impact of numerical variability. The key assumptions~\label{eq:assumptions_stats} are: (1) Null Hypothesis
 Scenario: we analyze the computational uncertainty for a fixed sample of $N$
 subjects, partitioned into two balanced groups ($n_1 = n_2 = N/2$). We assume
 the null hypothesis is true for this sample, meaning the mean of the true
@@ -1380,8 +1380,13 @@ the numerical variability ($\sigma_{\text{anat}}^2 = \mathrm{Var}(\{\mu_i\})$)
 is small compared to the biological variability within the sample. This
 condition ($\sigma_{\text{num},i} \ll \sigma_{\text{anat}}$) allows the pooled
 standard deviation of the observed data, $s_p$, to be approximated by the
-standard deviation of the true biological values: $s_p \approx
-    \sigma_{\text{anat}}$.
+standard deviation of the true biological values: $s_p \approx \sigma_{\text{anat}}$.
+We use the following notation for the sample means, sample variances, and sample correlation for a sample size $n$:
+\[
+    \bar X=\tfrac1n\sum_i X_i,
+    s_X^2=\tfrac1{n-1}\sum_i (X_i-\bar X)^2,
+    s_{XY}=\tfrac1{n-1}\sum_i (X_i-\bar X)(X_i-\bar X).
+\]
 
 \paragraph{Cohen's $d$} is defined as the difference in sample means normalized by the pooled standard
 deviation:
@@ -1461,6 +1466,112 @@ of the t-statistic:
 \[
     \sigma_t = \nu_{\text{nav}}
 \]
+
+\section*{Conditional variance across repetitions for Cohen's $d$ (two-sample, pooled SD)}
+
+\paragraph{Setup.}
+Two independent groups $G_1$ and $G_2$ with sizes $n_1,n_2$ ($df=n_1+n_2-2$).
+Across subjects, the data $\{x_i\}$ vary; across Monte-Carlo repetitions $r$, only $X$ is perturbed:
+\[
+    X_i^{(r)}=x_i+e_i^{(r)},\qquad \mathbb E[e_i^{(r)}]=0,\ \ \operatorname{Var}(e_i^{(r)})=\sigma_{\mathrm{num}}^2.
+\]
+Group statistics (Bessel):
+\[
+    \bar X_g=\frac{1}{n_g}\sum_{i\in G_g}X_i,\qquad
+    s_g^2=\frac{1}{n_g-1}\sum_{i\in G_g}(X_i-\bar X_g)^2,\qquad g=1,2.
+\]
+Pooled SD $s_p=\sqrt{\frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{df}}$, mean difference $\Delta=\bar X_1-\bar X_2$,
+Cohen's $d=\Delta/s_p$.
+
+\paragraph{Target quantity (conditional variance).}
+\[
+    \boxed{\quad
+    \mathrm{Var}_{\mathrm{rep}}[d]\ :=\ \mathrm{Var}\!\left(d(X^{(r)})\ \big|\ \{x_i\}\right).
+    \quad}
+\]
+Delta method about the baseline $X_0=x$ gives
+\[
+    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \nabla_X d(X_0)^\top\,\Sigma_{XX}\,\nabla_X d(X_0),
+\]
+and for i.i.d.\ repetition noise $\Sigma_{XX}=\sigma_{\mathrm{num}}^2 I$,
+\[
+    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \sigma_{\mathrm{num}}^2\sum_{i=1}^n\left(\frac{\partial d}{\partial X_i}\right)^2.
+\]
+
+\paragraph{Derivatives.}
+For $i\in G_1$, $\partial\bar X_1/\partial X_i=1/n_1$, $\partial\bar X_2/\partial X_i=0$, hence $\partial\Delta/\partial X_i=1/n_1$.
+For $i\in G_2$, $\partial\Delta/\partial X_i=-1/n_2$.
+Within a group of size $m$,
+\(
+\frac{\partial s}{\partial X_i}=\frac{X_i-\bar X}{(m-1)s}.
+\)
+Therefore
+\[
+    \frac{\partial s_p}{\partial X_i}
+    =\begin{cases}
+        \dfrac{X_i-\bar X_1}{df\,s_p}, & i\in G_1, \\[6pt]
+        \dfrac{X_i-\bar X_2}{df\,s_p}, & i\in G_2.
+    \end{cases}
+\]
+Quotient rule for $d=\Delta/s_p$ yields
+\[
+    \boxed{
+        \frac{\partial d}{\partial X_i}
+        =\begin{cases}
+            \dfrac{1}{n_1 s_p}\ -\ \dfrac{\Delta}{df\,s_p^3}\,(X_i-\bar X_1),  & i\in G_1, \\[8pt]
+            -\dfrac{1}{n_2 s_p}\ -\ \dfrac{\Delta}{df\,s_p^3}\,(X_i-\bar X_2), & i\in G_2.
+        \end{cases}
+    }
+\]
+
+\paragraph{Summation of squares.}
+Use $\sum_{i\in G_g}(X_i-\bar X_g)=0$ and $\sum_{i\in G_g}(X_i-\bar X_g)^2=(n_g-1)s_g^2$.
+Then
+\[
+    \sum_{i\in G_1}\!\left(\frac{\partial d}{\partial X_i}\right)^2
+    = \frac{1}{n_1 s_p^2} + \frac{\Delta^2}{df^{2}s_p^{6}}\,(n_1-1)s_1^2,\qquad
+    \sum_{i\in G_2}\!\left(\frac{\partial d}{\partial X_i}\right)^2
+    = \frac{1}{n_2 s_p^2} + \frac{\Delta^2}{df^{2}s_p^{6}}\,(n_2-1)s_2^2.
+\]
+Since $(n_1-1)s_1^2+(n_2-1)s_2^2=df\cdot s_p^2$,
+\[
+    \sum_{i=1}^n\!\left(\frac{\partial d}{\partial X_i}\right)^2
+    =\frac{1}{s_p^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)
+    +\frac{\Delta^2}{df\,s_p^4}.
+\]
+Noting $d=\Delta/s_p$,
+\[
+    \boxed{\quad
+        \sum_{i=1}^n\!\left(\frac{\partial d}{\partial X_i}\right)^2
+        =\frac{1}{s_p^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}+\frac{d^2}{df}\right).
+        \quad}
+\]
+
+\paragraph{Main result (homoskedastic, independent repetition noise).}
+\[
+    \boxed{\quad
+    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \sigma_{\mathrm{num}}^2\ \frac{1}{s_p^2}\!
+    \left(\frac{1}{n_1}+\frac{1}{n_2}+\frac{d^2}{df}\right).
+    \quad}
+\]
+
+\paragraph{General repetition noise.}
+For arbitrary $\Sigma_{XX}$,
+\[
+    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \nabla_X d^\top\,\Sigma_{XX}\,\nabla_X d,
+\]
+with the elementwise $\partial d/\partial X_i$ given above. If $\Sigma_{XX}$ is diagonal with entries $\sigma_i^2$ (heteroskedastic),
+\(
+\mathrm{Var}_{\mathrm{rep}}[d]\approx \sum_{i=1}^n \sigma_i^2\left(\partial d/\partial X_i\right)^2.
+\)
+
+\paragraph{Remark (Hedges' $g$).}
+If $g=J(df)\,d$ is reported instead, then
+\(
+\mathrm{Var}_{\mathrm{rep}}[g]\approx J(df)^2\,\mathrm{Var}_{\mathrm{rep}}[d]
+\)
+since $J(df)$ does not depend on $X$.
+
 
 We can now apply this result to derive the uncertainty in p-values derived from
 the t-statistic. Let $Z \sim t(df)$ be a random variable following the
@@ -1544,32 +1655,46 @@ And thus
 \[
     \sigma_p = 2 \sqrt{z} f_Z(z) \nu_{\text{nav}}.
 \]
-\paragraph{Partial correlation under numerical noise.}
-Partial correlation measures the relationship between two variables while
-controlling for the influence of one or more additional variables. For
+\paragraph{Partial correlation}
+measures the relationship between two variables $(X,Y)$ while
+controlling for the influence of one or more additional variables $Z$. For
 instance, in our case we compute the partial correlation between regional brain
-measures and UPDRS-III scores, controlling for age and sex. Let three centered
-variables $X$, $Y$, and $Z$ have pairwise correlations
+measures and UPDRS-III scores, controlling for age and sex.
+Formula for the partial correlation is:
 \[
-    a = r_{XY}, \qquad b = r_{XZ}, \qquad c = r_{YZ}.
+    r_{XY\cdot Z}=\frac{r_{XY}-r_{XZ}r_{YZ}}{\sqrt{(1-r_{XZ}^2)(1-r_{YZ}^2)}}.
 \]
-The partial correlation between $X$ and $Y$ controlling for $Z$ is
+where
+$r_XY$ is the Pearson correlation coefficient between variables $U$ and $V$,
+defined as:
 \[
-    R \;\equiv\; r_{XY\cdot Z} \;=\;
-    \frac{a - bc}{\sqrt{(1 - b^2)(1 - c^2)}}.
+    r_{XY}=\frac{s_{XY}}{s_X s_Y}.
+\]
+
+The delta method provides a way to approximate the variance of a function of
+random variables. If we have a function $R(X)$ that depends on a vector of
+random variables $X$, and we know the variance-covariance matrix of $X$, we
+can approximate the variance of $R(X)$ using the first-order Taylor expansion
+around the mean of $X$. Let $\beta=\mathbb{E}[(X,Y,Z)]$ and $\operatorname{Var}(e) = \sigma_{num}^2I$ the numerical variability,
+the formula is given by:
+\begin{equation}
+    \label{eq:delta-core}
+    \operatorname{Var}_{num}[R(\beta)]\ \approx\ \nabla R(\beta)^\top \operatorname{Var}(e) \nabla_X R(\theta),
+\end{equation}
+where $\nabla R(\beta)$ is the gradient of $R$ evaluated at the mean $\beta$, and
+$\Sigma_R$ is the covariance matrix of the random variables in $X$.
+
+
+To apply the delta method, we first need to compute the first-order
+sensitivities of the partial correlation with respect to small perturbations in
+the data. Let $a = r_{XY}$, $b = r_{XZ}$ and $c = r_{YZ}$, so that
+\[
+    r_{XY\cdot Z} = R(a,b,c) = \frac{a - bc}{\sqrt{(1 - b^2)(1 - c^2)}}.
 \]
 
 We assume that only $X$ is affected by small, independent numerical
-perturbations:
-\[
-    X_i = x_i + \varepsilon_i, \qquad
-    \mathbb{E}[\varepsilon_i] = 0, \qquad
-    \Var(\varepsilon_i) = \sigma_{\mathrm{num}}^2.
-\]
-Variables $Y$ and $Z$ are treated as fixed. The characteristic anatomical scale
-of $X$ is denoted $\sigma_{\mathrm{anat}}$.
-
-\paragraph{Step 1: First-order differential of the partial correlation.}
+perturbations while variables $Y$ and $Z$ are treated as fixed.
+First, let compute the first-order differential of the partial correlation.
 Applying the chain rule to $R(a,b,c)$ gives
 \[
     \frac{\partial R}{\partial a} = \frac{1}{D}, \qquad
@@ -1675,6 +1800,390 @@ bivariate result
     \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{anat}}}
     \sqrt{\frac{(1 - r_{XY}^2)}{n}}.
 \]
+
+
+\section*{Delta-method variance of partial correlation with noise on $X$ only}
+
+\paragraph{Setup.}
+Let $(X,Y,Z)\in\mathbb R^n$ be sample vectors.
+Across runs we perturb $X$ only:
+\[
+    X = x + e,\qquad e\sim\mathcal N(0,\sigma_{\mathrm{num}}^2 I_n),\qquad Y,Z\text{ fixed.}
+\]
+Define (Bessel convention with divisor $n-1$)
+\[
+    \bar U=\tfrac1n\sum_i U_i,\quad
+    s_U^2=\tfrac1{n-1}\sum_i (U_i-\bar U)^2,\quad
+    s_{UV}=\tfrac1{n-1}\sum_i (U_i-\bar U)(V_i-\bar V),
+\]
+and sample correlations
+\[
+    r(U,V)=\frac{s_{UV}}{s_U s_V}.
+\]
+Set
+\[
+    a=r(X,Y),\quad b=r(X,Z),\quad c=r(Y,Z),\qquad
+    R=F(a,b,c)=\frac{a-bc}{\sqrt{(1-b^2)(1-c^2)}}.
+\]
+
+\paragraph{Delta method.}
+A first-order Taylor expansion around a baseline $X_0$ (e.g., noise-free $x$) gives
+\[
+    R(X)\approx R(X_0)+\nabla_X R(X_0)^\top (X-X_0)\,,
+\]
+hence, since $\operatorname{Var}(e)=\sigma_{\mathrm{num}}^2 I_n$,
+\begin{equation}
+    \label{eq:delta-core}
+    \operatorname{Var}_e[R]\ \approx\ \nabla_X R(X_0)^\top\,\operatorname{Var}(e)\,\nabla_X R(X_0)
+    =\sigma_{\mathrm{num}}^2\,\|\nabla_X R(X_0)\|^2.
+\end{equation}
+
+\paragraph{Chain rule for $R=F(a,b,c)$.}
+Because $c=r(Y,Z)$ does not depend on $X$,
+\[
+    \nabla_X R = F_a\,\nabla_X a + F_b\,\nabla_X b,
+\]
+where, with $N=a-bc$ and $D=\sqrt{(1-b^2)(1-c^2)}$,
+\begin{equation}
+    \label{eq:Fpartials}
+    F_a=\frac{1}{D},\qquad
+    F_b=-\frac{c}{D}+\frac{N\,b(1-c^2)}{D^{3}}.
+\end{equation}
+
+\paragraph{Exact gradients of sample Pearson correlation.}
+Using centered vectors $\tilde u=U-\bar U\mathbf 1$ and identities
+$\|\tilde U\|^2=(n-1)s_U^2$, $\tilde U^\top \tilde V=(n-1)s_U s_V\,r(U,V)$,
+a direct differentiation of $r(X,Y)=s_{XY}/(s_X s_Y)$ yields the exact vector gradient
+\begin{equation}
+    \label{eq:grad-r}
+    \nabla_X r(X,Y)=\frac{\tilde y}{(n-1)s_X s_Y}-\frac{a}{(n-1)s_X^2}\,\tilde x,
+    \qquad
+    \nabla_X r(X,Z)=\frac{\tilde z}{(n-1)s_X s_Z}-\frac{b}{(n-1)s_X^2}\,\tilde x.
+\end{equation}
+
+\paragraph{Norms and inner product.}
+From \eqref{eq:grad-r} and the centering identities,
+\begin{align}
+    \big\|\nabla_X r(X,Y)\big\|^2
+     & =\frac{1-a^2}{(n-1)\,s_X^2},
+     &
+    \big\|\nabla_X r(X,Z)\big\|^2
+     & =\frac{1-b^2}{(n-1)\,s_X^2},\label{eq:norms} \\
+    \left\langle \nabla_X r(X,Y),\,\nabla_X r(X,Z)\right\rangle
+     & =\frac{c-ab}{(n-1)\,s_X^2}. \label{eq:ip}
+\end{align}
+\emph{Derivation sketch:} write $\nabla_X r(X,Y)=\alpha\,\tilde y+\beta\,\tilde x$ with
+$\alpha=\frac{1}{(n-1)s_X s_Y}$ and $\beta=-\frac{a}{(n-1)s_X^2}$, then expand
+$\|\alpha\tilde y+\beta\tilde x\|^2$; similarly for the inner product with
+$\nabla_X r(X,Z)=\alpha'\tilde z+\beta'\tilde x$.
+
+\paragraph{Quadratic form for $\|\nabla_X R\|^2$.}
+Combining the chain rule with \eqref{eq:norms}--\eqref{eq:ip} gives
+\begin{equation}
+    \label{eq:quad}
+    \|\nabla_X R\|^2
+    =\frac{1}{(n-1)s_X^2}\Big[
+    F_a^{2}(1-a^2)+F_b^{2}(1-b^2)+2F_aF_b(c-ab)
+    \Big].
+\end{equation}
+
+\paragraph{Re-parameterization in terms of $R$.}
+Using $R=\dfrac{a-bc}{\sqrt{(1-b^2)(1-c^2)}}$, set
+\[
+    D=\sqrt{(1-b^2)(1-c^2)},\qquad a=bc+RD,\qquad
+    F_a=\frac1D,\qquad F_b=-\frac{c}{D}+\frac{Rb}{1-b^{2}}.
+\]
+A straightforward substitution into the bracket in \eqref{eq:quad} yields the identity
+\begin{equation}
+    \label{eq:collapse}
+    F_a^{2}(1-a^{2})+F_b^{2}(1-b^{2})+2F_aF_b(c-ab)
+    =\frac{1-R^{2}}{1-b^{2}}.
+\end{equation}
+
+\paragraph{Final variance formula.}
+Insert \eqref{eq:collapse} into \eqref{eq:quad}, then into \eqref{eq:delta-core}:
+\[
+    \boxed{\quad
+    \operatorname{Var}_e[R]\ \approx\ \frac{\sigma_{\mathrm{num}}^2}{(n-1)\,s_X^2}\,
+    \frac{1-R^2}{1-b^2},
+    \qquad b=r(X,Z).
+    \quad}
+\]
+
+\section*{Delta-method variance of a partial correlation when only $X$ is perturbed}
+
+Let $X,Y,Z\in\mathbb{R}^n$ be the sample vectors. Across Monte-Carlo runs,
+\[
+    X = x + e,\qquad e\sim\mathcal N(0,\sigma_{\mathrm{num}}^2 I_n),\qquad Y,Z\ \text{fixed.}
+\]
+With Bessel's convention,
+\[
+    \bar U=\tfrac1n\mathbf 1^\top U,\quad
+    s_U^2=\tfrac1{n-1}\sum_i (U_i-\bar U)^2,\quad
+    s_{UV}=\tfrac1{n-1}\sum_i (U_i-\bar U)(V_i-\bar V),
+\]
+and $r(U,V)=s_{UV}/(s_U s_V)$. Set $a=r(X,Y)$, $b=r(X,Z)$, $c=r(Y,Z)$, and
+\[
+    R=F(a,b,c)=\frac{a-bc}{\sqrt{(1-b^2)(1-c^2)}}.
+\]
+Let $H=I-\tfrac{1}{n}\mathbf 1\mathbf 1^\top$ so that $s_U^2=\tfrac{1}{n-1}U^\top H U$ and
+$s_{UV}=\tfrac{1}{n-1}U^\top H V$. Denote centered vectors by $\tilde u=HU$.
+
+\paragraph{Exact gradient of $r(X,Y)$ w.r.t.\ $X$.}
+We have
+\[
+    \nabla_X s_{XY}=\tfrac{1}{n-1}HY=\tfrac{1}{n-1}\tilde y,\qquad
+    \nabla_X s_X^2=\tfrac{2}{n-1}HX=\tfrac{2}{n-1}\tilde x,\qquad
+    \nabla_X s_X=\tfrac{1}{(n-1)s_X}\tilde x.
+\]
+Hence
+\[
+    \nabla_X r(X,Y)
+    =\frac{\nabla_X s_{XY}\, s_X s_Y - s_{XY}\, \nabla_X s_X\, s_Y}{s_X^2 s_Y^2}
+    =\frac{\tilde y}{(n-1)s_X s_Y}-\frac{a}{(n-1)s_X^2}\,\tilde x,
+\]
+and similarly
+\[
+    \nabla_X r(X,Z)=\frac{\tilde z}{(n-1)s_X s_Z}-\frac{b}{(n-1)s_X^2}\,\tilde x.
+\]
+
+\paragraph{Norms and inner product.}
+Using $\|\tilde u\|^2=(n-1)s_U^2$ and $\tilde u^\top \tilde v=(n-1)s_U s_V r(U,V)$,
+\begin{align*}
+    \big\|\nabla_X r(X,Y)\big\|^2                          & =\frac{1-a^2}{(n-1)\,s_X^2}, &
+    \big\|\nabla_X r(X,Z)\big\|^2                          & =\frac{1-b^2}{(n-1)\,s_X^2},       \\
+    \big\langle \nabla_X r(X,Y),\nabla_X r(X,Z)\big\rangle & =\frac{c-ab}{(n-1)\,s_X^2}.  &   &
+\end{align*}
+
+\paragraph{Chain rule for $R=F(a,b,c)$.}
+Let $N=a-bc$ and $D=\sqrt{(1-b^2)(1-c^2)}$. Then
+\[
+    F_a=\frac{\partial R}{\partial a}=\frac{1}{D},\qquad
+    F_b=\frac{\partial R}{\partial b}=-\frac{c}{D}+\frac{N\,b(1-c^2)}{D^{3}}.
+\]
+Since $c$ is constant w.r.t.\ $X$,
+\[
+    \nabla_X R=F_a\,\nabla_X a + F_b\,\nabla_X b,
+\]
+and thus
+\[
+    \|\nabla_X R\|^2
+    =\frac{1}{(n-1)s_X^2}\Big[F_a^2(1-a^2)+F_b^2(1-b^2)+2F_aF_b(c-ab)\Big].
+\]
+
+\paragraph{Algebraic simplification in terms of $R$ and $b$.}
+Because $R=(a-bc)/D$, we can reparameterize $a=bc+RD$ with
+\[
+    F_a=\frac{1}{D},\qquad F_b=-\frac{c}{D}+\frac{Rb}{1-b^2},\qquad D^2=(1-b^2)(1-c^2).
+\]
+Define $S:=F_a^2(1-a^2)+F_b^2(1-b^2)+2F_aF_b(c-ab)$. Expanding term by term:
+\[
+    \begin{aligned}
+        T_1 & :=F_a^2(1-a^2)=\frac{1 - (bc+RD)^2}{D^2}
+        =\frac{1}{1-c^2}+\frac{b^2}{1-b^2}-\frac{2bcR}{D}-R^2,                                         \\[4pt]
+        T_2 & :=F_b^2(1-b^2)=\frac{c^2}{1-c^2}-\frac{2bcR}{D}+\frac{R^2 b^2}{1-b^2},                   \\[4pt]
+        T_3 & :=2F_aF_b(c-ab)=2\!\left[-\frac{c^2}{1-c^2}+\frac{2bcR}{D}-\frac{R^2 b^2}{1-b^2}\right].
+    \end{aligned}
+\]
+Summing $S=T_1+T_2+T_3$ and grouping like terms gives
+\[
+    S=\big( \tfrac{1}{1-c^2}+\tfrac{c^2}{1-c^2}-2\tfrac{c^2}{1-c^2}\big)
+    +\big(-\tfrac{2bcR}{D}-\tfrac{2bcR}{D}+ \tfrac{4bcR}{D}\big)
+    +\big(\tfrac{b^2}{1-b^2}+\tfrac{R^2 b^2}{1-b^2}-2\tfrac{R^2 b^2}{1-b^2}\big)
+    -R^2
+    =1 - R^2 + \frac{b^2(1-R^2)}{1-b^2}.
+\]
+Therefore
+\[
+    \boxed{\quad S=\frac{1-R^2}{1-b^2}. \quad}
+\]
+
+\paragraph{Delta method.}
+A first-order Taylor expansion and $\operatorname{Var}(e)=\sigma_{\mathrm{num}}^2 I_n$ yield
+\[
+    \operatorname{Var}_e[R]\ \approx\ \sigma_{\mathrm{num}}^2\,\|\nabla_X R\|^2
+    =\frac{\sigma_{\mathrm{num}}^2}{(n-1)\,s_X^2}\,S
+    =\boxed{\ \frac{\sigma_{\mathrm{num}}^2}{(n-1)\,s_X^2}\,\frac{1-R^2}{1-b^2}\ }.
+\]
+All quantities are evaluated at a baseline (e.g., the noise-free data or a run average). Assumptions: sample Pearson with divisor $(n-1)$; first-order delta method; $|b|<1$, $|c|<1$, $|R|<1$; and $e\perp (Y,Z)$ i.i.d.\ across samples.
+
+\section*{Variance across repetitions of a partial correlation (conditional-variance proof)}
+
+\paragraph{Setup.}
+We observe $n$ subjects $(x_i,y_i,z_i)_{i=1}^n$, fixed throughout this proof. Across Monte-Carlo repetitions $r=1,\dots,R$, only $X$ is perturbed:
+\[
+    X_i^{(r)}=x_i+e_i^{(r)},\qquad e^{(r)}\sim (\mathbf 0,\Sigma_{XX}),\qquad
+    Y_i^{(r)}=y_i,\quad Z_i^{(r)}=z_i.
+\]
+Let $\bar U=\frac1n\sum_i U_i$ and define (Bessel) sample statistics
+\[
+    s_U^2=\frac{1}{n-1}\sum_{i=1}^n (U_i-\bar U)^2,\qquad
+    s_{UV}=\frac{1}{n-1}\sum_{i=1}^n (U_i-\bar U)(V_i-\bar V),\qquad
+    r(U,V)=\frac{s_{UV}}{s_U s_V}.
+\]
+Set the three sample correlations
+\[
+    a=r(X,Y),\qquad b=r(X,Z),\qquad c=r(Y,Z),
+\]
+and define the sample partial correlation
+\[
+    R=F(a,b,c)=\frac{a-bc}{\sqrt{(1-b^2)(1-c^2)}}.
+\]
+
+\paragraph{Quantity of interest (conditional variance).}
+We define the \emph{variance across repetitions} as the conditional variance
+\[
+    \boxed{\quad
+    \mathrm{Var}_{\mathrm{rep}}[R]
+    :=\mathrm{Var}\!\left(R(X^{(r)},Y,Z)\,\middle|\,\{(x_i,y_i,z_i)\}_{i=1}^n\right).
+    \quad}
+\]
+Intuitively, this isolates \emph{numerical} variability (from $e$) holding the cohort fixed.
+
+\paragraph{Delta-method linearization.}
+Let $X_0=x$ denote the baseline (noise-free) data vector and write a first-order Taylor expansion:
+\[
+    R(X)\approx R(X_0) + \nabla_X R(X_0)^\top (X-X_0).
+\]
+Conditioning on the dataset, the only randomness is $e=X-X_0$, hence
+\[
+    \boxed{\quad
+    \mathrm{Var}_{\mathrm{rep}}[R]
+    \;\approx\;
+    \nabla_X R(X_0)^\top\,\Sigma_{XX}\,\nabla_X R(X_0).
+    \quad}
+\]
+When $\Sigma_{XX}=\sigma_{\mathrm{num}}^2 I_n$ (homoskedastic independent noise),
+$\mathrm{Var}_{\mathrm{rep}}[R]\approx \sigma_{\mathrm{num}}^2\|\nabla_X R\|^2$.
+
+\paragraph{Outer derivatives of $R$ with respect to $(a,b,c)$.}
+Write $N=a-bc$, $D=\sqrt{(1-b^2)(1-c^2)}$. Then
+\begin{equation}
+    \label{eq:outer}
+    R_a=\frac{1}{D},\qquad
+    R_b=-\frac{c}{D}+\frac{N\,b(1-c^2)}{D^3},\qquad
+    R_c=-\frac{b}{D}+\frac{N\,c(1-b^2)}{D^3}.
+\end{equation}
+
+\paragraph{Exact gradients of sample correlations.}
+Let $\tilde u=U-\bar U\mathbf 1$ be centered vectors. Using
+$\|\tilde U\|^2=(n-1)s_U^2$, $\tilde U^\top \tilde V=(n-1)s_U s_V\,r(U,V)$,
+a direct differentiation of $r(U,V)$ yields
+\begin{align}
+    \nabla_U r(U,V) & =\frac{V-\bar V}{(n-1)s_U s_V} - \frac{r(U,V)}{(n-1)s_U^2}(U-\bar U),\label{eq:gradU} \\
+    \nabla_V r(U,V) & =\frac{U-\bar U}{(n-1)s_U s_V} - \frac{r(U,V)}{(n-1)s_V^2}(V-\bar V).\label{eq:gradV}
+\end{align}
+Applying \eqref{eq:gradU}--\eqref{eq:gradV} to $a=r(X,Y)$, $b=r(X,Z)$, $c=r(Y,Z)$ gives
+\begin{align*}
+    \nabla_X a & =\frac{\tilde y}{(n-1)s_X s_Y}-\frac{a}{(n-1)s_X^2}\tilde x, &
+    \nabla_Y a & =\frac{\tilde x}{(n-1)s_X s_Y}-\frac{a}{(n-1)s_Y^2}\tilde y, &
+    \nabla_Z a & =0,                                                            \\
+    \nabla_X b & =\frac{\tilde z}{(n-1)s_X s_Z}-\frac{b}{(n-1)s_X^2}\tilde x, &
+    \nabla_Z b & =\frac{\tilde x}{(n-1)s_X s_Z}-\frac{b}{(n-1)s_Z^2}\tilde z, &
+    \nabla_Y b & =0,                                                            \\
+    \nabla_Y c & =\frac{\tilde z}{(n-1)s_Y s_Z}-\frac{c}{(n-1)s_Y^2}\tilde y, &
+    \nabla_Z c & =\frac{\tilde y}{(n-1)s_Y s_Z}-\frac{c}{(n-1)s_Z^2}\tilde z, &
+    \nabla_X c & =0.
+\end{align*}
+
+\paragraph{Chain rule w.r.t.\ $X$.}
+Since $c=r(Y,Z)$ does not depend on $X$,
+\[
+    \nabla_X R = R_a\,\nabla_X a + R_b\,\nabla_X b.
+\]
+Hence, by the polarization identity,
+\begin{equation}
+    \label{eq:normRX}
+    \|\nabla_X R\|^2
+    =R_a^2\|\nabla_X a\|^2+R_b^2\|\nabla_X b\|^2+2R_aR_b\langle \nabla_X a,\nabla_X b\rangle.
+\end{equation}
+
+\paragraph{Three inner identities (norms and inner product).}
+With $a=r(X,Y)$, $b=r(X,Z)$, $c=r(Y,Z)$,
+\begin{align}
+    \|\nabla_X r(X,Y)\|^2                            & = \frac{1-a^2}{(n-1)s_X^2},\label{eq:normY} \\
+    \|\nabla_X r(X,Z)\|^2                            & = \frac{1-b^2}{(n-1)s_X^2},\label{eq:normZ} \\
+    \langle \nabla_X r(X,Y),\,\nabla_X r(X,Z)\rangle & = \frac{c-ab}{(n-1)s_X^2}.\label{eq:ipYZ}
+\end{align}
+\emph{Proof of \eqref{eq:normY}:}
+write $\nabla_X r(X,Y)=\alpha\tilde y+\beta\tilde x$ with
+$\alpha=\frac{1}{(n-1)s_X s_Y}$ and $\beta=-\frac{a}{(n-1)s_X^2}$; then expand
+$\|\alpha\tilde y+\beta\tilde x\|^2$ and replace inner products by the centered identities.
+The other two follow analogously.
+
+\paragraph{Quadratic form.}
+Insert \eqref{eq:normY}--\eqref{eq:ipYZ} into \eqref{eq:normRX}:
+\begin{equation}
+    \label{eq:quad}
+    \|\nabla_X R\|^2
+    =\frac{1}{(n-1)s_X^2}\Big[
+        R_a^2(1-a^2)+R_b^2(1-b^2)+2R_aR_b(c-ab)
+        \Big].
+\end{equation}
+
+\paragraph{Algebraic collapse to a function of $R$ and $b$.}
+Using $R=\frac{a-bc}{D}$, write $a=bc+RD$ and substitute into
+\eqref{eq:outer} and \eqref{eq:quad} (with $D^2=(1-b^2)(1-c^2)$). A direct expansion shows
+\[
+    R_a^2(1-a^2)+R_b^2(1-b^2)+2R_aR_b(c-ab)=\frac{1-R^2}{1-b^2}.
+\]
+(Each term is expanded, grouped, and cancellations occur; see the algebra in the Appendix below.)
+Therefore,
+\begin{equation}
+    \label{eq:rxnorm-final}
+    \boxed{\quad
+        \|\nabla_X R\|^2=\frac{1}{(n-1)s_X^2}\cdot \frac{1-R^2}{1-b^2}.
+        \quad}
+\end{equation}
+
+\paragraph{Main result (homoskedastic independent repetition noise).}
+If $\Sigma_{XX}=\sigma_{\mathrm{num}}^2 I_n$,
+\[
+    \boxed{\quad
+    \mathrm{Var}_{\mathrm{rep}}[R]
+    \;\approx\;
+    \nabla_X R^\top \Sigma_{XX}\nabla_X R
+    =\sigma_{\mathrm{num}}^2\|\nabla_X R\|^2
+    =\frac{\sigma_{\mathrm{num}}^2}{(n-1)s_X^2}\cdot\frac{1-R^2}{1-b^2},
+    \quad b=r(X,Z).
+    \quad}
+\]
+
+\paragraph{General repetition noise.}
+For arbitrary covariance $\Sigma_{XX}$ of the injected noise $e$,
+\[
+    \boxed{\quad
+    \mathrm{Var}_{\mathrm{rep}}[R]\ \approx\ \nabla_X R^\top\,\Sigma_{XX}\,\nabla_X R,
+    \quad\text{with }\ \nabla_X R=R_a\nabla_X a+R_b\nabla_X b\ \text{as above}.
+    \quad}
+\]
+If $\Sigma_{XX}=\mathrm{diag}(\sigma_1^2,\dots,\sigma_n^2)$ (heteroskedastic i.i.d.),
+\[
+    \mathrm{Var}_{\mathrm{rep}}[R]\approx \sum_{i=1}^n \sigma_i^2\left(\frac{\partial R}{\partial X_i}\right)^2.
+\]
+
+\paragraph{Appendix: algebraic collapse detail.}
+Let $a=bc+RD$, $D^2=(1-b^2)(1-c^2)$, $R_a=\frac{1}{D}$, $R_b=-\frac{c}{D}+\frac{Rb}{1-b^2}$.
+Define
+\[
+    S:=R_a^2(1-a^2)+R_b^2(1-b^2)+2R_aR_b(c-ab).
+\]
+Compute
+\[
+    \begin{aligned}
+        T_1 & :=R_a^2(1-a^2)=\frac{1-(bc+RD)^2}{D^2}
+        =\frac{1}{1-c^2}+\frac{b^2}{1-b^2}-\frac{2bcR}{D}-R^2,                                        \\
+        T_2 & :=R_b^2(1-b^2)=\frac{c^2}{1-c^2}-\frac{2bcR}{D}+\frac{R^2b^2}{1-b^2},                   \\
+        T_3 & :=2R_aR_b(c-ab)=2\!\left[-\frac{c^2}{1-c^2}+\frac{2bcR}{D}-\frac{R^2b^2}{1-b^2}\right].
+    \end{aligned}
+\]
+Summing $S=T_1+T_2+T_3$:
+the $\frac{1}{1-c^2}$-terms reduce to $1$,
+the $\frac{bcR}{D}$-terms cancel,
+and the $\frac{1}{1-b^2}$-terms give $\frac{b^2(1-R^2)}{1-b^2}$, with the remaining $-R^2$.
+Thus $S=1-R^2+\frac{b^2(1-R^2)}{1-b^2}=(1-R^2)/(1-b^2)$.
+This proves \eqref{eq:rxnorm-final}.
+
 
 \section{Data Availability}
 The data that support the findings of this study are available from the
