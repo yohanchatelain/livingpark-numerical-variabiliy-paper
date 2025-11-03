@@ -1320,31 +1320,36 @@ where $\sigma_{\text{num}}$ represents numerical variability (measurement
 precision across MCA repetitions for individual subjects) and
 $\sigma_{\text{anat}}$ represents anatomical variability (inter-subject
 differences within each repetition).
-
-For each region of interest, measurements from $n$ MCA repetitions across $m$
-subject-visit pairs form a data matrix $\mathcal{M}_{n \times m}$, where
-element $x_{i,j}$ represents the measurement for subject $j$ in MCA repetition
-$i$.
+For each region of interest, measurements from $k$ MCA repetitions across $n$
+subject-visit pairs form a data matrix $\mathcal{M}_{k \times n}$, where
+element ${x_{i}}^{(r)}$ represents the measurement for subject $i$ in MCA repetition
+$r$.
 
 Numerical variability quantifies intra-subject measurement consistency:
 \begin{equation}
-    \sigma^2_{\text{num}} = \frac{1}{m} \sum_{j=1}^{m} \left[ \frac{1}{n-1} \sum_{i=1}^{n} (x_{i,j} - \bar{x}_{\cdot,j})^2 \right]
+    \sigma^2_{\text{num}} = 
+    \frac{1}{k} \sum_{r=1}^{k} \left[ 
+        \frac{1}{n-1} \sum_{i=1}^{n} {(x_i^{(r)} - \bar{x}_i)}^2 
+        \right]
     \label{eq:sigma_num}
 \end{equation}
 
 Anatomical variability captures inter-subject differences:
 \begin{equation}
-    \sigma^2_{\text{anat}} = \frac{1}{n} \sum_{i=1}^{n} \left[ \frac{1}{m-1} \sum_{j=1}^{m} (x_{i,j} - \bar{x}_{i,\cdot})^2 \right]
+    \sigma^2_{\text{anat}} = 
+    \frac{1}{n} \sum_{i=1}^{n} \left[ 
+        \frac{1}{k-1} \sum_{r=1}^{k} {(x_i^{(r)} - {\bar{x}}^{(r)})}^2 
+        \right]
     \label{eq:sigma_anat}
 \end{equation}
 
-where $\bar{x}_{\cdot,j}$ and $\bar{x}_{i,\cdot}$ denote column and row means,
+where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means,
 respectively. Higher \navr values indicate regions where computational
 uncertainty approaches or exceeds biological variation, potentially
 compromising the detection of true anatomical differences.\TG{didn't you pool
     sigma anat across PD and HC?}
 
-\subsubsection{Relationship between \navr~and Effect Size Uncertainty}
+\subsubsection{Relationship between \navr~and downstream statistical tests uncertainty}
 
 \TG[done]{The remainder of this paragraph is quite informal, could you tidy up the
     equations to start from the definition of Cohen's d and clearly derive its
@@ -1353,92 +1358,121 @@ compromising the detection of true anatomical differences.\TG{didn't you pool
 To establish a direct mathematical link between a method's computational
 reproducibility and the reliability of group-level statistical inferences, we
 derived an analytical expression that connects numerical variability to the
-uncertainty of the estimated effect size Cohen's $d$. The goal is to quantify
-how numerical noise propagates to create uncertainty in the calculated $d$
-value, which we denote by its standard deviation, $\sigma_d$.
+uncertainty of the statistical tests. The goal is to quantify
+how numerical noise propagates to create uncertainty in the calculated statistics.
 
-We model an observed measurement $X_i$ for a subject $i$ as the sum of their
-true, underlying biological value $\mu_i$ and a numerical error term
-$\varepsilon_i$:
+For a MCA repetition $r$, we model an observed measurement $X_i^{(r)}$ for a subject $i$ as the sum of their
+true, underlying biological value $x_i$ and a numerical error term
+$\varepsilon_i^{(r)}$:
 \[
-    X_i = \mu_i + \varepsilon_i
+    X_i^{(r)}=x_i + \varepsilon_i^{(r)}, \qquad
+    \mathbb E[\varepsilon_i^{(r)}]= 0, \qquad
+    \operatorname{Var}(\varepsilon_i^{(r)})=\sigma_{\mathrm{num},i}^2
 \]
-Our derivation proceeds from a specific framework designed to isolate the
-impact of numerical variability. The key assumptions~\label{eq:assumptions_stats} are: (1) Null Hypothesis
-Scenario: we analyze the computational uncertainty for a fixed sample of $N$
-subjects, partitioned into two balanced groups ($n_1 = n_2 = N/2$). We assume
-the null hypothesis is true for this sample, meaning the mean of the true
-biological values is identical between the groups ($\bar{\mu}_1 =
-    \bar{\mu}_2$). In this context, the true values $\{\mu_i\}$ are treated as
-constants, and the only source of randomness is the numerical error, which
-models the variability across repeated computations on the same data. (2)
-Numerical Error Model: the numerical error for each subject is modeled as an
-independent, zero-mean Gaussian random variable $\varepsilon_i \sim
-    \mathcal{N}(0, \sigma_{\text{num},i}^2)$, with $\bar\varepsilon \sim
-    \mathcal{N}(0, \sigma_{\text{num}}^2/n)$. (3) Anatomical variability: we assume
-the numerical variability ($\sigma_{\text{anat}}^2 = \mathrm{Var}(\{\mu_i\})$)
-is small compared to the biological variability within the sample. This
-condition ($\sigma_{\text{num},i} \ll \sigma_{\text{anat}}$) allows the pooled
-standard deviation of the observed data, $s_p$, to be approximated by the
-standard deviation of the true biological values: $s_p \approx \sigma_{\text{anat}}$.
-We use the following notation for the sample means, sample variances, and sample correlation for a sample size $n$:
-\[
-    \bar X=\tfrac1n\sum_i X_i,
-    s_X^2=\tfrac1{n-1}\sum_i (X_i-\bar X)^2,
-    s_{XY}=\tfrac1{n-1}\sum_i (X_i-\bar X)(X_i-\bar X).
-\]
+
+Our derivation is designed to isolate the impact of numerical variability. The
+key assumptions~\label{eq:assumptions_stats} are: (1) Null Hypothesis Scenario:
+we analyze the computational uncertainty for a fixed sample of $N$ subjects. We
+assume the null hypothesis is true for this sample, meaning the mean of the true
+biological values is identical between the groups ($\bar{\mu}_1 = \bar{\mu}_2$).
+In this context, the true values $\{\mu_i\}$ are treated as constants, and the
+only source of randomness is the numerical error, which models the variability
+across repeated computations on the same data. (2) Numerical Error Model: the
+numerical error for each subject is modeled as an independent, zero-mean
+Gaussian random variable $\varepsilon_i^{(r)} \sim \mathcal{N}(0,
+\sigma_{\text{num},i}^2)$, with $\bar\varepsilon \sim \mathcal{N}(0,
+\sigma_{\text{num}}^2/n)$. (3) Anatomical variability: we assume the numerical
+variability ($\sigma_{\text{anat}}^2 = \mathrm{Var}(\{\mu_i\})$) is small
+compared to the biological variability within the sample. This condition
+($\sigma_{\text{num},i} \ll \sigma_{\text{anat}}$) allows the pooled standard
+deviation of the observed data, $s_p$, to be approximated by the standard
+deviation of the true biological values: $s_p \approx \sigma_{\text{anat}}$.
 
 \paragraph{Cohen's $d$} is defined as the difference in sample means normalized by the pooled standard
-deviation:
+deviation. For two independent groups $G_1$ and $G_2$ with sizes $n_1,n_2$ ($df=n_1+n_2-2$):
 \[
-    d = \frac{\bar{X}_1 - \bar{X}_2}{s_p}
-\]
-Based on assumption (3), we can approximate $d$ as:
-\[
-    d \approx \frac{\bar{X}_1 - \bar{X}_2}{\sigma_{\text{anat}}}
-\]
-The uncertainty in $d$ arising from numerical noise, $\sigma_d$, is the
-standard deviation of this quantity. Its variance, $\sigma_d^2$, is therefore:
-\[
-    \sigma_d^2 = \mathrm{Var}(d) \approx \mathrm{Var}\left(\frac{\bar{X}_1 -
-        \bar{X}_2}{\sigma_{\text{anat}}}\right) = \frac{1}{\sigma_{\text{anat}}^2}
-    \mathrm{Var}(\bar{X}_1 - \bar{X}_2)
-\]
-The difference in observed sample means is $\bar{X}_1 - \bar{X}_2 =
-    (\bar{\mu}_1 + \bar{\varepsilon}_1) - (\bar{\mu}_2 + \bar{\varepsilon}_2)$.
-Since the true values $\{\mu_i\}$ are constant for our fixed sample and we have
-assumed $\bar{\mu}_1 = \bar{\mu}_2$, the variance of this difference depends
-only on the variance of the mean numerical errors:
-\[
-    \mathrm{Var}(\bar{X}_1 - \bar{X}_2) = \mathrm{Var}(\bar{\varepsilon}_1 -
-    \bar{\varepsilon}_2)
-\]
-As the numerical errors $\varepsilon_i$ are independent, the variance of the
-difference between the mean errors is the sum of their respective variances:
-\[
-    \mathrm{Var}(\bar{\varepsilon}_1 - \bar{\varepsilon}_2) =
-    \mathrm{Var}(\bar{\varepsilon}_1) + \mathrm{Var}(\bar{\varepsilon}_2) =
-    \frac{\sigma_{\text{num}}^2}{n/2} + \frac{\sigma_{\text{num}}^2}{n/2} =
-    \frac{4}{n}\sigma_{\text{num}}^2
-\]
-Substituting this result back into the expression for $\sigma_d^2$, we find:
-\begin{equation*}
-    \begin{split}
-        \sigma_d^2 & \approx \frac{1}{\sigma_{\text{anat}}^2}
-        \left(\frac{4}{n}\sigma_{\text{num}}^2\right) = \frac{4}{n}
-        \left(\frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}\right)^2 \\
-        \sigma_d^2 & \approx \frac{4}{n} \nu_{\text{nav}}^2
-    \end{split}
-\end{equation*}
-Taking the square root yields
-the final relationship for the standard deviation of the effect size:
-\[
-    \sigma_d = \frac{2}{\sqrt{n}} \nu_{\text{nav}}
+    d = \frac{\Delta}{s_p} = \frac{\bar{X}_1 - \bar{X}_2}{s_p}, \qquad s_p = \sqrt{\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{df}}
 \]
 
-This provides a direct, quantitative link between the numerical variability
-(captured by $\nu_{\text{nav}}$) and the the uncertainty of the effect size,
-$\sigma_d$.
+To quantify the uncertainty in Cohen's $d$ arising from numerical variability, we
+focus on the variance of $d$ across MCA repetitions, conditional on the fixed
+sample $\{x_i\}$. This target quantity is expressed as:
+\[
+    \mathrm{Var}_{\mathrm{rep}}[d]\ :=\ \mathrm{Var}\!\left(d\ \big|\ \{x_i\}\right).    
+\]
+
+To do so, we apply the delta method to approximate the variance of $d$ around the asymptotic mean value $X_0 = \mathbb{E}[X]$:
+\[
+    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \nabla_X d(X_0)^\top\,\Sigma_{XX}\,\nabla_X d(X_0),
+\]
+and for i.i.d.\ repetition noise $\Sigma_{XX}=\sigma_{\mathrm{num}}^2 I$,
+\[
+    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \sigma_{\mathrm{num}}^2\sum_{i=1}^n\left(\frac{\partial d}{\partial X_i}\right)^2.
+\]
+The partial derivatives $\partial d/\partial X_i$ is given by the chain rule:
+\[
+    \frac{\partial d}{\partial X_i} = \frac{1}{s_p} \frac{\partial \Delta}{\partial X_i} - \frac{\Delta}{s_p^2} \frac{\partial s_p}{\partial X_i}.
+\]
+with ${\partial \overline{X_g}}/{\partial X_i} = 1/n_g$, $g\in\{1,2\}$ and 
+${\partial s_p}/{\partial X_i}$ with $i \in G_g$ computed as follows:
+\begin{align*}
+    \frac{\partial s_p}{\partial X_i} &= \frac{\partial}{\partial X_i} {\left[\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{df}\right]}^{\frac{1}{2}} \\
+    & = \frac{1}{df}\frac{1}{2 s_p}  \frac{\partial}{\partial X_i} \left[(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2\right] \\
+    & = \frac{1}{df}\frac{1}{2 s_p}2(X_i - \bar{X}_g) \\
+    \frac{\partial s_p}{\partial X_i} & = \frac{X_i - \bar{X}_g}{df s_p}
+\end{align*}
+Substituting back into the expression for $\partial d/\partial X_i$, we have:
+\begin{align*}
+    \frac{\partial d}{\partial X_i} &= \pm\frac{1}{n_g s_p} - \frac{\Delta}{s_p^2}\frac{X_i - \bar{X}_g}{df s_p} \\
+    & = \pm\frac{1}{n_g s_p} - \frac{\Delta}{df s_p^3}(X_i - \bar{X}_g) \\
+    \left(\frac{\partial d}{\partial X_i}\right)^2 & = \frac{1}{n_g^2 s_p^2} \pm \frac{2\Delta}{n_g df s_p^4}(X_i - \bar{X}_g) + \frac{\Delta^2}{df^2 s_p^6}(X_i - \bar{X}_g)^2 
+\end{align*}
+and summing over all $i$ in group $G_g$:
+\begin{align*}
+    \sum_{i\in G_g}\left(\frac{\partial d}{\partial X_i}\right)^2 & =
+    \frac{1}{n_g s_p^2} \pm \frac{2\Delta}{n_g df s_p^4}\sum_{i\in G_g}(X_i - \bar{X}_g) + \frac{\Delta^2}{df^2 s_p^6}\sum_{i\in G_g}(X_i - \bar{X}_g)^2 \\
+    & = \frac{1}{n_g s_p^2} + \frac{\Delta^2}{df^2 s_p^6}\left((n_g - 1)s_g^2 \right) 
+\end{align*}
+since $\sum_{i\in G_g}(X_i - \bar{X}_g) = 0$, so finally summing over both groups:
+\begin{align*}
+    \sum_{i = 1}^{n}\left(\frac{\partial d}{\partial X_i}\right)^2 & = 
+    \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2}\right) + \frac{\Delta^2}{df^2 s_p^6}\left((n_1 - 1)s_1^2 + (n_2 - 1)s_2^2 \right) \\
+    & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2}\right) + \frac{\Delta^2}{df s_p^4} \\
+    & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2}\right) + \frac{d^2}{df s_p^2} \\
+    & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2} + \frac{d^2}{df} \right).
+\end{align*}
+Finally, substituting this result back into the expression for $\mathrm{Var}_{\mathrm{rep}}[d]$, we obtain:
+\[    
+\mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \sigma_{\mathrm{num}}^2
+    \frac{1}{s_p^2}\left(\frac{1}{n_1^2} + \frac{1}{n_2^2} + \frac{d^2}{df} \right)
+\]
+following assumption (3) that $s_p \approx \sigma_{\text{anat}}$, we have:
+\[    
+\mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ 
+    \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\text{anat}}^2}\left(\frac{1}{n_1} + \frac{1}{n_2} + \frac{d^2}{df} \right)
+\]
+when $n_1 = n_2 = n/2$, $n$ large, we can neglect the $d^2/df$ term, yielding:
+\[    
+\mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ 
+    \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\text{anat}}^2}\left(\frac{4}{n}\right)
+\]
+Taking the square root gives the standard deviation of $d$ due to numerical variability:
+\[    
+\sigma_d = \sqrt{\mathrm{Var}_{\mathrm{rep}}[d]}\ \approx\ 
+    \frac{2}{\sqrt{n}} \frac{\sigma_{\mathrm{num}}}{\sigma_{\text{anat}}}
+\]
+Recalling the definition of \navr:
+\[
+    \nu_{\text{nav}} = \frac{\sigma_{\text{num}}}{\sigma_{\text{anat}}}
+\]
+we arrive at the final relationship:
+\[    
+\sigma_d \approx \frac{2}{\sqrt{n}} \nu_{\text{nav}}
+\]
+This expression quantitatively links the numerical variability captured by
+\navr~to the uncertainty in Cohen's $d$ effect size, providing a practical tool
+for assessing the reliability of statistical inferences in the presence of
+computational noise.
 
 \paragraph{The two-sample t-test statistic} is defined as:
 \[
@@ -1467,110 +1501,6 @@ of the t-statistic:
     \sigma_t = \nu_{\text{nav}}
 \]
 
-\section*{Conditional variance across repetitions for Cohen's $d$ (two-sample, pooled SD)}
-
-\paragraph{Setup.}
-Two independent groups $G_1$ and $G_2$ with sizes $n_1,n_2$ ($df=n_1+n_2-2$).
-Across subjects, the data $\{x_i\}$ vary; across Monte-Carlo repetitions $r$, only $X$ is perturbed:
-\[
-    X_i^{(r)}=x_i+e_i^{(r)},\qquad \mathbb E[e_i^{(r)}]=0,\ \ \operatorname{Var}(e_i^{(r)})=\sigma_{\mathrm{num}}^2.
-\]
-Group statistics (Bessel):
-\[
-    \bar X_g=\frac{1}{n_g}\sum_{i\in G_g}X_i,\qquad
-    s_g^2=\frac{1}{n_g-1}\sum_{i\in G_g}(X_i-\bar X_g)^2,\qquad g=1,2.
-\]
-Pooled SD $s_p=\sqrt{\frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{df}}$, mean difference $\Delta=\bar X_1-\bar X_2$,
-Cohen's $d=\Delta/s_p$.
-
-\paragraph{Target quantity (conditional variance).}
-\[
-    \boxed{\quad
-    \mathrm{Var}_{\mathrm{rep}}[d]\ :=\ \mathrm{Var}\!\left(d(X^{(r)})\ \big|\ \{x_i\}\right).
-    \quad}
-\]
-Delta method about the baseline $X_0=x$ gives
-\[
-    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \nabla_X d(X_0)^\top\,\Sigma_{XX}\,\nabla_X d(X_0),
-\]
-and for i.i.d.\ repetition noise $\Sigma_{XX}=\sigma_{\mathrm{num}}^2 I$,
-\[
-    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \sigma_{\mathrm{num}}^2\sum_{i=1}^n\left(\frac{\partial d}{\partial X_i}\right)^2.
-\]
-
-\paragraph{Derivatives.}
-For $i\in G_1$, $\partial\bar X_1/\partial X_i=1/n_1$, $\partial\bar X_2/\partial X_i=0$, hence $\partial\Delta/\partial X_i=1/n_1$.
-For $i\in G_2$, $\partial\Delta/\partial X_i=-1/n_2$.
-Within a group of size $m$,
-\(
-\frac{\partial s}{\partial X_i}=\frac{X_i-\bar X}{(m-1)s}.
-\)
-Therefore
-\[
-    \frac{\partial s_p}{\partial X_i}
-    =\begin{cases}
-        \dfrac{X_i-\bar X_1}{df\,s_p}, & i\in G_1, \\[6pt]
-        \dfrac{X_i-\bar X_2}{df\,s_p}, & i\in G_2.
-    \end{cases}
-\]
-Quotient rule for $d=\Delta/s_p$ yields
-\[
-    \boxed{
-        \frac{\partial d}{\partial X_i}
-        =\begin{cases}
-            \dfrac{1}{n_1 s_p}\ -\ \dfrac{\Delta}{df\,s_p^3}\,(X_i-\bar X_1),  & i\in G_1, \\[8pt]
-            -\dfrac{1}{n_2 s_p}\ -\ \dfrac{\Delta}{df\,s_p^3}\,(X_i-\bar X_2), & i\in G_2.
-        \end{cases}
-    }
-\]
-
-\paragraph{Summation of squares.}
-Use $\sum_{i\in G_g}(X_i-\bar X_g)=0$ and $\sum_{i\in G_g}(X_i-\bar X_g)^2=(n_g-1)s_g^2$.
-Then
-\[
-    \sum_{i\in G_1}\!\left(\frac{\partial d}{\partial X_i}\right)^2
-    = \frac{1}{n_1 s_p^2} + \frac{\Delta^2}{df^{2}s_p^{6}}\,(n_1-1)s_1^2,\qquad
-    \sum_{i\in G_2}\!\left(\frac{\partial d}{\partial X_i}\right)^2
-    = \frac{1}{n_2 s_p^2} + \frac{\Delta^2}{df^{2}s_p^{6}}\,(n_2-1)s_2^2.
-\]
-Since $(n_1-1)s_1^2+(n_2-1)s_2^2=df\cdot s_p^2$,
-\[
-    \sum_{i=1}^n\!\left(\frac{\partial d}{\partial X_i}\right)^2
-    =\frac{1}{s_p^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)
-    +\frac{\Delta^2}{df\,s_p^4}.
-\]
-Noting $d=\Delta/s_p$,
-\[
-    \boxed{\quad
-        \sum_{i=1}^n\!\left(\frac{\partial d}{\partial X_i}\right)^2
-        =\frac{1}{s_p^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}+\frac{d^2}{df}\right).
-        \quad}
-\]
-
-\paragraph{Main result (homoskedastic, independent repetition noise).}
-\[
-    \boxed{\quad
-    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \sigma_{\mathrm{num}}^2\ \frac{1}{s_p^2}\!
-    \left(\frac{1}{n_1}+\frac{1}{n_2}+\frac{d^2}{df}\right).
-    \quad}
-\]
-
-\paragraph{General repetition noise.}
-For arbitrary $\Sigma_{XX}$,
-\[
-    \mathrm{Var}_{\mathrm{rep}}[d]\ \approx\ \nabla_X d^\top\,\Sigma_{XX}\,\nabla_X d,
-\]
-with the elementwise $\partial d/\partial X_i$ given above. If $\Sigma_{XX}$ is diagonal with entries $\sigma_i^2$ (heteroskedastic),
-\(
-\mathrm{Var}_{\mathrm{rep}}[d]\approx \sum_{i=1}^n \sigma_i^2\left(\partial d/\partial X_i\right)^2.
-\)
-
-\paragraph{Remark (Hedges' $g$).}
-If $g=J(df)\,d$ is reported instead, then
-\(
-\mathrm{Var}_{\mathrm{rep}}[g]\approx J(df)^2\,\mathrm{Var}_{\mathrm{rep}}[d]
-\)
-since $J(df)$ does not depend on $X$.
 
 
 We can now apply this result to derive the uncertainty in p-values derived from
@@ -1590,6 +1520,80 @@ And thus
 \[
     \sigma_p = 2 f_Z(|z|) \nu_{\text{nav}}.
 \]
+
+\section*{Conditional variance across repetitions for the two-sample pooled-$t$}
+
+\paragraph{Setup.}
+Groups $G_1$ ($n_1$) and $G_2$ ($n_2$), $n=n_1+n_2$, $df=n_1+n_2-2$.
+Across subjects, $X$ varies; across repetitions $r$, only $X$ is perturbed:
+\[
+X_i^{(r)}=x_i+e_i^{(r)},\quad \mathbb E[e_i^{(r)}]=0,\ \operatorname{Var}(e_i^{(r)})=\sigma_{\mathrm{num}}^2.
+\]
+Group stats (Bessel):
+\[
+\bar X_g=\frac{1}{n_g}\!\sum_{i\in G_g}X_i,\quad
+s_g^2=\frac{1}{n_g-1}\!\sum_{i\in G_g}(X_i-\bar X_g)^2,\quad g=1,2.
+\]
+Pooled SD $s_p=\sqrt{\frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{df}}$, difference $\Delta=\bar X_1-\bar X_2$.
+Define $c=\sqrt{\frac1{n_1}+\frac1{n_2}}$ and the two-sample pooled-$t$
+\[
+t=\frac{\Delta}{s_p\,c}.
+\]
+We target the conditional variance across repetitions:
+\[
+\mathrm{Var}_{\mathrm{rep}}[t]=\mathrm{Var}\big(t(X^{(r)})\mid \{x_i\}\big).
+\]
+
+\paragraph{Derivatives.}
+For $i\in G_1$: $\partial\Delta/\partial X_i=1/n_1$; for $i\in G_2$: $\partial\Delta/\partial X_i=-1/n_2$.
+Within a group of size $m$: $\partial s/\partial X_i=(X_i-\bar X)/[(m-1)s]$.
+Thus
+\[
+\frac{\partial s_p}{\partial X_i}=
+\begin{cases}
+\dfrac{X_i-\bar X_1}{df\,s_p}, & i\in G_1,\\[4pt]
+\dfrac{X_i-\bar X_2}{df\,s_p}, & i\in G_2,
+\end{cases}
+\qquad
+\frac{\partial t}{\partial X_i}
+=\frac{1}{c}\!\left(\frac{1}{s_p}\frac{\partial\Delta}{\partial X_i}
+-\frac{\Delta}{s_p^2}\frac{\partial s_p}{\partial X_i}\right).
+\]
+Therefore
+\[
+\frac{\partial t}{\partial X_i}=
+\begin{cases}
+\dfrac{1}{c}\left(\dfrac{1}{n_1 s_p}-\dfrac{\Delta}{df\,s_p^3}(X_i-\bar X_1)\right), & i\in G_1,\\[8pt]
+\dfrac{1}{c}\left(-\dfrac{1}{n_2 s_p}-\dfrac{\Delta}{df\,s_p^3}(X_i-\bar X_2)\right), & i\in G_2.
+\end{cases}
+\]
+
+\paragraph{Delta method (i.i.d.\ repetition noise).}
+With $\operatorname{Cov}(e)=\sigma_{\mathrm{num}}^2 I$,
+\[
+\mathrm{Var}_{\mathrm{rep}}[t]\approx \sigma_{\mathrm{num}}^2\sum_{i=1}^n\left(\frac{\partial t}{\partial X_i}\right)^2.
+\]
+Using $\sum_{i\in G_g}(X_i-\bar X_g)=0$ and $\sum_{i\in G_g}(X_i-\bar X_g)^2=(n_g-1)s_g^2$,
+\[
+\sum_{i=1}^n\!\left(\frac{\partial t}{\partial X_i}\right)^2
+=\frac{1}{c^2}\left[\frac{1}{s_p^2}\!\left(\frac{1}{n_1}+\frac{1}{n_2}\right)
++\frac{\Delta^2}{df\,s_p^4}\right].
+\]
+Since $c^2=1/n_1+1/n_2$ and $t=\Delta/(s_p c)$,
+\[
+\boxed{\quad
+\mathrm{Var}_{\mathrm{rep}}[t]\ \approx\ \sigma_{\mathrm{num}}^2\,\frac{1}{s_p^2}\left(1+\frac{t^2}{df}\right).
+\quad}
+\]
+
+\paragraph{General repetition noise.}
+For arbitrary $\Sigma_{XX}$,
+\[
+\mathrm{Var}_{\mathrm{rep}}[t]\ \approx\ \nabla_X t^\top\,\Sigma_{XX}\,\nabla_X t,
+\]
+with the entries of $\nabla_X t$ given above. If $\Sigma_{XX}=\mathrm{diag}(\sigma_1^2,\ldots,\sigma_n^2)$,
+then $\mathrm{Var}_{\mathrm{rep}}[t]\approx \sum_{i=1}^n \sigma_i^2(\partial t/\partial X_i)^2$.
+
 
 \paragraph{ANCOVA group effect.}
 Analysis of covariance (ANCOVA) evaluates group using a general linear model,
@@ -2250,7 +2254,83 @@ sets, defined as follows:
     \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \bigcap_{i=1}^{n} A_i \right|}{\sum_{i=1}^{n} \left| A_i \right|}
 \].
 
-\subsection{Delta Method}
+\subsection{Partial derivatives of sample statistics}
+
+We derive below the partial derivatives of common sample statistics for a dataset 
+\(x = \{x_1, x_2, \ldots, x_n\}\)
+with respect to an individual observation \(x_i\), where \(n\) denotes the sample size.
+The Kronecker delta \(\delta_{ij}\) equals 1 when \(i = j\) and 0 otherwise.
+
+\subsubsection{Sample Mean}
+\label{sec:sample_mean_derivation}
+
+The partial derivative of the sample mean with respect to \(x_i\) is constant:
+\[
+    \frac{\partial \overline{x}}{\partial x_i} = \frac{1}{n}.
+\]
+
+\paragraph{Proof.}
+The sample mean is defined as
+\[
+    \overline{x} = \frac{1}{n} \sum_{j=1}^{n} x_j.
+\]
+Taking the partial derivative with respect to \(x_i\) gives
+\[
+    \frac{\partial \overline{x}}{\partial x_i} 
+    = \frac{\partial}{\partial x_i} \left( \frac{1}{n} \sum_{j=1}^{n} x_j \right)
+    = \frac{1}{n} \sum_{j=1}^{n} \frac{\partial x_j}{\partial x_i}
+    = \frac{1}{n} \sum_{j=1}^{n} \delta_{ij}
+    = \frac{1}{n}. 
+\]
+
+\subsubsection{Sample Variance}
+\label{sec:sample_variance_derivation}
+
+The partial derivative of the sample variance with respect to \(x_i\) is
+\[
+    \frac{\partial s^2}{\partial x_i} = \frac{2(x_i - \overline{x})}{n-1}.
+\]
+
+\paragraph{Proof.}
+The sample variance is defined as
+\[
+    s^2 = \frac{1}{n-1} \sum_{j=1}^{n} {(x_j - \overline{x})}^2.
+\]
+Differentiating with respect to \(x_i\) yields
+\begin{align*}
+    \frac{\partial s^2}{\partial x_i} 
+    &= \frac{1}{n-1} \sum_{j=1}^{n} 
+       \frac{\partial}{\partial x_i} (x_j - \overline{x})^2 \\
+    &= \frac{2}{n-1} \sum_{j=1}^{n} 
+       (x_j - \overline{x}) \frac{\partial (x_j - \overline{x})}{\partial x_i} \\
+    &= \frac{2}{n-1} \sum_{j=1}^{n} 
+       (x_j - \overline{x}) \left( \delta_{ij} - \frac{1}{n} \right) \\
+    &= \frac{2}{n-1} \left[ (x_i - \overline{x})\!\left( 1 - \frac{1}{n} \right)
+        - \frac{1}{n} \sum_{\substack{j=1 \\ j \ne i}}^{n} (x_j - \overline{x}) \right].
+\end{align*}
+Since \(\sum_{j=1}^{n} (x_j - \overline{x}) = 0\) then \(\sum_{\substack{j=1 \\ j \ne i}}^{n} (x_j - \overline{x}) = - (x_i - \overline{x})\) so the second term simplifies, giving
+\[
+    \frac{\partial s^2}{\partial x_i} 
+    = \frac{2(x_i - \overline{x})}{n-1}. 
+\]
+
+\subsubsection{Sample Standard Deviation}
+\label{sec:sample_std_derivation}
+
+The partial derivative of the sample standard deviation with respect to \(x_i\) is
+\[
+    \frac{\partial s}{\partial x_i} = \frac{x_i - \overline{x}}{(n-1)s}.
+\]
+
+\paragraph{Proof.}
+Given that \(s = \sqrt{s^2}\), the derivative follows directly from the chain rule:
+\begin{align*}
+    \frac{\partial s^2}{\partial x_i} &= \frac{2(x_i - \overline{x})}{n-1}, \\
+    2s \frac{\partial s}{\partial x_i} &= \frac{2(x_i - \overline{x})}{n-1}, \\
+    \frac{\partial s}{\partial x_i} &= \frac{x_i - \overline{x}}{(n-1)s}. 
+\end{align*}
+
+\subsubsection{Delta Method}
 \label{eq:delta_method}
 
 The delta method~\cite{cox2005delta} is a method of deriving the asymptotic
@@ -2265,6 +2345,8 @@ approximation for a ratio $X/Y$,
     -\frac{2\,\text{Cov}(X,Y)}{\mathbb{E}(X)\mathbb{E}(Y)}
     +\frac{\text{Var}(Y)}{[\mathbb{E}(Y)]^2}\right),
 \]
+
+
 
 \section{Cross-sectional Analysis}
 
