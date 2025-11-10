@@ -189,10 +189,10 @@ large-scale meta-analyses from the ENIGMA consortium~\cite{thompson2014enigma}.
 Numerical instability arises from floating-point arithmetic, where subtle
 rounding errors accumulate over complex calculations. Floating-point rounding
 errors, although individually small, can collectively introduce substantial
-numerical variability. 
+numerical variability.
 
 
-Mention NARPS 
+Mention NARPS
 \section{Numerical variability alters statistical inference for MRI measures of Parkinson's disease}
 
 
@@ -204,7 +204,7 @@ differences between PD subjects and Healthy Controls (HC), and (2) partial
 correlations between regional volumes and motor evaluation scores (MDS-Unified
 Parkinson's Disease Rating Scale (MDS-UPDRS) part 3). For both, we conducted a
 cross-sectional analysis at baseline and a longitudinal analysis across two time
-points. 
+points.
 
 We extracted T1-weighted MRI data from the Parkinson Progression Marker
 Initiative (PPMI) dataset~\cite{marek2011parkinson}, selecting participants with
@@ -373,55 +373,89 @@ Table~\ref{tab:stats-coef-var-cortical}).
     (although new architectures may enable it in the coming years), and explain the
     need for a statistical correction.}
 
-While the importance of numerical variability is established, its practical
-impact on individual studies remains difficult to quantify. Methods like Monte
-Carlo Arithmetic (MCA) can measure this variability, but their computational
-cost makes them hard for routine use with complex neuroimaging pipelines,
-although new architectures may democratize this in the
-future~\cite{elarar2025ms2a}. This creates a critical need for a fast,
-analytical framework to estimate numerical uncertainty. Our approach is built
-on the assumption that numerical variability is a property of the computational
-pipeline rather than the underlying anatomical population
-specificity~\cite{bhagwat2021understanding,vila2024impact,chatelain2024numerical,sokolowski2024impact}.
-This allows us to develop a generalizable statistical model for widespread
-application. To be meaningful, any assessment of numerical variability must be
-contextualized by the statistical effect size under investigation and the
-study's sample size. We, therefore, first developed a model to estimate the
-uncertainty ($\sigma_d$) that numerical variability introduces into a standard
-measure of group difference, Cohen's d (Eq.~\ref{eq:cohen_d}). To model
-$\sigma_d$, we defined a standardized metric to characterize a pipeline's
-intrinsic numerical instability: the Numerical-Anatomical Variability Ratio
-(NAVR). NAVR is the ratio between the standard deviation of numerical
-variability ($\sigma_{\mathrm{num}}$; Eq.\ref{eq:sigma_num}) and the
-between-subject anatomical variability ($\sigma_{\mathrm{anat}}$;
-Eq.\ref{eq:sigma_anat}):
+Although the importance of numerical variability is established, its practical
+impact on individual studies remains difficult to quantify. Stochastic
+arithmetic like Monte Carlo Arithmetic (MCA) can measure this variability but
+are computationally expensive, making them hard for routine use with complex
+neuroimaging pipelines. While new architectures~\cite{elarar2025ms2a} may
+democratize stochastic-rounding in the coming years, MCA remains unsuitable for
+routine use at study scale. This motivates the need for a fast, analytical
+framework to estimate numerical uncertainty without re-running an entire
+pipeline. Our approach builds on the assumption that numerical variability is a
+property of the computational pipeline rather than the underlying anatomical
+population specificity~\cite{bhagwat2021understanding,vila2024impact,chatelain2024numerical,sokolowski2024impact}.
+This enables us to develop a generalizable statistical model for widespread
+application.
 
+To make this framework interpretable and comparable across datasets, we
+introduce the Numerical-Anatomical Variability Ratio (\navr):
 $$\nu_{\mathrm{nav}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{anat}}}$$
+which expresses the relative magnitude of numerical variability
+($\sigma_{\mathrm{num}}$; Eq.~\eqref{eq:sigma_num}) to anatomical variability
+($\sigma_{\mathrm{anat}}$; Eq.~\eqref{eq:sigma_anat}). \navr quantifies
+the intrinsic numerical instability of a neuroimaging pipeline, allowing
+comparison across regions and studies.
+
+We then derived closed-form, first-order approximations for how numerical variability
+perturbs four common statistical tests used in structural
+MRI: Cohen's $d$, two-sample $t$-test, partial correlation, and ANCOVA. For each
+of these tests, we obtained: (1) an approximation of the standard deviation of
+the metric induced by numerical variability and (2) the corresponding
+uncertainty in the $p$-value (Table~\ref{tab:stat_uncertainty}). These results
+follow from propagating the numerical variability through the estimators using
+the delta-method (derivations in Section~\ref{sec:theoretical_derivations}).
+
+This analytical framework provides a practical link between the pipeline's
+numerical instability (\navr), the study's sample size ($n$), and the
+resulting uncertainty in effect sizes and $p$-values. Since the formulas
+include the summary statistics of the study, it enables researchers to
+audit the potential impact of numerical variability on existing
+studies without requiring expensive recomputation or access to the original data.
+
 \TG[done]{I think I would rather present the $\sigma_d$ result first, then explain
     NAV. When introducing sigma d, you could better explain that numerical
     variability has to be evaluated in the context of a particular effect size, and its impact will be dependent on sample size.}
 
-This metric allowed us to establish a direct, closed-form relationship between
-the pipeline's instability (NAVR) and the resulting uncertainty in a study's
-effect size ($\sigma_d$):
+\begin{table}[t]
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Statistic}
+                            & \textbf{Numerical standard deviation}
+                            & \textbf{Numerical p-value uncertainty}                                                                                                           \\
+        \midrule
+        Cohen's $d$         & $\sigma_d \approx\nu_{\mathrm{nav}}\frac{2}{\sqrt{n}}$             & \multicolumn{1}{c}{-}                                                       \\
+        Two-sample $t$      & $\sigma_t \approx \nu_{\mathrm{nav}}        $                      & $\sigma_{p} \approx 2f_{t,df}(|t|)\nu_{\mathrm{nav}}$                       \\
+        Partial correlation & $\sigma_r \geq \nu_{\mathrm{nav}}\sqrt{\frac{(1-r^{2})^{3}}{n-1}}$ & $\sigma_{p} \geq 2f_{t,df}(|t|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{nav}}$     \\
+        ANCOVA              & $\sigma_F \approx 2\sqrt{F}\nu_{\mathrm{nav}}$                     & $\sigma_{p} \approx 2\sqrt{F}f_{\mathcal{F}}(F;1,df_2)\,\nu_{\mathrm{nav}}$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{First-order numerical uncertainty of common statistical tests under
+        Monte Carlo Arithmetic perturbations. Cohen's d formula assumes large
+        and equal group sizes. $f_{t,df}$ and $f_\mathcal{F}(F;1,df_2)$ denote
+        the probability density functions of the Student's $t$-distribution with
+        $df$ degrees of freedom and the $\mathcal{F}$-distribution with $(1,
+            df_2)$ degrees of freedom, respectively. The $p$-value approximation for
+        the partial correlation uses $t=r(df/(1-r^2))^{1/2}$.}
+    \label{tab:stat_uncertainty}
+\end{table}
 
-$$\sigma_d = \frac{2}{\sqrt{N}} \nu_{\mathrm{nav}}$$
-
-where $N$ is the total sample size. This relationship allows researchers to
-estimate the numerical uncertainty in effect sizes from summary statistics
-alone, without requiring expensive recomputation or access to the original
-data.
-
-NAVR provides a general, interpretable metric to evaluate the robustness of
-neuroimaging measurements. Across cortical and subcortical regions, we found
-numerical variability accounted for up to 37-40\% of the observed anatomical
-variance (Figures~\ref{fig:navr_subcortical},~\ref{fig:navr_thickness}). Mean
-NAVR values reached 0.21 for cortical thickness and 0.15 for subcortical
-volumes, indicating that numerical imprecision constitutes a portion of the
-anatomical signal. Our model provides immediate, practical insights from these
-values. For instance, with a typical NAVR of 0.2, a study would require over
-1,500 participants to reduce the numerical uncertainty in its effect size,
-$\sigma_d$, to a negligible level of 0.01 (Fig.~\ref{fig:sigma_d_contour}).
+Across cortical and subcortical regions, we found numerical variability
+accounted for up to 37-40\% of the observed anatomical variance in baseline
+analyses (Figures~\ref{fig:navr_subcortical},~\ref{fig:navr_thickness}).
+Longitudinal analyses exhibited substantially higher \navr values with up to
+XX-XX\%. At baseline, mean \navr values reached 0.21 for cortical thickness,
+0.15 for subcortical volumes, and XX and XX for longitudinal studies, indicating
+that numerical imprecision constitutes a portion of the anatomical signal.
+Higher \navr values in longitudinal analyses suggest that tracking changes over
+time is more susceptible to numerical noise, likely due to catastrophic
+cancellation when computing differences between timepoints. Catastrophic
+cancellation occurs when subtracting two nearly equal numbers, leading to a
+significant loss of precision by promoting rounding errors. These values have
+direct implications: for a typical \navr of 0.2, achieving a negligible
+numerical uncertainty on Cohen's d effect size ($\sigma_d \leq 0.01$) would
+require a sample size of at least 1,500 participants
+(Fig.~\ref{fig:sigma_d_contour}).
 \TG[done]{not sure what this means, reformulate}
 
 \begin{figure}[h]
@@ -463,26 +497,24 @@ $\sigma_d$, to a negligible level of 0.01 (Fig.~\ref{fig:sigma_d_contour}).
         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
 \end{figure}
 
-To facilitate the widespread adoption of this framework, we have implemented it
-as an interactive, public web tool available at
-\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}
-(Appendix Figure~\ref{fig:brain_render_tool}). \TG[done]{you could add a
-    screenshot of the tool} This tool enables researchers to perform rapid
-reproducibility audits, evaluate findings from published literature
-retroactively, and assess numerical robustness at a fraction of the cost of
-traditional methods. Furthermore, we observed that regions failing standard
-quality control (QC) checks consistently exhibited higher NAVR, suggesting the
-metric can also serve as a useful proxy for data quality. By making these
-assessments accessible, our framework helps improve transparency, support peer
-review, and ultimately foster more trustworthy scientific inference in
-neuroimaging.
+To facilitate the widespread adoption of this framework, we provide an
+interactive, public web tool available at
+\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
+\TG[done]{you could add a screenshot of the tool} allowing rapid reproducibility
+audits and retrospective assessments of published findings (Appendix
+Figure~\ref{fig:brain_render_tool}). Furthermore, we observed that regions
+failing standard quality control (QC) checks consistently exhibited higher
+\navr, suggesting the metric can also serve as a useful proxy for data quality.
+By making numerical-variability evaluation accessible, our framework helps to
+improve transparency, support peer review, and foster more reliable statistical
+inference in neuroimaging.
 
 \section{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
 
-To assess the broader implications of numerical variability, we applied NAVR to
-re-evaluate influential findings from the ENIGMA consortium, which has
+To assess the broader implications of numerical variability, we applied \navr to
+re-evaluate influential findings from X articles, which has
 substantially shaped our understanding of psychiatric and neurological
-disorders. Applying NAVR-based thresholding to ENIGMA's published brain maps
+disorders. Applying \navr-based thresholding to ENIGMA's published brain maps
 identified multiple regions where reported effect sizes fell below the
 computational noise floor, potentially calling into question their reliability.
 \TG{Assuming that you're referring to figure 6, this is not so clear. All the
@@ -1305,6 +1337,7 @@ compromising the detection of true anatomical differences.\TG{didn't you pool
 
 
 \subsubsection{Relationship between \navr~and downstream statistical test uncertainty}
+\label{sec:theoretical_derivations}
 
 \TG[done]{The remainder of this paragraph is quite informal, could you tidy up the
     equations to start from the definition of Cohen's d and clearly derive its
@@ -1386,26 +1419,7 @@ allowing the numerical variance to be expressed through the delta method as
     \label{eq:var-ds}
 \end{equation}
 
-\begin{table}[t]
-    \centering
-    \begin{tabular}{lll}
-        \toprule
-        \textbf{Statistic}
-                            & \textbf{Numerical standard deviation}
-                            & \textbf{Numerical p-value uncertainty}                                                                                                           \\
-        \midrule
-        Cohen's $d$         & $\sigma_d \approx\nu_{\mathrm{nav}}\frac{2}{\sqrt{n}}$             & \multicolumn{1}{c}{-}                                                       \\
-        Two-sample $t$      & $\sigma_t \approx \nu_{\mathrm{nav}}        $                      & $\sigma_{p} \approx 2f_{t,df}(|t|)\nu_{\mathrm{nav}}$                       \\
-        Partial correlation & $\sigma_r \geq \nu_{\mathrm{nav}}\sqrt{\frac{(1-r^{2})^{3}}{n-1}}$ & $\sigma_{p} \approx 2f_{t,df}(|t|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{nav}}$  \\
-        ANCOVA              & $\sigma_F \approx 2\sqrt{F}\nu_{\mathrm{nav}}$                     & $\sigma_{p} \approx 2\sqrt{F}f_{\mathcal{F}}(F;1,df_2)\,\nu_{\mathrm{nav}}$ \\
-        \bottomrule
-    \end{tabular}
-    \caption{First-order numerical uncertainty of common statistical tests under
-        Monte Carlo Arithmetic perturbations. $f_{t,df}$ and $f_\mathcal{F}(F;1,df_2)$ denote the probability density functions of the Student's
-        $t$-distribution with $df$ degrees of freedom and the $\mathcal{F}$-distribution with
-        $(1, df_2)$ degrees of freedom, respectively. The $p$-value approximation for the partial correlation uses $t=r(df/(1-r^2))^{1/2}$.}
-    \label{tab:stat_uncertainty}
-\end{table}
+
 
 Table~\ref{tab:stat_uncertainty} summarizes the derived expressions for the
 numerical standard deviation of several common statistics.
