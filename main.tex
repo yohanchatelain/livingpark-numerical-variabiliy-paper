@@ -185,114 +185,43 @@ large-scale meta-analyses from the ENIGMA consortium~\cite{thompson2014enigma}.
 % computational uncertainty, enhancing reproducibility and reliability in
 % clinical neuroscience.
 
-\section{Impact of numerical variability on MRI measures of Parkinson's disease~\label{sec:results}}
 
 Numerical instability arises from floating-point arithmetic, where subtle
 rounding errors accumulate over complex calculations. Floating-point rounding
 errors, although individually small, can collectively introduce substantial
-numerical variability. By repeatedly processing the same MRI scans under random
-numerical perturbations representative of differences across hardware systems,
-software libraries, or other computational parameters, we found significant
-variations directly impacting statistical conclusions. We introduced
-perturbations using Monte Carlo Arithmetic
-(MCA)~\cite{parker1997monte,salari2021accurate} \TG[done]{add ref to Parker and
-    Ali's fuzzy libmath}, a technique to perturb floating-point operations with
-random, zero-mean offsets that preserve mathematical expectations.
-\TG[done]{operations?} \YC{$E[x \circ y] = x \circ y$. MCA preserves the
-    expectation for a single arithmetic operation.} Repeatedly executing an
-analysis pipeline with MCA enables us to estimate the variability of results
-that could arise from different computational environments.
+numerical variability. 
 
-%These fluctuations pose a major concern for
-%interpreting subtle anatomical changes in PD, underscoring the need for robust
-%numerical precision in biomarker discovery.
 
-To test the impact of numerical variability on statistical inference, we
-performed group comparisons and partial correlations between regional brain
-volumes and clinical measures of Parkinson's disease (UPDRS scores),
-controlling for age and sex. For both cortical and subcortical regions, we
-found substantial discrepancies in statistical outcomes across the 26
-numerically perturbed analyses.
+Mention NARPS 
+\section{Numerical variability alters statistical inference for MRI measures of Parkinson's disease}
 
-We analyzed T1-weighted MRI from Parkinson Progression Marker Initiative
-(PPMI)~\cite{marek2011parkinson}, including 118 PD without MCI (PD-non-MCI) and
-90 HC with two visits each (final cohort after QC and exclusions;
-Table~\ref{tab:cohort_stat}). \TG[done]{Rewrite the remainder of this paragraph
-    to explain the type of analyses that was done on the data, and why these
-    analyses were selected.} We tested (a) PD-HC group differences using ANCOVA
-test and (b) associations with clinical severity using partial correlations
-between regional measures and UPDRS scores, adjusting for age and sex. These
-analyses were selected to evaluate the impact of numerical variability on both
-group-level differences and individual correlations, providing a comprehensive
-view of how computational noise may influence neuroimaging findings.
 
-% Parkinson's disease provides an ideal scenario for testing numerical stability
-% \TG{this sentence comes back a few times in the writing but it's not the right
-% logic: our goal is not to find a use case to evaluate numerical stability;
-% instead, we are genuinely interested in PD}, 
-% as structural MRI-derived
-% measurements such as cortical thickness and subcortical volume hold significant
-% promise as potential biomarkers for clinical progression due to their
-% non-invasive nature. Furthermore, the availability of large multi-site datasets
-% (e.g., PPMI) and established region-of-interest analyses ensure PD is a
-% thoroughly characterized context for evaluating the impacts of numerical
-% variability. Thus, PD allows us to directly assess whether numerical noise is
-% sufficiently large to obscure clinically meaningful anatomical signals.
+By repeatedly processing the same MRI scans under random numerical perturbations
+representative of differences across hardware systems, software libraries, or
+other computational parameters, we assessed the impact of numerical variability
+on conclusions drawn from MRI analyses of Parkinson's disease. We focused on (1) volumetric group
+differences between PD subjects and Healthy Controls (HC), and (2) partial
+correlations between regional volumes and motor evaluation scores (MDS-Unified
+Parkinson's Disease Rating Scale (MDS-UPDRS) part 3). For both, we conducted a
+cross-sectional analysis at baseline and a longitudinal analysis across two time
+points. 
 
-We instrumented FreeSurfer 7.3.1 with MCA (virtual precision set to mimic
-realistic perturbations), and re-analyzed each T1-weighted MRI scan 26 times,
-each time with a different random state. \TG[done]{The remainder of this
-    paragraph refers to supplementary data, which doesn't read well as we're
-    expecting to read the key (main) results first. It should be reworked.} Across
-MCA replicates ($n=26$), statistical conclusions fluctuated for a non-trivial
-fraction of regions. For subcortical volumes, 27\% of PD-HC comparisons changed
-significance across numerical states; for cortical thickness, 19\% did so
-(Figs.~\ref{fig:significance_correlation_subcortical_volume}-\ref{fig:significance_correlation_thickness}).
-Eight subcortical regions alternated between significant and non-significant
-outcomes at $\alpha=0.05$, illustrating that numerical variability can directly
-affect clinical interpretation. Distributions of partial correlation
-coefficients and ANCOVA F-statistics from MCA runs enveloped the unperturbed
-IEEE-754 results, supporting the validity of the instrumentation rather than
-indicating methodological artifacts
-(Fig.~\ref{fig:statstest_coefficients_distribution}). The spread tended to be
-larger in longitudinal than baseline analyses, indicating greater sensitivity
-of longitudinal effects to numerical noise.
+We extracted T1-weighted MRI data from the Parkinson Progression Marker
+Initiative (PPMI) dataset~\cite{marek2011parkinson}, selecting participants with
+at least two usable visits separated by 0.9–2.0 years, and excluding
+participants with Mild Cognitive Impairment (MCI) or other neurological
+disorders. The final dataset included  118 PD participants without MCI (PD-non-MCI) and
+90 HC (Table~\ref{tab:cohort_stat}).
 
-% NAVR stats
-% metric    | mean | std  | median | min  | max
-% thickness | 0.21 | 0.06 | 0.20   | 0.11 | 0.37
-% area      | 0.18 | 0.08 | 0.16   | 0.09 | 0.42 
-% volume    | 0.17 | 0.08 | 0.15   | 0.09 | 0.42
-% cortical  | 0.19 | 0.08 | 0.17   | 0.09 | 0.42
-% subvolume | 0.15 | 0.07 | 0.16   | 0.01 | 0.27
-
-\subsection{Numerical variability alters statistical inference for MRI measures of Parkinson's disease}
-% Comments
-% - Extend the results section
-% - First result on a page
-%   - Writing for clinician audience with no expertise in computer science
-%   - Writing for computer science audience with no expertise in neuroimaging  
-% - Explain why MCA is important
-% - Explain why figure significance_correlation_thickness is important
-% - Explain why we choose Parkinson's disease MRI
-%   - Explain the context of Parkinson's disease and its impact on neuroimaging research
-%   - Cite Andrezj paper on Parkinson's disease MRI
-%   - Use paper to replicate a representative of existing results and methodologie used for structural MRI analysis Parkinson's disease
-% - refers to NARPS paper for the figures
-% - Add more interpretation of the results
-% - Get inspiration from the NARPS paper for the writing results section
-
-To test the impact of numerical variability on statistical inference, we
-performed group comparisons and partial \TG[done]{why partial?} \YC{Because we
-    controlling for age and sex. } correlations between regional cortical thickness
-and subcortical volumes with clinical measures of Parkinson's disease (UPDRS
-scores).
-
-\TG[done]{Rewrite the remainder of this paragraph with the following outline:
-    (1) key message: "for both cortical and subcortical regions, substantial
-    discrepancies..., (2) focus on subcortical volumes specifically, discussing the
-    different analyses, (3) focus on cortical volumes, (4) conclusion and reference
-    to NARPS.}
+All images underwent standard pre-processing using FreeSurfer's longitudinal
+stream: cross-sectional processing of both timepoints, followed by creation of
+an unbiased within-subject template using robust registration. We introduced
+numerical noise mimicking realistic perturbations into this pipeline using
+Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}, a technique that injects
+random, zero-mean perturbations into floating-point operations while perserving
+mathematical expectations. MCA was applied via dynamic library linking using
+fuzzy libmath~\cite{salari2021accurate}. We repeated the perturbed analyses,
+yielded 26 usable runs, to estimate numerical variability.
 
 For both cortical and subcortical regions, statistical outcomes varied
 substantially across the 26 Monte Carlo Arithmetic (MCA) replicates: $20\%$ of
@@ -311,6 +240,29 @@ Table~\ref{tab:fluctuating_regions}). These fluctuations indicate that
 candidate biomarker relationships may appear or vanish due to numerical noise,
 echoing multi-analyst variability reported in
 NARPS~\cite{botvinik2020variability}.
+
+% NAVR stats
+% metric    | mean | std  | median | min  | max
+% thickness | 0.21 | 0.06 | 0.20   | 0.11 | 0.37
+% area      | 0.18 | 0.08 | 0.16   | 0.09 | 0.42 
+% volume    | 0.17 | 0.08 | 0.15   | 0.09 | 0.42
+% cortical  | 0.19 | 0.08 | 0.17   | 0.09 | 0.42
+% subvolume | 0.15 | 0.07 | 0.16   | 0.01 | 0.27
+
+% Comments
+% - Extend the results section
+% - First result on a page
+%   - Writing for clinician audience with no expertise in computer science
+%   - Writing for computer science audience with no expertise in neuroimaging  
+% - Explain why MCA is important
+% - Explain why figure significance_correlation_thickness is important
+% - Explain why we choose Parkinson's disease MRI
+%   - Explain the context of Parkinson's disease and its impact on neuroimaging research
+%   - Cite Andrezj paper on Parkinson's disease MRI
+%   - Use paper to replicate a representative of existing results and methodologie used for structural MRI analysis Parkinson's disease
+% - refers to NARPS paper for the figures
+% - Add more interpretation of the results
+% - Get inspiration from the NARPS paper for the writing results section
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
@@ -331,18 +283,14 @@ For subcortical volumes, the distributions of partial-correlation coefficients
 (Figure~\ref{fig:statstest_coefficients_distribution}) show that the
 unperturbed IEEE-754 estimates (red markers) consistently fall within the
 MCA-sampled range. This supports the validity of the instrumentation rather
-than indicating a methodological artifact \TG[done]{not really, the variability
-    could be larger than the real one, reformulate to say that it ``supports the
-    validity of the instrumentation''}. The spread of the r coefficients is larger
+than indicating a methodological artifact. The spread of the r coefficients is larger
 in longitudinal than in baseline analyses (Ansari-Bradley one-sided test at
 $p<0.05$ corrected with Bonferroni; detailed results in Appendix
 Table~\ref{tab:stats-coef-var-subcortical}), whereas no significant difference
 in spread is detected for F-statistics using the same test
-(Bonferroni-corrected, $p<0.05$). \TG[done]{it's quite apparent for r
-    coefficients but not so much for F-statistics. A statistical test would help.}.
+(Bonferroni-corrected, $p<0.05$).
 This indicates that numerical variability has a more pronounced impact on
-longitudinal studies. \TG[done]{reviewers will wonder about a similar graph for
-    cortical regions} An analogous analysis for cortical thickness leads to similar
+longitudinal studies. An analogous analysis for cortical thickness leads to similar
 conclusions (Appendix Figure~\ref{fig:consistency_thickness_coefficients},
 Table~\ref{tab:stats-coef-var-cortical}).
 
@@ -401,7 +349,7 @@ Table~\ref{tab:stats-coef-var-cortical}).
 % that could be obtained by running the same analysis under computational
 % environments.
 
-\subsection{A framework to quantify the impact of numerical variability}
+\section{A framework to quantify the impact of numerical variability}
 % Comments:
 % - Build a tool that can be broadly applied to any neuroimaging
 % - Analytical modeling of sigma_d
@@ -529,7 +477,7 @@ assessments accessible, our framework helps improve transparency, support peer
 review, and ultimately foster more trustworthy scientific inference in
 neuroimaging.
 
-\subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
+\section{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
 
 To assess the broader implications of numerical variability, we applied NAVR to
 re-evaluate influential findings from the ENIGMA consortium, which has
