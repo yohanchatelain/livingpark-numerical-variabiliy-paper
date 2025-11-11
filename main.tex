@@ -1039,45 +1039,39 @@ compromised by numerical instability \TG{I think you should show examples of
 % [] Mention using neuroimaging as biomarker (n=1 scenario), personalized medicine,
 
 Our systematic perturbation of FreeSurfer revealed that numerical variability
-alone can account for up to 30\% of the anatomical variability observed in
-structural MRI measurements. This level of uncertainty can significantly impact
-statistical outcomes in Parkinson's disease analyses \TG[done]{in Parkinson's
-    disease analyses}, leading to the appearance or disappearance of clinically
-relevant group differences or correlations depending solely on computational
-conditions. These findings offer a mechanistic explanation for some of the
-reproducibility challenges reported in clinical neuroimaging.
+alone can account for up to 30\% \TG{check value, can we report the average
+$\nu_{nav}$ observed in PD participants?} of the anatomical variability observed
+in structural MRI measurements. This level of uncertainty can significantly
+impact statistical outcomes in Parkinson's disease analyses, leading to the
+appearance or disappearance of group differences or correlations depending
+solely on computational conditions. These findings offer a mechanistic
+explanation for some of the reproducibility challenges reported in clinical
+neuroimaging.
 
-To move beyond identifying the problem, we introduced the Numerical-Anatomical
-Variability Ratio (NAVR), a quantitative framework for assessing the relative
-magnitude of computational noise. By establishing a theoretical link between
-NAVR and the uncertainty in Cohen's d effect sizes, we provide a practical tool
-to assess the robustness of findings. Our re-analysis of published ENIGMA
-results illustrates this utility: while large sample sizes confer robustness to
-core findings, many secondary effects fall below the computational noise floor.
-This suggests that in exploratory studies with lower sample size, numerical
-instability may undermine the reliability of reported effects. \TG{see previous
-    comments: it would be nice to include analyses for some of such smaller
-    studies}
+To facilitate numerical evaluations in previous and future studies, we
+introduced the Numerical-Anatomical Variability Ratio (NAVR), a quantitative
+framework for assessing the relative magnitude of computational noise. By
+establishing a theoretical link between NAVR and the uncertainty in common
+statistics, we provided a practical tool to assess the numerical robustness of MRI measures.
+Our re-analysis of published ENIGMA results illustrates this utility: while
+large sample sizes confer robustness to core findings, many secondary effects
+fall below the computational noise floor. This suggests that in exploratory
+studies with lower sample size, numerical instability may undermine the
+reliability of reported effects. \TG{revise this part when results are available}
 
 Although our primary analysis focused on FreeSurfer 7.3.1 and Parkinson's
-disease, the underlying numerical issues are general. Floating-point arithmetic
-\TG[done]{what does this mean? Additions of floating-point numbers is not
-    associative? If so, this is out of context} \YC{Yes, FP operations are not
-    associative but it is an implication of the finite precision. I just remove it
-    to simplify.} is sensitive to compiler behavior, hardware architecture, and
-thread scheduling. As a result, neuroimaging pipelines—though deterministic in
-design—can produce divergent results across computational environments.
+disease, the underlying numerical issues are more general.
 Previous analyses of FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite
     Mathieu} indicate that such instability is not unique to FreeSurfer but likely
 pervades the field. SPM however seems to be less impacted by numerical
-variability~\cite{mirhakimi2025numerical} \TG[done]{cite Niusha}.
+variability, possibly due to the use of Bayesian optimization~\cite{mirhakimi2025numerical}.
 
-Traditional image processing workflows rely on nonlinear optimization
+Traditional image processing methods rely on nonlinear optimization
 procedures that can converge to different local minima under small
 perturbations, resulting in substantive changes to derived measures. To address
 this problem and decrease the execution time, the neuroimaging field is
 increasingly shifting toward deep learning models. The latest FreeSurfer
-release (v8), for example, now incorporates neural networks such as
+release (v8), for example, now incorporates Deep Learning (DL) models such as
 FastSurfer~\cite{henschel2020fastsurfer} and
 Synthmorph~\cite{hoffmann2021synthmorph} to replace its classical segmentation
 and registration steps. However, this shift does not eliminate the problem of
@@ -1090,11 +1084,8 @@ remains an open question in neuroimaging. This phenomenon is analogous to the
 local minima issue in classical optimization. Ultimately, whether arising from
 classical optimization or DL training, such instability means that even
 identical inputs can lead to divergent interpretations, raising critical
-concerns for research reproducibility and clinical translation.
+concerns for research reproducibility and clinical translation. \TG{Reword paragraph to refer to Ines' latest results on FastSurfer training}
 
-\TG[done]{start a new paragraph here, on the generalizability across data cohorts. You
-    could include a mention that numerical variability didn't differ between PD and
-    HC, and possibly link to a supplementary figure to support the claim.}
 To address the generalizability of our findings, we considered the
 characteristics of our data cohorts. A potential limitation is that our
 Parkinson's Disease cohort was relatively homogeneous in age and phenotype,
