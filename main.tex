@@ -85,37 +85,37 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
 \section{Introduction}
 
-\TG[done]{Rewrite using the following structure:
-    \begin{itemize}
-        \item The reliability of structural MRI measures critically depends on the estimation
-              of sources of analytical variability.
-        \item In particular when effect sizes are moderate, such as in Parkinson's disease.
-        \item Among these sources, numerical variability has been shown to have a measurable
-              impact on analyses across multiple pipeline tools.
-        \item Numerical variability arises from rounding and truncation errors associated
-              with the use of limited-precision numerical formats.
-        \item Due to the complexity of MRI analyses, and in particular their reliance on
-              high-dimensional optimization, such errors propagate and sometimes lead to
-              measurable differences.
-        \item However, numerical variability is understudied, mainly due to practical
-              challenges.
-        \item In particular, the implications of numerical variability on clinical findings
-              is unknown.
-        \item What we have done
-    \end{itemize}
-}
+% \TG[done]{Rewrite using the following structure:
+%     \begin{itemize}
+%         \item The reliability of structural MRI measures critically depends on the estimation
+%               of sources of analytical variability.
+%         \item In particular when effect sizes are moderate, such as in Parkinson's disease.
+%         \item Among these sources, numerical variability has been shown to have a measurable
+%               impact on analyses across multiple pipeline tools.
+%         \item Numerical variability arises from rounding and truncation errors associated
+%               with the use of limited-precision numerical formats.
+%         \item Due to the complexity of MRI analyses, and in particular their reliance on
+%               high-dimensional optimization, such errors propagate and sometimes lead to
+%               measurable differences.
+%         \item However, numerical variability is understudied, mainly due to practical
+%               challenges.
+%         \item In particular, the implications of numerical variability on clinical findings
+%               is unknown.
+%         \item What we have done
+%     \end{itemize}
+% }
 
-The reliability of structural MRI measures critically depends on the estimation
-of all sources of analytical variability. This is particularly important when
-effect sizes are moderate, as it is the case in studies of Parkinson's disease
-(PD)~\cite{he2020progressive}. Among these sources, numerical
-variability—subtle differences in computational results arising from factors
-like hardware, operating systems, or software library versions—has been shown
-to have a measurable impact on analyses across multiple pipeline
-tools~\cite{glatard2012virtual,gronenschild2012effects,sokolowski2024impact,des2023reproducibility,vila2024impact}.
+The reliability of MRI measures critically depends on the estimation of all
+sources of analytical variability~\cite{carp2012plurality,botvinik2020variability,kennedy2019everything}.
+This is particularly important when effect sizes are moderate, as it is the case
+in studies of Parkinson's disease (PD)~\cite{he2020progressive}. Among these
+sources, numerical variability---differences in computational results arising from
+factors like hardware, operating systems, or software library versions---has been
+shown to have a measurable impact on analyses across multiple pipeline
+tools~\cite{glatard2012virtual,gronenschild2012effects,des2023reproducibility,vila2024impact}.
 
 Numerical variability arises from rounding and truncation errors associated
-with the use of limited-precision numerical formats, such as the IEEE-754
+with the use of limited-precision numerical formats, such as the widespread IEEE-754
 standard for floating-point arithmetic~\cite{markstein2008new}. Due to the
 complexity of MRI analyses, particularly their reliance on high-dimensional
 optimization, such errors can propagate and accumulate, sometimes leading to
@@ -125,74 +125,30 @@ However, numerical variability remains understudied, mainly due to the
 practical challenges of quantifying its effects. Consequently, the implications
 of numerical variability for clinical findings are largely unknown.
 
-In this study, we systematically investigated the impact of numerical
-variability on structural MRI analyses in a clinical context. We instrumented
-FreeSurfer 7.3.1~\cite{fischl2012freesurfer} with Monte Carlo
-Arithmetic~\cite{parker1997monte} to simulate a range of realistic
-computational environments. We then processed a dataset of Parkinson's disease
-(PD) patients and healthy controls (HC) from the Parkinson's Progression
-Markers Initiative (PPMI) to quantify how numerical noise affects derived
-biomarkers, such as cortical thickness and subcortical volume. We introduce the
-Numerical-Anatomical Variability Ratio (NAVR) to compare the magnitude of
-numerical noise to that of anatomical variability and demonstrate its use in
-evaluating the robustness of statistical findings, both in our dataset and in
-large-scale meta-analyses from the ENIGMA consortium~\cite{thompson2014enigma}.
+The first aim of this study was to quantify the impact of numerical
+variability in structural MRI analyses of Parkinson's disease. Building on these
+initial observations, we developed an analytical framework and associated tools
+to rapidly assess the numerical quality of structural MRI analyses reported in
+the published literature. By making numerical-variability evaluation accessible,
+our framework and tool enhance transparency, support peer review, and promote
+more reliable statistical inference in neuroimaging. Applying this framework to
+the PD literature, we provide the first estimates of the numerical quality of
+MRI analyses in Parkinson's disease studies. \TG{revise last sentence when results are available.}
 
-% Complex neuroimaging pipelines transform raw MRI data into putative biomarkers
-% such as cortical thickness and subcortical volume. Because disease-related
-% effects may be subtle, the reliability of these metrics depends critically on
-% pipeline chosen~\cite{bhagwat2021understanding,botvinik2020variability},
-% software versions~\cite{sokolowski2024impact,des2023reproducibility}, and
-% computational
-% environments~\cite{glatard2012virtual,gronenschild2012effects,des2023reproducibility,vila2024impact}.
-% However, numerical variability arising from software computations is rarely
-% quantified.
-
-% Floating-point arithmetic ruled by IEEE-754 norm~\cite{markstein2008new} can
-% cause ostensibly deterministic algorithms to yield subtly different outputs.
-% Whether such numerical noise significantly impacts biological conclusions
-% remains unclear. Preliminary studies suggest substantial
-% effects~\cite{kiar2020comparing,salari2021accurate,des2023reproducibility,chatelain2024numerical},
-% yet systematic quantification within clinical datasets is lacking.
-
-% Parkinson's disease (PD) represents an ideal context to investigate numerical
-% variability, as the identification of reliable structural biomarkers is highly
-% desirable for diagnosis, tracking disease progression, and developing targeted
-% therapies. Structural MRI is particularly attractive for biomarker discovery
-% due to its non-invasive nature, but subtle anatomical changes associated with
-% PD pose significant analytical challenges. Consequently, ensuring that
-% MRI-derived measures are robust to numerical variability is essential to the
-% successful translation of these biomarkers into clinical practice.
-
-% We instrumented FreeSurfer 7.3.1~\cite{fischl2012freesurfer} with Monte Carlo
-% arithmetic~\cite{parker1997monte}, reprocessing identical MRI scans of PD
-% patients and healthy controls across multiple perturbed numerical states. To
-% systematically quantify the impact, we introduce the Numerical-Anatomical
-% Variability Ratio (NAVR), directly comparing numerical variation within
-% individuals to anatomical differences between individuals.
-
-% We find that in several cortical and subcortical regions, NAVR approaches 0.3,
-% indicating that numerical noise can represent nearly one-third of the measured
-% biological variation. Consequently, statistical inferences regarding group
-% differences and clinical correlations can fluctuate significantly. Applying
-% NAVR-based thresholding to published ENIGMA~\cite{thompson2014enigma}
-% consortium brain maps reveals that numerous previously reported small regional
-% effects likely fall below computational noise thresholds.
-
-% Our findings demonstrate that numerical variability is a significant,
-% quantifiable source of uncertainty in neuroimaging studies. The NAVR framework
-% we propose offers researchers a practical approach to quantify and report
-% computational uncertainty, enhancing reproducibility and reliability in
-% clinical neuroscience.
+% In this study, we systematically investigated the impact of numerical
+% variability on structural MRI analyses of Parkinson's disease. We instrumented
+% the FreeSurfer tool~\cite{fischl2012freesurfer} with Monte Carlo
+% Arithmetic~\cite{parker1997monte} to simulate a range of realistic
+% numerical perturbations, and used it to measure how numerical noise affects 
+% group comparisons and correlations in the  Parkinson's Progression
+% Markers Initiative (PPMI) data. We introduce the
+% Numerical-Anatomical Variability Ratio (NAVR) to compare the magnitude of
+% numerical noise to that of anatomical variability and demonstrate its use in
+% evaluating the robustness of statistical findings, both in our dataset and in
+% large-scale meta-analyses from the ENIGMA consortium~\cite{thompson2014enigma}.
 
 
-Numerical instability arises from floating-point arithmetic, where subtle
-rounding errors accumulate over complex calculations. Floating-point rounding
-errors, although individually small, can collectively introduce substantial
-numerical variability.
 
-
-Mention NARPS
 \section{Numerical variability alters statistical inference for MRI measures of Parkinson's disease}
 
 
@@ -376,15 +332,10 @@ Table~\ref{tab:stats-coef-var-cortical}).
 The previous results underscore the importance of quantifying the impact of
 numerical variability in MRI analyses, as such variability can substantially
 affect statistical inference. However, evaluating numerical variability directly
-is highly compute-intensive and impractical to perform routinely. In this
-section, we introduce a practical analytical model of numerical variability in
+is highly compute-intensive and impractical to perform routinely. We developed a practical analytical model of numerical variability in
 MRI analyses, assuming that this variability is an inherent property of the
 computational pipeline and generalizes across
-populations.
-% ~\cite{bhagwat2021understanding,vila2024impact,chatelain2024numerical,sokolowski2024impact}.
-% \TG{explain what claims are supported by these references} 
-
-More specifically, we derived closed-form approximations of numerical
+populations. To do so, we derived closed-form approximations of numerical
 uncertainty for common statistics and their associated p-values, which can be
 readily incorporated into MRI analyses (Table~\ref{tab:stat_uncertainty}).
 These formulas rely on the Numerical-Anatomical Variability Ratio
@@ -397,12 +348,12 @@ allowing comparison across regions and studies. The formulas in
 Table~\ref{tab:stat_uncertainty} were obtained by propagating the numerical
 variability through the estimators using the delta-method (see
 Section~\ref{sec:theoretical_derivations}) and were verified through numerical
-simulatesions.
+simulations.
 
 This analytical framework provides a practical link between the pipeline's
 numerical instability (\navr), the study's sample size ($n$), and the
 resulting uncertainty in effect sizes and $p$-values. Because the formulas
-rely only on the study's summary statistics, they enable researchers to
+rely only on the study's summary statistics, they can be used to
 assess the potential impact of numerical variability on existing
 studies without requiring costly recomputation or access to the original data.
 
