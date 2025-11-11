@@ -199,12 +199,12 @@ Mention NARPS
 By repeatedly processing the same MRI scans under random numerical perturbations
 representative of differences across hardware systems, software libraries, or
 other computational parameters, we assessed the impact of numerical variability
-on conclusions drawn from MRI analyses of Parkinson's disease. We focused on (1) volumetric group
-differences between PD subjects and Healthy Controls (HC), and (2) partial
-correlations between regional volumes and motor evaluation scores (MDS-Unified
-Parkinson's Disease Rating Scale (MDS-UPDRS) part 3). For both, we conducted a
-cross-sectional analysis at baseline and a longitudinal analysis across two time
-points.
+on conclusions drawn from MRI analyses of Parkinson's disease. We focused on two
+common analyses, namely (1) volumetric group differences between PD subjects and
+Healthy Controls (HC), and (2) partial correlations between regional volumes and
+motor evaluation scores (measured with the MDS-Unified Parkinson's Disease Rating Scale
+part 3---UPDRS-III). For both, we conducted a cross-sectional analysis at
+baseline and a longitudinal analysis across two time points.
 
 We extracted T1-weighted MRI data from the Parkinson Progression Marker
 Initiative (PPMI) dataset~\cite{marek2011parkinson}, selecting participants with
@@ -219,27 +219,27 @@ an unbiased within-subject template using robust registration. We introduced
 numerical noise mimicking realistic perturbations into this pipeline using
 Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}, a technique that injects
 random, zero-mean perturbations into floating-point operations while perserving
-mathematical expectations. MCA was applied via dynamic library linking using
-fuzzy libmath~\cite{salari2021accurate}. We repeated the perturbed analyses,
-yielded 26 usable runs, to estimate numerical variability.
+mathematical expectations. We repeated the perturbed analyses,
+yielding 26 usable runs, to estimate numerical variability.
 
-For both cortical and subcortical regions, statistical outcomes varied
-substantially across the 26 Monte Carlo Arithmetic (MCA) replicates: $20\%$ of
-comparisons (66/328) changed significance at the $p<0.05$ threshold. In
-subcortical volumes (14 regions;
-Figure~\ref{fig:significance_correlation_subcortical_volume}), $21\%$ of group
-comparisons and $25\%$ of partial correlations were inconsistent across MCA
-replicates, and 8 of 14 regions ($57\%$) exhibited at least one flip in
-significance. Cortical thickness showed a similar pattern (68 regions;
+For both group analyses and correlation analyses, statistical outcomes varied
+substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
+(Figures~\ref{fig:significance_correlation_subcortical_volume}
+and~\ref{fig:significance_correlation_thickness}): $20\%$ of comparisons
+(66/328) changed significance at the $p<0.05$ threshold. In subcortical volumes
+(14 regions; Figure~\ref{fig:significance_correlation_subcortical_volume}),
+$21\%$ of group comparisons and $25\%$ of partial correlations were inconsistent
+across MCA repetitions, and $57\%$ exhibited at least one flip
+in significance. Cortical thickness showed a similar pattern (68 regions;
 Figure~\ref{fig:significance_correlation_thickness}), with $10\%$ of group
 comparisons and $25\%$ of partial correlations inconsistent, affecting 40 of 68
 regions ($59\%$) in at least one test. Expanding to all cortical measures
 (thickness, area, and volume) and subcortical metrics, the proportion of
 inconsistent results increased to $28\%$ (241/872; Appendix
-Table~\ref{tab:fluctuating_regions}). These fluctuations indicate that
-candidate biomarker relationships may appear or vanish due to numerical noise,
-echoing multi-analyst variability reported in
-NARPS~\cite{botvinik2020variability}.
+Table~\ref{tab:fluctuating_regions}). These fluctuations indicate that candidate
+biomarker relationships may appear or vanish due to numerical noise, echoing
+multi-analyst variability reported in NARPS~\cite{botvinik2020variability}. \TG{The numbers in this paragraph are hard to follow as the $\%$
+ refer to different totals. Could this be simplified to one main percentage per figure?}
 
 % NAVR stats
 % metric    | mean | std  | median | min  | max
@@ -290,11 +290,11 @@ Table~\ref{tab:stats-coef-var-subcortical}), whereas no significant difference
 in spread is detected for F-statistics using the same test
 (Bonferroni-corrected, $p<0.05$).
 This indicates that numerical variability has a more pronounced impact on
-longitudinal studies. An analogous analysis for cortical thickness leads to similar
+longitudinal studies than on cross-sectional ones. An analogous analysis for cortical thickness leads to similar
 conclusions (Appendix Figure~\ref{fig:consistency_thickness_coefficients},
 Table~\ref{tab:stats-coef-var-cortical}).
 
-\begin{figure}
+\begin{figure}[ht]
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
     \caption{ Distribution of partial correlation coefficients (r-values) and
         F-statistics from ANCOVA across MCA repetitions for subcortical volume
@@ -363,60 +363,54 @@ Table~\ref{tab:stats-coef-var-cortical}).
 % - To be general, we developped an analytical model
 % - Refers to the online tool on yohanchatelain.github.io/brain-render
 
-\TG[done]{Instead of re-stating the importance of numerical variability in this
-    paragraph, which supposedly should be understood from the end of the
-    introduction, here you could explain the need for a tool to quickly and
-    practically evaluate its impact in a given study, explain and justify your
-    assumptions (e.g., numerical variability is a feature of the pipeline rather
-    than the population---refer to previous works). In doing so, you could explain
-    how running MCA is currently not realistic due to computational requirements
-    (although new architectures may enable it in the coming years), and explain the
-    need for a statistical correction.}
+% \TG[done]{Instead of re-stating the importance of numerical variability in this
+%     paragraph, which supposedly should be understood from the end of the
+%     introduction, here you could explain the need for a tool to quickly and
+%     practically evaluate its impact in a given study, explain and justify your
+%     assumptions (e.g., numerical variability is a feature of the pipeline rather
+%     than the population---refer to previous works). In doing so, you could explain
+%     how running MCA is currently not realistic due to computational requirements
+%     (although new architectures may enable it in the coming years), and explain the
+%     need for a statistical correction.}
 
-Although the importance of numerical variability is established, its practical
-impact on individual studies remains difficult to quantify. Stochastic
-arithmetic like Monte Carlo Arithmetic (MCA) can measure this variability but
-are computationally expensive, making them hard for routine use with complex
-neuroimaging pipelines. While new architectures~\cite{elarar2025ms2a} may
-democratize stochastic-rounding in the coming years, MCA remains unsuitable for
-routine use at study scale. This motivates the need for a fast, analytical
-framework to estimate numerical uncertainty without re-running an entire
-pipeline. Our approach builds on the assumption that numerical variability is a
-property of the computational pipeline rather than the underlying anatomical
-population specificity~\cite{bhagwat2021understanding,vila2024impact,chatelain2024numerical,sokolowski2024impact}.
-This enables us to develop a generalizable statistical model for widespread
-application.
+The previous results underscore the importance of quantifying the impact of
+numerical variability in MRI analyses, as such variability can substantially
+affect statistical inference. However, evaluating numerical variability directly
+is highly compute-intensive and impractical to perform routinely. In this
+section, we introduce a practical analytical model of numerical variability in
+MRI analyses, assuming that this variability is an inherent property of the
+computational pipeline and generalizes across
+populations.
+% ~\cite{bhagwat2021understanding,vila2024impact,chatelain2024numerical,sokolowski2024impact}.
+% \TG{explain what claims are supported by these references} 
 
-To make this framework interpretable and comparable across datasets, we
-introduce the Numerical-Anatomical Variability Ratio (\navr):
-$$\nu_{\mathrm{nav}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{anat}}}$$
-which expresses the relative magnitude of numerical variability
-($\sigma_{\mathrm{num}}$; Eq.~\eqref{eq:sigma_num}) to anatomical variability
-($\sigma_{\mathrm{anat}}$; Eq.~\eqref{eq:sigma_anat}). \navr quantifies
-the intrinsic numerical instability of a neuroimaging pipeline, allowing
-comparison across regions and studies.
-
-We then derived closed-form, first-order approximations for how numerical variability
-perturbs four common statistical tests used in structural
-MRI: Cohen's $d$, two-sample $t$-test, partial correlation, and ANCOVA. For each
-of these tests, we obtained: (1) an approximation of the standard deviation of
-the metric induced by numerical variability and (2) the corresponding
-uncertainty in the $p$-value (Table~\ref{tab:stat_uncertainty}). These results
-follow from propagating the numerical variability through the estimators using
-the delta-method (derivations in Section~\ref{sec:theoretical_derivations}).
+More specifically, we derived closed-form approximations of numerical
+uncertainty for common statistics and their associated p-values, which can be
+readily incorporated into MRI analyses (Table~\ref{tab:stat_uncertainty}).
+These formulas rely on the Numerical-Anatomical Variability Ratio
+(\navr) that represents the relative magnitude of numerical variability
+($\sigma_{\mathrm{num}}$; Eq.~\eqref{eq:sigma_num}) to population variability
+($\sigma_{\mathrm{anat}}$; Eq.~\eqref{eq:sigma_anat}):
+$$\nu_{\mathrm{nav}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}$$
+\navr quantifies the intrinsic numerical instability of a neuroimaging pipeline,
+allowing comparison across regions and studies. The formulas in
+Table~\ref{tab:stat_uncertainty} were obtained by propagating the numerical
+variability through the estimators using the delta-method (see
+Section~\ref{sec:theoretical_derivations}) and were verified through numerical
+simulatesions.
 
 This analytical framework provides a practical link between the pipeline's
 numerical instability (\navr), the study's sample size ($n$), and the
-resulting uncertainty in effect sizes and $p$-values. Since the formulas
-include the summary statistics of the study, it enables researchers to
-audit the potential impact of numerical variability on existing
-studies without requiring expensive recomputation or access to the original data.
+resulting uncertainty in effect sizes and $p$-values. Because the formulas
+rely only on the study's summary statistics, they enable researchers to
+assess the potential impact of numerical variability on existing
+studies without requiring costly recomputation or access to the original data.
 
-\TG[done]{I think I would rather present the $\sigma_d$ result first, then explain
-    NAV. When introducing sigma d, you could better explain that numerical
-    variability has to be evaluated in the context of a particular effect size, and its impact will be dependent on sample size.}
+% \TG[done]{I think I would rather present the $\sigma_d$ result first, then explain
+%     NAV. When introducing sigma d, you could better explain that numerical
+%     variability has to be evaluated in the context of a particular effect size, and its impact will be dependent on sample size.}
 
-\begin{table}[t]
+\begin{table}[ht]
     \centering
     \begin{tabular}{lll}
         \toprule
@@ -440,6 +434,9 @@ studies without requiring expensive recomputation or access to the original data
     \label{tab:stat_uncertainty}
 \end{table}
 
+
+We measured $\nu_{nav}$ in the PPMI-extracted dataset used in the previous
+section (Figure~\ref{fig:navr}). \TG{Revise the following text when Figure 4 is final}
 Across cortical and subcortical regions, we found numerical variability
 accounted for up to 37-40\% of the observed anatomical variance in baseline
 analyses (Figures~\ref{fig:navr_subcortical},~\ref{fig:navr_thickness}).
@@ -456,7 +453,6 @@ direct implications: for a typical \navr of 0.2, achieving a negligible
 numerical uncertainty on Cohen's d effect size ($\sigma_d \leq 0.01$) would
 require a sample size of at least 1,500 participants
 (Fig.~\ref{fig:sigma_d_contour}).
-\TG[done]{not sure what this means, reformulate}
 
 \begin{figure}[h]
     \centering
@@ -479,12 +475,14 @@ require a sample size of at least 1,500 participants
         \includegraphics[width=.8\linewidth]{figures/NAVR_map/jet_colorbar.pdf}
     \end{subfigure}
 
+    \label{fig:navr}
     \caption{Numerical-Anatomical Variability Ratio (\navr) for subcortical
         volumes~\ref{fig:navr_subcortical} and cortical
         thickness~\ref{fig:navr_thickness} across regions and groups. Higher
         \navr values indicate greater computational uncertainty relative to
         biological variation. The color scale indicates the \navr value, with
         warmer colors indicating higher \navr values.}
+    
 \end{figure}
 
 \begin{figure}
@@ -497,17 +495,25 @@ require a sample size of at least 1,500 participants
         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
 \end{figure}
 
-To facilitate the widespread adoption of this framework, we provide an
-interactive, public web tool available at
+To facilitate the use of our analytical framework, we developed an interactive,
+public web tool available at
 \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
-\TG[done]{you could add a screenshot of the tool} allowing rapid reproducibility
-audits and retrospective assessments of published findings (Appendix
-Figure~\ref{fig:brain_render_tool}). Furthermore, we observed that regions
-failing standard quality control (QC) checks consistently exhibited higher
-\navr, suggesting the metric can also serve as a useful proxy for data quality.
-By making numerical-variability evaluation accessible, our framework helps to
-improve transparency, support peer review, and foster more reliable statistical
-inference in neuroimaging.
+(Figure~\ref{fig:brain_render_tool}). By making numerical-variability evaluation
+accessible, our framework and accompanying tool help improve transparency,
+support peer review, and promote more reliable statistical inference in
+neuroimaging.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/screenshot_light.png}
+    \caption{Interactive web tool for estimating NAVR and assessing numerical
+        variability in neuroimaging studies. Users can input summary statistics
+        to obtain NAVR values and visualize the impact of numerical variability
+        on effect size estimates. The tool is available at
+        \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.}
+    \label{fig:brain_render_tool}
+\end{figure}
+
+
 
 \section{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
 
@@ -2698,16 +2704,7 @@ measurements are more stable than cortical volume.
 
 \section{Numerical-Anatomical Variability Ratio (\navr)}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{figures/screenshot_light.png}
-    \caption{Interactive web tool for estimating NAVR and assessing numerical
-        variability in neuroimaging studies. Users can input summary statistics
-        to obtain NAVR values and visualize the impact of numerical variability
-        on effect size estimates. The tool is available at
-        \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.}
-    \label{fig:brain_render_tool}
-\end{figure}
+
 
 \subsection{\navr maps}
 
