@@ -1,34 +1,37 @@
 \section{Introduction}
 
 The reliability of MRI measures critically depends on the estimation of all
-sources of analytical variability~\cite{carp2012plurality,botvinik2020variability,kennedy2019everything}.
-This is particularly important when effect sizes are moderate, as it is the case
-in studies of Parkinson's disease (PD)~\cite{he2020progressive}. Among these
-sources, numerical variability---differences in computational results arising from
-factors like hardware, operating systems, or software library versions---has been
-shown to have a measurable impact on analyses across multiple pipeline
+sources of analytical
+variability~\cite{carp2012plurality,botvinik2020variability,kennedy2019everything}.
+Estimating variability is particularly important when effect sizes are moderate,
+as it is the case in studies of Parkinson's disease
+(PD)~\cite{he2020progressive}. Among variability sources, numerical
+variability---differences in computational results arising from factors such as
+hardware, operating systems, or software library versions---has been shown to
+have a measurable impact on analyses across multiple pipeline
 tools~\cite{glatard2012virtual,gronenschild2012effects,des2023reproducibility,vila2024impact}.
 
-Numerical variability arises from rounding and truncation errors associated
-with the use of limited-precision numerical formats, such as the widespread IEEE-754
+Numerical variability arises from rounding and truncation errors associated with
+the use of limited-precision numerical formats, such as the widespread IEEE-754
 standard for floating-point arithmetic~\cite{markstein2008new}. Due to the
 complexity of MRI analyses, particularly their reliance on high-dimensional
 optimization, such errors can propagate and accumulate, sometimes leading to
 measurable differences in final
 outputs~\cite{salari2021accurate,kiar2021numerical,chatelain2024numerical,mirhakimi2025numerical}.
-However, numerical variability remains understudied, mainly due to the
-practical challenges of quantifying its effects. Consequently, the implications
-of numerical variability for clinical findings are largely unknown.
+However, numerical variability remains understudied, mainly due to the practical
+challenges of quantifying its effects. Consequently, the implications of
+numerical variability for clinical findings are largely unknown.
 
-The first aim of this study was to quantify the impact of numerical
-variability in structural MRI analyses of Parkinson's disease. Building on these
-initial observations, we developed an analytical framework and associated tools
-to rapidly assess the numerical quality of structural MRI analyses reported in
-the published literature. By making numerical-variability evaluation accessible,
-our framework and tool enhance transparency, support peer review, and promote
-more reliable statistical inference in neuroimaging. Applying this framework to
-the PD literature, we provide the first estimates of the numerical quality of
-MRI analyses in Parkinson's disease studies. \TG{revise last sentence when results are available.}
+The first aim of this study was to quantify the impact of numerical variability
+in structural MRI analyses of Parkinson's disease. Building on these initial
+observations, we developed an analytical framework and associated tools to
+rapidly assess the numerical quality of structural MRI analyses reported in the
+published literature. By making numerical-variability evaluation accessible, our
+framework and tool enhance transparency, support peer review, and promote more
+reliable statistical inference in neuroimaging. Applying this framework to the
+PD literature, we provide the first estimates of the numerical quality of MRI
+analyses in Parkinson's disease studies, showing that \ldots \TG{revise last
+sentence when results are available.}
 
 \section{Results}
 
@@ -167,7 +170,7 @@ studies without requiring costly recomputation or access to the original data.
 \end{table}
 
 
-We measured $\nu_{nav}$ in the PPMI dataset used in the previous section
+We measured $\nu_{npv}$ in the PPMI dataset used in the previous section
 (Figure~\ref{fig:navr}). For the baseline analysis, the average \navr value
 across cortical and subcortical regions was \TG{add value} in the PD group and
 \TG{value} in the HC group. No significant differences in mean \navr were
@@ -183,6 +186,9 @@ substracting nearly equal numbers between timepoints. Using the same formula, we
 anticiapte that at this level of uncertainty, achieving a negligible numerical
 uncertainty ($\sigma_d \leq 0.01$) would require at least 1,600 participants. 
 
+To facilitate the use of our model, we developed an interactive web tool available at
+\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
+(Figure~\ref{fig:brain_render_tool}).
 
 \begin{figure}[h]
     \centering
@@ -207,12 +213,7 @@ uncertainty ($\sigma_d \leq 0.01$) would require at least 1,600 participants.
 %         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
 % \end{figure}
 
-To facilitate the use of our model, we developed an interactive web tool available at
-\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
-(Figure~\ref{fig:brain_render_tool}). By making numerical variability evaluation
-accessible, our model and accompanying tool help improve transparency,
-support peer review, and promote more reliable statistical inference in
-neuroimaging.
+
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\linewidth]{figures/screenshot_light.png}
