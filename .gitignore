@@ -1,6 +1,8 @@
-main.*
-!main.tex
-!main.bib
-!main.pdf
-.vscode/PythonImportHelper-v2-Completion.json
-main.pdf
+*.aux
+*.log
+*.bbl
+*.blg
+*.log
+*.out
+*.old
+paper.pdf

@@ -1,0 +1,101 @@
+\documentclass{article}
+
+% Language setting Replace `english' with e.g. `spanish' to change the document
+% language
+\usepackage[english]{babel}
+
+% Set page size and margins Replace `letterpaper' with `a4paper' for UK/EU
+% standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[pdftex]{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{todonotes}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{tabularray}
+\usepackage{xspace} % For \xspace command
+\usepackage{tikz}
+\usetikzlibrary{shadings,positioning,overlay-beamer-styles}
+\usepackage{xifthen}
+\usepackage{ulem}
+\usepackage{amsthm}
+\usepackage{cleveref}
+
+\newcommand{\YC}[1]{\textcolor{red}{YC: #1}}
+\newcommand{\TG}[2][]{\ifthenelse{\equal{#1}{done}}{[\textcolor{teal}{$\blacksquare$}]~\textcolor{blue!60}{\textsc{From
+Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
+
+
+\newcommand{\0}{\mspace{9mu}}
+\newcommand{\navr}[0]{$\nu_{\mathrm{nav}}$\xspace}
+\newcommand{\Var}[0]{\mathrm{Var}}
+
+\title{Numerical variability in structural MRI measures of Parkinson's disease}
+
+\author{Yohan Chatelain, Andrzej Sokołowski, Madeleine Sharp, Jean-Baptiste Poline, Tristan Glatard}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    Numerical variability is rarely quantified in neuroimaging despite many
+    biomarkers relying on subtle morphometric differences across individuals. We
+    instrumented FreeSurfer, a widely used neuroimaging pipeline, to simulate
+    numerical differences across computational environments, and used it to
+    measure numerical variability in MRI analyses of Parkinson's disease
+    patients and controls. In multiple cortical and subcortical regions,
+    numerical variation reached nearly one-third of the anatomical signal,
+    altering statistical conclusions about group differences and clinical
+    associations. To address this, we developed a practical tool that estimates
+    the Numerical-Anatomical Variability Ratio (NAVR), enabling researchers to
+    assess the impact of numerical noise in existing studies. Applying
+    NAVR-based thresholding to ENIGMA brain maps showed that many small regional
+    effects fall below typical numerical noise thresholds \TG{Note to self:
+        re-evaluate this (strong) claim after reading the results} for standard
+    study sizes \TG{not sure why study sizes are mentioned here since ENIGMA
+        maps were obtained for specific sample sizes}. Our tool provides a practical
+    approach to quantify the effect of numerical variability, improving the
+    robustness and reproducibility of neuroimaging analyses.
+\end{abstract}
+
+\include{main}
+
+% \include{methods}
+
+\section{Data Availability}
+The data that support the findings of this study are available from the
+Parkinson's Progression Markers Initiative (PPMI) database
+(www.ppmi-info.org/access-data-specimens/download-data), but restrictions apply
+to the availability of these data, which were used under license for the
+current study, and so are not publicly available. Data are however available
+from the authors upon reasonable request and with permission of the PPMI.
+
+\section{Code Availability}
+
+All MCA instrumentation scripts, FreeSurfer build instructions and analysis
+notebooks are available at [GitHub URL to be inserted]. Exact commit hashes are
+archived on Zenodo (DOI [to be added]) to ensure bit-level reproducibility.
+
+\section{Acknowledgements}
+
+The analyses were conducted on the Virtual Imaging
+Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
+Biomed virtual organization within the European Grid Infrastructure (EGI). We
+extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
+\TG{acknowledge MJFF project LivingPark}
+
+\bibliographystyle{plain}
+\bibliography{paper}
+
+% \include{appendix}
+
+\end{document}

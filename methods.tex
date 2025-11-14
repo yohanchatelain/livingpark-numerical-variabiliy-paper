@@ -1,0 +1,763 @@
+\section{Methods}
+
+\TG{include a summary of your methods here.}
+
+\TG{Overall the methods are quite brief, you should add more details so that
+    people get a better sense of what you did, see detailed suggestions in the text}
+
+\subsection{Participants}
+
+Structural MRI data were obtained from the Parkinson's Progression Markers
+Initiative (PPMI; \url{www.ppmi-info.org}). The
+study included 201 participants: 112 individuals diagnosed with Parkinson's
+disease without mild cognitive impairment (PD-non-MCI) and 89 healthy controls
+(HC). All participants had two usable T1-weighted MRI scans acquired
+approximately $1.4 \pm 0.5$ years apart ($0.9$-$2.0$ years). Patients with mild
+cognitive impairment were excluded to minimize confounding effects of cognitive
+decline.
+
+Inclusion criteria were: (i) diagnosis of idiopathic Parkinson's disease
+(PD-non-MCI) or healthy control status; (ii) availability of two high-quality
+T1-weighted scans at distinct visits; and (iii) absence of other neurological or
+psychiatric conditions. PD severity was quantified using the Unified Parkinson's
+Disease Rating Scale part III (UPDRS-III) in the OFF medication state at both
+baseline and follow-up visits.
+
+All procedures were approved by the research ethics boards of participating PPMI
+sites, and written informed consent was obtained from all participants in
+accordance with the Declaration of Helsinki. The PD and HC groups did not differ
+significantly in age, education, or sex distribution ($p > 0.05$;
+Table~\ref{tab:cohort_stat}).
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Cohort}              & \textbf{HC}     & \textbf{PD-non-MCI} \\
+        \hline
+        $n$                          & $89$            & $112$               \\
+        Age (years)                  & $60.7 \pm 9.7$  & $60.6 \pm 8.9$      \\
+        Age range                    & $30.6$ - $79.8$ & $39.2$ - $78.3$     \\
+        Gender (male,\%)             & $47$ (52.8\%)   & $74$ (66.1\%)       \\
+        Education (years)            & $16.7 \pm 3.4$  & $16.0 \pm 3.1$      \\
+        UPDRS-III OFF baseline       & $-$             & $23.3 \pm 10.0$     \\
+        UPDRS-III OFF follow-up      & $-$             & $25.6 \pm 11.2$     \\
+        Inter-visit interval (years) & $1.4 \pm 0.5$   & $1.4 \pm 0.6$       \\
+        \bottomrule
+    \end{tabular}
+    \vspace{1em}
+    \caption{\textbf{Participant characteristics.} Values represent mean $\pm$
+        standard deviation. PD = Parkinson's disease; MCI = mild cognitive impairment;
+        UPDRS = Unified Parkinson's Disease Rating Scale. The PD-non-MCI longitudinal
+        subset corresponds to participants with available follow-up MRI and  and disease
+        severity scores available. \label{tab:cohort_stat}}
+\end{table}
+
+\subsection{Image acquisition and preprocessing}
+
+T1-weighted MRI scans were obtained from the Parkinson's Progression Markers
+Initiative (PPMI), acquired using standardized 3D MPRAGE protocols across sites
+(repetition time = 2.3 s, echo time = 2.98 ms, inversion time = 0.9 s, voxel
+size = 1 mm isotropic, 192 sagittal slices, field of view = 256 mm, matrix size
+= 256 $\times$ 256). Minor variations in acquisition parameters may exist across
+scanners and sites due to PPMI's multisite design.
+
+Structural images were processed using FreeSurfer 7.3.1 instrumented with
+Fuzzy-libm, a modified math library that introduces stochastic perturbations
+into floating-point operations to assess numerical stability (Section~\label{sec:numerical_variability_assessment}).
+Each participant's MRI was processed 26 times under independent perturbations to
+estimate numerical variability. Runs that failed \TG{defined
+    failed: failed due to technical reasons or failed QC?} due to processing errors or
+quality-control (QC) issues were excluded, ensuring exactly 26 valid outputs per
+participant. \TG{you should mention QC too}
+
+Longitudinal reconstruction followed the standard FreeSurfer
+pipeline~\cite{reuter2012within}, consisting of independent cross-sectional
+processing for each timepoint, followed by creation of an unbiased
+within-subject template~\cite{reuter2011avoiding} using robust
+registration~\cite{reuter2010highly}. All downstream statistical analyses were
+performed on unperturbed FreeSurfer outputs to avoid introducing additional
+numerical variability.
+
+\subsection{Numerical Variability Assessment}
+\label{sec:numerical_variability_assessment}
+We employed Monte Carlo Arithmetic (MCA)~\cite{parker1997monte} to quantify
+numerical instability in FreeSurfer computations. MCA introduces controlled
+random perturbations into floating-point operations, simulating rounding errors
+that occur across different computational environments. This stochastic
+approach enables systematic assessment of result stability by measuring
+variation across multiple runs of identical analyses.
+
+\TG{I think you should give more details about MCA, including the equations and also your improvements to fuzzy-libm}
+
+We used Fuzzy-libm~\cite{salari2021accurate}, which extends MCA to mathematical
+library functions (\texttt{exp}, \texttt{log}, \texttt{sin}, \texttt{cos})
+through Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler.
+Virtual precision parameters were set to 53 bits for double precision and 24
+bits for single precision to simulate realistic machine-level precision errors.
+
+We processed each visit with FreeSurfer 7.3.1. To sample numerical variability
+we compiled FreeSurfer \TG{did you really compile Freesurfer?} with Fuzzy-libm
+an implementation of Monte Carlo arithmetic (MCA) that injects zero-mean
+rounding noise into every elementary function call. Virtual precision was set
+to 53 bits for operations promoted to double and 24 bits for single precision,
+\TG{there's quite some redundancy with the previous paragraph} thereby
+preserving IEEE-754 expectations but exposing the variance of alternative
+execution paths. Each subject-visit pair was processed 26 times; failed or
+quality-control-flagged runs were discarded, and exactly 26 successful runs per
+pair were retained for analysis.
+
+\subsubsection{Numerical-Anatomical Variability Ratio (\navr)}
+
+To quantify computational stability relative to anatomical variation, we
+introduce the Numerical-Anatomical Variability Ratio (\navr). For each brain
+region, \navr measures the ratio of measurement uncertainty arising from
+computational processes to natural inter-subject anatomical variation:
+
+\[
+    \text{\navr} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{anat}}}
+\]
+
+where $\sigma_{\mathrm{num}}$ represents numerical variability (measurement
+precision across MCA repetitions for individual subjects) and
+$\sigma_{\mathrm{anat}}$ represents anatomical variability (inter-subject
+differences within each repetition).
+For each region of interest, measurements from $k$ MCA repetitions across $n$
+subject-visit pairs form a data matrix $\mathcal{M}_{k \times n}$ with entries
+$x_i^{(r)}$, where $i=1,\dots,n$ indexes subject-visits and $r=1,\dots,k$ indexes repetitions.
+Let
+\[
+    \bar x_i=\frac{1}{k}\sum_{r=1}^k x_i^{(r)}, \qquad
+    \bar x^{(r)}=\frac{1}{n}\sum_{i=1}^n x_i^{(r)}.
+\]
+
+\textbf{Numerical variability (within-subject, across repetitions):}
+\begin{equation}
+    \sigma^2_{\mathrm{num}}
+    = \frac{1}{n}\sum_{i=1}^{n}\left[
+    \frac{1}{k-1}\sum_{r=1}^{k}\bigl(x_i^{(r)}-\bar x_i\bigr)^2
+    \right].
+    \label{eq:sigma_num}
+\end{equation}
+
+\textbf{Anatomical variability (within-repetition, across subjects):}
+\begin{equation}
+    \sigma^2_{\mathrm{anat}}
+    = \frac{1}{k}\sum_{r=1}^{k}\left[
+    \frac{1}{n-1}\sum_{i=1}^{n}\bigl(x_i^{(r)}-\bar x^{(r)}\bigr)^2
+    \right].
+    \label{eq:sigma_anat}
+\end{equation}
+where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means,
+respectively. Higher \navr values indicate regions where computational
+uncertainty approaches or exceeds biological variation, potentially
+compromising the detection of true anatomical differences.\TG{didn't you pool
+    sigma anat across PD and HC?}
+
+
+
+\subsubsection{Relationship between \navr~and downstream statistical test uncertainty}
+\label{sec:theoretical_derivations}
+
+\TG[done]{The remainder of this paragraph is quite informal, could you tidy up the
+    equations to start from the definition of Cohen's d and clearly derive its
+    standard deviation? You should also clarify the assumptions that are made.}
+
+To establish a quantitative link between a method's computational reproducibility
+and the reliability of group-level statistical inferences, we derived analytical
+expressions connecting numerical variability to the uncertainty of commonly used
+statistical tests (Cohen's~$d$, $t$-tests, partial correlation, and ANCOVA).
+Our goal is to characterize how numerical noise propagates through the analytical
+pipeline to produce uncertainty in the reported statistics.
+
+For each Monte Carlo Arithmetic (MCA) repetition $r$, we denote by
+$\tilde{\mathbf{x}}^{(r)} = (\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})^\top$
+the vector of perturbed measurements across $N$ subjects.
+Each perturbed observation is modeled as the sum of the subject's
+true underlying biological value and a numerical error term:
+\begin{equation*}
+    \tilde{x}_i^{(r)} = x_i + \varepsilon_i^{(r)},
+    \qquad
+    \mathbb{E}[\varepsilon_i^{(r)}] = 0,
+    \qquad
+    \mathrm{Cov}[\boldsymbol{\varepsilon}^{(r)}] = \Sigma_{\mathrm{num}}.
+    \label{eq:model_noise}
+\end{equation*}
+Here, $\mathbf{x} = (x_1, \dots, x_N)^\top$ represents the fixed,
+biological measurements, while $\boldsymbol{\varepsilon}^{(r)}$
+captures the random numerical perturbations introduced during computation.
+
+\vspace{0.4em}
+\noindent\textbf{Assumptions.}
+To isolate the contribution of numerical variability, we make three simplifying assumptions:
+\begin{enumerate}
+
+    \item \textbf{Numerical error model.}
+          The numerical perturbations are modeled as independent, zero-mean Gaussian
+          random variables:
+          $\varepsilon_i^{(r)} \sim \mathcal{N}(0,\,\sigma_{\mathrm{num},i}^2),
+              \boldsymbol{\varepsilon}^{(r)} \sim
+              \mathcal{N}\!\left(\mathbf{0},\,\Sigma_{\mathrm{num}}\right)$,
+          where, under homoscedasticity,
+          $\Sigma_{\mathrm{num}} = \sigma_{\mathrm{num}}^2 I_N$.
+
+    \item \textbf{Anatomical variability.}
+          The between-subject (biological) variance
+          $\sigma_{\mathrm{anat}}^2 = \Var(\{x_i\})$
+          dominates the numerical noise, i.e.\
+          $\sigma_{\mathrm{num},i} \ll \sigma_{\mathrm{anat}}$.
+          This implies that the pooled empirical standard deviation
+          of the observed data can be approximated by the biological one,
+          $s_p \approx \sigma_{\mathrm{anat}}$.
+
+    \item \textbf{Baseline (null-hypothesis) scenario.} \YC{Do we need this assumption?
+              It seems we can derive the same results without it.}
+          We condition on the observed biological measurements $\mathbf{x}$
+          and quantify variability only from numerical perturbations
+          $\boldsymbol{\varepsilon}^{(r)}$. This isolates finite-precision effects from sampling
+          variation; the resulting expressions remain accurate near the null
+          and for small effect sizes. In this setting, the biological
+          values $\mathbf{x} = (x_1, \dots, x_N)^\top$ are treated as fixed,
+          and all randomness arises from numerical perturbations
+          $\boldsymbol{\varepsilon}^{(r)}$.
+
+\end{enumerate}
+
+Under these assumptions, each downstream statistic
+$ds = f(\tilde{\mathbf{x}})$ can be linearized around the
+baseline $\mathbf{x}$ as
+$ds(\tilde{\mathbf{x}}) \approx ds(\mathbf{x}) +
+    \nabla_{\!\mathbf{x}}f(\mathbf{x})^\top \boldsymbol{\varepsilon}$,
+allowing the numerical variance to be expressed through the delta method as
+\begin{equation}
+    \Var_{\mathrm{num}}[ds]
+    \approx
+    \nabla_{\!\mathbf{x}} f(\mathbf{x})^\top
+    \Sigma_{\mathrm{num}}
+    \nabla_{\!\mathbf{x}} f(\mathbf{x})
+    = \sigma_{\mathrm{num}}^2 \|\nabla_{\!\mathbf{x}} f(\mathbf{x})\|_2^2.
+    \label{eq:var-ds}
+\end{equation}
+
+
+
+Table~\ref{tab:stat_uncertainty} summarizes the derived expressions for the
+numerical standard deviation of several common statistics.
+
+\paragraph{Cohen's \textit{d}}
+
+Cohen's effect size quantifies the standardized difference between two sample means.
+For two independent groups $G_1$ and $G_2$ with sample sizes $n_1$ and $n_2$
+($df = n_1 + n_2 - 2$), we define:
+\begin{equation}
+    d = \frac{\Delta}{s_p}
+    = \frac{\bar{x}_1 - \bar{x}_2}{s_p},
+    \qquad
+    s_p = \sqrt{\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{df}}.
+    \label{eq:cohen-d-def}
+\end{equation}
+
+The variance of $d$ across Monte Carlo Arithmetic (MCA) repetitions, conditional
+on the fixed dataset $\mathbf{x}$, is given by:
+\begin{equation*}
+    \Var_{\mathrm{num}}[d]
+    = \Var\!\left[d(\tilde{\mathbf{x}})\,\big|\,\mathbf{x}\right].
+    \label{eq:var-rep-def}
+\end{equation*}
+Applying the multivariate delta method (Eq.~\ref{eq:var-ds}) around the baseline $\mathbf{x}_0 = \mathbf{x}$, we obtain:
+\begin{equation}
+    \Var_{\mathrm{num}}[d]
+    \approx
+    \sigma_{\mathrm{num}}^2
+    \sum_{i=1}^{n}
+    \left(\frac{\partial d}{\partial x_i}\right)^{\!2}.
+    \label{eq:var-rep-approx}
+\end{equation}
+For an observation $x_i \in G_g$ ($g \in \{1,2\}$), the chain rule gives:
+\begin{equation*}
+    \frac{\partial d}{\partial x_i} = \frac{1}{s_p}\frac{\partial \Delta}{\partial x_i} - \frac{\Delta}{s_p^2}\frac{\partial s_p}{\partial x_i}, \quad
+    \frac{\partial \Delta}{\partial x_i} = \pm \frac{1}{n_g}, \quad
+    \frac{\partial s_p}{\partial x_i} = \frac{x_i - \bar{x}_g}{df s_p}
+    \label{eq:d-deriv-chain}
+\end{equation*}
+where the sign in $\partial \Delta/\partial x_i$ is positive for $g=1$ and negative for $g=2$.
+Substituting back into the expression for $\partial d/\partial x_i$, we have:
+\begin{equation*}
+    \frac{\partial d}{\partial x_i} = \pm\frac{1}{n_g s_p} - \frac{\Delta(x_i - \bar{x}_g)}{df s_p^3}
+    \Rightarrow {\left(\frac{\partial d}{\partial x_i}\right)}^2 = \frac{1}{n_g^2 s_p^2} \pm \frac{2\Delta(x_i - \bar{x}_g)}{n_g df s_p^4} + \frac{\Delta^2(x_i - \bar{x}_g)^2}{df^2 s_p^6}
+\end{equation*}
+and summing over all $i$ in group $G_g$:
+\begin{equation*}
+    \sum_{i\in G_g}\left(\frac{\partial d}{\partial x_i}\right)^2 =
+    \frac{1}{n_g s_p^2} \pm \frac{2\Delta}{n_g df s_p^4}\sum_{i\in G_g}(x_i - \bar{x}_g) + \frac{\Delta^2}{df^2 s_p^6}\sum_{i\in G_g}(x_i - \bar{x}_g)^2 = \frac{1}{n_g s_p^2} + \frac{\Delta^2}{df^2 s_p^6}\left((n_g - 1)s_g^2 \right)
+\end{equation*}
+since $\sum_{i\in G_g}(X_i - \bar{X}_g) = 0$, so finally summing over both groups:
+\begin{align*}
+    \sum_{i = 1}^{n}\left(\frac{\partial d}{\partial X_i}\right)^2
+     & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2}\right) +
+    \frac{\Delta^2}{df^2 s_p^6}\left((n_1 - 1)s_1^2 + (n_2 - 1)s_2^2 \right)                                         \\
+     & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2} +
+    \frac{1}{df}\frac{\Delta^2}{s_p^2}\frac{1}{s_p^2}\frac{\left((n_1 - 1)s_1^2 + (n_2 - 1)s_2^2 \right)}{df}\right) \\
+     & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2} + \frac{d^2}{df} \right).
+\end{align*}
+Finally, assuming $s_p \approx \sigma_{\mathrm{anat}}$, the anatomical (between-subject)
+variance, Eq.~\eqref{eq:var-rep-approx} becomes:
+\begin{equation}
+    \Var_{\mathrm{num}}[d]
+    \approx
+    \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\mathrm{anat}}^2}
+    \left(\frac{1}{n_1}+\frac{1}{n_2}+\frac{d^2}{df}\right).
+    \label{eq:var-rep-simplified}
+\end{equation}
+For balanced groups ($n_1 = n_2 = n/2$) and large $n$, the $d^2/df$ term is negligible:
+\begin{align*}
+    \Var_{\mathrm{num}}[d]   & \approx \frac{4}{n} \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\mathrm{anat}}^2}   = \frac{4}{n} \nu_{\mathrm{nav}}^2 \\
+    \sigma_{\mathrm{num}}[d] & \approx \frac{2}{\sqrt{n}}\,\nu_{\mathrm{nav}}
+    \label{eq:var-rep-final-simplified}
+\end{align*}
+where $\nu_{\mathrm{nav}} = \sigma_{\mathrm{num}} / \sigma_{\mathrm{anat}}$
+is the numerical–anatomical variability ratio.
+This expression quantitatively links the numerical uncertainty captured by
+$\nu_{\mathrm{nav}}$ to the variability of Cohen's~$d$ effect size,
+providing a practical measure of the stability of statistical inferences
+under finite-precision arithmetic.
+
+\paragraph{Two-sample \textit{t}-test statistic}
+
+The pooled two-sample $t$ statistic quantifies the standardized difference between
+two group means:
+\begin{equation*}
+    t =
+    \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\tfrac{1}{n_1} + \tfrac{1}{n_2}}}
+    =
+    \frac{d}{\sqrt{\tfrac{1}{n_1} + \tfrac{1}{n_2}}},
+    \label{eq:t-stat-def}
+\end{equation*}
+where $d$ is Cohen's~$d$ defined in Eq.~\eqref{eq:cohen-d-def}.
+Defining
+\(
+\omega_n = \tfrac{1}{n_1} + \tfrac{1}{n_2},
+\)
+the $t$ statistic can be expressed as
+\(t = d / \sqrt{\omega_n}\).
+From Eq.~\eqref{eq:var-rep-simplified}, the variance of $d$ due to numerical
+perturbations propagates to the variance of $t$ as:
+\begin{equation}
+    \begin{aligned}
+        \Var_{\mathrm{num}}[t]
+         & =
+        \Var\!\left[\frac{d}{\sqrt{\omega_n}}\right]
+        \approx
+        \frac{1}{\omega_n}
+        \nu_{\mathrm{nav}}^{2}
+        \left(\omega_n + \frac{d^{2}}{df}\right) \\[3pt]
+         & =
+        \nu_{\mathrm{nav}}^{2}
+        \left(1 + \frac{d^{2}}{df\,\omega_n}\right).
+        \label{eq:t-var-approx}
+    \end{aligned}
+\end{equation}
+
+\vspace{0.5em}
+\noindent
+To analyze the correction term, consider
+\begin{equation*}
+    df\,\omega_n = (n_1 + n_2 - 2)
+    \left(\frac{1}{n_1} + \frac{1}{n_2}\right)
+    = (n_1 + n_2 - 2)\frac{n_1 + n_2}{n_1 n_2}
+    \label{eq:df-omega-analysis}
+\end{equation*}
+When $n_1 \gg n_2$,
+\(
+df\,\omega_n \approx \tfrac{n_1 - 2}{n_2};
+\)
+symmetrically, when $n_2 \gg n_1$,
+\(
+df\,\omega_n \approx \tfrac{n_2 - 2}{n_1}.
+\)
+In both cases, $1/(df\,\omega_n) \to 0$, so the correction term
+\(\tfrac{d^2}{df\,\omega_n}\) vanishes for unbalanced groups.
+When the groups are balanced ($n_1 = n_2 = n/2$),
+$df \omega_n = 4\!\left(1 - \tfrac{2}{n}\right) \to 4$ as $n \to \infty$,
+so that $\tfrac{d^2}{df\,\omega_n} \to d^2 / 4$.
+Substituting these results into Eq.~\eqref{eq:t-var-approx} gives:
+\begin{equation*}
+    \Var_{\mathrm{num}}[t]
+    \approx
+    \nu_{\mathrm{nav}}^{2}\,(1 + \epsilon),
+    \label{eq:t-var-final}
+\end{equation*}
+where $\epsilon$ tends to $0$ for strongly unbalanced groups and to $d^{2}/4$
+for large balanced samples.
+For small effect sizes ($d^2 \ll 4$) and unbalanced groups, the correction term
+$\epsilon$ is negligible, yielding the simplified expression:
+\begin{align*}
+    \Var_{\mathrm{num}}[t]   & \approx \nu_{\mathrm{nav}}^{2} \notag \\
+    \sigma_{\mathrm{num}}[t] & \approx \nu_{\mathrm{nav}}.
+    \label{eq:t-var-simplified}
+\end{align*}
+
+\vspace{0.5em}
+\noindent
+The uncertainty of the corresponding $p$-values can then be derived. Let $X$ be the
+random variable with $\mathbb{E}_{\mathrm{num}}[X]=t_0$ and
+$\Var_{\mathrm{num}}[X]=\nu_{\mathrm{nav}}^{2}$. Let $f_t$, $F_t$ be the
+probability density and cumulative distribution functions of the Student
+$t$-distribution with $df$ degrees of freedom. Applying the delta method to the
+two-sided $p$-value $p(X) = 2\left(1 - F_t(|X|)\right)$ gives:
+\begin{align*}
+    \Var_{\mathrm{num}}[p(X)] & = \Var_{\mathrm{num}}\left[2(1 - F_t(|X|))\right]                             \notag     \\
+                              & \approx {\left(-2f_t(|t_0|)\,\mathrm{sign}(t_0)\right)}^{2}\Var_{\mathrm{num}}[X] \notag \\
+                              & \approx 4{\left(f_t(|t_0|)\right)}^{2}\nu_{\mathrm{nav}}^{2},
+\end{align*}
+which gives the standard deviation of the numerical uncertainty in the
+$p$-value:
+\begin{equation*}
+    \sigma_{\mathrm{num}}[p(X)] = 2f_t(|t_0|)\,\nu_{\mathrm{nav}}.
+    \label{eq:p-std}
+\end{equation*}
+
+\paragraph{ANCOVA group effect.}
+
+Analysis of covariance (ANCOVA) evaluates group differences using a general
+linear model:
+\begin{equation*}
+    \mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon},
+    \qquad
+    \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0},\, \sigma^2 I),
+    \label{eq:ancova-model}
+\end{equation*}
+where $\mathbf{y}$ is the vector of measurements across subjects, and
+$\mathbf{X}$ includes an intercept, diagnostic group (PD vs.\ HC), and
+covariates (e.g., age and sex). The adjusted group difference is expressed as
+the one-degree-of-freedom contrast $c^{\top}\boldsymbol{\beta}$, with contrast
+vector $c = [0,\, 1,\, 0,\, 0]^{\top}$. Let
+$\widehat{\boldsymbol{\beta}} = (\mathbf{X}^{\top}\mathbf{X})^{-1}
+    \mathbf{X}^{\top}\mathbf{y}$ denote the ordinary least-squares (OLS) estimator
+and $\widehat{\sigma}_{\mathrm{res}}^{2} = SS_{\mathrm{res}} / df_2$ the
+residual mean square, where $df_2 = n - \mathrm{rank}(\mathbf{X})$.
+The sum of squares associated with the group effect is:
+\begin{equation*}
+    SS_{\mathrm{group}}
+    =
+    \frac{(c^{\top}\widehat{\boldsymbol{\beta}})^{2}}
+    {c^{\top}(\mathbf{X}^{\top}\mathbf{X})^{-1}c},
+    \qquad df_1 = 1.
+\end{equation*}
+The corresponding ANCOVA $F$ statistic is given by:
+\begin{equation*}
+    F
+    =
+    \frac{MS_{\mathrm{group}}}{MS_{\mathrm{res}}}
+    =
+    \frac{(c^{\top}\widehat{\boldsymbol{\beta}})^{2}}
+    {\widehat{\sigma}_{\mathrm{res}}^{2}\;
+    c^{\top}(\mathbf{X}^{\top}\mathbf{X})^{-1}c},
+    \qquad
+    F \sim \mathcal{F}(df_1 = 1,\, df_2).
+    \label{eq:ancova-F}
+\end{equation*}
+Significance is evaluated using the upper-tail of the central $\mathcal{F}$ distribution under
+the null hypothesis:
+\[
+    p(X) = 1 - F_{\mathcal{F}}\left(X;df_1,df_2\right),
+\]
+with $X \sim \mathcal{F}(df_1, df_2)$ and $F_{\mathcal{F}}$ the cumulative distribution
+function of the $F$ distribution with $(df_1, df_2)$ degrees of freedom. For
+$df_1 = 1$, the ANCOVA $F$ statistic is equivalent to the two-sample $t$-test
+through $F = t^{2}$ (see~\cite[p.~403]{johnson1995continuous}).
+Then the uncertainty in the $F$ statistic due to numerical noise follows directly from the uncertainty of $t$:
+\begin{align*}
+    \Var_{\mathrm{num}}[F]
+     & = \Var_{\mathrm{num}}[t^{2}]
+    \approx (2t)^{2}\Var_{\mathrm{num}}[t]
+    = 4t^{2}\nu_{\mathrm{nav}}^{2}
+    = 4F\nu_{\mathrm{nav}}^{2},
+\end{align*}
+yielding
+\begin{equation}
+    \sigma_{\mathrm{num}}[F] = 2\sqrt{F}\,\nu_{\mathrm{nav}}.
+    \label{eq:ancova-F-sigma}
+\end{equation}
+
+\vspace{0.4em}
+\noindent
+The uncertainty in the corresponding $p$-values can be obtained by the delta
+method. Let $X$ be a random variable with $\mathbb{E}_{\mathrm{num}}[X]=F_0$ and
+$\Var_{\mathrm{num}}[X]=4F_0\nu_{\mathrm{nav}}^{2}$  and $f_{\mathcal{F}}$, $F_{\mathcal{F}}$ the probability
+density and cumulative distribution functions. Applying the delta-method to the
+upper-tail $p$-value is $p(X) = 1 - F_{\mathcal{F}}(X)$ yields:
+\begin{align*}
+    \Var_{\mathrm{num}}[p(X)] & = \Var_{\mathrm{num}}[1 - F_{\mathcal{F}}(X)]           \\
+                              & \approx f_{\mathcal{F}}(F_0)^{2}\Var_{\mathrm{num}}[X]  \\
+                              & = 4F_0{f_{\mathcal{F}}(F_0)}^{2}\nu_{\mathrm{nav}}^{2},
+\end{align*}
+so that
+\begin{equation}
+    \sigma_{\mathrm{num}}[p(X)] = 2\sqrt{F_0}\,f_{\mathcal{F}}(F_0)\,\nu_{\mathrm{nav}}.
+    \label{eq:ancova-p-sigma}
+\end{equation}
+
+Equations~\eqref{eq:ancova-F-sigma} and~\eqref{eq:ancova-p-sigma} show that
+numerical imprecision introduces a variance in the estimated $F$ statistic and
+its corresponding $p$-value that scales linearly with the numerical-anatomical
+variability ratio $\nu_{\mathrm{nav}}$, and proportionally to $\sqrt{F}$ for
+the group effect magnitude.
+
+\paragraph{Partial correlation.}
+
+Partial correlation measures the association between two variables $(x,y)$ while
+controlling for the influence of one or more additional variables $z$.
+In our analysis, this corresponds to quantifying the relationship between
+regional brain measurements and UPDRS-III motor scores, controlling for age and sex.
+The sample partial correlation is defined as:
+\begin{equation*}
+    r_{xy,z}
+    =
+    \frac{r_{xy} - r_{xz}r_{yz}}
+    {\sqrt{(1 - r_{xz}^{2})(1 - r_{yz}^{2})}},
+    \label{eq:partial-r-def}
+\end{equation*}
+where $r_{xy}$ denotes the Pearson correlation between variables $x$ and $y$,
+\[
+    r_{xy} = \frac{s_{xy}}{s_x s_y}.
+\]
+To simplify notation, we set
+$a = r_{xy}$, $b = r_{xz}$, and $c = r_{yz}$ so that
+\[
+    R(a,b,c)
+    = \frac{a - bc}{\sqrt{(1 - b^{2})(1 - c^{2})}}
+    = \frac{a - bc}{D},
+    \qquad
+    D = \sqrt{(1 - b^{2})(1 - c^{2})}.
+\]
+Applying the delta method (Eq.~\ref{eq:var-ds}) to the partial correlation, we have:
+\begin{equation}
+    \Var_{\mathrm{num}}[R] \approx \sigma_{\mathrm{num}}^{2} \sum_{i=1}^{n} \left(\frac{\partial R}{\partial x_i}\right)^{2},
+    \label{eq:delta-partial}
+\end{equation}
+
+Assuming only $x$ is affected by numerical perturbations while $y$ and $z$ are
+fixed, the gradient with respect to each observation $x_i$ is:
+\[
+    \frac{\partial R}{\partial x_i}
+    =
+    \frac{\partial R}{\partial a}\frac{\partial a}{\partial x_i}
+    +
+    \frac{\partial R}{\partial b}\frac{\partial b}{\partial x_i}.
+\]
+The first-order partial derivatives are:
+\[
+    \frac{\partial R}{\partial a} = \frac{1}{D}, \qquad
+    \frac{\partial R}{\partial b} = \frac{(1 - c^{2})(ab - c)}{D^{3}}.
+\]
+and the derivatives of the correlations with respect to $x_i$ are (see
+Eq~\ref{eq:pearson_derivative}):
+\[
+    \frac{\partial a}{\partial x_i}
+    =
+    \frac{(v_i - a\,u_i)}{(n-1)s_x} = \frac{\alpha_i}{(n-1)s_x},
+    \qquad
+    \frac{\partial b}{\partial x_i}
+    = \frac{(w_i - b\,u_i)}{(n-1)s_x} = \frac{\beta_i}{(n-1)s_x}.
+\]
+where $u_i = (x_i - \bar{x})/s_x$, $v_i = (y_i - \bar{y})/s_y$, and $w_i = (z_i - \bar{z})/s_z$ are standardized and centered observations of
+$x$, $y$, and $z$ respectively.
+Then $\partial R / \partial x_i$ becomes:
+\begin{align*}
+    \frac{\partial R}{\partial x_i}
+     & =
+    \frac{1}{(n-1) s_x}
+    \left[
+        \frac{\alpha_i}{D} + \beta_i
+        \frac{(1 - c^{2})(ab - c)}{D^{3}}
+        \right]
+\end{align*}
+thus $(\partial R / \partial x_i)^{2}$ is:
+\begin{align*}
+    \left(\frac{\partial R}{\partial x_i}\right)^{2}
+     & =
+    \frac{1}{(n-1)^{2}s_{x}^{2}}
+    \left[
+        \frac{\alpha_i^{2}}{D^{2}}
+        +
+        2\frac{\alpha_i\beta_i(1 - c^{2})(ab - c)}{D^{4}}
+        +
+        \frac{\beta_i^{2}(1 - c^{2})^{2}(ab - c)^{2}}{D^{6}}
+    \right]                           \\
+     & =
+    \frac{1}{(n-1)^{2}s_{x}^{2}}
+    \left[
+        \frac{\alpha_i^{2}}{(1 - b^{2})(1 - c^{2})}
+        +
+        2\frac{\alpha_i\beta_i(1 - c^{2})(ab - c)}{(1 - b^{2})^{2}(1 - c^{2})^{2}}
+        +
+        \frac{\beta_i^{2}(1 - c^{2})^{2}(ab - c)^{2}}{(1 - b^{2})^{3}(1 - c^{2})^{3}}
+    \right]                           \\
+     & = \frac{1}{(n-1)^{2}s_{x}^{2}}
+    \left[
+        \frac{\alpha_i^{2}}{(1 - b^{2})(1 - c^{2})}
+        +
+        2\frac{\alpha_i\beta_i(ab - c)}{(1 - b^{2})^{2}(1 - c^{2})}
+        +
+        \frac{\beta_i^{2}(ab - c)^{2}}{(1 - b^{2})^{3}(1 - c^{2})}
+        \right].
+\end{align*}
+Using the correlation identities
+$\sum\alpha_i^2 = (n-1)(1 - a^{2})$,
+$\sum\beta_i^2 = (n-1)(1 - b^{2})$, and
+$\sum\alpha_i\beta_i = (n-1)(ab - c)$ (see proof in
+Appendix~\ref{sec:correlation_identities}),
+we sum over all $i$ to obtain:
+\begin{align*}
+    \sum_{i=1}^{n}
+    \left(\frac{\partial R}{\partial x_i}\right)^{2}
+     & =
+    \frac{1}{(n-1)s_{x}^{2}}
+    \left[
+        \frac{(1 - a^{2})}{(1 - b^{2})(1 - c^{2})}
+        +
+        2\frac{(ab - c)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+        +
+        \frac{(ab - c)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+    \right] \\
+     & =
+    \frac{1}{(n-1)s_{x}^{2}}
+    \left[
+        \frac{(1 - a^{2})}{(1 - b^{2})(1 - c^{2})}
+        +
+        \frac{3(ab - c)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+    \right] \\
+     & =
+    \frac{1}{(n-1)s_{x}^{2}}
+    \left[
+    \frac{(1 - a^{2})(1+3r_{yz,x}^{2})}{(1 - b^{2})(1 - c^{2})}
+    \right].
+\end{align*}
+Substituting back into Eq.~\eqref{eq:delta-partial} with $s_x^2 \simeq \sigma_{\mathrm{anat}}^2$ gives:
+\begin{equation}
+    \Var_{\mathrm{num}}[R]
+    \approx
+    \frac{\nu_{\mathrm{nav}}^{2}}{(n-1)}
+    \left[
+    \frac{(1 - a^{2})(1+3r_{yz,x}^{2})}{(1 - b^{2})(1 - c^{2})}
+    \right].
+    \label{eq:partial-var}
+\end{equation}
+Since $a,b,c$ are rarely not reported in practice, we further simplify
+this expression by deriving the lower bound:
+\begin{equation}
+    (1 - R^{2})^{3} \le \frac{(1 - a^{2})}{(1 - b^{2})(1 - c^{2})},
+    \label{eq:partial-corr-bound}
+\end{equation}
+First, note that the squared partial correlation is:
+\[
+    1 - R^{2}
+    =
+    \frac{(1-b^{2})(1-c^{2})-(a-bc)^{2}}{(1-b^{2})(1-c^{2})}
+    =
+    \frac{\Delta}{(1-b^{2})(1-c^{2})},
+\]
+where
+\[
+    \Delta
+    =
+    (1-b^{2})(1-c^{2})-(a-bc)^{2}
+    =
+    (1-a^{2})(1-b^{2})-(ac-b)^{2}
+    =
+    (1-a^{2})(1-c^{2})-(ab-c)^{2}.
+\]
+Each equality above follows from expanding both sides.
+Because every squared term is nonnegative, we obtain the three inequalities
+\begin{equation}
+    \label{eq:three-ineq}
+    \Delta \le (1-a^{2})(1-b^{2}),
+    \qquad
+    \Delta \le (1-b^{2})(1-c^{2}),
+    \qquad
+    \Delta \le (1-c^{2})(1-a^{2}).
+\end{equation}
+Multiplying the first and third inequalities in~\eqref{eq:three-ineq} gives
+\[
+    \Delta^{2} \le (1-a^{2})^{2}(1-b^{2})(1-c^{2}),
+\]
+and multiplying also by the middle one yields
+\[
+    \Delta^{3} \le (1-a^{2})^{2}(1-b^{2})^{2}(1-c^{2})^{2}.
+\]
+Since $0\le 1-a^{2}\le 1$, we have $(1-a^{2})^{2}\le (1-a^{2})$, so that
+\[
+    \Delta^{3} \le (1-a^{2})(1-b^{2})^{2}(1-c^{2})^{2}.
+\]
+Dividing both sides by $(1-b^{2})^{3}(1-c^{2})^{3}$ and substituting
+$\Delta=(1-b^{2})(1-c^{2})(1-R^{2})$ yields
+\[
+    (1-R^{2})^{3}
+    =
+    \frac{\Delta^{3}}{(1-b^{2})^{3}(1-c^{2})^{3}}
+    \le
+    \frac{1-a^{2}}{(1-b^{2})(1-c^{2})}.
+\]
+This establishes the claimed bound~\eqref{eq:partial-corr-bound}.
+Since $3r_{yz,x}^2+1 \geq 1$ it follows immediately that
+\[
+    (1 - R^{2})^{3} \leq
+    \frac{(1-a^{2})}{(1-b^{2})(1-c^{2})} \leq
+    \frac{(1-a^{2})(1+3r_{yz,x}^{2})}{(1-b^{2})(1-c^{2})}
+\]
+So, substituting into Eq.~\eqref{eq:partial-var} gives the lower bound:
+\begin{equation}
+    \nu_{\mathrm{nav}}^{2}\frac{(1 - R^{2})^{3}}{n-1}
+    \lesssim
+    \Var_{\mathrm{num}}[R].
+    \label{eq:partial-var-bound}
+\end{equation}
+Taking the square root yields the standard deviation:
+\[
+    \nu_{\mathrm{nav}}
+    \sqrt{\frac{(1 - r_{xy,z}^{2})^{3}}{n - 1}}
+    \lesssim
+    \sigma_{\mathrm{num}}[R].
+\]
+The two-sided significance of a partial correlation is computed from the
+$t$-statistic
+\[
+    t
+    =
+    R\sqrt{\frac{df}{1-R^{2}}},
+    \qquad
+    df = n-k-2,
+\]
+where $k$ is the number of controlling variables. Let $X$ be the random variable
+with $\mathbb{E}_{\mathrm{num}}[X]=R_0$, $t_0^2=R_0(df/(1-R_0^2))$ with
+$\Var_{\mathrm{num}}[X]$ bounded by~\Cref{eq:partial-var-bound}. Let $f_t$,
+$F_t$ be the probability density and cumulative distribution functions of the
+Student $t$-distribution with $df$ degrees of freedom. Applying the delta method
+to the two-sided $p$-value $p(X) = 2\left(1 - F_t(|X|)\right)$ gives:
+\begin{equation}
+    \Var_{\mathrm{num}}[p(X)]
+    \approx
+    \left(\frac{\partial p}{\partial t}\frac{\partial t}{\partial R}\right)^{2}
+    \Var_{\mathrm{num}}[X],
+    \label{eq:partial-p-var}
+\end{equation}
+with the partial derivatives given by:
+\begin{equation}
+    \frac{\partial p}{\partial t} = -2 f_t(|t|)\,\mathrm{sign}(t),\qquad
+    \frac{\partial t}{\partial R} = \sqrt{\frac{df}{(1-R^{2})^{3}}}.
+    \label{eq:partial-t-deriv}
+\end{equation}
+Combining equations \eqref{eq:partial-p-var} and \eqref{eq:partial-t-deriv} yields
+\[
+    \Var_{\mathrm{num}}[p(X)]
+    \geq
+    4f_t(|t_0|)^{2}\frac{df}{(1-R_0^{2})^{3}}\Var_{\mathrm{num}}[X].
+\]
+Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$,
+the dependence on $(1-R^{2})^{3}$ cancels, leading to:
+\[
+    \sigma_{\mathrm{num}}[p(X)]
+    \geq
+    2f_t(|t_0|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{nav}}.
+\]
