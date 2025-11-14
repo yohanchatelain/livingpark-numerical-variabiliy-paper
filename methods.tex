@@ -107,20 +107,20 @@ execution paths. Each subject-visit pair was processed 26 times; failed or
 quality-control-flagged runs were discarded, and exactly 26 successful runs per
 pair were retained for analysis.
 
-\subsubsection{Numerical-Anatomical Variability Ratio (\navr)}
+\subsubsection{Numerical-Population Variability Ratio (\navr)}
 
-To quantify computational stability relative to anatomical variation, we
-introduce the Numerical-Anatomical Variability Ratio (\navr). For each brain
+To quantify computational stability relative to population variation, we
+introduce the Numerical-Population Variability Ratio (\navr). For each brain
 region, \navr measures the ratio of measurement uncertainty arising from
-computational processes to natural inter-subject anatomical variation:
+computational processes to natural inter-subject variation:
 
 \[
-    \text{\navr} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{anat}}}
+    \text{\navr} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}
 \]
 
 where $\sigma_{\mathrm{num}}$ represents numerical variability (measurement
 precision across MCA repetitions for individual subjects) and
-$\sigma_{\mathrm{anat}}$ represents anatomical variability (inter-subject
+$\sigma_{\mathrm{pop}}$ represents population variability (inter-subject
 differences within each repetition).
 For each region of interest, measurements from $k$ MCA repetitions across $n$
 subject-visit pairs form a data matrix $\mathcal{M}_{k \times n}$ with entries
@@ -140,9 +140,9 @@ Let
     \label{eq:sigma_num}
 \end{equation}
 
-\textbf{Anatomical variability (within-repetition, across subjects):}
+\textbf{Population variability (within-repetition, across subjects):}
 \begin{equation}
-    \sigma^2_{\mathrm{anat}}
+    \sigma^2_{\mathrm{pop}}
     = \frac{1}{k}\sum_{r=1}^{k}\left[
     \frac{1}{n-1}\sum_{i=1}^{n}\bigl(x_i^{(r)}-\bar x^{(r)}\bigr)^2
     \right].
@@ -152,7 +152,7 @@ where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means,
 respectively. Higher \navr values indicate regions where computational
 uncertainty approaches or exceeds biological variation, potentially
 compromising the detection of true anatomical differences.\TG{didn't you pool
-    sigma anat across PD and HC?}
+    sigma pop across PD and HC?}
 
 
 
@@ -201,14 +201,14 @@ To isolate the contribution of numerical variability, we make three simplifying 
           where, under homoscedasticity,
           $\Sigma_{\mathrm{num}} = \sigma_{\mathrm{num}}^2 I_N$.
 
-    \item \textbf{Anatomical variability.}
+    \item \textbf{Population variability.}
           The between-subject (biological) variance
-          $\sigma_{\mathrm{anat}}^2 = \Var(\{x_i\})$
+          $\sigma_{\mathrm{pop}}^2 = \Var(\{x_i\})$
           dominates the numerical noise, i.e.\
-          $\sigma_{\mathrm{num},i} \ll \sigma_{\mathrm{anat}}$.
+          $\sigma_{\mathrm{num},i} \ll \sigma_{\mathrm{pop}}$.
           This implies that the pooled empirical standard deviation
           of the observed data can be approximated by the biological one,
-          $s_p \approx \sigma_{\mathrm{anat}}$.
+          $s_p \approx \sigma_{\mathrm{pop}}$.
 
     \item \textbf{Baseline (null-hypothesis) scenario.} \YC{Do we need this assumption?
               It seems we can derive the same results without it.}
@@ -300,25 +300,25 @@ since $\sum_{i\in G_g}(X_i - \bar{X}_g) = 0$, so finally summing over both group
     \frac{1}{df}\frac{\Delta^2}{s_p^2}\frac{1}{s_p^2}\frac{\left((n_1 - 1)s_1^2 + (n_2 - 1)s_2^2 \right)}{df}\right) \\
      & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2} + \frac{d^2}{df} \right).
 \end{align*}
-Finally, assuming $s_p \approx \sigma_{\mathrm{anat}}$, the anatomical (between-subject)
+Finally, assuming $s_p \approx \sigma_{\mathrm{pop}}$, the population (between-subject)
 variance, Eq.~\eqref{eq:var-rep-approx} becomes:
 \begin{equation}
     \Var_{\mathrm{num}}[d]
     \approx
-    \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\mathrm{anat}}^2}
+    \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\mathrm{pop}}^2}
     \left(\frac{1}{n_1}+\frac{1}{n_2}+\frac{d^2}{df}\right).
     \label{eq:var-rep-simplified}
 \end{equation}
 For balanced groups ($n_1 = n_2 = n/2$) and large $n$, the $d^2/df$ term is negligible:
 \begin{align*}
-    \Var_{\mathrm{num}}[d]   & \approx \frac{4}{n} \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\mathrm{anat}}^2}   = \frac{4}{n} \nu_{\mathrm{nav}}^2 \\
-    \sigma_{\mathrm{num}}[d] & \approx \frac{2}{\sqrt{n}}\,\nu_{\mathrm{nav}}
+    \Var_{\mathrm{num}}[d]   & \approx \frac{4}{n} \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\mathrm{pop}}^2}   = \frac{4}{n} \nu_{\mathrm{npv}}^2 \\
+    \sigma_{\mathrm{num}}[d] & \approx \frac{2}{\sqrt{n}}\,\nu_{\mathrm{npv}}
     \label{eq:var-rep-final-simplified}
 \end{align*}
-where $\nu_{\mathrm{nav}} = \sigma_{\mathrm{num}} / \sigma_{\mathrm{anat}}$
-is the numerical–anatomical variability ratio.
+where $\nu_{\mathrm{npv}} = \sigma_{\mathrm{num}} / \sigma_{\mathrm{pop}}$
+is the numerical–population variability ratio.
 This expression quantitatively links the numerical uncertainty captured by
-$\nu_{\mathrm{nav}}$ to the variability of Cohen's~$d$ effect size,
+$\nu_{\mathrm{npv}}$ to the variability of Cohen's~$d$ effect size,
 providing a practical measure of the stability of statistical inferences
 under finite-precision arithmetic.
 
@@ -349,10 +349,10 @@ perturbations propagates to the variance of $t$ as:
         \Var\!\left[\frac{d}{\sqrt{\omega_n}}\right]
         \approx
         \frac{1}{\omega_n}
-        \nu_{\mathrm{nav}}^{2}
+        \nu_{\mathrm{npv}}^{2}
         \left(\omega_n + \frac{d^{2}}{df}\right) \\[3pt]
          & =
-        \nu_{\mathrm{nav}}^{2}
+        \nu_{\mathrm{npv}}^{2}
         \left(1 + \frac{d^{2}}{df\,\omega_n}\right).
         \label{eq:t-var-approx}
     \end{aligned}
@@ -384,7 +384,7 @@ Substituting these results into Eq.~\eqref{eq:t-var-approx} gives:
 \begin{equation*}
     \Var_{\mathrm{num}}[t]
     \approx
-    \nu_{\mathrm{nav}}^{2}\,(1 + \epsilon),
+    \nu_{\mathrm{npv}}^{2}\,(1 + \epsilon),
     \label{eq:t-var-final}
 \end{equation*}
 where $\epsilon$ tends to $0$ for strongly unbalanced groups and to $d^{2}/4$
@@ -392,8 +392,8 @@ for large balanced samples.
 For small effect sizes ($d^2 \ll 4$) and unbalanced groups, the correction term
 $\epsilon$ is negligible, yielding the simplified expression:
 \begin{align*}
-    \Var_{\mathrm{num}}[t]   & \approx \nu_{\mathrm{nav}}^{2} \notag \\
-    \sigma_{\mathrm{num}}[t] & \approx \nu_{\mathrm{nav}}.
+    \Var_{\mathrm{num}}[t]   & \approx \nu_{\mathrm{npv}}^{2} \notag \\
+    \sigma_{\mathrm{num}}[t] & \approx \nu_{\mathrm{npv}}.
     \label{eq:t-var-simplified}
 \end{align*}
 
@@ -401,19 +401,19 @@ $\epsilon$ is negligible, yielding the simplified expression:
 \noindent
 The uncertainty of the corresponding $p$-values can then be derived. Let $X$ be the
 random variable with $\mathbb{E}_{\mathrm{num}}[X]=t_0$ and
-$\Var_{\mathrm{num}}[X]=\nu_{\mathrm{nav}}^{2}$. Let $f_t$, $F_t$ be the
+$\Var_{\mathrm{num}}[X]=\nu_{\mathrm{npv}}^{2}$. Let $f_t$, $F_t$ be the
 probability density and cumulative distribution functions of the Student
 $t$-distribution with $df$ degrees of freedom. Applying the delta method to the
 two-sided $p$-value $p(X) = 2\left(1 - F_t(|X|)\right)$ gives:
 \begin{align*}
     \Var_{\mathrm{num}}[p(X)] & = \Var_{\mathrm{num}}\left[2(1 - F_t(|X|))\right]                             \notag     \\
                               & \approx {\left(-2f_t(|t_0|)\,\mathrm{sign}(t_0)\right)}^{2}\Var_{\mathrm{num}}[X] \notag \\
-                              & \approx 4{\left(f_t(|t_0|)\right)}^{2}\nu_{\mathrm{nav}}^{2},
+                              & \approx 4{\left(f_t(|t_0|)\right)}^{2}\nu_{\mathrm{npv}}^{2},
 \end{align*}
 which gives the standard deviation of the numerical uncertainty in the
 $p$-value:
 \begin{equation*}
-    \sigma_{\mathrm{num}}[p(X)] = 2f_t(|t_0|)\,\nu_{\mathrm{nav}}.
+    \sigma_{\mathrm{num}}[p(X)] = 2f_t(|t_0|)\,\nu_{\mathrm{npv}}.
     \label{eq:p-std}
 \end{equation*}
 
@@ -471,12 +471,12 @@ Then the uncertainty in the $F$ statistic due to numerical noise follows directl
     \Var_{\mathrm{num}}[F]
      & = \Var_{\mathrm{num}}[t^{2}]
     \approx (2t)^{2}\Var_{\mathrm{num}}[t]
-    = 4t^{2}\nu_{\mathrm{nav}}^{2}
-    = 4F\nu_{\mathrm{nav}}^{2},
+    = 4t^{2}\nu_{\mathrm{npv}}^{2}
+    = 4F\nu_{\mathrm{npv}}^{2},
 \end{align*}
 yielding
 \begin{equation}
-    \sigma_{\mathrm{num}}[F] = 2\sqrt{F}\,\nu_{\mathrm{nav}}.
+    \sigma_{\mathrm{num}}[F] = 2\sqrt{F}\,\nu_{\mathrm{npv}}.
     \label{eq:ancova-F-sigma}
 \end{equation}
 
@@ -484,24 +484,24 @@ yielding
 \noindent
 The uncertainty in the corresponding $p$-values can be obtained by the delta
 method. Let $X$ be a random variable with $\mathbb{E}_{\mathrm{num}}[X]=F_0$ and
-$\Var_{\mathrm{num}}[X]=4F_0\nu_{\mathrm{nav}}^{2}$  and $f_{\mathcal{F}}$, $F_{\mathcal{F}}$ the probability
+$\Var_{\mathrm{num}}[X]=4F_0\nu_{\mathrm{npv}}^{2}$  and $f_{\mathcal{F}}$, $F_{\mathcal{F}}$ the probability
 density and cumulative distribution functions. Applying the delta-method to the
 upper-tail $p$-value is $p(X) = 1 - F_{\mathcal{F}}(X)$ yields:
 \begin{align*}
     \Var_{\mathrm{num}}[p(X)] & = \Var_{\mathrm{num}}[1 - F_{\mathcal{F}}(X)]           \\
                               & \approx f_{\mathcal{F}}(F_0)^{2}\Var_{\mathrm{num}}[X]  \\
-                              & = 4F_0{f_{\mathcal{F}}(F_0)}^{2}\nu_{\mathrm{nav}}^{2},
+                              & = 4F_0{f_{\mathcal{F}}(F_0)}^{2}\nu_{\mathrm{npv}}^{2},
 \end{align*}
 so that
 \begin{equation}
-    \sigma_{\mathrm{num}}[p(X)] = 2\sqrt{F_0}\,f_{\mathcal{F}}(F_0)\,\nu_{\mathrm{nav}}.
+    \sigma_{\mathrm{num}}[p(X)] = 2\sqrt{F_0}\,f_{\mathcal{F}}(F_0)\,\nu_{\mathrm{npv}}.
     \label{eq:ancova-p-sigma}
 \end{equation}
 
 Equations~\eqref{eq:ancova-F-sigma} and~\eqref{eq:ancova-p-sigma} show that
 numerical imprecision introduces a variance in the estimated $F$ statistic and
-its corresponding $p$-value that scales linearly with the numerical-anatomical
-variability ratio $\nu_{\mathrm{nav}}$, and proportionally to $\sqrt{F}$ for
+its corresponding $p$-value that scales linearly with the numerical-population
+variability ratio $\nu_{\mathrm{npv}}$, and proportionally to $\sqrt{F}$ for
 the group effect magnitude.
 
 \paragraph{Partial correlation.}
@@ -634,11 +634,11 @@ we sum over all $i$ to obtain:
     \frac{(1 - a^{2})(1+3r_{yz,x}^{2})}{(1 - b^{2})(1 - c^{2})}
     \right].
 \end{align*}
-Substituting back into Eq.~\eqref{eq:delta-partial} with $s_x^2 \simeq \sigma_{\mathrm{anat}}^2$ gives:
+Substituting back into Eq.~\eqref{eq:delta-partial} with $s_x^2 \simeq \sigma_{\mathrm{pop}}^2$ gives:
 \begin{equation}
     \Var_{\mathrm{num}}[R]
     \approx
-    \frac{\nu_{\mathrm{nav}}^{2}}{(n-1)}
+    \frac{\nu_{\mathrm{npv}}^{2}}{(n-1)}
     \left[
     \frac{(1 - a^{2})(1+3r_{yz,x}^{2})}{(1 - b^{2})(1 - c^{2})}
     \right].
@@ -708,14 +708,14 @@ Since $3r_{yz,x}^2+1 \geq 1$ it follows immediately that
 \]
 So, substituting into Eq.~\eqref{eq:partial-var} gives the lower bound:
 \begin{equation}
-    \nu_{\mathrm{nav}}^{2}\frac{(1 - R^{2})^{3}}{n-1}
+    \nu_{\mathrm{npv}}^{2}\frac{(1 - R^{2})^{3}}{n-1}
     \lesssim
     \Var_{\mathrm{num}}[R].
     \label{eq:partial-var-bound}
 \end{equation}
 Taking the square root yields the standard deviation:
 \[
-    \nu_{\mathrm{nav}}
+    \nu_{\mathrm{npv}}
     \sqrt{\frac{(1 - r_{xy,z}^{2})^{3}}{n - 1}}
     \lesssim
     \sigma_{\mathrm{num}}[R].
@@ -759,5 +759,5 @@ the dependence on $(1-R^{2})^{3}$ cancels, leading to:
 \[
     \sigma_{\mathrm{num}}[p(X)]
     \geq
-    2f_t(|t_0|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{nav}}.
+    2f_t(|t_0|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{npv}}.
 \]

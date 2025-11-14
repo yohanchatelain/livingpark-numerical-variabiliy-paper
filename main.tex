@@ -32,12 +32,11 @@ MRI analyses in Parkinson's disease studies. \TG{revise last sentence when resul
 
 \section{Results}
 
-\subsection{Numerical variability alters statistical inference for MRI measures of Parkinson's disease}
+\subsection{Numerical variability alters statistical inference in MRI measures of PD}
 
-By repeatedly processing the same MRI scans under realistic random numerical
-perturbations, we assessed the impact of numerical variability on conclusions
-drawn from MRI analyses of Parkinson's disease. We focused on two common
-analyses, namely (1) volumetric group differences between PD subjects and
+We assessed the impact of numerical variability on conclusions
+drawn from MRI analyses of Parkinson's disease, focusing on two common
+analyses: (1) volumetric group differences between PD subjects and
 Healthy Controls (HC), and (2) partial correlations between regional volumes and
 motor evaluation scores measured with the MDS-Unified Parkinson's Disease
 Rating Scale part 3 (UPDRS-III). For both, we conducted a cross-sectional
@@ -47,20 +46,18 @@ We selected T1-weighted MRI data from the Parkinson Progression Marker
 Initiative (PPMI) dataset~\cite{marek2011parkinson}, including participants with
 at least two usable visits separated by 0.9-2.0 years, and excluding
 participants with Mild Cognitive Impairment (MCI) or other neurological
-disorders. The final dataset included  112 PD participants without MCI (PD-non-MCI) and
-89 HC participants (Table~\ref{tab:cohort_stat}).
-
-All images underwent standard pre-processing using FreeSurfer's longitudinal
-stream: cross-sectional processing of both timepoints, followed by creation of
-an unbiased within-subject template using robust registration. We introduced
+disorders. The final dataset included  112 PD participants without MCI
+(PD-non-MCI) and 89 HC participants (Table~\ref{tab:cohort_stat}). All images
+underwent standard pre-processing using FreeSurfer's longitudinal stream:
+cross-sectional processing of both timepoints, followed by creation of an
+unbiased within-subject template using robust registration. We introduced
 numerical noise mimicking realistic perturbations into this pipeline using Monte
 Carlo Arithmetic (MCA)~\cite{parker1997monte}, a technique that injects random,
 zero-mean perturbations into floating-point operations while perserving
 mathematical expectations. We repeated the perturbed analyses, yielding 26
 usable runs, to estimate numerical variability. We verified the validity of the
 numerical perturbation approach by confirming that all unperturbed results
-belong to the range defined by numericall perturbed results (see
-Appendix~\ref{appendix:distribution_stats_ieee}).
+belong to the range defined by numericall perturbed results.
 
 For both group and correlation analyses, statistical outcomes varied
 substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions (Figures
@@ -89,7 +86,7 @@ MRI measures of PD.
 \end{figure}
 
 
-\section{A framework to quantify the impact of numerical variability}
+\subsection{A practical model to quantify the impact of numerical variability}
 % Comments:
 % - Build a tool that can be broadly applied to any neuroimaging
 % - Analytical modeling of sigma_d
@@ -115,20 +112,19 @@ MRI measures of PD.
 
 The previous results underscore the importance of quantifying the impact of
 numerical variability in MRI analyses, as such variability can substantially
-affect statistical inference. However, evaluating numerical variability directly
-is highly compute-intensive and impractical to perform routinely. We developed a
-practical analytical model of numerical variability in MRI analyses, assuming
-that this variability is an inherent property of the computational pipeline and
-generalizes across populations. To do so, we derived closed-form approximations
-of numerical uncertainty for common statistics and their associated p-values,
-which can be readily incorporated into MRI analyses
-(Table~\ref{tab:stat_uncertainty}). These formulas rely on the
-Numerical-Anatomical Variability Ratio (\navr) that represents the relative
+affect statistical inference. However, conducting such empirical evaluations of
+numerical variability routinely is impractical due to their substantial
+computational demands. We developed an analytical model of numerical variability
+in structural MRI analyses by deriving closed-form approximations of numerical
+uncertainty for common statistics and their associated p-values
+(Table~\ref{tab:stat_uncertainty}), which can be readily integrated in
+statistical analyses. The main variable of interest is the
+Numerical-Population Variability Ratio (\navr) that represents the relative
 magnitude of numerical variability ($\sigma_{\mathrm{num}}$;
-Eq.~\eqref{eq:sigma_num}) to population variability ($\sigma_{\mathrm{anat}}$;
+Eq.~\eqref{eq:sigma_num}) to population variability ($\sigma_{\mathrm{pop}}$;
 Eq.~\eqref{eq:sigma_anat}):
-$$\nu_{\mathrm{nav}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}$$
-\navr quantifies the intrinsic numerical instability of a neuroimaging pipeline,
+$$\nu_{\mathrm{npv}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}$$
+The \navr ratio quantifies the numerical instability of a neuroimaging analysis,
 allowing comparison across regions and studies. The formulas in
 Table~\ref{tab:stat_uncertainty} were obtained by propagating the numerical
 variability through the estimators using the delta-method (see
@@ -154,10 +150,10 @@ studies without requiring costly recomputation or access to the original data.
                             & \textbf{Numerical standard deviation}
                             & \textbf{Numerical p-value uncertainty}                                                                                                           \\
         \midrule
-        Cohen's $d$         & $\sigma_d \approx\nu_{\mathrm{nav}}\frac{2}{\sqrt{n}}$             & \multicolumn{1}{c}{-}                                                       \\
-        Two-sample $t$      & $\sigma_t \approx \nu_{\mathrm{nav}}        $                      & $\sigma_{p} \approx 2f_{t,df}(|t|)\nu_{\mathrm{nav}}$                       \\
-        Partial correlation & $\sigma_r \geq \nu_{\mathrm{nav}}\sqrt{\frac{(1-r^{2})^{3}}{n-1}}$ & $\sigma_{p} \geq 2f_{t,df}(|t|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{nav}}$     \\
-        ANCOVA              & $\sigma_F \approx 2\sqrt{F}\nu_{\mathrm{nav}}$                     & $\sigma_{p} \approx 2\sqrt{F}f_{\mathcal{F}}(F;1,df_2)\,\nu_{\mathrm{nav}}$ \\
+        Cohen's $d$         & $\sigma_d \approx\nu_{\mathrm{npv}}\frac{2}{\sqrt{n}}$             & \multicolumn{1}{c}{-}                                                       \\
+        Two-sample $t$      & $\sigma_t \approx \nu_{\mathrm{npv}}        $                      & $\sigma_{p} \approx 2f_{t,df}(|t|)\nu_{\mathrm{npv}}$                       \\
+        Partial correlation & $\sigma_r \geq \nu_{\mathrm{npv}}\sqrt{\frac{(1-r^{2})^{3}}{n-1}}$ & $\sigma_{p} \geq 2f_{t,df}(|t|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{npv}}$     \\
+        ANCOVA              & $\sigma_F \approx 2\sqrt{F}\nu_{\mathrm{npv}}$                     & $\sigma_{p} \approx 2\sqrt{F}f_{\mathcal{F}}(F;1,df_2)\,\nu_{\mathrm{npv}}$ \\
         \bottomrule
     \end{tabular}
     \caption{First-order numerical uncertainty of common statistical tests under
@@ -171,73 +167,64 @@ studies without requiring costly recomputation or access to the original data.
 \end{table}
 
 
-We measured $\nu_{nav}$ in the PPMI-extracted dataset used in the previous
-section for HC and PD (Figure~\ref{fig:navr}). \TG{Revise the following text
-    when Figure 4 is final} Across cortical and subcortical regions, we found
-numerical variability accounted for up to 29-45\% of the observed anatomical
-variance in baseline analyses among both HC and PD groups. Longitudinal analyses
-exhibited substantially higher \navr values with up to 68-89\%. At baseline,
-mean \navr values reached 0.19 for HC (0.21 for PD) for cortical thickness, 0.18
-(0.19) for subcortical volumes, and 0.43 (0.43) and (0.53) 0.58 for longitudinal
-studies, indicating that numerical imprecision constitutes a portion of the
-anatomical signal. No significant differences in mean \navr were observed
-between HC and PD groups (Bootstrap with 10,000 samples; Appendix
-Table~\ref{tab:bootstrap-navr}), confirming that numerical variability is
-primarily a property of the computational pipeline rather than the population
-being studied. Higher \navr values in longitudinal analyses suggest that
-tracking changes over time is more susceptible to numerical noise, likely due to
-catastrophic cancellation when computing differences between timepoints.
-Catastrophic cancellation occurs when subtracting two nearly equal numbers,
-leading to a significant loss of precision by promoting rounding errors. These
-values have direct implications: for a typical \navr of 0.2, achieving a
-negligible numerical uncertainty on Cohen's d effect size ($\sigma_d \leq 0.01$)
-would require a sample size of at least 1,500 participants
-(Fig.~\ref{fig:sigma_d_contour}).
+We measured $\nu_{nav}$ in the PPMI dataset used in the previous section
+(Figure~\ref{fig:navr}). For the baseline analysis, the average \navr value
+across cortical and subcortical regions was \TG{add value} in the PD group and
+\TG{value} in the HC group. No significant differences in mean \navr were
+observed between HC and PD groups (Bootstrap with 10,000 samples), supporting
+the idea that numerical variability measured through \navr may roughly
+generalize across populations, for structural MRI measures produced by
+FreeSurfer. The Cohen's d formula in Table~\ref{tab:stat_uncertainty} gives that
+for this level of uncertainty, achieving a negligible level of numerical
+uncertainty ($\sigma_d \leq 0.01$) would require \TG{100} participants.
+Longitudinal analyses exhibited substantially higher \navr values, \TG{report
+averages}, likely owing to the occurrence of catastrophic cancellation when
+substracting nearly equal numbers between timepoints. Using the same formula, we
+anticiapte that at this level of uncertainty, achieving a negligible numerical
+uncertainty ($\sigma_d \leq 0.01$) would require at least 1,600 participants. 
+
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figures/NAVR_map/NAVR_thickness_subcortical_volumes.png}
-    \caption{Numerical-Anatomical Variability Ratio (\navr) for subcortical volumes (top row in each panel) and cortical
+    \caption{Numerical-Population Variability Ratio (\navr) for subcortical volumes (top row in each panel) and cortical
         thickness (bottom row in each panel) in healthy controls (HC) and patients with
         Parkinson's disease (PD). Panels show \navr maps for HC at baseline (a), PD
         at baseline (b), HC longitudinally between follow-up and baseline scans
         (c), and PD longitudinally (d). Higher \navr values indicate greater
-        computational uncertainty relative to inter-subject anatomical variability.
+        computational uncertainty relative to inter-subject variability.
         Warmer colors correspond to higher \navr values.}
     \label{fig:navr}
 \end{figure}
 
-\begin{figure}
-    \includegraphics[width=\linewidth]{figures/sigma_d_contour.pdf}
-    \caption{\TG{could you show some of the papers in this figure? } Relationship between \navr and population sample size  \(N\) for
-        predicting the uncertainty in Cohen's d effect size estimation. The
-        contour lines represent different \navr values, showing how numerical
-        variability scales with sample size. With a typical \navr value of 0.2,
-        to maintain reliable effect size estimates $\sigma_d \leq 0.01$, the
-        plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
-\end{figure}
+% \begin{figure}
+%     \includegraphics[width=\linewidth]{figures/sigma_d_contour.pdf}
+%     \caption{\TG{could you show some of the papers in this figure? } Relationship between \navr and population sample size  \(N\) for
+%         predicting the uncertainty in Cohen's d effect size estimation. The
+%         contour lines represent different \navr values, showing how numerical
+%         variability scales with sample size. With a typical \navr value of 0.2,
+%         to maintain reliable effect size estimates $\sigma_d \leq 0.01$, the
+%         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
+% \end{figure}
 
-To facilitate the use of our analytical framework, we developed an interactive,
-public web tool available at
+To facilitate the use of our model, we developed an interactive web tool available at
 \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
-(Figure~\ref{fig:brain_render_tool}). By making numerical-variability evaluation
-accessible, our framework and accompanying tool help improve transparency,
+(Figure~\ref{fig:brain_render_tool}). By making numerical variability evaluation
+accessible, our model and accompanying tool help improve transparency,
 support peer review, and promote more reliable statistical inference in
 neuroimaging.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\linewidth]{figures/screenshot_light.png}
-    \caption{Interactive web tool for estimating NAVR and assessing numerical
+    \includegraphics[width=0.7\linewidth]{figures/screenshot_light.png}
+    \caption{Interactive web tool for estimating NPVR and assessing numerical
         variability in neuroimaging studies. Users can input summary statistics
-        to obtain NAVR values and visualize the impact of numerical variability
+        to obtain NPVR values and visualize the impact of numerical variability
         on effect size estimates. The tool is available at
         \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.}
     \label{fig:brain_render_tool}
 \end{figure}
 
-
-
-\section{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
+\subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
 
 To assess the broader implications of numerical variability, we applied numerical uncertainty propagation (Table~\ref{tab:stat_uncertainty}) to
 re-evaluate findings from X articles. Applying \navr-based thresholding to ENIGMA's published brain maps
@@ -250,7 +237,7 @@ identified multiple regions where significance of reported p-values flipped.
     impact of numerical variability.}
 
 Figures~\ref{fig:navr_enigma_thickness} and~\ref{fig:navr_enigma_subcortical}
-illustrate the impact of applying NAVR thresholds to cortical thickness and
+illustrate the impact of applying NPVR thresholds to cortical thickness and
 subcortical volume maps from ENIGMA. Regions rendered in black indicate areas
 where reported effect sizes were smaller than numerical variability, suggesting
 these findings should be interpreted with caution. \TG{same comment as in the
@@ -265,110 +252,6 @@ secondary, smaller-scale effects reported in the literature could be
 compromised by numerical instability \TG{I think you should show examples of
     such studies}.
 
-\begin{figure}[h]
-    \centering
-    \vspace{0.2cm}
-
-    % Header row with column labels
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            % Empty space for alignment with condition labels
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{minipage}[c]{0.47\linewidth}
-                \centering\textbf{Unthresholded}
-            \end{minipage}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                % Vertical line separator
-            \end{minipage}%
-            \hfill
-            \begin{minipage}[c]{0.47\linewidth}
-                \centering\textbf{Thresholded}
-            \end{minipage}
-        \end{minipage}
-    \end{minipage}
-
-    % Horizontal line
-    \noindent\rule{\linewidth}{0.5pt}
-    \vspace{-1.5cm}
-
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{L1}}
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY3-vs-HY4+5.png}
-                \label{fig:Laansma_2021_parkinson_area_HY3_vs_HY45_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY3-vs-HY4+5_thresholded.png}
-                \label{fig:Laansma_2021_parkinson_area_HY3_vs_HY45_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{L2}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-HY2.png}
-                \label{fig:Laansma_2021_parkinson_area_HY1_vs_HY2_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-HY2_thresholded.png}
-                \label{fig:Laansma_2021_parkinson_area_HY1_vs_HY2_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{L3}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-PD.png}
-                \label{fig:Laansma_2021_parkinson_area_HY1_vs_PD_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/Laansma_2021/parkinson/png/parkinson_area_HY1-vs-PD_thresholded.png}
-                \label{fig:Laansma_2021_parkinson_area_HY1_vs_PD_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-    % \vspace{-2cm}
-
-    \caption{\TG{can you add a color bar to the figure?} ENIGMA Parkinson group \TG{wdym?}. LSA* \TG{what's LSA*?} Laansma et
-        al.~\cite{laansma2021international}, Cortical Surface Area. L1: HY 3 vs
-        HY 4\%5; L2: HY 1 vs HY 2; L3: HY 1 vs PD. Cohen's d maps showing
-        unthresholded effect sizes (left) and effect sizes thresholded by the
-        \navr framework (right). Black regions indicate areas where Cohen's d
-        values fall below the numerical variability threshold, demonstrating
-        regions where reported effect sizes may be unreliable due to
-        computational uncertainty.\label{fig:navr_laansma}}
-\end{figure}
-
 % ---
 
 \section{Discussion}
@@ -382,7 +265,7 @@ compromised by numerical instability \TG{I think you should show examples of
 
 Our systematic perturbation of FreeSurfer revealed that numerical variability
 alone can account for up to 30\% \TG{check value, can we report the average
-    $\nu_{nav}$ observed in PD participants?} of the anatomical variability observed
+    $\nu_{nav}$ observed in PD participants?} of the population variability observed
 in structural MRI measurements. This level of uncertainty can significantly
 impact statistical outcomes in Parkinson's disease analyses, leading to the
 appearance or disappearance of group differences or correlations depending
@@ -391,9 +274,9 @@ explanation for some of the reproducibility challenges reported in clinical
 neuroimaging.
 
 To facilitate numerical evaluations in previous and future studies, we
-introduced the Numerical-Anatomical Variability Ratio (NAVR), a quantitative
+introduced the Numerical-Population Variability Ratio (NPVR), a quantitative
 framework for assessing the relative magnitude of computational noise. By
-establishing a theoretical link between NAVR and the uncertainty in common
+establishing a theoretical link between NPVR and the uncertainty in common
 statistics, we provided a practical tool to assess the numerical robustness of MRI measures.
 Our re-analysis of published ENIGMA results illustrates this utility: while
 large sample sizes confer robustness to core findings, many secondary effects
@@ -431,7 +314,7 @@ concerns for research reproducibility and clinical translation. \TG{Reword parag
 To address the generalizability of our findings, we considered the
 characteristics of our data cohorts. A potential limitation is that our
 Parkinson's Disease cohort was relatively homogeneous in age and phenotype,
-which could reduce anatomical variance and consequently inflate NAVR values.
+which could reduce population variance and consequently inflate NPVR values.
 However, direct statistical analyses revealed no significant differences in
 numerical variability between the PD and healthy control groups (see
 Supplementary Fig. X). This key finding supports the idea that the pipeline's
@@ -439,18 +322,18 @@ instability is a consistent factor and that our results are likely to generalize
 across these populations.\TG[done]{I would moderate this statement a little bit.
     I think it would be interesting the measure the NAV in different pipelines and
     datasets, but I don't think there's a very strong need for that.} Measuring the
-NAVR across more diverse datasets, software packages, and disease contexts would
+NPVR across more diverse datasets, software packages, and disease contexts would
 nevertheless be a valuable step. Such work would help build a more comprehensive
 map of computational reliability across the entire neuroimaging landscape.
 
-NAVR provides a scalable, interpretable metric to quantify hidden numerical
+NPVR provides a scalable, interpretable metric to quantify hidden numerical
 variability. Although floating-point rounding is a dominant source of
 instability, future work should broaden this analysis to other contributors,
 including algorithmic choices, preprocessing decisions, and data handling
 practices. A comprehensive understanding of these factors is essential for
 developing numerically robust software. Our results show that computational
 uncertainty is as critical as statistical uncertainty in neuroimaging;
-systematic assessments of numerical variability, exemplified by NAVR, are
+systematic assessments of numerical variability, exemplified by NPVR, are
 therefore necessary to ensure the reproducibility and reliability of
 neuroimaging-based biomarkers. Extending this quantification to the
 deep-learning training stage is equally important, given the field's central
