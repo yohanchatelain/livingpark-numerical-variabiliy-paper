@@ -76,15 +76,19 @@ MRI measures of PD.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
-    \caption{ Proportion of significant tests ($p<0.05$) for subcortical volumes across 26 numerical perturbations.
-        measures \TG{could you sort the x-axis by region first rather than by hemisphere?}.\label{fig:significance_correlation_subcortical_volume} \TG{Make sure that ``right accumbens area'' also appears in the x labels}}
+    \caption{ Proportion of significant tests ($p<0.05$) for subcortical volumes
+        across 26 numerical perturbations. measures \TG{could you sort the
+        x-axis by region first rather than by
+        hemisphere?}.\label{fig:significance_correlation_subcortical_volume}
+        \TG{Make sure that ``right accumbens area'' also appears in the x
+        labels}}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/consistency/cortical_thickness_significance_correlation.pdf}
-    \caption{Proportion of significant tests ($p<0.05$) for cortical thickness across 26 numerical perturbations.
-        measures.\label{fig:significance_correlation_thickness}}
+    \caption{Proportion of significant tests ($p<0.05$) for cortical thickness
+        across 26 numerical perturbations. measures.\label{fig:significance_correlation_thickness}}
     \label{fig:navr_consistency_thickness_plot}
 \end{figure}
 
@@ -169,7 +173,6 @@ studies without requiring costly recomputation or access to the original data.
     \label{tab:stat_uncertainty}
 \end{table}
 
-
 We measured $\nu_{npv}$ in the PPMI dataset used in the previous section
 (Figure~\ref{fig:navr}). For the baseline analysis, the average \navr value
 across cortical and subcortical regions was \TG{add value} in the PD group and
@@ -225,35 +228,22 @@ To facilitate the use of our model, we developed an interactive web tool availab
     \label{fig:brain_render_tool}
 \end{figure}
 
-\subsection{Re-evaluating landmark studies reveals widespread potential for unreliable effect sizes \TG{This title is over-emphasized given the results that are currently presented}}
+\subsection{Impact of numerical variability on published findings}
 
-To assess the broader implications of numerical variability, we applied numerical uncertainty propagation (Table~\ref{tab:stat_uncertainty}) to
-re-evaluate findings from X articles. Applying \navr-based thresholding to ENIGMA's published brain maps
-identified multiple regions where significance of reported p-values flipped.
-\TG{Assuming that you're referring to figure 6, this is not so clear. All the
-    masked areas are areas with low effect sizes compared to the other ones. On the
-    contrary, it seems to me that this is a case where numerical variability
-    wouldn't impact the findings much, most likely because N was high. I would
-    suggest to include another example, possibly with a lower N, showing a larger
-    impact of numerical variability.}
+To assess the broader implications of numerical variability, we applied numerical uncertainty propagation (Table~\ref{tab:stat_uncertainty}) to re-evaluate findings from ten representative articles on Parkinson's disease. These studies were selected to illustrate the potential impact of numerical variability on reported outcomes based on available summary statistics. Applying \navr-based thresholding to published p-values identified multiple instances where the statistical significance of reported findings was unstable.
 
-Figures~\ref{fig:navr_enigma_thickness} and~\ref{fig:navr_enigma_subcortical}
-illustrate the impact of applying NPVR thresholds to cortical thickness and
-subcortical volume maps from ENIGMA. Regions rendered in black indicate areas
-where reported effect sizes were smaller than numerical variability, suggesting
-these findings should be interpreted with caution. \TG{same comment as in the
-    previous figure}
+For each p-value reported as significant in the original articles, we calculated the associated numerical uncertainty using the formulae in Table~\ref{tab:stat_uncertainty}. We then estimated the probability of a significance flip where a result transitions from significant to non-significant due to numerical error by modeling the true p-value as a Beta distribution. This distribution is parameterized such that the reported p-value represents the mean and the calculated numerical uncertainty represents the standard deviation. By computing the cumulative distribution function of this characterized Beta distribution at the original significance threshold, we derived the probability that the reported significant finding was, in fact, a numerically induced false positive.
 
-This observation highlights potential risks of overestimating small effects
-\TG{I don't think that the results presented show that clearly} and underscores
-the importance of systematically accounting for numerical uncertainty in
-neuroimaging research. While ENIGMA's primary findings generally remained
-robust due to large sample sizes, our analysis indicates that numerous
-secondary, smaller-scale effects reported in the literature could be
-compromised by numerical instability \TG{I think you should show examples of
-    such studies}.
+Figure~\ref{fig:false_positive_vs_sample_size} displays the probability of such false positives as a function of sample size across different effect size metrics: T-values (T), F-values (F), and correlation coefficients (R). Our analysis yields four key observations. First, no specific statistical test appears inherently more robust to numerical variability than others. Second, contrary to standard statistical intuition regarding sampling error, sample size does not appear to mitigate the probability of numerically induced false positives; for example, cross-sectional volume analyses exhibited similar instability magnitudes at sample sizes of both 43 and 315. 
 
-% ---
+Third, while longitudinal analyses generally showed lower false positive probabilities than cross-sectional analyses, they simultaneously exhibited higher \navr. This apparent contradiction suggests that the proximity of a p-value to the significance threshold is the primary driver of instability: p-values hovering near the threshold are highly sensitive to numerical noise, regardless of the study design. Finally, cortical measures demonstrated higher false positive probabilities compared to subcortical measures, indicating a greater sensitivity to numerical variability in cortical measures.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/false_positive_vs_sample_size_boxplots.pdf}
+    \caption{Probability of a numerically induced false positive (significance flip) as a function of sample size across different effect sizes: T-values (T), F-values (F), and correlation coefficients (R). Probabilities are derived from the overlap between the numerical uncertainty distribution (Beta distribution) and the significance threshold.}
+    \label{fig:false_positive_vs_sample_size}
+\end{figure}
 
 \section{Discussion}
 
