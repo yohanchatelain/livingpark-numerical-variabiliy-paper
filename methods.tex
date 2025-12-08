@@ -55,57 +55,48 @@ Table~\ref{tab:cohort_stat}).
 
 \subsection{Image acquisition and preprocessing}
 
-T1-weighted MRI scans were obtained from the Parkinson's Progression Markers
-Initiative (PPMI), acquired using standardized 3D MPRAGE protocols across sites
-(repetition time = 2.3 s, echo time = 2.98 ms, inversion time = 0.9 s, voxel
-size = 1 mm isotropic, 192 sagittal slices, field of view = 256 mm, matrix size
-= 256 $\times$ 256). Minor variations in acquisition parameters may exist across
-scanners and sites due to PPMI's multisite design.
+High-resolution T1-weighted MRI scans were obtained from the Parkinson's Progression Markers Initiative (PPMI). Data were acquired using standardized 3D MPRAGE protocols (TR = 2.3 s, TE = 2.98 ms, TI = 0.9 s, voxel size = 1 mm isotropic) across multiple sites. While the protocol was standardized, we account for minor acquisition variations inherent to the PPMI multisite design.
 
-Structural images were processed using FreeSurfer 7.3.1 instrumented with
-Fuzzy-libm, a modified math library that introduces stochastic perturbations
-into floating-point operations to assess numerical stability (Section~\ref{sec:numerical_variability_assessment}).
-Each participant's MRI was processed 26 times under independent perturbations to
-estimate numerical variability. Runs that failed \TG{defined
-    failed: failed due to technical reasons or failed QC?} due to processing errors or
-quality-control (QC) issues were excluded, ensuring exactly 26 valid outputs per
-participant. \TG{you should mention QC too}
+Structural images were processed using FreeSurfer 7.3.1 instrumented with Fuzzy-libm, a modified mathematical library that injects stochastic perturbations into floating-point operations to probe numerical stability (Section~\ref{sec:numerical_variability_assessment}). To estimate numerical variability, each scan was processed 34 times. We filtered the resulting outputs to exclude both technical failures \TG[done]{defined failed: failed due to technical reasons or failed QC?} (e.g., incomplete execution and FreeSurfer failures) and quality control (QC) failures. 
 
-Longitudinal reconstruction followed the standard FreeSurfer
-pipeline~\cite{reuter2012within}, consisting of independent cross-sectional
-processing for each timepoint, followed by creation of an unbiased
-within-subject template~\cite{reuter2011avoiding} using robust
-registration~\cite{reuter2010highly}. All downstream statistical analyses were
-performed on unperturbed FreeSurfer outputs to avoid introducing additional
-numerical variability.
+\TG[done]{you should mention QC too}
+For QC, we visually inspected nine representative slices (3 along each axis) per run to identify gross artifacts, such as missing brain tissue, blurring, or biologically implausible segmentation. Table~\ref{tab:qc} details the exclusion rates. To ensure statistical consistency across the cohort, we randomly subsampled the remaining runs to retain exactly 26 valid realizations per participant.
 
 \subsection{Numerical Variability Assessment}
 \label{sec:numerical_variability_assessment}
-We employed Monte Carlo Arithmetic (MCA)~\cite{parker1997monte} to quantify
-numerical instability in FreeSurfer computations. MCA introduces controlled
-random perturbations into floating-point operations, simulating rounding errors
-that occur across different computational environments. This stochastic
-approach enables systematic assessment of result stability by measuring
-variation across multiple runs of identical analyses.
 
-\TG{I think you should give more details about MCA, including the equations and also your improvements to fuzzy-libm}
+To quantify the numerical instability inherent in the FreeSurfer pipeline, we
+employed Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}. MCA is a
+stochastic technique that simulates the propagation of rounding errors by
+introducing controlled random perturbations into floating-point operations. We
+utilized the Random Rounding (RR) mode, where the result of an arithmetic
+operation is perturbed by a zero-mean random noise scaled to the magnitude of
+the least significant bit. For any operation producing an exact result $x$, the
+perturbed result $\tilde{x}$ is modeled as $\tilde{x} = x + 2^{e_x - t}\xi$
+where $e_x = \lfloor \log_2 |x| \rfloor$ is the exponent of $x$, $t$ is the
+\textit{virtual precision} parameter, and $\xi$ is a random variable drawn
+uniformly from the interval $(-\frac{1}{2}, \frac{1}{2})$.
 
-We used Fuzzy-libm~\cite{salari2021accurate}, which extends MCA to mathematical
-library functions (\texttt{exp}, \texttt{log}, \texttt{sin}, \texttt{cos})
-through Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler.
-Virtual precision parameters were set to 53 bits for double precision and 24
-bits for single precision to simulate realistic machine-level precision errors.
+While comprehensive MCA instrumentation provides a rigorous bound on numerical
+error, it incurs a prohibitive computational cost (typically $100\times$ to
+$1000\times$ slowdown), rendering it intractable for large-scale neuroimaging
+cohorts. To address this, we used \textit{Fuzzy-libm}~\cite{salari2021accurate},
+a lightweight implementation that restricts MCA instrumentation to elementary
+mathematical library functions (e.g., \texttt{exp}, \texttt{log}, \texttt{sin},
+\texttt{cos}). By targeting these elementary functions, which are sources of
+divergence across operating systems~\cite{glatard2015reproducibility},
+Fuzzy-libm significantly reduces computational overhead while effectively
+capturing the numerical variability relevant to cross-platform
+reproducibility~\cite{salari2021accurate,vila2024impact,des2023reproducibility}.
 
-We processed each visit with FreeSurfer 7.3.1. To sample numerical variability
-we compiled FreeSurfer \TG{did you really compile Freesurfer?} with Fuzzy-libm
-an implementation of Monte Carlo arithmetic (MCA) that injects zero-mean
-rounding noise into every elementary function call. Virtual precision was set
-to 53 bits for operations promoted to double and 24 bits for single precision,
-\TG{there's quite some redundancy with the previous paragraph} thereby
-preserving IEEE-754 expectations but exposing the variance of alternative
-execution paths. Each subject-visit pair was processed 26 times; failed or
-quality-control-flagged runs were discarded, and exactly 26 successful runs per
-pair were retained for analysis.
+Fuzzy-libm is deployed via a Docker container and uses the \texttt{LD\_PRELOAD}
+mechanism to dynamically intercept calls to the standard system math library and
+redirect them to the instrumented version. The library is compiled using
+Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler that injects the
+MCA logic at compile time. Virtual precision parameters are set to match
+standard hardware precision ($t=53$ bits for double precision and $t=24$ bits
+for single precision), ensuring that the simulated variability remains
+representative of realistic machine-level precision errors.
 
 \subsubsection{Numerical-Population Variability Ratio (\navr)}
 
