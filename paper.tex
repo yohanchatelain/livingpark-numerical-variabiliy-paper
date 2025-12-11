@@ -34,6 +34,7 @@
 Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
 
+\providecommand{\includeappendix}{true}
 \newcommand{\0}{\mspace{9mu}}
 \newcommand{\navr}[0]{$\nu_{\mathrm{npv}}$\xspace}
 \newcommand{\Var}[0]{\mathrm{Var}}
@@ -67,7 +68,7 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
     robustness and reproducibility of neuroimaging analyses.
 \end{abstract}
 
-\include{main}
+\input{main}
 
 \include{methods}
 
@@ -96,6 +97,8 @@ extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
 \bibliographystyle{plain}
 \bibliography{paper}
 
-% \include{appendix}
+\ifthenelse{\equal{\includeappendix}{true}}{
+\include{appendix}
+}{}
 
 \end{document}
