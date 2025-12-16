@@ -5,59 +5,57 @@ for a variety of brain-related conditions, the reproducibility of MRI-derived
 measures across analytical conditions has  been challenged in multiple contexts
 over the past years. In structural MRI, cortical surface analyses have been
 shown substantially affected by software, parcellation, and quality
-control~\cite{bhagwat2021understanding},
-in functional MRI, different research teams analyzing the data have found only
-moderately consistent results~\cite{botvinik2020variability}, and in diffusion
-MRI the variability among white matter bundle segmentation protocols using
-diffusion MRI was found to be comparable to variability across
-subjects~\cite{schilling2021tractography}. The reliability of MRI-derived measures critically depends
-on a better understanding and characterization of the impacts of analytical
-variability, including  
-data selection, analytical decisions,
-tool selection, computational infrastructure, and numerical
+control~\cite{bhagwat2021understanding}, in functional MRI, different research
+teams analyzing the data have found only moderately consistent
+results~\cite{botvinik2020variability}, and in diffusion MRI the variability
+among white matter bundle segmentation protocols using diffusion MRI was found
+to be comparable to variability across
+subjects~\cite{schilling2021tractography}. The reliability of MRI-derived
+measures critically depends on a better understanding and characterization of
+the impacts of analytical variability, including
+data selection, analytical decisions, tool selection, computational
+infrastructure, and numerical
 state~\cite{kennedy2019everything,kiar2024experimental}.
 
 % Estimating variability
 % is particularly important when effect sizes are moderate, as it is the case in
 % studies of Parkinson's disease (PD)~\cite{he2020progressive}. 
 
-
-
 Among these sources of analytical variability, numerical variability has been
 shown to have a measurable impact on MRI
-analyses~\cite{gronenschild2012effects,glatard2015reproducibility}
-but remains understudied, mainly due to the practical
-challenges of quantifying its effects. Numerical variability arises from rounding and
-truncation errors associated with the use of limited-precision numerical
-formats, such as the widespread IEEE-754 standard for floating-point
-arithmetic~\cite{markstein2008new}. Numerical errors manifest slightly differently across
-computational platforms (hardware, operating systems, or library versions) and
-such differences sometimes accumulate and amplify across computational analyses, eventually
-leading to measurable differences in final
+analyses~\cite{gronenschild2012effects,glatard2015reproducibility} but remains
+understudied, mainly due to the practical challenges of quantifying its effects.
+Numerical variability arises from rounding and truncation errors associated with
+the use of limited-precision numerical formats, such as the widespread IEEE-754
+standard for floating-point arithmetic~\cite{markstein2008new}. Numerical errors
+manifest slightly differently across computational platforms (hardware,
+operating systems, or library versions) and such differences sometimes
+accumulate and amplify across computational analyses, eventually leading to
+measurable differences in final
 outputs~\cite{salari2021accurate,kiar2021numerical,des2023reproducibility,vila2024impact,chatelain2024numerical,mirhakimi2025numerical}.
-Such issues occur particularly within high-dimensional optimization processes 
-such as linear and non-linear registration, or the training of deep learning models~\cite{gonzalez2025uncertain}. 
+Such issues occur particularly within high-dimensional optimization processes
+such as linear and non-linear registration, or the training of deep learning
+models~\cite{gonzalez2025uncertain}.
 
 The implications of numerical variability for clinical findings are unknown.
-Previous studies focused on measuring its impact on image
-pre-processing   and did not include any particular downstream
-analysis. The first aim of this study was to quantify the impact of numerical variability
-in structural MRI analyses of Parkinson's disease (PD), where robust MRI
-measures of the disease have yet to be identified. We conducted typical
-cross-sectional and longitudinal analyses of structural MRI data of PD
-participants, measuring numerical variability through an experimental stochastic
-arithmetic approach.
+Previous studies focused on measuring its impact on image pre-processing   and
+did not include any particular downstream analysis. The first aim of this study
+was to quantify the impact of numerical variability in structural MRI analyses
+of Parkinson's disease (PD), where robust MRI measures of the disease have yet
+to be identified. We conducted typical cross-sectional and longitudinal analyses
+of structural MRI data of PD participants, measuring numerical variability
+through an experimental stochastic arithmetic approach.
 
-Building on these observations, we developed an analytical
-framework and associated tools to rapidly assess the numerical quality of
-structural MRI analyses reported in the published literature, opening the
-possibility to conduct large-scale impact evaluations of numerical variability.
-By making numerical-variability evaluation accessible, our framework and tool
-enhance transparency, support peer review, and promote more reliable statistical
+Building on these observations, we developed an analytical framework and
+associated tools to rapidly assess the numerical quality of structural MRI
+analyses reported in the published literature, opening the possibility to
+conduct large-scale impact evaluations of numerical variability. By making
+numerical-variability evaluation accessible, our framework and tool enhance
+transparency, support peer review, and promote more reliable statistical
 inference in neuroimaging. Applying this framework to the PD literature, we
 obtained the first estimates of the numerical quality of MRI analyses in
 Parkinson's disease studies, highlighting a widespread impact of numerical
-variability on MRI measures of PD. 
+variability on MRI measures of PD.
 
 \section{Results}
 
@@ -96,17 +94,17 @@ substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions (Figures
 \ref{fig:significance_correlation_subcortical_volume} and~\ref{fig:significance_correlation_thickness}).
 In subcortical volumes (14 regions; Figure
 \ref{fig:significance_correlation_subcortical_volume}), significance flipped in
-27\% of regions \TG{of the regions or of the (region, analysis) pairs?},
+27\% of the (regions, analysis) pairs \TG[done]{of the regions or of the (region, analysis) pairs?},
 indicating frequent inconsistencies across repetitions. In cortical thickness
 (68 regions; Figure \ref{fig:significance_correlation_thickness}), 21\% of
-regions \TG{same comments} were similarly found to be unstable. These
+(regions, analysis) pairs \TG[done]{same comments} were similarly found to be unstable. These
 fluctuations demonstrate the measurable impact of numerical noise on structural
 MRI measures of PD.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
     \caption{ Proportion of significant tests ($p<0.05$) for subcortical volumes
-        across 26 numerical perturbations measures.}
+        across 26 numerical perturbations measures.\label{fig:significance_correlation_subcortical_volume}}
 \end{figure}
 
 \begin{figure}
@@ -200,19 +198,20 @@ studies without requiring costly recomputation or access to the original data.
 
 We measured $\nu_{npv}$ in the analyses reported in the previous section
 (Figure~\ref{fig:navr}). For the baseline analysis, the average \navr value
-across cortical and subcortical regions was \TG{add value} in the PD group and
-\TG{value} in the HC group. No significant differences in mean \navr were
-observed between HC and PD groups (Bootstrap with 10,000 samples), supporting
-the idea that numerical variability measured through \navr may roughly
-generalize across populations, for structural MRI measures produced by
-FreeSurfer. The Cohen's d formula in Table~\ref{tab:stat_uncertainty} gives that
-for this level of uncertainty, achieving a negligible level of numerical
-uncertainty ($\sigma_d \leq 0.01$) would require \TG{100} participants.
-Longitudinal analyses exhibited substantially higher \navr values, \TG{report
-    averages}, likely owing to the occurrence of catastrophic cancellation when
-substracting nearly equal numbers between timepoints. Using the same formula, we
-anticiapte that at this level of uncertainty, achieving a negligible numerical
-uncertainty ($\sigma_d \leq 0.01$) would require at least 1,600 participants.
+across cortical and subcortical regions was 0.191 in the PD group and 0.176 in
+the HC group. No significant differences in mean \navr were observed between HC
+and PD groups (Permutation test with 10,000 resamples; $\alpha=0.05$ with
+Bonferroni correction), supporting the idea that numerical variability measured
+through \navr may roughly generalize across populations, for structural MRI
+measures produced by FreeSurfer. The Cohen's d formula in
+Table~\ref{tab:stat_uncertainty} gives that for this level of uncertainty,
+achieving a negligible level of numerical uncertainty ($\sigma_d \leq 0.01$)
+would require 1340 participants. Longitudinal analyses exhibited substantially
+higher \navr values, 0.561 for PD and 0.549 for HC, likely owing to the
+occurrence of catastrophic cancellation when substracting nearly equal numbers
+between timepoints. Using the same formula, we anticiapte that at this level of
+uncertainty, achieving a negligible numerical uncertainty ($\sigma_d \leq 0.01$)
+would require at least 12,321 participants.
 
 To facilitate the use of our model, we developed an interactive web tool available at
 \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
@@ -261,7 +260,7 @@ To assess the broader implications of numerical variability on MRI measures of P
 numerical uncertainty propagation (Table~\ref{tab:stat_uncertainty}) to
 re-evaluate findings from ten articles reporting MRI measures of Parkinson's disease.
 These studies were selected to illustrate the potential impact of numerical
-variability on reported outcomes based on available summary statistics. 
+variability on reported outcomes based on available summary statistics.
 
 For each p-value reported as significant in the original articles, we calculated
 the associated numerical uncertainty using the formulas in
@@ -277,13 +276,13 @@ positive.
 
 Figure~\ref{fig:false_positive_vs_sample_size} displays the probability of such
 false positives as a function of the sample size, across different statistics:
- T-values (T), F-values (F), and correlation coefficients (R). Our
+T-values (T), F-values (F), and correlation coefficients (R). Our
 analysis yields four key observations. First, no specific statistical test
 appears inherently more robust to numerical variability than others. Second,
 contrary to standard statistical intuition regarding sampling error, sample size
 does not appear to mitigate the probability of numerically induced false
 positives; for example, cross-sectional volume analyses exhibited similar
-instability magnitudes at sample sizes of both 43 and 315. 
+instability magnitudes at sample sizes of both 43 and 315.
 
 Third, while longitudinal analyses generally showed lower false positive
 probabilities than cross-sectional analyses, they simultaneously exhibited

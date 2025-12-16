@@ -951,22 +951,23 @@ uncertainty significantly affects typical neuroimaging analyses.
 
 \begin{table}[t]
     \centering
-    \caption{Bootstrap comparison of $\nu_{\text{nav}}$ between HC and PD.
+    \caption{Permutation test comparison of $\nu_{\text{nav}}$ between HC and PD.
+        No significance detected after Bonferroni correction ($\alpha=0.05/8$).
         Values are observed differences (PD$-$HC). 95\% CIs from percentile bootstrap.}
     \label{tab:bootstrap-navr}
     \begin{tabular}{lcccc}
         \toprule
-        \textbf{Metric}    & {\textbf{Observed} $\Delta$} & \textbf{95\% CI}    & {\textbf{p-value}} & \textbf{Study} \\
+        \textbf{Metric}    & {\textbf{Observed} $\Delta$} & \textbf{95\% CI}    & {\textbf{p-value}} & \textbf{Study}  \\
         \midrule
-        area               & 0.005                        & {[}-0.002, 0.012{]} & 0.504              & baseline       \\
-        thickness          & 0.026                        & {[}-0.019, 0.033{]} & 0.485              & baseline       \\
-        volume             & 0.012                        & {[} 0.003, 0.021{]} & 0.499              & baseline       \\
-        subcortical volume & -0.014                       & {[} 0.004, 0.025{]} & 0.490              & baseline       \\
+        area               & 0.005                        & {[}-0.002, 0.013{]} & 0.734              & cross-sectional \\
+        thickness          & 0.027                        & {[}0.020, 0.034{]}  & 0.033              & cross-sectional \\
+        volume             & 0.013                        & {[} 0.004, 0.022{]} & 0.371              & cross-sectional \\
+        subcortical volume & 0.014                        & {[} 0.004, 0.025{]} & 0.646              & cross-sectional \\
         \midrule
-        area               & 0.021                        & {[}-0.002, 0.042{]} & 0.496              & longitudinal   \\
-        thickness          & 0.002                        & {[}-0.014, 0.017{]} & 0.798              & longitudinal   \\
-        volume             & 0.025                        & {[} 0.002, 0.048{]} & 0.492              & longitudinal   \\
-        subcortical volume & -0.029                       & {[}-0.050,-0.015{]} & 0.500              & longitudinal   \\
+        area               & 0.021                        & {[}-0.002, 0.044{]} & 0.482              & longitudinal    \\
+        thickness          & 0.002                        & {[}-0.014, 0.020{]} & 0.919              & longitudinal    \\
+        volume             & 0.025                        & {[} 0.002, 0.049{]} & 0.370              & longitudinal    \\
+        subcortical volume & -0.027                       & {[}-0.047,-0.006{]} & 0.489              & longitudinal    \\
         \bottomrule
     \end{tabular}
 \end{table}
