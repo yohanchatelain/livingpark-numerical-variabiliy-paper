@@ -1,9 +1,23 @@
 \section{Methods}
 
-\TG{include a summary of your methods here.}
-
-\TG{Overall the methods are quite brief, you should add more details so that
+\TG[done]{include a summary of your methods here.}
+\TG[done]{Overall the methods are quite brief, you should add more details so that
     people get a better sense of what you did, see detailed suggestions in the text}
+
+We quantified the impact of numerical variability on structural MRI findings in
+Parkinson's disease (PD) using (1) stochastic perturbation
+experiments and (2) analytical uncertainty propagation. Empirically, we processed a
+longitudinal PPMI cohort using FreeSurfer instrumented with stochastic numerical
+noise to isolate run-to-run variability. Analytically, we derived closed-form
+approximations linking this pipeline instability (\navr) to uncertainty in
+effect sizes and test statistics, enabling retrospective quality control using
+only summary statistics.
+
+The experimental workflow proceeded in four stages: (1) curation of a
+longitudinal dataset with two visits per participant; (2) repeated processing
+under Monte Carlo Arithmetic (MCA) perturbations via Fuzzy-libm; (3) rigorous
+quality control to distinguish numerical artifacts from technical failures; and
+(4) statistical evaluation of inference instability across repetitions.
 
 \subsection{Participants}
 
@@ -55,12 +69,27 @@ Table~\ref{tab:cohort_stat}).
 
 \subsection{Image acquisition and preprocessing}
 
-High-resolution T1-weighted MRI scans were obtained from the Parkinson's Progression Markers Initiative (PPMI). Data were acquired using standardized 3D MPRAGE protocols (TR = 2.3 s, TE = 2.98 ms, TI = 0.9 s, voxel size = 1 mm isotropic) across multiple sites. While the protocol was standardized, we account for minor acquisition variations inherent to the PPMI multisite design.
+High-resolution T1-weighted MRI scans were obtained from the Parkinson's
+Progression Markers Initiative (PPMI). Data were acquired using standardized 3D
+MPRAGE protocols (TR = 2.3 s, TE = 2.98 ms, TI = 0.9 s, voxel size = 1 mm
+isotropic) across multiple sites. While the protocol was standardized, we
+account for minor acquisition variations inherent to the PPMI multisite design.
 
-Structural images were processed using FreeSurfer 7.3.1 instrumented with Fuzzy-libm, a modified mathematical library that injects stochastic perturbations into floating-point operations to probe numerical stability (Section~\ref{sec:numerical_variability_assessment}). To estimate numerical variability, each scan was processed 34 times. We filtered the resulting outputs to exclude both technical failures \TG[done]{defined failed: failed due to technical reasons or failed QC?} (e.g., incomplete execution and FreeSurfer failures) and quality control (QC) failures. 
+Structural images were processed using FreeSurfer 7.3.1 instrumented with
+Fuzzy-libm, a modified mathematical library that injects stochastic
+perturbations into floating-point operations to probe numerical stability
+(Section~\ref{sec:numerical_variability_assessment}). To estimate numerical
+variability, each scan was processed 34 times. We filtered the resulting outputs
+to exclude both technical failures \TG[done]{defined failed: failed due to
+    technical reasons or failed QC?} (e.g., incomplete execution and FreeSurfer
+failures) and quality control (QC) failures.
 
-\TG[done]{you should mention QC too}
-For QC, we visually inspected nine representative slices (3 along each axis) per run to identify gross artifacts, such as missing brain tissue, blurring, or biologically implausible segmentation. Table~\ref{tab:qc} details the exclusion rates. To ensure statistical consistency across the cohort, we randomly subsampled the remaining runs to retain exactly 26 valid realizations per participant.
+\TG[done]{you should mention QC too} For QC, we visually inspected nine
+representative slices (3 along each axis) per run to identify gross artifacts,
+such as missing brain tissue, blurring, or biologically implausible
+segmentation. Table~\ref{tab:qc} details the exclusion rates. To ensure
+statistical consistency across the cohort, we randomly subsampled the remaining
+runs to retain exactly 26 valid realizations per participant.
 
 \subsection{Numerical Variability Assessment}
 \label{sec:numerical_variability_assessment}
@@ -141,11 +170,7 @@ Let
 \end{equation}
 where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means,
 respectively. Higher \navr values indicate regions where computational
-uncertainty approaches or exceeds biological variation, potentially
-compromising the detection of true anatomical differences.\TG{didn't you pool
-    sigma pop across PD and HC?}
-
-
+uncertainty approaches population variation.
 
 \subsubsection{Relationship between \navr~and downstream statistical test uncertainty}
 \label{sec:theoretical_derivations}
@@ -165,7 +190,7 @@ For each Monte Carlo Arithmetic (MCA) repetition $r$, we denote by
 $\tilde{\mathbf{x}}^{(r)} = (\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})^\top$
 the vector of perturbed measurements across $N$ subjects.
 Each perturbed observation is modeled as the sum of the subject's
-true underlying biological value and a numerical error term:
+biological value and a numerical error term:
 \begin{equation*}
     \tilde{x}_i^{(r)} = x_i + \varepsilon_i^{(r)},
     \qquad

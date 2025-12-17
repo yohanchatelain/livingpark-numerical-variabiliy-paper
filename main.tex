@@ -74,37 +74,39 @@ Initiative (PPMI) dataset~\cite{marek2011parkinson}, including participants with
 at least two usable visits separated by 0.9-2.0 years, and excluding
 participants with Mild Cognitive Impairment (MCI) or other neurological
 disorders. The final dataset included  112 PD participants without MCI
-(PD-non-MCI) and 89 HC participants (Table~\ref{tab:cohort_stat}). All images
-underwent standard pre-processing using FreeSurfer's longitudinal stream:
-cross-sectional processing of both timepoints, followed by creation of an
-unbiased within-subject template using robust registration. We introduced
-numerical noise mimicking realistic perturbations into this pipeline using Monte
-Carlo Arithmetic (MCA)~\cite{parker1997monte}, a technique that injects random,
-zero-mean perturbations into floating-point operations while perserving
-mathematical expectations. Such noise is representative of the noise introduced
-by typical variations in hardware (e.g., CPU models), software libraries (e.g.,
-operating system updates), or parallelization (e.g., sequential vs
-multi-threaded executions). We repeated the perturbed analyses, yielding 26
-usable runs from which we estimated numerical variability. We verified the validity of the
-numerical perturbation approach by confirming that all unperturbed results
-belonged to the range defined by numericall perturbed results.
+(PD-non-MCI) and 89 HC participants (Table~\ref{tab:cohort_stat}).
 
-For both group and correlation analyses, statistical outcomes varied
+We processed all images for both timepoints using FreeSurfer's
+\texttt{recon-all}, introducing numerical noise via Monte Carlo Arithmetic
+(MCA)~\cite{parker1997monte} to mimick realistic perturbations into this
+pipeline. MCA injects random, zero-mean perturbations into floating-point
+operations while perserving mathematical expectations. Such noise is
+representative of the noise introduced by typical variations in hardware (e.g.,
+CPU models), software libraries (e.g., operating system updates), or
+parallelization (e.g., sequential vs multi-threaded executions). We repeated the
+perturbed analyses, yielding 26 usable runs from which we estimated numerical
+variability. We verified the validity of the numerical perturbation approach by
+confirming that all unperturbed results belonged to the range defined by
+numerically perturbed results.
+
+For both group comparisons and correlation analyses, statistical outcomes varied
 substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions (Figures
-\ref{fig:significance_correlation_subcortical_volume} and~\ref{fig:significance_correlation_thickness}).
-In subcortical volumes (14 regions; Figure
-\ref{fig:significance_correlation_subcortical_volume}), significance flipped in
-27\% of the (regions, analysis) pairs \TG[done]{of the regions or of the (region, analysis) pairs?},
-indicating frequent inconsistencies across repetitions. In cortical thickness
-(68 regions; Figure \ref{fig:significance_correlation_thickness}), 21\% of
-(regions, analysis) pairs \TG[done]{same comments} were similarly found to be unstable. These
-fluctuations demonstrate the measurable impact of numerical noise on structural
-MRI measures of PD.
+\ref{fig:significance_correlation_subcortical_volume}
+and~\ref{fig:significance_correlation_thickness}). For subcortical volumes (14
+regions; Figure \ref{fig:significance_correlation_subcortical_volume}),
+significance flipped in 27\% of of all (regions, analysis) pairs
+\TG[done]{of the regions or of the (region, analysis) pairs?}, indicating
+frequent inconsistencies across repetitions. For cortical thickness (68 regions;
+Figure \ref{fig:significance_correlation_thickness}), 21\% of (regions,
+analysis) pairs \TG[done]{same comments} were similarly unstable. These
+fluctuations demonstrate that numerical noise alone can alter downstream
+statistical inference in structural MRI analyses of PD.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
     \caption{ Proportion of significant tests ($p<0.05$) for subcortical volumes
-        across 26 numerical perturbations measures.\label{fig:significance_correlation_subcortical_volume}}
+        across 26 numerical perturbations.
+        \label{fig:significance_correlation_subcortical_volume}}
 \end{figure}
 
 \begin{figure}
@@ -140,33 +142,30 @@ MRI measures of PD.
 %     (although new architectures may enable it in the coming years), and explain the
 %     need for a statistical correction.}
 
-The previous results underscore the importance of quantifying the impact of
-numerical variability in MRI analyses, as such variability can substantially
-affect statistical inference. However, conducting such empirical evaluations of
-numerical variability routinely is impractical due to their
-computational demands. We developed an analytical model of numerical variability
-in structural MRI analyses by deriving closed-form approximations of numerical
-uncertainty for common statistics and their associated p-values
-(Table~\ref{tab:stat_uncertainty}), which can be readily integrated in
-statistical analyses. The main variable of interest is the
-Numerical-Population Variability Ratio (\navr) that represents the relative
-magnitude of numerical variability ($\sigma_{\mathrm{num}}$;
-Eq.~\eqref{eq:sigma_num}) to population variability ($\sigma_{\mathrm{pop}}$;
-Eq.~\eqref{eq:sigma_anat}):
-$$\nu_{\mathrm{npv}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}$$
-The \navr ratio quantifies the numerical instability of a neuroimaging analysis,
-allowing comparison across regions and studies. The formulas in
-Table~\ref{tab:stat_uncertainty} were obtained by propagating the numerical
-variability through the estimators using the delta-method (see
-Section~\ref{sec:theoretical_derivations}) and were verified through numerical
-simulations.
+While the previous results demonstrate that numerical variability can alter
+statistical inference in MRI analyses, routinely conducting computationally
+expensive Monte Carlo evaluations is impractical for most studies. To address
+this, we developed a closed-form analytical model that predicts numerical
+uncertainty using only standard summary statistics. The core of this framework
+is the Numerical-Population Variability Ratio (\navr), defined as the ratio
+between numerical variability ($\sigma_{\mathrm{num}}$; Eq.~\ref{eq:sigma_num})
+and population variability ($\sigma_{\mathrm{pop}}$; Eq.~\ref{eq:sigma_anat}):
+\[
+    \nu_{\mathrm{npv}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}
+\]
 
-This analytical framework provides a practical link between the pipeline's
-numerical instability (\navr), the study's sample size ($n$), and the
-resulting uncertainty in effect sizes and $p$-values. Because the formulas
-rely only on the study's summary statistics, they can be used to
-assess the potential impact of numerical variability on existing
-studies without requiring costly recomputation or access to the original data.
+The \navr metric standardizes the quantification of numerical instability,
+enabling direct comparisons across different brain regions, software pipelines,
+and cohorts. By propagating this ratio through standard statistical estimators
+using the delta-method (see Section~\ref{sec:theoretical_derivations}), we
+derived approximations for the numerical uncertainty inherent in common
+statistics (Table~\ref{tab:stat_uncertainty}) and validated them through
+numerical simulations. This framework establishes a direct link between a
+pipeline's numerical instability (\navr), the study's sample size ($n$), and the
+resulting reliability of p-values and effect sizes. Crucially, because these
+formulas rely solely on summary statistics, they allow for the retrospective
+quality control of existing literature without requiring access to original raw
+data or costly re-computation.
 
 % \TG[done]{I think I would rather present the $\sigma_d$ result first, then explain
 %     NAV. When introducing sigma d, you could better explain that numerical
@@ -196,26 +195,37 @@ studies without requiring costly recomputation or access to the original data.
     \label{tab:stat_uncertainty}
 \end{table}
 
-We measured $\nu_{npv}$ in the analyses reported in the previous section
-(Figure~\ref{fig:navr}). For the baseline analysis, the average \navr value
-across cortical and subcortical regions was 0.191 in the PD group and 0.176 in
-the HC group. No significant differences in mean \navr were observed between HC
-and PD groups (Permutation test with 10,000 resamples; $\alpha=0.05$ with
-Bonferroni correction), supporting the idea that numerical variability measured
-through \navr may roughly generalize across populations, for structural MRI
-measures produced by FreeSurfer. The Cohen's d formula in
-Table~\ref{tab:stat_uncertainty} gives that for this level of uncertainty,
-achieving a negligible level of numerical uncertainty ($\sigma_d \leq 0.01$)
-would require 1340 participants. Longitudinal analyses exhibited substantially
-higher \navr values, 0.561 for PD and 0.549 for HC, likely owing to the
-occurrence of catastrophic cancellation when substracting nearly equal numbers
-between timepoints. Using the same formula, we anticiapte that at this level of
-uncertainty, achieving a negligible numerical uncertainty ($\sigma_d \leq 0.01$)
-would require at least 12,321 participants.
+We applied this model to quantify the stability of the analyses reported above
+(Figure~\ref{fig:navr}). In cross-sectional baseline analyses, the average \navr
+was 0.191 for the PD group and 0.176 for HC, with no significant difference
+between groups (Permutation test, $p > 0.05$; Appendix
+Figure~\ref{tab:bootstrap-navr}). This suggests that for structural MRI measures
+derived from FreeSurfer, numerical variability is a consistent property of the
+pipeline rather than the clinical population. Applying the Cohen's $d$
+uncertainty formula (Table~\ref{tab:stat_uncertainty}) to these \navr values
+reveals that suppressing numerical uncertainty to a negligible level ($\sigma_d
+    \leq 0.01$) in cross-sectional studies would require approximately 1,340
+participants.
 
-To facilitate the use of our model, we developed an interactive web tool available at
-\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
-(Figure~\ref{fig:brain_render_tool}). Using this tool, researchers can upload \TG{... add a few sentences to summarize the tool's capabilities.}
+In contrast, longitudinal analyses exhibited substantially higher instability,
+with average \navr values of 0.561 for PD and 0.549 for HC. This amplification
+is likely driven by catastrophic cancellation that occurs when subtracting
+nearly identical values between timepoints. Consequently, achieving the same
+level of numerical uncertainty ($\sigma_d \leq 0.01$) would require a sample
+size exceeding 12,000 participants, highlighting the critical impact of
+numerical noise on reliability.
+
+To facilitate the broader adoption of this framework, we developed an
+open-source, interactive web interface available at
+\href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}
+(Appendix Figure~\ref{fig:brain_render_tool}). This tool allows researchers to
+upload standard summary statistics to instantly estimate the numerical
+uncertainty floor of their findings. The interface
+includes a 3D visualization engine that maps uncertainty onto cortical and
+subcortical atlases, allowing for interactive exploration of pipeline stability.
+To aid interpretation, the tool automatically flags regions where the reported
+effect size is indistinguishable from the estimated numerical noise,
+thereby identifying potentially spurious findings.
 
 \begin{figure}[h]
     \centering
@@ -242,17 +252,6 @@ To facilitate the use of our model, we developed an interactive web tool availab
 % \end{figure}
 
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.7\linewidth]{figures/screenshot_light.png}
-    \caption{Interactive web tool for estimating NPVR and assessing numerical
-        variability in neuroimaging studies. Users can input summary statistics
-        to obtain NPVR values and visualize the impact of numerical variability
-        on effect size estimates. The tool is available at
-        \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
-        \YC{Move to appendix?}}
-    \label{fig:brain_render_tool}
-\end{figure}
 
 \subsection{Impact of numerical variability on published findings}
 
@@ -323,39 +322,36 @@ To facilitate numerical evaluations in previous and future studies, we
 introduced the Numerical-Population Variability Ratio (NPVR), a quantitative
 framework for assessing the relative magnitude of computational noise. By
 establishing a theoretical link between NPVR and the uncertainty in common
-statistics, we provided a practical tool to assess the numerical robustness of MRI measures.
-Our re-analysis of published ENIGMA results illustrates this utility: while
-large sample sizes confer robustness to core findings, many secondary effects
-fall below the computational noise floor. This suggests that in exploratory
-studies with lower sample size, numerical instability may undermine the
-reliability of reported effects. \TG{revise this part when results are available}
+statistics, we provided a practical tool to assess the numerical robustness of
+MRI measures.
 
 Although our primary analysis focused on FreeSurfer 7.3.1 and Parkinson's
-disease, the underlying numerical issues are more general.
-Previous analyses of FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite
-    Mathieu} indicate that such instability is not unique to FreeSurfer but likely
-pervades the field. SPM however seems to be less impacted by numerical
-variability, possibly due to the use of Bayesian optimization~\cite{mirhakimi2025numerical}.
+disease, the underlying numerical issues are more general. Previous analyses of
+FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite Mathieu} indicate that such
+instability is not unique to FreeSurfer but likely pervades the field. SPM
+however seems to be less impacted by numerical variability, possibly due to the
+use of Bayesian optimization~\cite{mirhakimi2025numerical}.
 
-Traditional image processing methods rely on nonlinear optimization
-procedures that can converge to different local minima under small
-perturbations, resulting in substantive changes to derived measures. To address
-this problem and decrease the execution time, the neuroimaging field is
-increasingly shifting toward deep learning models. The latest FreeSurfer
-release (v8), for example, now incorporates Deep Learning (DL) models such as
+Traditional image processing methods rely on nonlinear optimization procedures
+that can converge to different local minima under small perturbations, resulting
+in substantive changes to derived measures. To address this problem and decrease
+the execution time, the neuroimaging field is increasingly shifting toward deep
+learning models. The latest FreeSurfer release (v8), for example, now
+incorporates Deep Learning (DL) models such as
 FastSurfer~\cite{henschel2020fastsurfer} and
 Synthmorph~\cite{hoffmann2021synthmorph} to replace its classical segmentation
 and registration steps. However, this shift does not eliminate the problem of
-instability but rather reframes it. While these DL models have been shown
-stable during the inference stage~\cite{pepe2023numerical}, their training
-process is subject to its own sources of variability. Factors like weight
-initialization and floating-point precision can cause different training runs
-to yield distinct models with varying performance, and their quantification
-remains an open question in neuroimaging. This phenomenon is analogous to the
-local minima issue in classical optimization. Ultimately, whether arising from
-classical optimization or DL training, such instability means that even
-identical inputs can lead to divergent interpretations, raising critical
-concerns for research reproducibility and clinical translation. \TG{Reword paragraph to refer to Ines' latest results on FastSurfer training}
+instability but rather reframes it. While these DL models have been shown stable
+during the inference stage~\cite{pepe2023numerical}, their training process is
+subject to its own sources of variability. Factors like weight initialization
+and floating-point precision can cause different training runs to yield distinct
+models with varying performance, and their quantification remains an open
+question in neuroimaging. This phenomenon is analogous to the local minima issue
+in classical optimization. Ultimately, whether arising from classical
+optimization or DL training, such instability means that even identical inputs
+can lead to divergent interpretations, raising critical concerns for research
+reproducibility and clinical translation. \TG{Reword paragraph to refer to Ines'
+    latest results on FastSurfer training}
 
 To address the generalizability of our findings, we considered the
 characteristics of our data cohorts. A potential limitation is that our
@@ -384,8 +380,8 @@ therefore necessary to ensure the reproducibility and reliability of
 neuroimaging-based biomarkers. Extending this quantification to the
 deep-learning training stage is equally important, given the field's central
 role in modern neuroimaging, and would support more robust and interpretable
-models. Likewise, evaluating numerical variability in the classical
-optimization schemes used in non-linear registration is a key milestone, as
-these traditional tools often provide the reference for training deep-learning
-models. Advancing both lines of analysis will benefit conventional and
-learning-based approaches alike.
+models. Likewise, evaluating numerical variability in the classical optimization
+schemes used in non-linear registration is a key milestone, as these traditional
+tools often provide the reference for training deep-learning models. Advancing
+both lines of analysis will benefit conventional and learning-based approaches
+alike.

@@ -751,7 +751,6 @@ higher or lower \navr values.
     \label{fig:navr_maps_area_volume}
 \end{figure}
 
-
 \subsection{Consistency results}
 
 \YC{Moved from section~\ref{sec:results}. Rewrite to fit here.}
@@ -1004,6 +1003,19 @@ triangles indicate the IEEE-754 run for reference.
     \label{fig:consistency_volume_plot}
 \end{figure}
 
+\subsection{Interactive web tool}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/screenshot_light.png}
+    \caption{Interactive web tool for estimating NPVR and assessing numerical
+        variability in neuroimaging studies. Users can input summary statistics
+        to obtain NPVR values and visualize the impact of numerical variability
+        on effect size estimates. The tool is available at
+        \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
+        \label{fig:brain_render_tool}}
+\end{figure}
+
 \section{Distribution of statistical tests coefficients}
 \label{appendix:distribution_stats_ieee}
 
@@ -1069,13 +1081,13 @@ supports the validity of the numerical perturbation. \TG{Yohan, please check my 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{\linewidth}
-        \includegraphics[width=\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Left.pdf}
+        \includegraphics[width=.9\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:consistency_area_left}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\linewidth}
-        \includegraphics[width=\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Right.pdf}
+        \includegraphics[width=.9\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:consistency_area_right}
     \end{subfigure}
@@ -1088,13 +1100,13 @@ supports the validity of the numerical perturbation. \TG{Yohan, please check my 
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{\linewidth}
-        \includegraphics[width=\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Left.pdf}
+        \includegraphics[width=.9\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:consistency_volume_left}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\linewidth}
-        \includegraphics[width=\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Right.pdf}
+        \includegraphics[width=.9\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:consistency_volume_right}
     \end{subfigure}
