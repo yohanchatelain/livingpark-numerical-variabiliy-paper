@@ -311,10 +311,10 @@ think makes a lot of sense given the scarcity of the data.}
 
 % [] Mention using neuroimaging as biomarker (n=1 scenario), personalized medicine,
 
-Our systematic perturbation of FreeSurfer revealed that numerical variability
-alone can account for up to 30\% \TG{check value, can we report the average
+Our systematic perturbation of FreeSurfer showed that numerical variability
+alone can amount to up to 30\% \TG{check value, can we report the average
     $\nu_{nav}$ observed in PD participants?} of the population variability observed
-in structural MRI measurements. This level of uncertainty can significantly
+in structural MRI measurements. This level of variability can significantly
 impact statistical outcomes in Parkinson's disease analyses, leading to the
 appearance or disappearance of group differences or correlations depending
 solely on computational conditions. These findings offer a mechanistic
@@ -324,16 +324,20 @@ neuroimaging.
 To facilitate numerical evaluations in previous and future studies, we
 introduced the Numerical-Population Variability Ratio (NPVR), a quantitative
 framework for assessing the relative magnitude of computational noise. By
-establishing a theoretical link between NPVR and the uncertainty in common
+establishing a theoretical link between NPVR and the standard deviation of common
 statistics, we provided a practical tool to assess the numerical robustness of
-MRI measures.
+MRI measures. \TG{can we say that technically the NPVR can be use to propagate other uncertainties, such as test-retest?}
+\TG{can we make recommendations for people to evaluate false positive rates using your tool or any other simple mean?}
 
 Although our primary analysis focused on FreeSurfer 7.3.1 and Parkinson's
 disease, the underlying numerical issues are more general. Previous analyses of
-FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite Mathieu} indicate that such
-instability is not unique to FreeSurfer but likely pervades the field. SPM
-however seems to be less impacted by numerical variability, possibly due to the
-use of Bayesian optimization~\cite{mirhakimi2025numerical}.
+FSL and ANTs~\cite{mirhakimi2025numerical} \TG{add references to FSL, ANTs and
+SPM, and expand acronyms} \YC{cite Mathieu} indicate that such instability is
+not unique to FreeSurfer but likely pervades the field. SPM however seems to be
+less impacted by numerical variability, possibly due to the use of Bayesian
+optimization~\cite{mirhakimi2025numerical}. Future work will involve measuring
+NPVR values across various analysis pipelines to validate these preliminary
+observations.
 
 Traditional image processing methods rely on nonlinear optimization procedures
 that can converge to different local minima under small perturbations, resulting
@@ -346,45 +350,41 @@ Synthmorph~\cite{hoffmann2021synthmorph} to replace its classical segmentation
 and registration steps. However, this shift does not eliminate the problem of
 instability but rather reframes it. While these DL models have been shown stable
 during the inference stage~\cite{pepe2023numerical}, their training process is
-subject to its own sources of variability. Factors like weight initialization
+subject to its own sources of variability that are comparable to the ones found in traditional imaging methods~\cite{gonzalez2025uncertain}.
+Factors like weight initialization
 and floating-point precision can cause different training runs to yield distinct
-models with varying performance, and their quantification remains an open
-question in neuroimaging. This phenomenon is analogous to the local minima issue
+models with varying performance. This phenomenon is analogous to the local minima issue
 in classical optimization. Ultimately, whether arising from classical
 optimization or DL training, such instability means that even identical inputs
-can lead to divergent interpretations, raising critical concerns for research
-reproducibility and clinical translation. \TG{Reword paragraph to refer to Ines'
-    latest results on FastSurfer training}
+can lead to divergent interpretations, raising concerns for research
+reproducibility and clinical translation. 
 
-To address the generalizability of our findings, we considered the
-characteristics of our data cohorts. A potential limitation is that our
-Parkinson's Disease cohort was relatively homogeneous in age and phenotype,
-which could reduce population variance and consequently inflate NPVR values.
-However, direct statistical analyses revealed no significant differences in
-numerical variability between the PD and healthy control groups (see
-Supplementary Fig. X). This key finding supports the idea that the pipeline's
-instability is a consistent factor and that our results are likely to generalize
-across these populations.\TG[done]{I would moderate this statement a little bit.
-    I think it would be interesting the measure the NAV in different pipelines and
-    datasets, but I don't think there's a very strong need for that.} Measuring the
-NPVR across more diverse datasets, software packages, and disease contexts would
-nevertheless be a valuable step. Such work would help build a more comprehensive
-map of computational reliability across the entire neuroimaging landscape.
+A potential limitation is that our Parkinson's Disease cohort was relatively
+homogeneous in age and phenotype, which could reduce population variance and
+consequently inflate NPVR values. However, direct statistical analyses showed
+no significant differences in numerical variability between the PD and healthy
+control groups (see Supplementary Fig. X \TG{fix reference}), supporting the idea
+that the pipeline's instability is a consistent factor across HC and PD populations. 
+Measuring the NPVR across more
+diverse datasets, software packages, and disease contexts would nevertheless be
+a valuable step. Such work would help build a more comprehensive map of
+computational reliability across the entire neuroimaging landscape.
 
-NPVR provides a scalable, interpretable metric to quantify hidden numerical
-variability. Although floating-point rounding is a dominant source of
-instability, future work should broaden this analysis to other contributors,
-including algorithmic choices, preprocessing decisions, and data handling
-practices. A comprehensive understanding of these factors is essential for
-developing numerically robust software. Our results show that computational
-uncertainty is as critical as statistical uncertainty in neuroimaging;
-systematic assessments of numerical variability, exemplified by NPVR, are
-therefore necessary to ensure the reproducibility and reliability of
-neuroimaging-based biomarkers. Extending this quantification to the
-deep-learning training stage is equally important, given the field's central
-role in modern neuroimaging, and would support more robust and interpretable
-models. Likewise, evaluating numerical variability in the classical optimization
-schemes used in non-linear registration is a key milestone, as these traditional
-tools often provide the reference for training deep-learning models. Advancing
-both lines of analysis will benefit conventional and learning-based approaches
-alike.
+% \TG{This paragraph reads like pure gibberish!}
+% NPVR provides a scalable, interpretable metric to quantify hidden numerical
+% variability. Although floating-point rounding is a dominant source of
+% instability, future work should broaden this analysis to other contributors,
+% including algorithmic choices, preprocessing decisions, and data handling
+% practices. A comprehensive understanding of these factors is essential for
+% developing numerically robust software. Our results show that computational
+% uncertainty is as critical as statistical uncertainty in neuroimaging;
+% systematic assessments of numerical variability, exemplified by NPVR, are
+% therefore necessary to ensure the reproducibility and reliability of
+% neuroimaging-based biomarkers. Extending this quantification to the
+% deep-learning training stage is equally important, given the field's central
+% role in modern neuroimaging, and would support more robust and interpretable
+% models. Likewise, evaluating numerical variability in the classical optimization
+% schemes used in non-linear registration is a key milestone, as these traditional
+% tools often provide the reference for training deep-learning models. Advancing
+% both lines of analysis will benefit conventional and learning-based approaches
+% alike.
