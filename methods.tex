@@ -1,9 +1,5 @@
 \section{Methods}
 
-\TG[done]{include a summary of your methods here.}
-\TG[done]{Overall the methods are quite brief, you should add more details so that
-    people get a better sense of what you did, see detailed suggestions in the text}
-
 We quantified the impact of numerical variability on structural MRI findings in
 Parkinson's disease (PD) using (1) stochastic perturbation
 experiments and (2) analytical uncertainty propagation. Empirically, we processed a
@@ -39,7 +35,8 @@ baseline and follow-up visits.
 
 All procedures were approved by the research ethics boards of participating PPMI
 sites, and written informed consent was obtained from all participants in
-accordance with the Declaration of Helsinki. The PD and HC groups did not differ
+accordance with the Declaration of Helsinki and was exempt from Concordia University’s
+Research Ethics Unit. The PD and HC groups did not differ
 significantly in age, education, or sex distribution ($p > 0.05$;
 Table~\ref{tab:cohort_stat}).
 
@@ -80,21 +77,20 @@ Fuzzy-libm, a modified mathematical library that injects stochastic
 perturbations into floating-point operations to probe numerical stability
 (Section~\ref{sec:numerical_variability_assessment}). To estimate numerical
 variability, each scan was processed 34 times. We filtered the resulting outputs
-to exclude both technical failures \TG[done]{defined failed: failed due to
-    technical reasons or failed QC?} (e.g., incomplete execution and FreeSurfer
+to exclude both technical failures (e.g., incomplete execution and FreeSurfer
 failures) and quality control (QC) failures.
 
-\TG[done]{you should mention QC too} For QC, we visually inspected nine
+For QC, we visually inspected nine
 representative slices (3 along each axis) per run to identify gross artifacts,
 such as missing brain tissue, blurring, or biologically implausible
-segmentation. Table~\ref{tab:qc} details the exclusion rates. To ensure
+segmentation. Table~\ref{tab:qc} \TG{table reference is broken} details the exclusion rates. To ensure
 statistical consistency across the cohort, we randomly subsampled the remaining
 runs to retain exactly 26 valid realizations per participant.
 
 \subsection{Numerical Variability Assessment}
 \label{sec:numerical_variability_assessment}
 
-To quantify the numerical instability inherent in the FreeSurfer pipeline, we
+To quantify the numerical instability in the FreeSurfer pipeline, we
 employed Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}. MCA is a
 stochastic technique that simulates the propagation of rounding errors by
 introducing controlled random perturbations into floating-point operations. We
@@ -174,10 +170,6 @@ uncertainty approaches population variation.
 
 \subsubsection{Relationship between \navr~and downstream statistical test uncertainty}
 \label{sec:theoretical_derivations}
-
-\TG[done]{The remainder of this paragraph is quite informal, could you tidy up the
-    equations to start from the definition of Cohen's d and clearly derive its
-    standard deviation? You should also clarify the assumptions that are made.}
 
 To establish a quantitative link between a method's computational reproducibility
 and the reliability of group-level statistical inferences, we derived analytical
@@ -777,3 +769,5 @@ the dependence on $(1-R^{2})^{3}$ cancels, leading to:
     \geq
     2f_t(|t_0|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{npv}}.
 \]
+
+\TG{I think you need to explain how you computed the probability of false positives in section 2.3}
