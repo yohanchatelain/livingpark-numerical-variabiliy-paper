@@ -303,7 +303,8 @@ numerical evaluations in MRI studies.
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/false_positive_vs_sample_size_boxplots.pdf}
-    \caption{\TG{remove figure title on top of the figure, it's redundant. Change "Statistical test T" to "T test", etc.} Probability of numerically-induced false positives across different effect sizes \TG{effect sizes or statistics?}: T-values (T), F-values (F), and correlation coefficients (R).}
+    \caption{Probability of numerically-induced false positives across different
+        statistics: T-values (T), F-values (F), and correlation coefficients (R).}
     \label{fig:false_positive_vs_sample_size}
 \end{figure}
 
@@ -353,12 +354,14 @@ robustness of the existing literature and prospective evaluation of new studies.
 \TG{can we make recommendations for people to evaluate false positive rates using your tool or any other simple mean?}
 
 Although our empirical analyses focused on FreeSurfer 7.3.1, the observed
-instabilities are not unique to this software. Prior work has documented
-comparable numerical sensitivity in other widely used neuroimaging pipelines,
-including FSL~\cite{mirhakimi2025numerical} and ANTs~\YC{cite Mathieu},  \TG{add references to FSL, ANTs and
-    SPM, and expand acronyms} while
-suggesting lower sensitivity in SPM~\cite{mirhakimi2025numerical}, potentially
-due to differences in optimization strategies and regularization. These findings
+instabilities are not unique to this software. Prior
+work~\cite{mirhakimi2025numerical}~\YC{cite Mathieu} has documented comparable
+numerical sensitivity in other widely used neuroimaging pipelines, including
+FMRIB Software Library~\cite{jenkinson2012fsl} (FSL) and Advanced Normalization
+Tools~\cite{avants2009advanced} (ANTs), \TG[done]{add references to FSL, ANTs
+    and SPM, and expand acronyms} while suggesting lower sensitivity in Statistical
+Parametric Mapping~\cite{ashburner2009computational} (SPM), potentially due to
+differences in optimization strategies and regularization. These findings
 indicate that numerical variability is a property of computational pipelines
 rather than a specific implementation artifact. The magnitude of the uncertainty
 then depends on algorithmic design choices, numerical precision, and
