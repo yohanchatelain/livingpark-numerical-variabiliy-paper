@@ -4,50 +4,14 @@
 
 \TG{Remove appendices that are not referred in the text, for instance significant digits formula, dice coefficient, etc}
 
-\section{Formula}
+\section{Partial derivatives of sample statistics}
 
-\subsection{Significant digits formula}
-\label{eq:significant_digits}
+We derive below the partial derivatives of common sample statistics for a
+dataset \(x = \{x_1, x_2, \ldots, x_n\}\) with respect to an individual
+observation \(x_i\), where \(n\) denotes the sample size. The Kronecker delta
+\(\delta_{ij}\) equals 1 when \(i = j\) and 0 otherwise.
 
-We compute the number of significant bits \(\hat{s}\) with probability
-\(p_s=0.95\) and confidence \(1-\alpha_s=0.95\) using the
-\texttt{significantdigits}
-package\footnote{\url{https://github.com/verificarlo/significantdigits}}
-(version 0.4.0). \texttt{significantdigits} implements the Centered Normality
-Hypothesis approach described in~\cite{sohier2021confidence}:
-\[
-    \hat{s_i} = -\log_2 \left| \frac{\hat{\sigma_i}}{\hat{\mu_i}} \right| -
-    \delta(n, \alpha_s, p_s),
-\]
-where \(\hat{\sigma_i}\) and \(\hat{\mu_i}\) are the average and standard
-deviation over the repetitions, and
-\begin{equation}
-    \delta(n, \alpha_s, p_s) = \log_2 \left(
-    \sqrt{\frac{n-1}{\chi^2_{1-\alpha_s/2}}} \Phi^{-1} \left( \frac{p_s+1}{2}
-    \right) \right)
-\end{equation}
-is a penalty term for estimating \(\hat{s_i}\) with probability \(p_s\) and
-confidence level \(1-\alpha_s\) for a sample size \(n\). \(\Phi^{-1}\) is the
-inverse cumulative distribution of the standard normal distribution and
-\(\chi^2\) is the Chi-2 distribution with \(n\)-1 degrees of freedom.
-
-\subsection{Extended Sørensen-Dice coefficient}
-\label{eq:extended_dice}
-
-The extended Sørensen-Dice coefficient is a measure of overlap between multiple
-sets, defined as follows:
-\[
-    \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \bigcap_{i=1}^{n} A_i \right|}{\sum_{i=1}^{n} \left| A_i \right|}
-\].
-
-\subsection{Partial derivatives of sample statistics}
-
-We derive below the partial derivatives of common sample statistics for a dataset
-\(x = \{x_1, x_2, \ldots, x_n\}\)
-with respect to an individual observation \(x_i\), where \(n\) denotes the sample size.
-The Kronecker delta \(\delta_{ij}\) equals 1 when \(i = j\) and 0 otherwise.
-
-\subsubsection{Sample Mean}
+\subsection{Sample Mean}
 \label{sec:sample_mean_derivation}
 
 The partial derivative of the sample mean with respect to \(x_i\) is constant:
@@ -71,7 +35,7 @@ The partial derivative of the sample mean with respect to \(x_i\) is constant:
     \]
 \end{proof}
 
-\subsubsection{Sample Variance}
+\subsection{Sample Variance}
 \label{sec:sample_variance_derivation}
 
 The partial derivative of the sample variance with respect to \(x_i\) is
@@ -104,15 +68,15 @@ The partial derivative of the sample variance with respect to \(x_i\) is
     \]
 \end{proof}
 
-\subsubsection{Sample Standard Deviation}
+\subsection{Sample Standard Deviation}
 \label{sec:sample_std_derivation}
 
-The partial derivative of the sample standard deviation with respect to \(x_i\) is
+The partial derivative of the sample standard deviation with respect to \(x_i\)
+is
 \begin{equation}
     \frac{\partial s}{\partial x_i} = \frac{x_i - \overline{x}}{(n-1)s}.
     \label{eq:sample_std_derivative}
 \end{equation}
-
 
 \begin{proof}
     Given that \(s = \sqrt{s^2}\), the derivative follows directly from the chain rule:
@@ -123,11 +87,12 @@ The partial derivative of the sample standard deviation with respect to \(x_i\) 
     \end{align*}
 \end{proof}
 
-\subsubsection{Pooled Standard Deviation}
+\subsection{Pooled Standard Deviation}
 \label{sec:pooled_std_derivation}
 
-The pooled standard deviation is a weighted average of the variances
-of two groups \(|G_1|=n_1\) and \(|G_2|=n_2\) with \(df=n_1+n_2-2\). Its partial derivative with respect to \(x_i\), \(i \in G_g\) is given by
+The pooled standard deviation is a weighted average of the variances of two
+groups \(|G_1|=n_1\) and \(|G_2|=n_2\) with \(df=n_1+n_2-2\). Its partial
+derivative with respect to \(x_i\), \(i \in G_g\) is given by
 \begin{equation}
     \frac{\partial s_p}{\partial x_i} = \frac{x_i - \overline{x}_g}{df s_p}.
 \end{equation}
@@ -149,7 +114,7 @@ of two groups \(|G_1|=n_1\) and \(|G_2|=n_2\) with \(df=n_1+n_2-2\). Its partial
     \end{align*}
 \end{proof}
 
-\subsubsection{Sample Covariance}
+\subsection{Sample Covariance}
 \label{sec:sample_covariance_derivation}
 
 The partial derivative of the sample covariance with respect to \(x_i\) is
@@ -181,7 +146,7 @@ The partial derivative of the sample covariance with respect to \(x_i\) is
     \]
 \end{proof}
 
-\subsubsection{Pearson correlation coefficient}
+\subsection{Pearson correlation coefficient}
 \label{sec:pearson_derivation}
 The partial derivative of \(r_{x,y}\) with respect to an individual
 observation \(x_i\) is given by
@@ -210,7 +175,7 @@ observation \(x_i\) is given by
     \end{align*}
 \end{proof}
 
-\subsubsection{Correlation identities}
+\subsection{Correlation identities}
 \label{sec:correlation_identities}
 Let \(\tilde{x}_i = (x_i - \overline{x})/s_x\), \(\tilde{y}_i = (y_i - \overline{y})/s_y\) and \(\tilde{z}_i = (z_i - \overline{z})/s_z\) be the standardized variables.
 The following identities hold:
@@ -247,7 +212,15 @@ variability in FreeSurfer version 7.3.1 on the PPMI (Parkinson's Progression
 Markers Initiative) cohort. This involves comparing the estimation of
 structural MRI measures, including cortical and subcortical volumes, cortical
 thickness, and surface area. The goal is to assess the stability of these key
-metrics and quantify the numerical variability.
+metrics and quantify the numerical variability. To do that, we compute (1) the
+number of significant digits~\cite{sohier2021confidence} (with probability
+\(p_s=0.95\), confidence \(1-\alpha_s=0.95\)) using the
+\texttt{significantdigits}
+package\footnote{\url{https://github.com/verificarlo/significantdigits}}
+(version 0.4.0), and (2) the extended Sørensen-Dice coefficient to measure of
+overlap between multiple sets, defined as follows: $\text{Dice}(A_1, A_2,
+    \dots, A_n) = n \left| \bigcap_{i=1}^{n} A_i \right| / \sum_{i=1}^{n} \left|
+    A_i \right|$.
 
 FreeSurfer 7.3.1 showed limited numerical precision across all cortical
 measures: $1.61 \pm 0.20$ significant digits for cortical thickness, $1.33 \pm
@@ -729,16 +702,15 @@ measurements are more stable than cortical volume.
     \label{tab:cohort_stat_vertical}
 \end{table}
 
-\section{Numerical-Anatomical Variability Ratio (\navr)}
+\section{Numerical-Population Variability Ratio (\navr)}
 
 \subsection{\navr maps}
 
-Figure~\ref{fig:navr_maps_area_volume} shows the \navr
-maps for cortical surface area and volume, for each region. The color
-scale indicates the \navr value, with warmer colors indicating higher \navr
-values. The maps provide a visual representation of the variability in the
-\navr values across different cortical regions, highlighting regions with
-higher or lower \navr values.
+Figure~\ref{fig:navr_maps_area_volume} shows the \navr maps for cortical
+surface area and volume, for each region. The color scale indicates the \navr
+value, with warmer colors indicating higher \navr values. The maps provide a
+visual representation of the variability in the \navr values across different
+cortical regions, highlighting regions with higher or lower \navr values.
 
 \begin{figure}[t]
     \centering
@@ -754,38 +726,6 @@ higher or lower \navr values.
 \end{figure}
 
 \subsection{Consistency results}
-
-\YC{Moved from section~\ref{sec:results}. Rewrite to fit here.}
-
-We instrumented FreeSurfer 7.3.1 with MCA (virtual precision set to mimic
-realistic perturbations), and re-analyzed each T1-weighted MRI scan 26 times,
-each time with a different random state. For subcortical volumes, statistical
-significance ($p < 0.05$) fluctuated notably across MCA repetitions
-(Figure~\ref{fig:significance_correlation_subcortical_volume}). For group
-comparisons alone, eight subcortical regions alternated between significant and
-non-significant outcomes, illustrating how numerical instability can directly
-affect clinical interpretation. Overall, 27\% of all statistical comparisons,
-including both group differences and clinical correlations, yielded
-inconsistent results across numerical states. Similarly, for cortical
-thickness, 19\% of the comparisons produced inconsistent results
-(Fig.~\ref{fig:significance_correlation_thickness}), suggesting that potential
-biomarker relationships might emerge or vanish purely due to computational
-noise. This outcome-level variability mirrors the analytical variability
-reported in large-scale reproducibility challenges like NARPS, where different
-analysis teams reached conflicting conclusions from the same
-dataset~\cite{botvinik2020variability}.
-
-Testing for PD progression partial correlations and group differences between
-PD patients and healthy controls, 27\% of statistical tests are
-non-reproducible for subcortical volumes and 19\% for cortical thickness
-(Extended Data Fig.~\ref{fig:significance_correlation_subcortical_volume}
-and~\ref{fig:significance_correlation_thickness}). The within-subject
-variability due to numerical differences peaked at 37\% and 40\% of the
-observed between-subject anatomical variance in critical cortical and
-subcortical regions (Fig.~\ref{fig:navr_subcortical}
-and~\ref{fig:navr_thickness}). The median NAVR of approximately 0.20 and 0.16
-across all cortical regions and subcortical regions underscores that numerical
-uncertainty significantly affects typical neuroimaging analyses.
 
 \begin{table}[ht]
     \centering
@@ -1021,15 +961,15 @@ triangles indicate the IEEE-754 run for reference.
 \section{Distribution of statistical tests coefficients}
 \label{appendix:distribution_stats_ieee}
 
-
 Figures \ref{fig:statstest_coefficients_distribution},
-\ref{fig:consistency_area_coefficients} and \ref{fig:consistency_volume_coefficients} show the
-distribution of partial correlation coefficients and F-statistics for
-subcortical volume measures, cortical thickness, cortical areas and cortical
-volumes, across all subjects and regions. Red triangles indicate the unperturbed
-(IEEE-754) run for reference. For all analyses, the unperturbed (IEEE-754)
-result is included in the range of numericallly perturbed results, which
-supports the validity of the numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
+\ref{fig:consistency_area_coefficients} and
+\ref{fig:consistency_volume_coefficients} show the distribution of partial
+correlation coefficients and F-statistics for subcortical volume measures,
+cortical thickness, cortical areas and cortical volumes, across all subjects
+and regions. Red triangles indicate the unperturbed (IEEE-754) run for
+reference. For all analyses, the unperturbed (IEEE-754) result is included in
+the range of numericallly perturbed results, which supports the validity of the
+numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
 
 % The distribution shows the variability in the
 % coefficients, with some regions exhibiting higher consistency than others.
@@ -1050,7 +990,6 @@ supports the validity of the numerical perturbation. \TG{Yohan, please check my 
 % (Appendix Figure~\ref{fig:consistency_thickness_coefficients},
 % Table~\ref{tab:stats-coef-var-cortical}).
 
-
 \begin{figure}[ht]
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
     \caption{ Distribution of partial correlation coefficients (r-values) and
@@ -1058,8 +997,6 @@ supports the validity of the numerical perturbation. \TG{Yohan, please check my 
         measures. Red dots represent the IEEE-754 unperturbed results.
         \label{fig:statstest_coefficients_distribution}}
 \end{figure}
-
-
 
 \begin{figure}
     \centering
