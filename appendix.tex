@@ -2,8 +2,6 @@
 
 \appendix
 
-\TG{Remove appendices that are not referred in the text, for instance significant digits formula, dice coefficient, etc}
-
 \section{Partial derivatives of sample statistics}
 
 We derive below the partial derivatives of common sample statistics for a
@@ -205,65 +203,82 @@ The following identities hold:
     \end{align*}
 \end{proof}
 
-\section{Cross-sectional Analysis}
+\section{Cross-sectional numerical variability quantification at baseline visit}
 
-As a side result, the cross-sectional analysis measures the impact of numerical
-variability in FreeSurfer version 7.3.1 on the PPMI (Parkinson's Progression
-Markers Initiative) cohort. This involves comparing the estimation of
-structural MRI measures, including cortical and subcortical volumes, cortical
-thickness, and surface area. The goal is to assess the stability of these key
-metrics and quantify the numerical variability. To do that, we compute (1) the
-number of significant digits~\cite{sohier2021confidence} (with probability
-\(p_s=0.95\), confidence \(1-\alpha_s=0.95\)) using the
-\texttt{significantdigits}
-package\footnote{\url{https://github.com/verificarlo/significantdigits}}
-(version 0.4.0), and (2) the extended Sørensen-Dice coefficient to measure of
-overlap between multiple sets, defined as follows: $\text{Dice}(A_1, A_2,
-    \dots, A_n) = n \left| \bigcap_{i=1}^{n} A_i \right| / \sum_{i=1}^{n} \left|
-    A_i \right|$.
+As a complementary component of our analysis, we quantified cross-sectional
+numerical variability for cortical and subcortical measures at baseline.
+Numerical variability was assessed using two metrics: (1) the number of
+significant digits~\cite{sohier2021confidence} ($p_s=0.95$, confidence
+$1-\alpha_s=0.95$), calculated using the \texttt{significantdigits}
+package\footnote{\url{github.com/verificarlo/significantdigits}} (version
+0.4.0); and (2) the extended Sørensen-Dice coefficient, which measures the
+spatial overlap of segmentation masks across $n$ repetitions. The extended Dice
+coefficient is defined as:
+\begin{equation}
+    \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \bigcap_{i=1}^{n} A_i \right|}{\sum_{i=1}^{n} \left| A_i \right|},
+\end{equation}
+where $A_i$ represents the segmentation for the $i$-th Monte Carlo sample.
 
-FreeSurfer 7.3.1 showed limited numerical precision across all cortical
-measures: $1.61 \pm 0.20$ significant digits for cortical thickness, $1.33 \pm
-    0.23$ for surface area, and $1.33 \pm 0.23$ for cortical volume
-(Figures~\ref{fig:sig_digits_cortical}). Subcortical volumes have a similar
-precision with $1.33 \pm 0.22$ significant digits on average
-(Figure~\ref{fig:sig_digits_subcortical}). These values indicate measurements
-are typically precise to only one decimal place, with some instances showing
-complete precision loss. Regional consistency was observed within each metric
-type, with cortical thickness showing the highest precision (range: $1.22-1.93$
-digits) compared to surface area ($0.82 - 1.72$ digits) and cortical volume
-($0.80 - 1.72$ digits). Subcortical volumes exhibited the highest precision
-(range: $0.88 - 1.57$ digits), with a mean of $1.33 \pm 0.22$ significant
-digits.
+FreeSurfer 7.3.1 demonstrated limited numerical precision across all anatomical
+measures. Cortical metrics showed averages of $1.61 \pm 0.20$ significant digits
+for thickness, $1.33 \pm 0.23$ for surface area, and $1.33 \pm 0.23$ for
+cortical volume (Figure~\ref{fig:sig_digits_cortical}). Subcortical volumes
+exhibited similar instability, with an average of $1.33 \pm 0.22$ significant
+digits (Figure~\ref{fig:sig_digits_subcortical}). These results indicate that,
+on average, FreeSurfer measurements are precise to only one decimal place, with
+specific instances exhibiting complete loss of significant digits. While
+variability was observed across all metrics, cortical thickness displayed the
+highest relative precision (range: $1.22-1.93$ digits), whereas surface area
+($0.82 - 1.72$) and cortical volume ($0.80 - 1.72$) were notably less stable.
+Table~\ref{tab:sig-cortical} and Table~\ref{tab:std-cortical} provide a detailed
+breakdown of within-subject significant digits and standard-deviation average
+across all subjects for each cortical region and metric.
+Table~\ref{tab:sig-std-subcortical-volume} presents the corresponding data for
+subcortical regions.
 
-To measure the structural overlap, we evaluated using the extended
-Sørensen-Dice coefficient: Dice coefficients revealed substantial inter-subject
-variability, particularly in temporal pole regions (Figure~\ref{fig:dice}). We
-also observed that the Dice coefficient varies across regions, with some
-regions showing higher variability than others with cortical volume ($0.00 -
-    0.91$) with a mean of $0.75 \pm 0.11$ and subcortical volume ($0.18 - 0.94$)
-with a mean of $0.82 \pm 0.08$. Finally, we noticed that subcortical volume
-measurements are more stable than cortical volume.
+To assess spatial stability, we evaluated the volumetric overlap using the
+extended Sørensen-Dice coefficient. The analysis revealed substantial
+inter-subject and regional variability (Figure~\ref{fig:dice}). Cortical regions
+showed marked instability, with Dice coefficients ranging from $0.00$ to $0.91$
+(mean $0.75 \pm 0.11$), indicating that for some regions, numerical noise could
+lead to a complete lack of spatial overlap. Subcortical structures appeared
+comparatively more stable, ranging from $0.18$ to $0.94$ (mean $0.82 \pm 0.08$).
+Overall, subcortical segmentations demonstrated higher spatial robustness
+compared to cortical parcellations.
 
-\begin{figure}
-    \includegraphics*[width=\linewidth]{figures/dice.pdf}
-    \caption{Dice coefficient.\label{fig:dice}}
-
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figures/dice.pdf}
+    \caption{Numerical variability of segmentation. The distribution of extended
+        Sørensen-Dice coefficients, highlighting the variability in spatial overlap
+        for cortical and subcortical segmentations due to numerical variability. Lower
+        values indicate higher instability.}
+    \label{fig:dice}
 \end{figure}
 
-\begin{figure}
-    \includegraphics*[width=\linewidth]{figures/sig_digits.pdf}
-    \caption{Number of significant digits for each cortical region and
-        metric.\label{fig:sig_digits_cortical}}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figures/sig_digits.pdf}
+    \caption{Numerical precision of cortical measures. The number of significant
+        digits for cortical thickness, surface area, and volume across regions.
+        Lower values indicate higher instability. Significant digits for population
+        variability (black cross) remains consistently lower than numerical
+        variability on average, indicating that numerical variability does not
+        dominate population variability.}
+    \label{fig:sig_digits_cortical}
 \end{figure}
 
-\begin{figure}
-    \includegraphics*[width=\linewidth]{figures/sig_digits_subcortical_volume.pdf}
-    \caption{Number of significant digits of subcortical volume for each
-        subcortical region.\label{fig:sig_digits_subcortical}}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figures/sig_digits_subcortical_volume.pdf}
+    \caption{Numerical precision of subcortical volumes. The number of
+        significant digits estimated for each subcortical region, showing comparable
+        instability to cortical volume measures. Significant digits for population
+        variability (black cross) remains consistently lower than numerical
+        variability on average, indicating that numerical variability does not
+        dominate population variability.}
+    \label{fig:sig_digits_subcortical}
 \end{figure}
-
-\subsection{Within-subject significant digits averaged across all subjects}
 
 \begin{longtblr}[ caption={Within-subject significant digits averaged across all subjects.},
         label={tab:sig-cortical},]{ colspec={lcc|cc|cc}, width=0.25\linewidth,
@@ -417,7 +432,7 @@ measurements are more stable than cortical volume.
     \\
 \end{longtblr}
 
-\begin{longtblr}[ caption={Within-subject standard-deviation averaged across all subjects for
+\begin{longtblr}[ caption={Within-subject standard-deviation average across all subjects for
                 cortical metrics.}, label={tab:std-cortical}, ]{
         colspec={lcc|cc|cc}, width=\linewidth,
         row{even}={white,font=\footnotesize},
@@ -626,81 +641,65 @@ measurements are more stable than cortical volume.
         Total              & 1633 (7.60\%)                           & 21488 \\
         \bottomrule
     \end{tabular}
+    \label{tab:qc}
 \end{table}
 
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{c|lccc}
-        \toprule
-        \textbf{Status} & \textbf{Cohort}             & \textbf{HC}
-                        & \textbf{PD-non-MCI}         & \textbf{PD-MCI}
-        \\
-        \hline
-        \multirow{5}{*}{\textbf{\shortstack{Before                                    \\QC}}} & n
-                        & 106                         & 181                      & 29 \\
-                        & Age (y)                     & $60.6 \pm 10.2   $
-                        & $61.7 \pm \09.6$            & $67.7 \pm \07.7$
-        \\
-                        & Age range                   & $30.6 - 84.3  $
-                        & $36.3 - 83.3$               & $49.9 - 80.5$
-        \\
-                        & Gender (male, \%)           & $58 \; (54.7\%)   $
-                        & $119 \; (65.7\%)          $ & $-          $
-        \\
-                        & Education (y)               & $16.6 \pm \03.3  $
-                        & $15.9 \pm \02.9$            & $-          $
-        \\
-        \hline
-        \multirow{5}{*}{\textbf{\shortstack{After                                     \\QC}}} & n
-                        & 103                         & 175                      & 27 \\
-                        & Age (y)                     & $60.7 \pm 10.3   $
-                        & $61.4 \pm \09.5          $  & $67.8 \pm \07.9$
-        \\
-                        & Age range                   & $30.6 - 84.3  $
-                        & $36.3 - 79.9           $    & $49.9 - 80.5$
-        \\
-                        & Gender (male, \%)           & $57 \; (55.3\%)   $
-                        & $114 \; (65.1\%)       $    & $20 \; (74.1\%) $
-        \\
-                        & Education (y)               & $16.6 \pm \03.3  $
-                        & $15.9 \pm \02.9        $    & $15.0 \pm \03.5$
-        \\
-        \hline
-        \multirow{8}{*}{\textbf{\shortstack{After                                     \\MCI\\exclusion}}} & n
-                        & $103 $                      & $121                   $ & -- \\
-                        & Age (y)                     & $60.7 \pm 10.3   $
-                        & $60.7 \pm \09.1        $    & --
-        \\
-                        & Age range                   & $30.6 - 84.3  $
-                        & $39.2 - 78.3           $    & --
-        \\
-                        & Gender (male, \%)           & $57 \; (55.3\%)   $
-                        & $80 \; (66.1\%)        $    & --
-        \\
-                        & Education (y)               & $16.6 \pm \03.3  $
-                        & $16.1 \pm \03.0        $    & --
-        \\
-                        & UPDRS III OFF baseline      & $-            $
-                        & $23.4 \pm 10.1         $    & --
-        \\
-                        & UPDRS III OFF follow-up     & $-            $
-                        & $25.8 \pm 11.1         $    & --
-        \\
-                        & Duration T2 - T1 (y)        & $\01.4 \pm \00.5 $
-                        & $\01.4 \pm \00.7       $    & --
-        \\
-        \bottomrule
-    \end{tabular}
-    \vspace{1em}
+% \begin{table}[h!]
+%     \centering
+%     \begin{tabular}{c|lcc}
+%         \toprule
+%         \textbf{Status} & \textbf{Cohort}             & \textbf{HC}
+%                         & \textbf{PD-non-MCI}
+%         \\
+%         \hline
+%         \multirow{5}{*}{\textbf{\shortstack{Before                               \\QC}}} & n
+%                         & 106                         & 181                      \\
+%                         & Age (y)                     & $60.6 \pm 10.2   $
+%                         & $61.7 \pm \09.6$
+%         \\
+%                         & Age range                   & $30.6 - 84.3  $
+%                         & $36.3 - 83.3$
+%         \\
+%                         & Gender (male, \%)           & $58 \; (54.7\%)   $
+%                         & $119 \; (65.7\%)          $                            \\
+%                         & Education (y)               & $16.6 \pm \03.3  $
+%                         & $15.9 \pm \02.9$                                       \\
+%         \hline
+%         \multirow{8}{*}{\textbf{\shortstack{After                                \\QC}}} & n
+%                         & $89$                        & $112                   $ \\
+%                         & Age (y)                     & $60.7 \pm 10.3   $
+%                         & $60.6 \pm \08.9        $
+%         \\
+%                         & Age range                   & $30.6 - 79.8  $
+%                         & $39.2 - 78.3           $
+%         \\
+%                         & Gender (male, \%)           & $47 \; (52.8\%)   $
+%                         & $74 \; (66.1\%)        $
+%         \\
+%                         & Education (y)               & $16.0 \pm \03.1  $
+%                         & $16.1 \pm \03.1        $
+%         \\
+%                         & UPDRS III OFF baseline      & $-            $
+%                         & $23.3 \pm 10.0         $
+%         \\
+%                         & UPDRS III OFF follow-up     & $-            $
+%                         & $25.6 \pm 11.2         $
+%         \\
+%                         & Duration T2 - T1 (y)        & $\01.4 \pm \00.5 $
+%                         & $\01.4 \pm \00.6       $
+%         \\
+%         \bottomrule
+%     \end{tabular}
+%     \vspace{1em}
 
-    \textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS = Unified
-    Parkinson's Disease Rating Scale; PD = Parkinson's disease. Descriptive
-    statistics before and after quality control (QC). Values are expressed as
-    mean $\pm$ standard deviation. PD-non-MCI longitudinal sample is a subsample
-    of the PD-non-MCI original sample that had longitudinal data and disease
-    severity scores available.
-    \label{tab:cohort_stat_vertical}
-\end{table}
+%     \textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS = Unified
+%     Parkinson's Disease Rating Scale; PD = Parkinson's disease. Descriptive
+%     statistics before and after quality control (QC). Values are expressed as
+%     mean $\pm$ standard deviation. PD-non-MCI longitudinal sample is a subsample
+%     of the PD-non-MCI original sample that had longitudinal data and disease
+%     severity scores available.
+%     \label{tab:cohort_stat_vertical}
+% \end{table}
 
 \section{Numerical-Population Variability Ratio (\navr)}
 
@@ -714,25 +713,54 @@ cortical regions, highlighting regions with higher or lower \navr values.
 
 \begin{figure}[t]
     \centering
-
     \includegraphics[width=\textwidth]{figures/NPV_map/figure_area_volume.pdf}
-
-    \caption{Numerical-Anatomical Variability Ratio (\navr) for cortical surface (top row in each panel)
-        area and cortical volume (bottom row) in HC and PD. Panels show \navr{} maps at baseline for PD (a) and
-        (HC), longitudinally for HC (c) and PD (d). Higher \navr{} values
-        indicate greater computational uncertainty relative to inter-subject
-        anatomical variability. Warmer colors denote higher \navr{} values.}
+    \caption{Numerical-Population Variability Ratio (\navr) for cortical surface
+        (top row in each panel) area and cortical volume (bottom row) in HC and
+        PD. Panels show \navr{} maps at baseline for PD (a) and (HC),
+        longitudinally for HC (c) and PD (d). Higher \navr{} values indicate
+        greater computational uncertainty relative to inter-subject anatomical
+        variability. Warmer colors denote higher \navr{} values.}
     \label{fig:navr_maps_area_volume}
 \end{figure}
 
 \subsection{Consistency results}
+
+We evaluated the stability of statistical inferences by quantifying the
+frequency of significance flipping across 26 MCA repetitions
+(Table~\ref{tab:fluctuating_regions}). The analysis revealed that longitudinal
+processing introduces considerably more instability than baseline
+cross-sectional analysis, particularly for cortical metrics. Notably, partial
+correlation analysis exhibited higher susceptibility to instability in cortical
+volume (53\% of regions unstable) and area (38\% unstable) compared to ANCOVA.
+
+To investigate whether longitudinal processing amplifies numerical instability,
+we compared the dispersion of the test statistics ($F$-values for ANCOVA,
+correlation coefficients $r$ for partial correlation) in longitudinal versus
+cross-sectional pipelines. We used a one-sided Ansari-Bradley test on
+mean-centered distributions to test the specific hypothesis that longitudinal
+processing significantly has higher numerical variance compared to the baseline
+(Tables~\ref{tab:stats-coef-var-subcortical} and
+\ref{tab:stats-coef-var-cortical}).
+
+For subcortical structures (Table~\ref{tab:stats-coef-var-subcortical}), partial
+correlation yielded significantly higher variance in the longitudinal setting
+for nearly all regions (13/14), whereas ANCOVA remained largely stable, with
+only the caudate showing significant variance inflation. This trend was mirrored
+in cortical regions (Table~\ref{tab:stats-coef-var-cortical}); partial
+correlation analysis consistently demonstrated significantly greater variance
+longitudinally across volume, thickness, and surface area. In contrast, ANCOVA
+showed significant variance differences in far fewer regions.
 
 \begin{table}[ht]
     \centering
     \small
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.15}
-    \caption{Number and percentage of regions showing significance instability across 26 MCA repetitions, for ANCOVA and partial correlation analyses at baseline and longitudinal levels.}
+    \caption{Variance variability in subcortical structures
+        (Ansari-Bradley test). Comparison of cross-sectional vs. longitudinal
+        variances of test statistics. Significant results (*) indicate that
+        longitudinal variance is significantly greater than baseline variance
+        ($p_{\text{FDR}} < 0.05$, one-sided). $W$: test statistic.}
     \label{tab:fluctuating_regions}
     \begin{tabular}{lcccc}
         \hline
@@ -750,14 +778,14 @@ cortical regions, highlighting regions with higher or lower \navr values.
     \end{tabular}
 \end{table}
 
-% Updated Ansari-Bradley Test Results Tables
-
 % Table 1: Subcortical Structures
 \begin{table}[h]
     \centering
     \centering
-    \caption{Ansari–Bradley Test Results for Subcortical Structures.
-        * indicates FDR-corrected significance ($p<0.05$). L/R = Left/Right.  W = statistic, p = p-value.}
+    \caption={Variance variability in cortical regions. One-sided
+    Ansari-Bradley test comparing cross-sectional vs. longitudinal variances of
+    test statistics. ($* p_{\text{FDR}} < 0.05$). L/R =
+    Left/Right.  $W$ = statistic, $p$ = p-value.}
     \label{tab:stats-coef-var-subcortical}
     \begin{tblr}[
         ]
@@ -796,10 +824,9 @@ cortical regions, highlighting regions with higher or lower \navr values.
 
 % Table 2: Cortical Regions
 \begin{longtblr}[
-        caption={Ansari-Bradley Test Results for Cortical Regions: ANCOVA vs Partial
-                Correlation. * indicates FDR-corrected significance ($p < 0.05$). lh/rh =
+        caption={Ansari-Bradley test results for cross-sectional vs. longitudinal variances in cortical regions. * indicates FDR-corrected significance ($p < 0.05$). lh/rh =
                 left/right hemisphere. ACC = anterior cingulate cortex, MF = middle
-                frontal. W = statistic, p = p-value.},
+                frontal. $W$ = statistic, $p$ = p-value.},
         label={tab:stats-coef-var-cortical},
     ]{
         width=\linewidth,
@@ -915,13 +942,15 @@ cortical regions, highlighting regions with higher or lower \navr values.
 
 \subsubsection{Consistency of statistical tests}
 
-Figures \ref{fig:navr_consistency_area_plot} and
-\ref{fig:consistency_volume_plot} show the consistency of statistical tests for
-cortical area and volume, respectively, across all subjects and regions. The
-plots show the percentage of subjects for which the statistical test was
-significant ($\alpha = 0.05$) for each region. The consistency varies across
-regions, with some regions showing higher consistency than others. The red
-triangles indicate the IEEE-754 run for reference.
+For both group comparisons and correlation analyses, statistical outcomes varied
+substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions (Figures
+\ref{fig:navr_consistency_area_plot} and \ref{fig:consistency_volume_plot}). For
+cortical area (68 regions; Figure \ref{fig:navr_consistency_area_plot}),
+significance flipped in 31\% of all (regions, analysis) pairs, indicating
+frequent inconsistencies across repetitions. For cortical volume (68 regions;
+Figure \ref{fig:consistency_volume_plot}), 29\% of pairs were similarly unstable.
+These fluctuations demonstrate that numerical noise alone can alter downstream
+statistical inference in structural MRI analyses of PD.
 
 \begin{figure}[h]
     \centering
@@ -969,7 +998,7 @@ cortical thickness, cortical areas and cortical volumes, across all subjects
 and regions. Red triangles indicate the unperturbed (IEEE-754) run for
 reference. For all analyses, the unperturbed (IEEE-754) result is included in
 the range of numericallly perturbed results, which supports the validity of the
-numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
+numerical perturbation.
 
 % The distribution shows the variability in the
 % coefficients, with some regions exhibiting higher consistency than others.
@@ -991,6 +1020,7 @@ numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
 % Table~\ref{tab:stats-coef-var-cortical}).
 
 \begin{figure}[ht]
+    \centering
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
     \caption{ Distribution of partial correlation coefficients (r-values) and
         F-statistics from ANCOVA across MCA repetitions for subcortical volume
@@ -1001,12 +1031,14 @@ numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
 \begin{figure}
     \centering
     \begin{subfigure}[b]{\linewidth}
+        \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_thickness_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:consistency_thickness_left}
     \end{subfigure}
 
     \begin{subfigure}[b]{\linewidth}
+        \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_thickness_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:consistency_thickness_right}
@@ -1020,12 +1052,14 @@ numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{\linewidth}
+        \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:consistency_area_left}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\linewidth}
+        \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:consistency_area_right}
@@ -1039,12 +1073,14 @@ numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{\linewidth}
+        \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Left.pdf}
         \caption{Left hemisphere}
         \label{fig:consistency_volume_left}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\linewidth}
+        \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:consistency_volume_right}
@@ -1227,3 +1263,90 @@ numerical perturbation. \TG{Yohan, please check my edits to this paragraph}
     \label{fig:navr_enigma_area}
 \end{figure}
 
+\section{Numerical validation of flip significance simulations}
+\label{appendix:numerical_validation_flip_significance}
+
+To assess the validity of the analytical uncertainty framework used to model
+numerically induced significance instability, we compared simulated estimates
+derived from closed-form uncertainty expressions with empirical estimates
+obtained from Monte Carlo Arithmetic (MCA) repetitions. Formally, the
+proportion of significant tests (positive prediction rate, PPR) is defined as:
+\begin{equation}
+    \text{PPR} = \frac{\text{TP} + \text{FN}}{\text{TP} + \text{FP} + \text{TN} + \text{FN}},
+    \label{eq:ppr}
+\end{equation}
+where TP, FP, TN, and FN denote true positives, false positives, true negatives,
+and false negatives, respectively.
+
+Figure~\ref{fig:std_sampled_simulated_comparison} compares standard deviations of
+$p$-values estimated directly from 26 MCA runs with those predicted by the
+analytical uncertainty formulas (Table~\ref{tab:stat_uncertainty}). Each point
+corresponds to a cortical or subcortical brain region. Results show close
+agreement between sampled and simulated estimates, particularly in the
+cross-sectional setting. In the longitudinal analyses, simulated standard
+deviations tend to be slightly larger than sampled values, indicating a
+conservative bias of the analytical model.
+
+Figure~\ref{fig:ppr_simulated_comparison} evaluates how this analytical
+uncertainty propagates to downstream inference by comparing the simulated
+positive prediction rate (PPR; Eq.~\ref{eq:ppr}) with the empirical proportion
+of significant tests observed across MCA repetitions. Cross-sectional results
+closely follow the identity line, while longitudinal results show a moderate
+overestimation of PPR, consistent with the conservative overestimation of
+$p$-value variability observed in Fig.~\ref{fig:std_sampled_simulated_comparison}.
+
+Finally, Figure~\ref{fig:ppr_sampled_comparison} assesses the Beta distribution
+model used to translate sampled $p$-value variability into PPR estimates.
+Here, PPR is computed using MCA-derived standard deviations propagated through
+the Beta model (Eq.~\ref{eq:beta-params}). Both cross-sectional and longitudinal
+results align closely with the identity line, supporting the suitability of the
+Beta modeling framework for capturing numerically induced variability in
+statistical significance.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.9\linewidth]{figures/std-sampled-simulated-comparison.pdf}
+    \caption{Comparison of standard deviation estimates of $p$-values obtained from
+        MCA sampling and analytical simulations. Sampled estimates are computed from
+        26 MCA repetitions, while simulated estimates are derived from the
+        uncertainty propagation formulas reported in
+        Table~\ref{tab:stat_uncertainty}. Each point corresponds to a cortical or
+        subcortical brain region. The solid line denotes the identity line. Results
+        show close agreement between sampled and simulated estimates, with
+        cross-sectional analyses exhibiting tighter clustering than longitudinal
+        analyses. In the longitudinal setting, simulated standard deviations tend to
+        slightly overestimate sampled variability, indicating conservative behavior
+        of the analytical uncertainty model.
+        \label{fig:std_sampled_simulated_comparison}}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.9\linewidth]{figures/ppr_simulated.pdf}
+    \caption{ Comparison between simulated positive prediction rate (PPR;
+        Eq.~\ref{eq:ppr}) and the empirical proportion of significant tests
+        (Section~\ref{sec:empirical_evaluation}). Simulated PPR values are computed
+        using analytical uncertainty estimates derived from
+        Table~\ref{tab:stat_uncertainty}. Each point represents a cortical or
+        subcortical brain region, and the solid line indicates the identity line.
+        Simulated PPR closely matches empirical significance rates in the
+        cross-sectional setting, while longitudinal analyses show a tendency toward
+        overestimation, consistent with the corresponding overestimation of
+        $p$-value variability.\label{fig:ppr_simulated_comparison}}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.9\linewidth]{figures/ppr_sampled.pdf}
+    \caption{Comparison between sampled positive prediction rate (PPR;
+        Eq.~\ref{eq:ppr}) and the empirical proportion of significant tests
+        (Section~\ref{sec:empirical_evaluation}). Sampled PPR values are
+        computed from MCA-derived $p$-value standard deviations and propagated
+        through the Beta distribution model (Eq.~\ref{eq:beta-params}). Each
+        point corresponds to a cortical or subcortical brain region, and the
+        solid line denotes the identity line. Both cross-sectional and
+        longitudinal results align closely with the identity line, supporting
+        the suitability of the Beta modeling framework for capturing numerically
+        induced variability in statistical significance.
+        \label{fig:ppr_sampled_comparison}}
+\end{figure}

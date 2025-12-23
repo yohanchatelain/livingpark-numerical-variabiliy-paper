@@ -22,22 +22,39 @@
 \usepackage{xcolor}
 \usepackage{tabularray}
 \usepackage{xspace} % For \xspace command
-\usepackage{tikz}
-\usetikzlibrary{shadings,positioning,overlay-beamer-styles}
 \usepackage{xifthen}
 \usepackage{ulem}
 \usepackage{amsthm}
 \usepackage{cleveref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{shadings,positioning,overlay-beamer-styles}
+\usetikzlibrary{patterns, arrows.meta, backgrounds}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.18}
 
 \newcommand{\YC}[1]{\textcolor{red}{YC: #1}}
 \newcommand{\TG}[2][]{\ifthenelse{\equal{#1}{done}}{[\textcolor{teal}{$\blacksquare$}]~\textcolor{blue!60}{\textsc{From
 Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
-
 \providecommand{\includeappendix}{true}
 \newcommand{\0}{\mspace{9mu}}
 \newcommand{\navr}[0]{$\nu_{\mathrm{npv}}$\xspace}
 \newcommand{\Var}[0]{\mathrm{Var}}
+
+% --- Colors & Styles for Beta distribution ---
+\definecolor{trueColor}{RGB}{50, 150, 200}   % Blue/Teal for TP, TN
+\definecolor{falseColor}{RGB}{200, 80, 80}   % Red for FP, FN
+\definecolor{axisGrey}{RGB}{80, 80, 80}
+% --- Macros ---
+\newcommand{\N}{\ensuremath{\mathrm{N}}}
+\newcommand{\PP}{\ensuremath{\mathrm{PP}}}
+\newcommand{\PN}{\ensuremath{\mathrm{PN}}}
+\newcommand{\TP}{\ensuremath{\mathrm{TP}}}
+\newcommand{\TN}{\ensuremath{\mathrm{TN}}}
+\newcommand{\FP}{\ensuremath{\mathrm{FP}}}
+\newcommand{\FN}{\ensuremath{\mathrm{FN}}}
+\newcommand{\PPR}{\ensuremath{\mathrm{PPR}}}
 
 \title{The practical impact of numerical variability on structural MRI measures of Parkinson's disease}
 
@@ -80,10 +97,11 @@ current study, and so are not publicly available. Data are however available
 from the authors upon reasonable request and with permission of the PPMI.
 
 \section{Code Availability}
-
 All MCA instrumentation scripts, FreeSurfer build instructions and analysis
-notebooks are available at [GitHub URL to be inserted]. Exact commit hashes are
-archived on Zenodo (DOI [to be added]) to ensure bit-level reproducibility.
+notebooks are available at
+\url{github.com/yohanchatelain/livingpark-numerical-variability}. Exact
+commit hashes are archived on Zenodo (DOI [to be added]) to ensure
+reproducibility.
 
 \section{Acknowledgements}
 
@@ -91,7 +109,11 @@ The analyses were conducted on the Virtual Imaging
 Platform~\cite{glatard2012virtual}, which utilizes resources provided by the
 Biomed virtual organization within the European Grid Infrastructure (EGI). We
 extend our gratitude to Sorina Pop from CREATIS, Lyon, France, for her support.
-\TG{acknowledge MJFF project LivingPark}
+This work was funded by the Michael J. Fox Foundation for Parkinson's Research
+(MJFF- 021134; https://www.michaeljfox.org). The funders had no role in study
+design, data collection and analysis, decision to publish, or preparation of the
+manuscript.
+
 
 \bibliographystyle{plain}
 \bibliography{paper}

@@ -80,14 +80,14 @@ variability, each scan was processed 34 times. We filtered the resulting outputs
 to exclude both technical failures (e.g., incomplete execution and FreeSurfer
 failures) and quality control (QC) failures.
 
-For QC, we visually inspected nine
-representative slices (3 along each axis) per run to identify gross artifacts,
-such as missing brain tissue, blurring, or biologically implausible
-segmentation. Table~\ref{tab:qc} \TG{table reference is broken} details the exclusion rates. To ensure
-statistical consistency across the cohort, we randomly subsampled the remaining
-runs to retain exactly 26 valid realizations per participant.
+For QC, we visually inspected nine representative slices (3 along each axis) per
+run to identify gross artifacts, such as missing brain tissue, blurring, or
+biologically implausible segmentation. Appendix Table~\ref{tab:qc} details the exclusion
+rates. To ensure statistical consistency across the cohort, we randomly
+subsampled the remaining runs to retain exactly 26 valid realisations per
+participant.
 
-\subsection{Numerical Variability Assessment}
+\subsection{Numerical variability assessment}
 \label{sec:numerical_variability_assessment}
 
 To quantify the numerical instability in the FreeSurfer pipeline, we
@@ -200,34 +200,29 @@ captures the random numerical perturbations introduced during computation.
 To isolate the contribution of numerical variability, we make three simplifying assumptions:
 \begin{enumerate}
 
-    \item \textbf{Numerical error model.}
-          The numerical perturbations are modeled as independent, zero-mean Gaussian
-          random variables:
+    \item \textbf{Numerical error model.} The numerical perturbations are
+          modeled as independent, zero-mean Gaussian random variables:
           $\varepsilon_i^{(r)} \sim \mathcal{N}(0,\,\sigma_{\mathrm{num},i}^2),
               \boldsymbol{\varepsilon}^{(r)} \sim
-              \mathcal{N}\!\left(\mathbf{0},\,\Sigma_{\mathrm{num}}\right)$,
-          where, under homoscedasticity,
-          $\Sigma_{\mathrm{num}} = \sigma_{\mathrm{num}}^2 I_N$.
+              \mathcal{N}\!\left(\mathbf{0},\,\Sigma_{\mathrm{num}}\right)$, where,
+          under homoscedasticity, $\Sigma_{\mathrm{num}} =
+              \sigma_{\mathrm{num}}^2 I_N$.
 
-    \item \textbf{Population variability.}
-          The between-subject (biological) variance
-          $\sigma_{\mathrm{pop}}^2 = \Var(\{x_i\})$
-          dominates the numerical noise, i.e.\
-          $\sigma_{\mathrm{num},i} \ll \sigma_{\mathrm{pop}}$.
-          This implies that the pooled empirical standard deviation
-          of the observed data can be approximated by the biological one,
-          $s_p \approx \sigma_{\mathrm{pop}}$.
+    \item \textbf{Population variability.} The between-subject variance
+          $\sigma_{\mathrm{pop}}^2 = \Var(\{x_i\})$ dominates the numerical
+          noise, i.e.\ $\sigma_{\mathrm{num},i} \ll \sigma_{\mathrm{pop}}$. This
+          implies that the pooled empirical standard deviation of the observed
+          data can be approximated by the biological one, $s_p \approx
+              \sigma_{\mathrm{pop}}$.
 
-    \item \textbf{Baseline (null-hypothesis) scenario.} \YC{Do we need this assumption?
-              It seems we can derive the same results without it.}
-          We condition on the observed biological measurements $\mathbf{x}$
-          and quantify variability only from numerical perturbations
-          $\boldsymbol{\varepsilon}^{(r)}$. This isolates finite-precision effects from sampling
-          variation; the resulting expressions remain accurate near the null
-          and for small effect sizes. In this setting, the biological
-          values $\mathbf{x} = (x_1, \dots, x_N)^\top$ are treated as fixed,
-          and all randomness arises from numerical perturbations
-          $\boldsymbol{\varepsilon}^{(r)}$.
+    \item \textbf{Null-hypothesis scenario.} We condition on the
+          observed biological measurements $\mathbf{x}$ and quantify variability
+          only from numerical perturbations $\boldsymbol{\varepsilon}^{(r)}$.
+          This isolates numerical variability effects from sampling variation;
+          the resulting expressions remain accurate near the null and for small
+          effect sizes. In this setting, the biological values $\mathbf{x} =
+              (x_1, \dots, x_N)^\top$ are treated as fixed, and all randomness
+          arises from numerical perturbations $\boldsymbol{\varepsilon}^{(r)}$.
 
 \end{enumerate}
 
@@ -770,6 +765,159 @@ the dependence on $(1-R^{2})^{3}$ cancels, leading to:
     2f_t(|t_0|)\sqrt{\frac{df}{n-1}}\nu_{\mathrm{npv}}.
 \]
 
-\TG{I think you need to explain how you computed the probability of false positives in section 2.3}
+\subsection{Probability of false positives induced by numerical uncertainty}
+\label{sec:false-positives-modeling}
 
-\subsection{Probability of false positives due to numerical uncertainty}
+To quantify the probability of false positive findings arising from numerical
+variability, we model the computed $p$-value as a random variable following a
+Beta distribution, $p \sim \text{Beta}(a, b)$, which is suitable for modeling
+probabilities and proportions bounded on $[0,1]$. The distribution is
+parameterized by shape parameters $(a,b)$ determined from a target mean $\mu_p$
+and variance $\sigma_p^2$ estimated using the uncertainty propagation formulae
+reported in Table~\ref{tab:stat_uncertainty}. The parameters are given by:
+
+\begin{equation*}
+    a = \mu_p\left(\frac{\mu_p(1 - \mu_p)}{\sigma_p^2} - 1\right), \quad
+    b = (1 - \mu_p)\left(\frac{\mu_p(1 - \mu_p)}{\sigma_p^2} - 1\right).
+    \label{eq:beta-params}
+\end{equation*}
+
+This formulation defines a distribution of plausible $p$-values centered around
+the nominal value $p_0=\mu_p$, with dispersion determined by numerical
+instability. Importantly, this model enables direct estimation of error rates
+caused by numerical perturbations relative to a fixed significance threshold
+$\alpha$. Two distinct regimes are considered, depending on whether the nominal
+$p$-value $p_0$ lies above or below $\alpha$
+(Fig.~\ref{fig:false-positives-model}):
+
+\begin{itemize}
+    \item Negative Case ($p_0 > \alpha$): The primary finding is
+          non-significant, i.e., a true negative (TN). Here, we calculate the
+          probability that numerical noise shifts the $p$-value below $\alpha$,
+          resulting in a false negative (FN) (instability leading to Type I-like
+          errors).
+    \item Positive Case ($p_0 \leq \alpha$): The primary finding is significant,
+          i.e., a true positive (TP). We calculate the probability that
+          numerical noise shifts the $p$-value above $\alpha$, resulting in a
+          false positive (FP) (instability leading to Type II-like errors).
+\end{itemize}
+
+The probabilities for these outcomes are obtained by computing the cumulative
+distribution function (CDF) of the Beta distribution up to the threshold
+$\alpha$, as illustrated in Figure~\ref{fig:false-positives-model}. This
+probabilistic modelisation provides an explicit link between numerical
+variability and classical Type~I and Type~II error rates, allowing us to isolate
+the contribution of numerical variability to spurious statistical significance.
+Numerical validation of this model is presented in
+Appendix Section~\ref{appendix:numerical_validation_flip_significance}.
+
+\vspace{1em}
+
+% --- Figure Code ---
+\begin{figure}[h]
+    \centering
+    % --- H1 Figure (Negative Case) ---
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \subcaption{Negative case ($p_0 > \alpha$)\label{fig:fp-negative-case}}
+        \begin{tikzpicture}
+            \begin{axis}[
+                    axis lines=left,
+                    xmin=0, xmax=1.05,
+                    ymin=0, ymax=3.5,
+                    xlabel={$p$-value},
+                    ytick=\empty,
+                    xtick={0,0.25,1},
+                    xticklabels={$0$,$\alpha$,$1$},
+                    width=\linewidth, height=5cm,
+                    clip=false
+                ]
+                % Beta Distribution Curve for H1 (Skewed Left approximation)
+                \addplot[thick, samples=200, domain=0.001:1, name path=H1Curve]
+                {30 * x^(2.5) * (1-x)^1.5};
+
+                \path[name path=xaxis] (axis cs:0,0) -- (axis cs:1,0);
+
+                % Alpha line
+                \draw[dashed, axisGrey] (axis cs:0.25,0) -- (axis cs:0.25,3.2);
+
+                % --- Shading ---
+                % Area below alpha (Spurious Significance / "False Positive")
+                \addplot[falseColor!30] fill between[of=H1Curve and xaxis, soft clip={domain=0:0.25}];
+                % Area above alpha (Consistent Negative)
+                \addplot[trueColor!30] fill between[of=H1Curve and xaxis, soft clip={domain=0.25:1}];
+
+                % Labels
+                % Note: Check definitions of FN/TN in your preamble. 
+                % Standard stats: p0 > alpha is Negative. If noise makes p < alpha, it's a False Positive.
+                \node[falseColor!80!black] at (axis cs:0.1, 0.55) {\textbf{\FN}};
+                \node[trueColor!80!black] at (axis cs:0.45, 0.55) {\textbf{\TN}};
+
+                % Sample p0
+                \draw[-{Latex}, thick] (axis cs:0.62, 0) -- (axis cs:0.62, 2.5) node[above, right] {$p_0$};
+            \end{axis}
+        \end{tikzpicture}
+        \begin{align*}
+            \mathbb{P}[\FN] & = \int_0^\alpha \text{Beta}(x; a, b) dx \\
+            \mathbb{P}[\TN] & = 1 - \mathbb{P}[\FN]
+        \end{align*}
+    \end{minipage}%
+    \hfill
+    % --- H0 Figure (Positive Case) ---
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \subcaption{Positive case ($p_0 \leq \alpha$)\label{fig:fp-positive-case}}
+        \begin{tikzpicture}
+            \begin{axis}[
+                    axis lines=left,
+                    xmin=0, xmax=1.05,
+                    ymin=0, ymax=2.5,
+                    xlabel={$p$-value},
+                    ytick=\empty,
+                    xtick={0,0.25,1},
+                    xticklabels={$0$,$\alpha$,$1$},
+                    width=\linewidth, height=5cm,
+                    clip=false
+                ]
+                % Beta Distribution Curve for H0 (Skewed Right approximation)
+                \addplot[thick, samples=200, domain=0:1, name path=H0Curve]
+                {7.5 * x^(0.5) * (1-x)^(5)};
+
+                \path[name path=xaxis] (axis cs:0,0) -- (axis cs:1,0);
+
+                % Alpha line
+                \draw[dashed, axisGrey] (axis cs:0.25,0) -- (axis cs:0.25,2.2);
+
+                % --- Shading ---
+                % Area below alpha (Consistent Positive)
+                \addplot[trueColor!30] fill between[of=H0Curve and xaxis, soft clip={domain=0:0.25}];
+                % Area above alpha (Missed Significance / "False Negative")
+                \addplot[falseColor!30] fill between[of=H0Curve and xaxis, soft clip={domain=0.25:1}];
+
+                % Labels
+                \node[trueColor!80!black] at (axis cs:0.17, 0.5) {\textbf{\TP}};
+                \node[falseColor!80!black] at (axis cs:0.5, 0.5) {\textbf{\FP}};
+
+                % Sample p0
+                \draw[-{Latex}, thick] (axis cs:0.085, 0) -- (axis cs:0.085, 1.75) node[above, right] {$p_0$};
+            \end{axis}
+        \end{tikzpicture}
+        \begin{align*}
+            \mathbb{P}[\TP] & = \int_0^\alpha \text{Beta}(x; a, b) dx \\
+            \mathbb{P}[\FP] & = 1 - \mathbb{P}[\TP]
+        \end{align*}
+    \end{minipage}
+    \caption{\textbf{Modeling inference stability using Beta distributions.}
+        The panels illustrate the probability of significance flipping due to
+        numerical uncertainty. The negative case ($p_0 > \alpha$, Fig.~\ref{fig:fp-negative-case}),
+        where the tail of the distribution crossing $\alpha$ represents the
+        probability of a false positive finding (\FN). The positive
+        case ($p_0 \leq \alpha$, Fig.~\ref{fig:fp-positive-case}), where the tail extending beyond $\alpha$
+        represents the probability of a false negative finding (\FP). Shaded
+        regions indicate the integration of the Beta PDF.}
+    \label{fig:false-positives-model}
+\end{figure}
+
+
+
+
