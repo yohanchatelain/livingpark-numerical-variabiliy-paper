@@ -28,6 +28,7 @@
 \usepackage{cleveref}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{authblk}
 \usetikzlibrary{shadings,positioning,overlay-beamer-styles}
 \usetikzlibrary{patterns, arrows.meta, backgrounds}
 \usepgfplotslibrary{fillbetween}
@@ -56,9 +57,21 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 \newcommand{\FN}{\ensuremath{\mathrm{FN}}}
 \newcommand{\PPR}{\ensuremath{\mathrm{PPR}}}
 
+\renewcommand\Affilfont{\small}
+
 \title{The practical impact of numerical variability on structural MRI measures of Parkinson's disease}
 
-\author{Yohan Chatelain, Andrzej Sokołowski, Madeleine Sharp, Jean-Baptiste Poline, Tristan Glatard}
+\author[1,2]{Yohan Chatelain}
+\author[2]{Andrzej Sokołowski}
+\author[3]{Madeleine Sharp}
+\author[3]{Jean-Baptiste Poline}
+\author[1,2,4,5]{Tristan Glatard}
+\affil[1]{Krembil Centre for Neuroinformatics, The Centre for Addiction and Mental Health, Toronto, ON, Canada}
+\affil[2]{Department of Computer Science and Software Engineering, Concordia University, Montreal, Canada}
+\affil[3]{Department of Neurology and Neurosurgery, McGill University, Montreal, Canada}
+\affil[4]{Department of Psychiatry, University of Toronto, Toronto, ON, Canada}
+\affil[5]{Department of Computer Science, University of Toronto, Toronto, ON, Canada}
+\date{}
 
 \begin{document}
 
