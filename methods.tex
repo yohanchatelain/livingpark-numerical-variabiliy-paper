@@ -1,11 +1,11 @@
 \section{Methods}
 
 We quantified the impact of numerical variability on structural MRI findings in
-Parkinson's disease (PD) using (1) stochastic perturbation
-experiments and (2) analytical uncertainty propagation. Empirically, we processed a
-longitudinal PPMI cohort using FreeSurfer instrumented with stochastic numerical
-noise to isolate run-to-run variability. Analytically, we derived closed-form
-approximations linking this pipeline instability (\navr) to uncertainty in
+Parkinson's disease (PD) using (1) stochastic perturbation experiments and (2)
+analytical uncertainty propagation. Empirically, we processed a longitudinal
+PPMI cohort using FreeSurfer instrumented with stochastic numerical noise to
+isolate run-to-run variability. Analytically, we derived closed-form
+approximations linking this pipeline instability (\npvr) to uncertainty in
 effect sizes and test statistics, enabling retrospective quality control using
 only summary statistics.
 
@@ -18,26 +18,25 @@ quality control to distinguish numerical artifacts from technical failures; and
 \subsection{Participants}
 
 Structural MRI data were obtained from the Parkinson's Progression Markers
-Initiative (PPMI; \url{www.ppmi-info.org}). The
-study included 201 participants: 112 individuals diagnosed with Parkinson's
-disease without mild cognitive impairment (PD-non-MCI) and 89 healthy controls
-(HC). All participants had two usable T1-weighted MRI scans acquired
-approximately $1.4 \pm 0.5$ years apart ($0.9$-$2.0$ years). Patients with mild
-cognitive impairment were excluded to minimize confounding effects of cognitive
-decline.
+Initiative (PPMI; \url{www.ppmi-info.org}). The study included 201
+participants: 112 individuals diagnosed with Parkinson's disease without mild
+cognitive impairment (PD-non-MCI) and 89 healthy controls (HC). All
+participants had two usable T1-weighted MRI scans acquired approximately $1.4
+    \pm 0.5$ years apart ($0.9$-$2.0$ years). Patients with mild cognitive
+impairment were excluded to minimize confounding effects of cognitive decline.
 
 Inclusion criteria were: (i) diagnosis of idiopathic Parkinson's disease
 (PD-non-MCI) or healthy control status; (ii) availability of two high-quality
-T1-weighted scans at distinct visits; and (iii) absence of other neurological or
-psychiatric conditions. PD severity was quantified using the Unified Parkinson's
-Disease Rating Scale part III (UPDRS-III) in the OFF medication state at both
-baseline and follow-up visits.
+T1-weighted scans at distinct visits; and (iii) absence of other neurological
+or psychiatric conditions. PD severity was quantified using the Unified
+Parkinson's Disease Rating Scale part III (UPDRS-III) in the OFF medication
+state at both baseline and follow-up visits.
 
-All procedures were approved by the research ethics boards of participating PPMI
-sites, and written informed consent was obtained from all participants in
-accordance with the Declaration of Helsinki and was exempt from Concordia University’s
-Research Ethics Unit. The PD and HC groups did not differ
-significantly in age, education, or sex distribution ($p > 0.05$;
+All procedures were approved by the research ethics boards of participating
+PPMI sites, and written informed consent was obtained from all participants in
+accordance with the Declaration of Helsinki and was exempt from review by
+Concordia University's Research Ethics Unit. The PD and HC groups did not
+differ significantly in age, education, or sex distribution ($p > 0.05$;
 Table~\ref{tab:cohort_stat}).
 
 \begin{table}[h!]
@@ -60,7 +59,7 @@ Table~\ref{tab:cohort_stat}).
     \caption{\textbf{Participant characteristics.} Values represent mean $\pm$
         standard deviation. PD = Parkinson's disease; MCI = mild cognitive impairment;
         UPDRS = Unified Parkinson's Disease Rating Scale. The PD-non-MCI longitudinal
-        subset corresponds to participants with available follow-up MRI and  and disease
+        subset corresponds to participants with available follow-up MRI and disease
         severity scores available. \label{tab:cohort_stat}}
 \end{table}
 
@@ -70,78 +69,79 @@ High-resolution T1-weighted MRI scans were obtained from the Parkinson's
 Progression Markers Initiative (PPMI). Data were acquired using standardized 3D
 MPRAGE protocols (TR = 2.3 s, TE = 2.98 ms, TI = 0.9 s, voxel size = 1 mm
 isotropic) across multiple sites. While the protocol was standardized, we
-account for minor acquisition variations inherent to the PPMI multisite design.
+accounted for minor acquisition variations inherent to the PPMI multisite
+design.
 
 Structural images were processed using FreeSurfer 7.3.1 instrumented with
 Fuzzy-libm, a modified mathematical library that injects stochastic
 perturbations into floating-point operations to probe numerical stability
 (Section~\ref{sec:numerical_variability_assessment}). To estimate numerical
-variability, each scan was processed 34 times. We filtered the resulting outputs
-to exclude both technical failures (e.g., incomplete execution and FreeSurfer
-failures) and quality control (QC) failures.
+variability, each scan was processed 34 times. We filtered the resulting
+outputs to exclude both technical failures (e.g., incomplete execution and
+FreeSurfer failures) and quality control (QC) failures.
 
-For QC, we visually inspected nine representative slices (3 along each axis) per
-run to identify gross artifacts, such as missing brain tissue, blurring, or
-biologically implausible segmentation. Appendix Table~\ref{tab:qc} details the exclusion
-rates. To ensure statistical consistency across the cohort, we randomly
-subsampled the remaining runs to retain exactly 26 valid realisations per
-participant.
+For QC, we visually inspected nine representative slices (3 along each axis)
+per run to identify gross artifacts, such as missing brain tissue, blurring, or
+biologically implausible segmentation. Appendix Table~\ref{tab:qc} details the
+exclusion rates. To ensure statistical consistency across the cohort, we
+randomly subsampled the remaining runs to retain exactly 26 valid realisations
+per participant.
 
 \subsection{Numerical variability assessment}
 \label{sec:numerical_variability_assessment}
 
-To quantify the numerical instability in the FreeSurfer pipeline, we
-employed Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}. MCA is a
-stochastic technique that simulates the propagation of rounding errors by
-introducing controlled random perturbations into floating-point operations. We
-utilized the Random Rounding (RR) mode, where the result of an arithmetic
-operation is perturbed by a zero-mean random noise scaled to the magnitude of
-the least significant bit. For any operation producing an exact result $x$, the
-perturbed result $\tilde{x}$ is modeled as $\tilde{x} = x + 2^{e_x - t}\xi$
-where $e_x = \lfloor \log_2 |x| \rfloor$ is the exponent of $x$, $t$ is the
-\textit{virtual precision} parameter, and $\xi$ is a random variable drawn
-uniformly from the interval $(-\frac{1}{2}, \frac{1}{2})$.
+To quantify the numerical instability in the FreeSurfer pipeline, we employed
+Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}. MCA is a stochastic
+technique that simulates the propagation of rounding errors by introducing
+controlled random perturbations into floating-point operations. We utilized the
+Random Rounding (RR) mode, where the result of an arithmetic operation is
+perturbed by a zero-mean random noise scaled to the magnitude of the least
+significant bit. For any operation producing an exact result $x$, the perturbed
+result $\tilde{x}$ is modeled as $\tilde{x} = x + 2^{e_x - t}\xi$ where $e_x =
+    \lfloor \log_2 |x| \rfloor$ is the exponent of $x$, $t$ is the \textit{virtual
+    precision} parameter, and $\xi$ is a random variable drawn uniformly from the
+interval $(-\frac{1}{2}, \frac{1}{2})$.
 
 While comprehensive MCA instrumentation provides a rigorous bound on numerical
 error, it incurs a prohibitive computational cost (typically $100\times$ to
 $1000\times$ slowdown), rendering it intractable for large-scale neuroimaging
-cohorts. To address this, we used \textit{Fuzzy-libm}~\cite{salari2021accurate},
-a lightweight implementation that restricts MCA instrumentation to elementary
-mathematical library functions (e.g., \texttt{exp}, \texttt{log}, \texttt{sin},
-\texttt{cos}). By targeting these elementary functions, which are sources of
-divergence across operating systems~\cite{glatard2015reproducibility},
-Fuzzy-libm significantly reduces computational overhead while effectively
-capturing the numerical variability relevant to cross-platform
+cohorts. To address this, we used
+\textit{Fuzzy-libm}~\cite{salari2021accurate}, a lightweight implementation
+that restricts MCA instrumentation to elementary mathematical library functions
+(e.g., \texttt{exp}, \texttt{log}, \texttt{sin}, \texttt{cos}). By targeting
+these elementary functions, which are sources of divergence across operating
+systems~\cite{glatard2015reproducibility}, Fuzzy-libm significantly reduces
+computational overhead while effectively capturing the numerical variability
+relevant to cross-platform
 reproducibility~\cite{salari2021accurate,vila2024impact,des2023reproducibility}.
 
 Fuzzy-libm is deployed via a Docker container and uses the \texttt{LD\_PRELOAD}
-mechanism to dynamically intercept calls to the standard system math library and
-redirect them to the instrumented version. The library is compiled using
-Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler that injects the
-MCA logic at compile time. Virtual precision parameters are set to match
+mechanism to dynamically intercept calls to the standard system math library
+and redirect them to the instrumented version. The library is compiled using
+Verificarlo~\cite{denis2016verificarlo}, an LLVM-based compiler that injects
+the MCA logic at compile time. Virtual precision parameters are set to match
 standard hardware precision ($t=53$ bits for double precision and $t=24$ bits
 for single precision), ensuring that the simulated variability remains
 representative of realistic machine-level precision errors.
 
-\subsubsection{Numerical-Population Variability Ratio (\navr)}
+\subsubsection{Numerical-Population Variability Ratio (\npvr)}
 
 To quantify computational stability relative to population variation, we
-introduce the Numerical-Population Variability Ratio (\navr). For each brain
-region, \navr measures the ratio of measurement uncertainty arising from
+introduce the Numerical-Population Variability Ratio (\npvr). For each brain
+region, \npvr measures the ratio of measurement uncertainty arising from
 computational processes to natural inter-subject variation:
 
 \[
-    \text{\navr} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}
+    \text{\npvr} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}
 \]
 
 where $\sigma_{\mathrm{num}}$ represents numerical variability (measurement
 precision across MCA repetitions for individual subjects) and
 $\sigma_{\mathrm{pop}}$ represents population variability (inter-subject
-differences within each repetition).
-For each region of interest, measurements from $k$ MCA repetitions across $n$
-subject-visit pairs form a data matrix $\mathcal{M}_{k \times n}$ with entries
-$x_i^{(r)}$, where $i=1,\dots,n$ indexes subject-visits and $r=1,\dots,k$ indexes repetitions.
-Let
+differences within each repetition). For each region of interest, measurements
+from $k$ MCA repetitions across $n$ subject-visit pairs form a data matrix
+$\mathcal{M}_{k \times n}$ with entries $x_i^{(r)}$, where $i=1,\dots,n$
+indexes subject-visits and $r=1,\dots,k$ indexes repetitions. Let
 \[
     \bar x_i=\frac{1}{k}\sum_{r=1}^k x_i^{(r)}, \qquad
     \bar x^{(r)}=\frac{1}{n}\sum_{i=1}^n x_i^{(r)}.
@@ -165,24 +165,25 @@ Let
     \label{eq:sigma_anat}
 \end{equation}
 where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means,
-respectively. Higher \navr values indicate regions where computational
+respectively. Higher \npvr values indicate regions where computational
 uncertainty approaches population variation.
 
-\subsubsection{Relationship between \navr~and downstream statistical test uncertainty}
+\subsubsection{Relationship between \npvr~and downstream statistical test uncertainty}
 \label{sec:theoretical_derivations}
 
-To establish a quantitative link between a method's computational reproducibility
-and the reliability of group-level statistical inferences, we derived analytical
-expressions connecting numerical variability to the uncertainty of commonly used
-statistical tests (Cohen's~$d$, $t$-tests, partial correlation, and ANCOVA).
-Our goal is to characterize how numerical noise propagates through the analytical
-pipeline to produce uncertainty in the reported statistics.
+To establish a quantitative link between a method's computational
+reproducibility and the reliability of group-level statistical inferences, we
+derived analytical expressions connecting numerical variability to the
+uncertainty of commonly used statistical tests (Cohen's~$d$, $t$-tests, partial
+correlation, and ANCOVA). Our goal is to characterize how numerical noise
+propagates through the analytical pipeline to produce uncertainty in the
+reported statistics.
 
 For each Monte Carlo Arithmetic (MCA) repetition $r$, we denote by
 $\tilde{\mathbf{x}}^{(r)} = (\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})^\top$
-the vector of perturbed measurements across $N$ subjects.
-Each perturbed observation is modeled as the sum of the subject's
-biological value and a numerical error term:
+the vector of perturbed measurements across $N$ subjects. Each perturbed
+observation is modeled as the sum of the subject's biological value and a
+numerical error term:
 \begin{equation*}
     \tilde{x}_i^{(r)} = x_i + \varepsilon_i^{(r)},
     \qquad
@@ -226,12 +227,11 @@ To isolate the contribution of numerical variability, we make three simplifying 
 
 \end{enumerate}
 
-Under these assumptions, each downstream statistic
-$ds = f(\tilde{\mathbf{x}})$ can be linearized around the
-baseline $\mathbf{x}$ as
-$ds(\tilde{\mathbf{x}}) \approx ds(\mathbf{x}) +
-    \nabla_{\!\mathbf{x}}f(\mathbf{x})^\top \boldsymbol{\varepsilon}$,
-allowing the numerical variance to be expressed through the delta method as
+Under these assumptions, each downstream statistic $ds = f(\tilde{\mathbf{x}})$
+can be linearized around the baseline $\mathbf{x}$ as $ds(\tilde{\mathbf{x}})
+    \approx ds(\mathbf{x}) + \nabla_{\!\mathbf{x}}f(\mathbf{x})^\top
+    \boldsymbol{\varepsilon}$, allowing the numerical variance to be expressed
+through the delta method as
 \begin{equation}
     \Var_{\mathrm{num}}[ds]
     \approx
@@ -242,16 +242,14 @@ allowing the numerical variance to be expressed through the delta method as
     \label{eq:var-ds}
 \end{equation}
 
-
-
 Table~\ref{tab:stat_uncertainty} summarizes the derived expressions for the
 numerical standard deviation of several common statistics.
 
 \paragraph{Cohen's \textit{d}}
 
-Cohen's effect size quantifies the standardized difference between two sample means.
-For two independent groups $G_1$ and $G_2$ with sample sizes $n_1$ and $n_2$
-($df = n_1 + n_2 - 2$), we define:
+Cohen's effect size quantifies the standardized difference between two sample
+means. For two independent groups $G_1$ and $G_2$ with sample sizes $n_1$ and
+$n_2$ ($df = n_1 + n_2 - 2$), we define:
 \begin{equation}
     d = \frac{\Delta}{s_p}
     = \frac{\bar{x}_1 - \bar{x}_2}{s_p},
@@ -260,8 +258,8 @@ For two independent groups $G_1$ and $G_2$ with sample sizes $n_1$ and $n_2$
     \label{eq:cohen-d-def}
 \end{equation}
 
-The variance of $d$ across Monte Carlo Arithmetic (MCA) repetitions, conditional
-on the fixed dataset $\mathbf{x}$, is given by:
+The variance of $d$ across Monte Carlo Arithmetic (MCA) repetitions,
+conditional on the fixed dataset $\mathbf{x}$, is given by:
 \begin{equation*}
     \Var_{\mathrm{num}}[d]
     = \Var\!\left[d(\tilde{\mathbf{x}})\,\big|\,\mathbf{x}\right].
@@ -327,8 +325,8 @@ under finite-precision arithmetic.
 
 \paragraph{Two-sample \textit{t}-test statistic}
 
-The pooled two-sample $t$ statistic quantifies the standardized difference between
-two group means:
+The pooled two-sample $t$ statistic quantifies the standardized difference
+between two group means:
 \begin{equation*}
     t =
     \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\tfrac{1}{n_1} + \tfrac{1}{n_2}}}
@@ -465,11 +463,12 @@ the null hypothesis:
 \[
     p(X) = 1 - F_{\mathcal{F}}\left(X;df_1,df_2\right),
 \]
-with $X \sim \mathcal{F}(df_1, df_2)$ and $F_{\mathcal{F}}$ the cumulative distribution
-function of the $F$ distribution with $(df_1, df_2)$ degrees of freedom. For
-$df_1 = 1$, the ANCOVA $F$ statistic is equivalent to the two-sample $t$-test
-through $F = t^{2}$ (see~\cite[p.~403]{johnson1995continuous}).
-Then the uncertainty in the $F$ statistic due to numerical noise follows directly from the uncertainty of $t$:
+with $X \sim \mathcal{F}(df_1, df_2)$ and $F_{\mathcal{F}}$ the cumulative
+distribution function of the $F$ distribution with $(df_1, df_2)$ degrees of
+freedom. For $df_1 = 1$, the ANCOVA $F$ statistic is equivalent to the
+two-sample $t$-test through $F = t^{2}$
+(see~\cite[p.~403]{johnson1995continuous}). Then the uncertainty in the $F$
+statistic due to numerical noise follows directly from the uncertainty of $t$:
 \begin{align*}
     \Var_{\mathrm{num}}[F]
      & = \Var_{\mathrm{num}}[t^{2}]
@@ -487,9 +486,10 @@ yielding
 \noindent
 The uncertainty in the corresponding $p$-values can be obtained by the delta
 method. Let $X$ be a random variable with $\mathbb{E}_{\mathrm{num}}[X]=F_0$ and
-$\Var_{\mathrm{num}}[X]=4F_0\nu_{\mathrm{npv}}^{2}$  and $f_{\mathcal{F}}$, $F_{\mathcal{F}}$ the probability
-density and cumulative distribution functions. Applying the delta-method to the
-upper-tail $p$-value is $p(X) = 1 - F_{\mathcal{F}}(X)$ yields:
+$\Var_{\mathrm{num}}[X]=4F_0\nu_{\mathrm{npv}}^{2}$ with $f_{\mathcal{F}}$,
+$F_{\mathcal{F}}$ the probability density and cumulative distribution functions.
+Applying the delta-method to the upper-tail $p$-value is $p(X) = 1 -
+    F_{\mathcal{F}}(X)$ yields:
 \begin{align*}
     \Var_{\mathrm{num}}[p(X)] & = \Var_{\mathrm{num}}[1 - F_{\mathcal{F}}(X)]           \\
                               & \approx f_{\mathcal{F}}(F_0)^{2}\Var_{\mathrm{num}}[X]  \\
@@ -509,11 +509,11 @@ the group effect magnitude.
 
 \paragraph{Partial correlation.}
 
-Partial correlation measures the association between two variables $(x,y)$ while
-controlling for the influence of one or more additional variables $z$.
-In our analysis, this corresponds to quantifying the relationship between
-regional brain measurements and UPDRS-III motor scores, controlling for age and sex.
-The sample partial correlation is defined as:
+Partial correlation measures the association between two variables $(x,y)$
+while controlling for the influence of one or more additional variables $z$. In
+our analysis, this corresponds to quantifying the relationship between regional
+brain measurements and UPDRS-III motor scores, controlling for age and sex. The
+sample partial correlation is defined as:
 \begin{equation*}
     r_{xy,z}
     =
@@ -525,8 +525,8 @@ where $r_{xy}$ denotes the Pearson correlation between variables $x$ and $y$,
 \[
     r_{xy} = \frac{s_{xy}}{s_x s_y}.
 \]
-To simplify notation, we set
-$a = r_{xy}$, $b = r_{xz}$, and $c = r_{yz}$ so that
+To simplify notation, we set $a = r_{xy}$, $b = r_{xz}$, and $c = r_{yz}$ so
+that
 \[
     R(a,b,c)
     = \frac{a - bc}{\sqrt{(1 - b^{2})(1 - c^{2})}}
@@ -534,7 +534,8 @@ $a = r_{xy}$, $b = r_{xz}$, and $c = r_{yz}$ so that
     \qquad
     D = \sqrt{(1 - b^{2})(1 - c^{2})}.
 \]
-Applying the delta method (Eq.~\ref{eq:var-ds}) to the partial correlation, we have:
+Applying the delta method (Eq.~\ref{eq:var-ds}) to the partial correlation, we
+have:
 \begin{equation}
     \Var_{\mathrm{num}}[R] \approx \sigma_{\mathrm{num}}^{2} \sum_{i=1}^{n} \left(\frac{\partial R}{\partial x_i}\right)^{2},
     \label{eq:delta-partial}
@@ -564,9 +565,9 @@ Eq~\ref{eq:pearson_derivative}):
     \frac{\partial b}{\partial x_i}
     = \frac{(w_i - b\,u_i)}{(n-1)s_x} = \frac{\beta_i}{(n-1)s_x}.
 \]
-where $u_i = (x_i - \bar{x})/s_x$, $v_i = (y_i - \bar{y})/s_y$, and $w_i = (z_i - \bar{z})/s_z$ are standardized and centered observations of
-$x$, $y$, and $z$ respectively.
-Then $\partial R / \partial x_i$ becomes:
+where $u_i = (x_i - \bar{x})/s_x$, $v_i = (y_i - \bar{y})/s_y$, and $w_i = (z_i
+    - \bar{z})/s_z$ are standardized and centered observations of $x$, $y$, and $z$
+respectively. Then $\partial R / \partial x_i$ becomes:
 \begin{align*}
     \frac{\partial R}{\partial x_i}
      & =
@@ -647,7 +648,7 @@ Substituting back into Eq.~\eqref{eq:delta-partial} with $s_x^2 \simeq \sigma_{\
     \right].
     \label{eq:partial-var}
 \end{equation}
-Since $a,b,c$ are rarely not reported in practice, we further simplify
+Since $a,b,c$ are rarely reported in practice, we further simplify
 this expression by deriving the lower bound:
 \begin{equation}
     (1 - R^{2})^{3} \le \frac{(1 - a^{2})}{(1 - b^{2})(1 - c^{2})},
@@ -671,8 +672,8 @@ where
     =
     (1-a^{2})(1-c^{2})-(ab-c)^{2}.
 \]
-Each equality above follows from expanding both sides.
-Because every squared term is nonnegative, we obtain the three inequalities
+Each equality above follows from expanding both sides. Because every squared
+term is nonnegative, we obtain the three inequalities
 \begin{equation}
     \label{eq:three-ineq}
     \Delta \le (1-a^{2})(1-b^{2}),
@@ -702,8 +703,8 @@ $\Delta=(1-b^{2})(1-c^{2})(1-R^{2})$ yields
     \le
     \frac{1-a^{2}}{(1-b^{2})(1-c^{2})}.
 \]
-This establishes the claimed bound~\eqref{eq:partial-corr-bound}.
-Since $3r_{yz,x}^2+1 \geq 1$ it follows immediately that
+This establishes the claimed bound~\eqref{eq:partial-corr-bound}. Since
+$3r_{yz,x}^2+1 \geq 1$ it follows immediately that
 \[
     (1 - R^{2})^{3} \leq
     \frac{(1-a^{2})}{(1-b^{2})(1-c^{2})} \leq
@@ -732,12 +733,13 @@ $t$-statistic
     \qquad
     df = n-k-2,
 \]
-where $k$ is the number of controlling variables. Let $X$ be the random variable
-with $\mathbb{E}_{\mathrm{num}}[X]=R_0$, $t_0^2=R_0(df/(1-R_0^2))$ with
-$\Var_{\mathrm{num}}[X]$ bounded by~\Cref{eq:partial-var-bound}. Let $f_t$,
-$F_t$ be the probability density and cumulative distribution functions of the
-Student $t$-distribution with $df$ degrees of freedom. Applying the delta method
-to the two-sided $p$-value $p(X) = 2\left(1 - F_t(|X|)\right)$ gives:
+where $k$ is the number of controlling variables. Let $X$ be the random
+variable with $\mathbb{E}_{\mathrm{num}}[X]=R_0$, $t_0^2=R_0(df/(1-R_0^2))$
+with $\Var_{\mathrm{num}}[X]$ bounded by~\Cref{eq:partial-var-bound}. Let
+$f_t$, $F_t$ be the probability density and cumulative distribution functions
+of the Student $t$-distribution with $df$ degrees of freedom. Applying the
+delta method to the two-sided $p$-value $p(X) = 2\left(1 - F_t(|X|)\right)$
+gives:
 \begin{equation}
     \Var_{\mathrm{num}}[p(X)]
     \approx
@@ -757,8 +759,8 @@ Combining equations \eqref{eq:partial-p-var} and \eqref{eq:partial-t-deriv} yiel
     \geq
     4f_t(|t_0|)^{2}\frac{df}{(1-R_0^{2})^{3}}\Var_{\mathrm{num}}[X].
 \]
-Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$,
-the dependence on $(1-R^{2})^{3}$ cancels, leading to:
+Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$, the
+dependence on $(1-R^{2})^{3}$ cancels, leading to:
 \[
     \sigma_{\mathrm{num}}[p(X)]
     \geq
@@ -791,25 +793,24 @@ $p$-value $p_0$ lies above or below $\alpha$
 (Fig.~\ref{fig:false-positives-model}):
 
 \begin{itemize}
-    \item Negative Case ($p_0 > \alpha$): The primary finding is
-          non-significant, i.e., a true negative (TN). Here, we calculate the
-          probability that numerical noise shifts the $p$-value below $\alpha$,
-          resulting in a false negative (FN) (instability leading to Type I-like
-          errors).
-    \item Positive Case ($p_0 \leq \alpha$): The primary finding is significant,
-          i.e., a true positive (TP). We calculate the probability that
-          numerical noise shifts the $p$-value above $\alpha$, resulting in a
-          false positive (FP) (instability leading to Type II-like errors).
+    \item Negative Case ($p_0 > \alpha$): The primary finding is non-significant, i.e., a
+          true negative (TN). Here, we calculate the probability that numerical noise
+          shifts the $p$-value below $\alpha$, resulting in a false negative (FN)
+          (instability leading to Type I-like errors).
+    \item Positive Case ($p_0 \leq \alpha$): The primary finding is significant, i.e., a
+          true positive (TP). We calculate the probability that numerical noise shifts
+          the $p$-value above $\alpha$, resulting in a false positive (FP) (instability
+          leading to Type II-like errors).
 \end{itemize}
 
 The probabilities for these outcomes are obtained by computing the cumulative
 distribution function (CDF) of the Beta distribution up to the threshold
 $\alpha$, as illustrated in Figure~\ref{fig:false-positives-model}. This
 probabilistic modelisation provides an explicit link between numerical
-variability and classical Type~I and Type~II error rates, allowing us to isolate
-the contribution of numerical variability to spurious statistical significance.
-Numerical validation of this model is presented in
-Appendix Section~\ref{appendix:numerical_validation_flip_significance}.
+variability and classical Type~I and Type~II error rates, allowing us to
+isolate the contribution of numerical variability to spurious statistical
+significance. Numerical validation of this model is presented in Appendix
+Section~\ref{appendix:numerical_validation_flip_significance}.
 
 \vspace{1em}
 
@@ -909,15 +910,12 @@ Appendix Section~\ref{appendix:numerical_validation_flip_significance}.
     \end{minipage}
     \caption{\textbf{Modeling inference stability using Beta distributions.}
         The panels illustrate the probability of significance flipping due to
-        numerical uncertainty. The negative case ($p_0 > \alpha$, Fig.~\ref{fig:fp-negative-case}),
-        where the tail of the distribution crossing $\alpha$ represents the
-        probability of a false positive finding (\FN). The positive
-        case ($p_0 \leq \alpha$, Fig.~\ref{fig:fp-positive-case}), where the tail extending beyond $\alpha$
-        represents the probability of a false negative finding (\FP). Shaded
-        regions indicate the integration of the Beta PDF.}
+        numerical uncertainty. The negative case ($p_0 > \alpha$,
+        Fig.~\ref{fig:fp-negative-case}), where the tail of the distribution
+        crossing $\alpha$ represents the probability of a false negative finding
+        (\FN). The positive case ($p_0 \leq \alpha$,
+        Fig.~\ref{fig:fp-positive-case}), where the tail extending beyond
+        $\alpha$ represents the probability of a false positive finding (\FP).}
     \label{fig:false-positives-model}
 \end{figure}
-
-
-
 

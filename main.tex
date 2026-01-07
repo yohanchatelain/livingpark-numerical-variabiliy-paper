@@ -3,7 +3,7 @@
 While Magnetic Resonance Imaging (MRI) remains a promising source of biomarkers
 for a variety of brain-related conditions, the reproducibility of MRI-derived
 measures across analytical conditions has been challenged in multiple contexts
-over the past years. In structural MRI, cortical surface analyses have been
+over the past few years. In structural MRI, cortical surface analyses have been
 shown to be substantially affected by software, parcellation, and quality
 control~\cite{bhagwat2021understanding}, in functional MRI, different research
 teams analyzing the data have found only moderately consistent
@@ -76,11 +76,11 @@ participants with Mild Cognitive Impairment (MCI) or other neurological
 disorders. The final dataset included 112 PD participants without MCI
 (PD-non-MCI) and 89 HC participants (Table~\ref{tab:cohort_stat}).
 
-We processed all images for both timepoints using FreeSurfer's
+We processed all images for both time points using FreeSurfer's
 \texttt{recon-all}, introducing numerical noise via Monte Carlo Arithmetic
-(MCA)~\cite{parker1997monte} to mimick realistic perturbations into this
+(MCA)~\cite{parker1997monte} to mimic realistic perturbations into this
 pipeline. MCA injects random, zero-mean perturbations into floating-point
-operations while perserving mathematical expectations. Such noise is
+operations while preserving mathematical expectations. Such noise is
 representative of the noise introduced by typical variations in hardware (e.g.,
 CPU models), software libraries (e.g., operating system updates), or
 parallelization (e.g., sequential vs multi-threaded executions). We repeated
@@ -89,14 +89,14 @@ numerical variability. We verified the validity of the numerical perturbation
 approach by confirming that all unperturbed results belonged to the range
 defined by numerically perturbed results.
 
-For both group comparisons and correlation analyses, statistical outcomes
-varied substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
-(Figures \ref{fig:significance_correlation_subcortical_volume}
+For both group comparisons and correlation analyses, statistical outcomes varied
+substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions (Figures
+\ref{fig:significance_correlation_subcortical_volume}
 and~\ref{fig:significance_correlation_thickness}). For subcortical volumes (14
-regions; Figure \ref{fig:significance_correlation_subcortical_volume}),
-significance flipped in 27\% of of all (regions, analysis) pairs, indicating
-frequent inconsistencies across repetitions. For cortical thickness (68
-regions; Figure \ref{fig:significance_correlation_thickness}), 21\% of
+regions; Figure \ref{fig:significance_correlation_subcortical_volume}), p-values
+crossed the 0.05 threshold in 27\% of all (regions, analysis) pairs,
+indicating frequent inconsistencies across repetitions. For cortical thickness
+(68 regions; Figure \ref{fig:significance_correlation_thickness}), 21\% of
 (regions, analysis) pairs were similarly unstable. These fluctuations
 demonstrate that numerical noise alone can alter downstream statistical
 inference in structural MRI analyses of PD.
@@ -114,7 +114,7 @@ inference in structural MRI analyses of PD.
     \caption{Proportion of significant tests ($p<0.05$, uncorrected) for
         cortical thickness across 26 numerical
         perturbations.\label{fig:significance_correlation_thickness}}
-    \label{fig:navr_consistency_thickness_plot}
+    \label{fig:npvr_consistency_thickness_plot}
 \end{figure}
 
 \subsection{A practical model to quantify the impact of numerical variability}
@@ -147,7 +147,7 @@ statistical inference in MRI analyses of PD, routinely conducting
 computationally expensive Monte Carlo evaluations is impractical for most
 studies. To address this issue, we developed a closed-form analytical model
 that predicts numerical uncertainty using only standard summary statistics. The
-core of this framework is the Numerical-Population Variability Ratio (\navr),
+core of this framework is the Numerical-Population Variability Ratio (\npvr),
 defined as the ratio between numerical variability ($\sigma_{\mathrm{num}}$;
 Eq.~\ref{eq:sigma_num}) and population variability ($\sigma_{\mathrm{pop}}$;
 Eq.~\ref{eq:sigma_anat}):
@@ -155,14 +155,14 @@ Eq.~\ref{eq:sigma_anat}):
     \nu_{\mathrm{npv}} = \frac{\sigma_{\mathrm{num}}}{\sigma_{\mathrm{pop}}}
 \]
 
-The \navr metric standardizes the quantification of numerical instability,
+The \npvr metric standardizes the quantification of numerical instability,
 enabling direct comparisons across different brain regions, software pipelines,
 and cohorts. By propagating this ratio through standard statistical estimators
 using the delta-method (see Section~\ref{sec:theoretical_derivations}), we
 derived approximations for the numerical uncertainty in common statistics
 (Table~\ref{tab:stat_uncertainty}) and validated them through numerical
 simulations. This framework establishes a direct link between a pipeline's
-numerical instability (\navr), the study's sample size ($n$), and the resulting
+numerical instability (\npvr), the study's sample size ($n$), and the resulting
 reliability of p-values and effect sizes. Crucially, because these formulas
 rely solely on summary statistics, they allow for the retrospective quality
 control of existing literature without requiring access to original raw data or
@@ -197,18 +197,18 @@ costly re-computation.
 \end{table}
 
 We applied this model to quantify the stability of the analyses reported above
-(Figure~\ref{fig:navr}). In cross-sectional baseline analyses, the average
-\navr was 0.191 for the PD group and 0.176 for HC, with no significant
+(Figure~\ref{fig:npvr}). In cross-sectional baseline analyses, the average
+\npvr was 0.191 for the PD group and 0.176 for HC, with no significant
 difference between groups (permutation test, $p > 0.05$; Appendix
-Figure~\ref{tab:bootstrap-navr}). Applying the Cohen's $d$ uncertainty formula
-(Table~\ref{tab:stat_uncertainty}) to these \navr values reveals that
+Table~\ref{tab:bootstrap-npvr}). Applying the Cohen's $d$ uncertainty formula
+(Table~\ref{tab:stat_uncertainty}) to these \npvr values reveals that
 suppressing numerical uncertainty to a negligible level ($\sigma_d \leq 0.01$)
 in cross-sectional studies would require approximately 1,340 participants.
 
 In contrast, longitudinal analyses exhibited substantially higher instability,
-with average \navr values of 0.561 for PD and 0.549 for HC although no
+with average \npvr values of 0.561 for PD and 0.549 for HC, although no
 significant difference was found between groups (permutation test, $p > 0.05$;
-Appendix Figure~\ref{tab:bootstrap-navr}). This amplification is likely driven
+Appendix Figure~\ref{tab:bootstrap-npvr}). This amplification is likely driven
 by catastrophic cancellation that occurs when subtracting nearly identical
 values between timepoints. Consequently, achieving the same level of numerical
 uncertainty ($\sigma_d \leq 0.01$) would require a sample size exceeding 12,000
@@ -230,20 +230,20 @@ potentially spurious findings.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figures/NPV_map/figure_3.pdf}
-    \caption{Numerical-Population Variability Ratio (\navr) for subcortical
+    \caption{Numerical-Population Variability Ratio (\npvr) for subcortical
         volumes (top row in each panel) and cortical thickness (bottom row in
         each panel) in healthy controls (HC) and Parkinson's disease (PD).
-        Higher \navr values indicate higher computational
+        Higher \npvr values indicate higher computational
         uncertainty relative to inter-subject variability.}
-    \label{fig:navr}
+    \label{fig:npvr}
 \end{figure}
 
 % \begin{figure}
 %     \includegraphics[width=\linewidth]{figures/sigma_d_contour.pdf}
-%     \caption{\TG{could you show some of the papers in this figure? } Relationship between \navr and population sample size  \(N\) for
+%     \caption{\TG{could you show some of the papers in this figure? } Relationship between \npvr and population sample size  \(N\) for
 %         predicting the uncertainty in Cohen's d effect size estimation. The
-%         contour lines represent different \navr values, showing how numerical
-%         variability scales with sample size. With a typical \navr value of 0.2,
+%         contour lines represent different \npvr values, showing how numerical
+%         variability scales with sample size. With a typical \npvr value of 0.2,
 %         to maintain reliable effect size estimates $\sigma_d \leq 0.01$, the
 %         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
 % \end{figure}
@@ -265,20 +265,20 @@ variability on reported outcomes based on available summary statistics.
 For each $p$-value reported as significant in the original articles, we
 calculated the associated numerical variability using the formulas in
 Table~\ref{tab:stat_uncertainty}. We then estimated the probability of a
-significance flip where a result transitions from significant to non-significant
-due to numerical error by modeling the $p$-value variability as a Beta
-distribution (see Section~\ref{sec:false-positives-modeling}). We parametrized
-this distribution such that the reported $p$-value represents the mean and the
-calculated numerical variability represents the standard deviation. By computing
-the cumulative distribution function of this characterized Beta distribution at
-the original significance threshold, we derived the probability that the
-reported significant finding was actually a numerically induced
-misclassification.
+significance flip where a result transitions from significant to
+non-significant due to numerical error by modeling the $p$-value variability as
+a Beta distribution (see Section~\ref{sec:false-positives-modeling}). We
+parametrized this distribution such that the reported $p$-value represents the
+mean and the calculated numerical variability represents the standard
+deviation. By computing the cumulative distribution function of this
+characterized Beta distribution at the original significance threshold, we
+derived the probability that the reported significant finding was actually a
+numerically induced misclassification.
 
 Figure~\ref{fig:false_positive_vs_sample_size} displays the probability of such
-misclassifications as a function of the distance of the $p$-value to the
+misclassifications as a function of the distance of the $p$-value from the
 significance threshold, across different statistics. The thirteen articles in
-the figure have been anonymized as our goal was not to single out particular
+the figure have been anonymized, as our goal was not to single out particular
 results. Substantial probabilities of numerically-induced misclassifications
 were observed close to the significance threshold, across sample size,
 statistics, and analysis types. These results indicate a widespread impact of
@@ -295,7 +295,7 @@ need for more systematic numerical evaluations in MRI studies.
 % positives; for example, cross-sectional volume analyses exhibited similar
 % instability magnitudes at sample sizes of both 43 and 315. Third, while
 % longitudinal analyses generally showed lower false positive probabilities than
-% cross-sectional analyses, they simultaneously exhibited higher \navr. This
+% cross-sectional analyses, they simultaneously exhibited higher \npvr. This
 % apparent contradiction suggests that the proximity of a p-value to the
 % significance threshold is the primary driver of instability: p-values hovering
 % near the threshold are highly sensitive to numerical noise, regardless of the
@@ -325,14 +325,14 @@ In this study, we demonstrate that numerical variability arising from
 floating-point computation constitutes a substantial source of variability in
 structural MRI analyses of Parkinson's disease, accounting for up to 90\% of
 population variability. By systematically perturbing the FreeSurfer pipeline
-using Monte Carlo Arithmetic, we show that numerical noise alone can account for
-a non-negligible fraction of population variability in both cortical and
+using Monte Carlo Arithmetic, we show that numerical noise alone can account
+for a non-negligible fraction of population variability in both cortical and
 subcortical measures. This variability is sufficient to alter downstream
 statistical inference, leading to frequent significance flips in group
-comparisons and clinical correlations, even when a pipeline configuration and
+comparisons and clinical correlations, even when pipeline configurations and
 computational environments are held constant. These findings provide a concrete
-computational mechanism that helps explain persistent reproducibility challenges
-reported across clinical neuroimaging.
+computational mechanism that helps explain persistent reproducibility
+challenges reported across clinical neuroimaging.
 
 The Numerical-Population Variability Ratio (NPVR) introduced in this work
 formalizes numerical variability as a quantity directly comparable to
@@ -354,25 +354,25 @@ revealed that a fraction of reported significant findings are susceptible to
 numerically induced instability, highlighting that numerical variability is not
 only a technical artifact but a substantive factor that can directly influence
 scientific conclusions. By making this assessment feasible from summary
-statistics alone, NPVR provides a scalable approach for retrospective evaluation
-of the existing literature. In this context, NPVR can be used by researchers and
-reviewers to estimate the potential contribution of numerical noise to observed
-false positive rates. Numerical validation demonstrated that these estimates
-tend to be conservative, thereby minimizing the risk of underestimating the
-impact of numerical variability.
+statistics alone, NPVR provides a scalable approach for retrospective
+evaluation of the existing literature. In this context, NPVR can be used by
+researchers and reviewers to estimate the potential contribution of numerical
+noise to observed false positive rates. Numerical validation demonstrated that
+these estimates tend to be conservative, thereby minimizing the risk of
+underestimating the impact of numerical variability.
 
 Although our empirical analyses focused on FreeSurfer 7.3.1, the observed
 instabilities are not unique to this software. Prior
-work~\cite{mirhakimi2025numerical} %~\YC{cite Mathieu}
-has documented comparable numerical sensitivity in other widely used
-neuroimaging pipelines, including FMRIB Software Library~\cite{jenkinson2012fsl}
-(FSL) and Advanced Normalization Tools~\cite{avants2009advanced} (ANTs), while
-suggesting lower sensitivity in Statistical Parametric
-Mapping~\cite{ashburner2009computational} (SPM), potentially due to differences
-in optimization strategies and regularization. These findings indicate that
-numerical variability is a property of computational pipelines rather than a
-specific implementation artifact. The magnitude of the uncertainty then depends
-on algorithmic design choices, numerical precision, and optimization dynamics.
+work~\cite{mirhakimi2025numerical} has documented comparable numerical
+sensitivity in other widely used neuroimaging pipelines, including FMRIB
+Software Library~\cite{jenkinson2012fsl} (FSL) and Advanced Normalization
+Tools~\cite{avants2009advanced} (ANTs), while suggesting lower sensitivity in
+Statistical Parametric Mapping~\cite{ashburner2009computational} (SPM),
+potentially due to differences in optimization strategies and regularization.
+These findings indicate that numerical variability is a property of
+computational pipelines rather than a specific implementation artifact. The
+magnitude of the uncertainty then depends on algorithmic design choices,
+numerical precision, and optimization dynamics.%~\YC{cite Mathieu}
 
 The increasing adoption of deep learning-based components in neuroimaging
 pipelines does not eliminate numerical variability but instead shifts its
