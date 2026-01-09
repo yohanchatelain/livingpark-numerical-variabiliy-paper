@@ -77,24 +77,29 @@ disorders. The final dataset included 112 PD participants without MCI
 (PD-non-MCI) and 89 HC participants (Table~\ref{tab:cohort_stat}).
 
 We processed all images for both time points using FreeSurfer's
-\texttt{recon-all}, introducing numerical noise via Monte Carlo Arithmetic
+\texttt{recon-all}. To quantify the numerical variability, we introduced
+machine-level numerical noise via Monte Carlo Arithmetic
 (MCA)~\cite{parker1997monte} to mimic realistic perturbations into this
 pipeline. MCA injects random, zero-mean perturbations into floating-point
-operations while preserving mathematical expectations. Such noise is
-representative of the noise introduced by typical variations in hardware (e.g.,
-CPU models), software libraries (e.g., operating system updates), or
-parallelization (e.g., sequential vs multi-threaded executions). We repeated
-the perturbed analyses, yielding 26 usable runs from which we estimated
-numerical variability. We verified the validity of the numerical perturbation
-approach by confirming that all unperturbed results belonged to the range
-defined by numerically perturbed results.
+operations while preserving mathematical expectations. Injected perturbations
+are on the order of IEEE-754 machine precision. Such noise is representative of
+the noise introduced by typical variations in hardware (e.g., CPU models),
+software libraries (e.g., operating system updates), or parallelization (e.g.,
+sequential vs multi-threaded executions). The validity of MCA to model
+realistic numerical variability in neuroimaging pipelines has been demonstrated
+in prior work for Operating Systems~\cite{salari2021accurate} and hardware
+variations~\cite{vila2024impact}. We repeated the perturbed analyses, yielding
+26 usable runs from which we estimated numerical variability. We verified the
+validity of the numerical perturbation approach by confirming that all
+unperturbed results belonged to the range defined by numerically perturbed
+results.
 
-For both group comparisons and correlation analyses, statistical outcomes varied
-substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions (Figures
-\ref{fig:significance_correlation_subcortical_volume}
+For both group comparisons and correlation analyses, statistical outcomes
+varied substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
+(Figures \ref{fig:significance_correlation_subcortical_volume}
 and~\ref{fig:significance_correlation_thickness}). For subcortical volumes (14
-regions; Figure \ref{fig:significance_correlation_subcortical_volume}), p-values
-crossed the 0.05 threshold in 27\% of all (regions, analysis) pairs,
+regions; Figure \ref{fig:significance_correlation_subcortical_volume}),
+p-values crossed the 0.05 threshold in 27\% of all (regions, analysis) pairs,
 indicating frequent inconsistencies across repetitions. For cortical thickness
 (68 regions; Figure \ref{fig:significance_correlation_thickness}), 21\% of
 (regions, analysis) pairs were similarly unstable. These fluctuations
@@ -275,15 +280,34 @@ characterized Beta distribution at the original significance threshold, we
 derived the probability that the reported significant finding was actually a
 numerically induced misclassification.
 
-Figure~\ref{fig:false_positive_vs_sample_size} displays the probability of such
-misclassifications as a function of the distance of the $p$-value from the
-significance threshold, across different statistics. The thirteen articles in
-the figure have been anonymized, as our goal was not to single out particular
-results. Substantial probabilities of numerically-induced misclassifications
-were observed close to the significance threshold, across sample size,
-statistics, and analysis types. These results indicate a widespread impact of
-numerical variability on MRI measures of Parkinson's disease, highlighting the
-need for more systematic numerical evaluations in MRI studies.
+Figure~\ref{fig:false_positive_vs_sample_size} shows the estimated probability
+of numerically induced misclassification as a function of the distance between
+reported $p$-values and the significance threshold, across multiple statistical
+tests. Each point corresponds to a significant result reported in the
+literature, with marker size reflecting sample size; the thirteen studies are
+anonymized to avoid singling out individual findings. The vertical axis shows
+the probability that numerical variability causes the result to cross the
+significance threshold, while the horizontal axis represents the distance to
+that threshold. Negative x-axis values correspond to reported significant
+results ($p < \alpha$), whereas positive values indicate reported
+non-significant results ($p > \alpha$). For negative distances, the
+misclassification probability quantifies the likelihood that a reported
+significant finding becomes non-significant (false positive) under numerical
+variability; for positive distances, it reflects the likelihood that a reported
+non-significant finding becomes significant (false negative).
+
+Across statistical tests and analysis types, misclassification probability
+peaks at the significance threshold, indicating that findings near this
+boundary are most likely to change significance status under numerical
+variability. By contrast, results farther from the threshold exhibit lower
+misclassification probabilities. High misclassification rates persist near the
+threshold across sample sizes, demonstrating that even well-powered studies can
+remain numerically fragile. Misclassification probability therefore reflects
+the joint influence of distance to the significance threshold and the
+Numerical-Population Variability Ratio. These results reveal a widespread
+impact of numerical variability on reported MRI measures of Parkinson's disease
+and underscore the need for systematic numerical robustness assessments in
+neuroimaging studies.
 
 % \TG{I have reworded the previous paragraph (still available in Latex comments)
 %     as your four claims would need to be backed by statistical tests, which I don't
