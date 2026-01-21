@@ -270,18 +270,18 @@ variability on reported outcomes based on available summary statistics.
 For each $p$-value reported as significant in the original articles, we
 calculated the associated numerical variability using the formulas in
 Table~\ref{tab:stat_uncertainty}. We then estimated the probability of a
-significance flip where a result transitions from significant to
-non-significant due to numerical error by modeling the $p$-value variability as
-a Beta distribution (see Section~\ref{sec:false-positives-modeling}). We
-parametrized this distribution such that the reported $p$-value represents the
-mean and the calculated numerical variability represents the standard
-deviation. By computing the cumulative distribution function of this
-characterized Beta distribution at the original significance threshold, we
-derived the probability that the reported significant finding was actually a
-numerically induced misclassification.
+significance flip where a result transitions from significant to non-significant
+due to numerical error by modeling the $p$-value variability as a Beta
+distribution (see Section~\ref{sec:false-positives-modeling}). We parametrized
+this distribution such that the reported $p$-value represents the mean and the
+calculated numerical variability represents the standard deviation. By computing
+the cumulative distribution function of this characterized Beta distribution at
+the original significance threshold, we derived the probability that the
+reported significant finding was actually a numerically induced
+significance flip.
 
 Figure~\ref{fig:false_positive_vs_sample_size} shows the estimated probability
-of numerically induced misclassification as a function of the distance between
+of numerically induced significance flip as a function of the distance between
 reported $p$-values and the significance threshold, across multiple statistical
 tests. Each point corresponds to a significant result reported in the
 literature, with marker size reflecting sample size; the thirteen studies are
@@ -291,18 +291,18 @@ significance threshold, while the horizontal axis represents the distance to
 that threshold. Negative x-axis values correspond to reported significant
 results ($p < \alpha$), whereas positive values indicate reported
 non-significant results ($p > \alpha$). For negative distances, the
-misclassification probability quantifies the likelihood that a reported
+significance flip probability quantifies the likelihood that a reported
 significant finding becomes non-significant (false positive) under numerical
 variability; for positive distances, it reflects the likelihood that a reported
 non-significant finding becomes significant (false negative).
 
-Across statistical tests and analysis types, misclassification probability
+Across statistical tests and analysis types, significance flip probability
 peaks at the significance threshold, indicating that findings near this
 boundary are most likely to change significance status under numerical
 variability. By contrast, results farther from the threshold exhibit lower
-misclassification probabilities. High misclassification rates persist near the
+significance flip probabilities. High significance flip rates persist near the
 threshold across sample sizes, demonstrating that even well-powered studies can
-remain numerically fragile. Misclassification probability therefore reflects
+remain numerically fragile. Significance flip probability therefore reflects
 the joint influence of distance to the significance threshold and the
 Numerical-Population Variability Ratio. These results reveal a widespread
 impact of numerical variability on reported MRI measures of Parkinson's disease
@@ -329,7 +329,7 @@ neuroimaging studies.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/figure-distance-paper.pdf}
-    \caption{Probability of numerically-induced misclassifications in function
+    \caption{Probability of numerically-induced significance flips in function
         of p-value distance to significance threshold across different
         statistics: T-values (T), F-values (F), and correlation coefficients
         (R). The marker's size reflects the sample size.
