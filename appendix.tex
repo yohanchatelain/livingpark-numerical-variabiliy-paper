@@ -96,10 +96,11 @@ derivative with respect to \(x_i\), \(i \in G_g\) is given by
 \end{equation}
 
 \begin{proof}
-    Let \(x\) be partitioned into two groups \(G_1\) and \(G_2\) with sizes \(n_1\)
-    and \(n_2\), \(\overline{x}_1\), \(\overline{x}_2\) be the sample means and
-    \(s_1\), \(s_2\) be the sample standard deviations of groups \(G_1\) and
-    \(G_2\), respectively. Let \(df=n_1+n_2-2\) then the pooled standard deviation \(s_p\) is defined as
+    Let \(x\) be partitioned into two groups \(G_1\) and \(G_2\) with sizes
+    \(n_1\) and \(n_2\), \(\overline{x}_1\), \(\overline{x}_2\) be the sample
+    means and \(s_1\), \(s_2\) be the sample standard deviations of groups
+    \(G_1\) and \(G_2\), respectively. Let \(df=n_1+n_2-2\). Then the pooled
+    standard deviation \(s_p\) is defined as
     \[
         s_p = \sqrt{\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{df}}.
     \]
@@ -107,8 +108,8 @@ derivative with respect to \(x_i\), \(i \in G_g\) is given by
     \begin{align*}
         \frac{\partial s_p}{\partial x_i} & = \frac{\partial}{\partial x_i} {\left[\frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{df}\right]}^{\frac{1}{2}}   \\
                                           & = \frac{1}{2 s_p} \frac{1}{df} \frac{\partial}{\partial x_i} \left[(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2\right] \\
-                                          & = \frac{1}{df}\frac{1}{2 s_p}2(x_i - \bar{x}_g)                                                           \\
-        \frac{\partial s_p}{\partial x_i} & = \frac{x_i - \bar{x}_g}{df s_p}
+                                          & = \frac{1}{df}\frac{1}{2 s_p}2(x_i - \overline{x}_g)                                                      \\
+        \frac{\partial s_p}{\partial x_i} & = \frac{x_i - \overline{x}_g}{df s_p}
     \end{align*}
 \end{proof}
 
@@ -179,12 +180,12 @@ Let \(\tilde{x}_i = (x_i - \overline{x})/s_x\), \(\tilde{y}_i = (y_i - \overline
 The following identities hold:
 \begin{align}
     \sum_{i=1}^{n} \left( \tilde{x}_i - r_{xy} \tilde{y}_i \right)^{2}                                            & = (n-1)(1 - r_{xy}^2)          \\
-    \sum_{i=1}^{n} \left( \tilde{y}_i - r_{xy} \tilde{x}_i \right)\left( \tilde{z}_i - r_{xz} \tilde{x}_i \right) & = (n-1)(r_{xy}r_{xz} - r_{yz})
+    \sum_{i=1}^{n} \left( \tilde{y}_i - r_{xy} \tilde{x}_i \right)\left( \tilde{z}_i - r_{xz} \tilde{x}_i \right) & = (n-1)(r_{yz} - r_{xy}r_{xz})
     \label{eq:correlation_identity}
 \end{align}
 
 \begin{proof}
-    Note that \((n-1)s_x = \sum_{i=1}^{n} (x_i - \overline{x})^2\) and \((n-1)s_{xy} = \sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})\) then by using the definitions of standardized variables, we have for the first identity:
+    Note that \((n-1)s_x^2 = \sum_{i=1}^{n} (x_i - \overline{x})^2\) and \((n-1)s_{xy} = \sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})\) then by using the definitions of standardized variables, we have for the first identity:
     \begin{align*}
         \sum_{i=1}^{n} \left( \tilde{x}_i - r_{xy} \tilde{y}_i \right)^{2} & = \sum_{i=1}^{n} \left( \tilde{x}_i^2 - 2r_{xy} \tilde{x}_i \tilde{y}_i + r_{xy}^2 \tilde{y}_i^2 \right)                                                                                                  \\
                                                                            & = \sum_{i=1}^{n} \left[ \frac{(x_i - \overline{x})^2}{s_x^2} - 2r_{xy} \frac{(x_i - \overline{x})(y_i - \overline{y})}{s_x s_y} + r_{xy}^2 \frac{(y_i - \overline{y})^2}{s_y^2} \right]                   \\
@@ -196,10 +197,10 @@ The following identities hold:
     and for the second identity:
     \begin{align*}
         \sum_{i=1}^{n} \left( \tilde{y}_i - r_{xy} \tilde{x}_i \right)\left( \tilde{z}_i - r_{xz} \tilde{x}_i \right)
-         & = \sum_{i=1}^{n} \left( \tilde{y}_i \tilde{z}_i - r_{xz} \tilde{y}_i \tilde{x}_i - r_{xy} \tilde{x}_i \tilde{z}_i + r_{xy} r_{xz} \tilde{x}_i^2 \right) \\
+         & = \sum_{i=1}^{n} \left( \tilde{y}_i \tilde{z}_i - \tilde{y}_i r_{xz} \tilde{x}_i - r_{xy} \tilde{x}_i \tilde{z}_i + r_{xy} r_{xz} \tilde{x}_i^2 \right) \\
          & = (n-1) r_{yz} - r_{xz} (n-1) r_{xy} - r_{xy} (n-1) r_{xz} + r_{xy} r_{xz} (n-1)                                                                        \\
          & = (n-1)(r_{yz} - 2 r_{xy} r_{xz} + r_{xy} r_{xz})                                                                                                       \\
-         & = (n-1)(r_{xy} r_{xz} - r_{yz}).
+         & = (n-1)(r_{yz} - r_{xy} r_{xz}).
     \end{align*}
 \end{proof}
 
@@ -448,156 +449,156 @@ robustness compared to cortical parcellations.
     \\
     \hline
     bankssts                 & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\028.65 \pm \015.97$               & $\021.73
-    \pm \0\08.68$            & $\077.25 \pm \037.44$               & $\059.87
-        \pm \020.45$
+    0.01$                    & $\z28.65 \pm \z15.97$               & $\z21.73
+    \pm \z\z8.68$            & $\z77.25 \pm \z37.44$               & $\z59.87
+        \pm \z20.45$
     \\
     caudalanteriorcingulate  & $0.04 \pm 0.01$                     & $0.04 \pm
-    0.01$                    & $\019.98 \pm \013.83$               & $\021.01
-    \pm \014.96$             & $\051.33 \pm \037.32$               & $\051.67
-        \pm \041.74$
+    0.01$                    & $\z19.98 \pm \z13.83$               & $\z21.01
+    \pm \z14.96$             & $\z51.33 \pm \z37.32$               & $\z51.67
+        \pm \z41.74$
     \\
     caudalmiddlefrontal      & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\038.58 \pm \036.77$               & $\046.65
-    \pm \044.68$             & $104.41 \pm 108.02$                 & $124.11 \pm
+    0.01$                    & $\z38.58 \pm \z36.77$               & $\z46.65
+    \pm \z44.68$             & $104.41 \pm 108.02$                 & $124.11 \pm
     112.10$                                                                                             \\
     cuneus                   & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\028.45 \pm \011.50$               & $\031.25
-    \pm \015.67$             & $\060.72 \pm \025.52$               & $\074.77
-        \pm \034.16$
+    0.01$                    & $\z28.45 \pm \z11.50$               & $\z31.25
+    \pm \z15.67$             & $\z60.72 \pm \z25.52$               & $\z74.77
+        \pm \z34.16$
     \\
     entorhinal               & $0.08 \pm 0.05$                     & $0.08 \pm
-    0.05$                    & $\027.41 \pm \016.67$               & $\022.37
-    \pm \011.70$             & $125.48 \pm \071.07$                & $115.94 \pm
-    \057.21$                                                                                            \\
+    0.05$                    & $\z27.41 \pm \z16.67$               & $\z22.37
+    \pm \z11.70$             & $125.48 \pm \z71.07$                & $115.94 \pm
+    \z57.21$                                                                                            \\
     fusiform                 & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\050.70 \pm \025.16$               & $\047.86
-    \pm \028.19$             & $182.92 \pm \092.31$                & $170.22 \pm
+    0.01$                    & $\z50.70 \pm \z25.16$               & $\z47.86
+    \pm \z28.19$             & $182.92 \pm \z92.31$                & $170.22 \pm
     103.05$                                                                                             \\
     inferiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\053.01 \pm \029.19$               & $\059.90
-    \pm \050.62$             & $145.66 \pm \072.95$                & $159.55 \pm
+    0.01$                    & $\z53.01 \pm \z29.19$               & $\z59.90
+    \pm \z50.62$             & $145.66 \pm \z72.95$                & $159.55 \pm
     110.14$                                                                                             \\
     inferiortemporal         & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\064.73 \pm \042.27$               & $\058.75
-    \pm \034.04$             & $198.15 \pm 127.44$                 & $168.38 \pm
-    \084.67$                                                                                            \\
+    0.01$                    & $\z64.73 \pm \z42.27$               & $\z58.75
+    \pm \z34.04$             & $198.15 \pm 127.44$                 & $168.38 \pm
+    \z84.67$                                                                                            \\
     isthmuscingulate         & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\023.74 \pm \011.07$               & $\023.35
-    \pm \013.99$             & $\057.43 \pm \029.59$               & $\053.05
-        \pm \034.34$
+    0.01$                    & $\z23.74 \pm \z11.07$               & $\z23.35
+    \pm \z13.99$             & $\z57.43 \pm \z29.59$               & $\z53.05
+        \pm \z34.34$
     \\
     lateraloccipital         & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\053.82 \pm \024.63$               & $\056.35
-    \pm \028.61$             & $156.83 \pm \066.16$                & $160.98 \pm
-    \076.00$                                                                                            \\
+    0.01$                    & $\z53.82 \pm \z24.63$               & $\z56.35
+    \pm \z28.61$             & $156.83 \pm \z66.16$                & $160.98 \pm
+    \z76.00$                                                                                            \\
     lateralorbitofrontal     & $0.02 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\043.31 \pm \030.16$               & $117.14 \pm
-    \033.75$                 & $\092.60 \pm \056.29$               & $217.89 \pm
-    \069.06$                                                                                            \\
+    0.01$                    & $\z43.31 \pm \z30.16$               & $117.14 \pm
+    \z33.75$                 & $\z92.60 \pm \z56.29$               & $217.89 \pm
+    \z69.06$                                                                                            \\
     lingual                  & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\044.26 \pm \022.65$               & $\046.73
-    \pm \023.96$             & $\089.19 \pm \046.24$               & $\095.82
-        \pm \049.65$
+    0.01$                    & $\z44.26 \pm \z22.65$               & $\z46.73
+    \pm \z23.96$             & $\z89.19 \pm \z46.24$               & $\z95.82
+        \pm \z49.65$
     \\
     medialorbitofrontal      & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\066.04 \pm \024.11$               & $\058.06
-    \pm \019.00$             & $147.37 \pm \057.84$                & $134.52 \pm
-    \042.26$                                                                                            \\
+    0.01$                    & $\z66.04 \pm \z24.11$               & $\z58.06
+    \pm \z19.00$             & $147.37 \pm \z57.84$                & $134.52 \pm
+    \z42.26$                                                                                            \\
     middletemporal           & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\053.01 \pm \034.97$               & $\044.87
-    \pm \028.36$             & $165.49 \pm 108.52$                 & $135.26 \pm
-    \077.98$                                                                                            \\
+    0.01$                    & $\z53.01 \pm \z34.97$               & $\z44.87
+    \pm \z28.36$             & $165.49 \pm 108.52$                 & $135.26 \pm
+    \z77.98$                                                                                            \\
     parahippocampal          & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\019.55 \pm \0\08.42$              & $\020.45
-    \pm \0\07.81$            & $\064.22 \pm \025.29$               & $\065.43
-        \pm \024.59$
+    0.01$                    & $\z19.55 \pm \z\z8.42$              & $\z20.45
+    \pm \z\z7.81$            & $\z64.22 \pm \z25.29$               & $\z65.43
+        \pm \z24.59$
     \\
     paracentral              & $0.03 \pm 0.02$                     & $0.03 \pm
-    0.01$                    & $\022.94 \pm \012.98$               & $\026.94
-    \pm \019.80$             & $\063.71 \pm \040.74$               & $\073.88
-        \pm \056.66$
+    0.01$                    & $\z22.94 \pm \z12.98$               & $\z26.94
+    \pm \z19.80$             & $\z63.71 \pm \z40.74$               & $\z73.88
+        \pm \z56.66$
     \\
     parsopercularis          & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\028.65 \pm \028.77$               & $\029.46
-    \pm \026.82$             & $\080.67 \pm \092.87$               & $\082.38
-        \pm \089.16$
+    0.01$                    & $\z28.65 \pm \z28.77$               & $\z29.46
+    \pm \z26.82$             & $\z80.67 \pm \z92.87$               & $\z82.38
+        \pm \z89.16$
     \\
     parsorbitalis            & $0.03 \pm 0.02$                     & $0.03 \pm
-    0.02$                    & $\017.82 \pm \0\09.77$              & $\021.41
-    \pm \010.66$             & $\060.63 \pm \045.20$               & $\068.18
-        \pm \036.64$
+    0.02$                    & $\z17.82 \pm \z\z9.77$              & $\z21.41
+    \pm \z10.66$             & $\z60.63 \pm \z45.20$               & $\z68.18
+        \pm \z36.64$
     \\
     parstriangularis         & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\025.67 \pm \014.65$               & $\034.86
-    \pm \037.79$             & $\071.73 \pm \045.49$               & $\096.87
+    0.01$                    & $\z25.67 \pm \z14.65$               & $\z34.86
+    \pm \z37.79$             & $\z71.73 \pm \z45.49$               & $\z96.87
         \pm 102.22$
     \\
     pericalcarine            & $0.03 \pm 0.02$                     & $0.04 \pm
-    0.02$                    & $\036.04 \pm \020.18$               & $\042.02
-    \pm \024.82$             & $\059.64 \pm \029.98$               & $\068.61
-        \pm \034.89$
+    0.02$                    & $\z36.04 \pm \z20.18$               & $\z42.02
+    \pm \z24.82$             & $\z59.64 \pm \z29.98$               & $\z68.61
+        \pm \z34.89$
     \\
     postcentral              & $0.01 \pm 0.02$                     & $0.02 \pm
-    0.02$                    & $\043.47 \pm \067.12$               & $\045.98
-    \pm \083.10$             & $100.26 \pm 121.35$                 & $104.53 \pm
+    0.02$                    & $\z43.47 \pm \z67.12$               & $\z45.98
+    \pm \z83.10$             & $100.26 \pm 121.35$                 & $104.53 \pm
     156.51$                                                                                             \\
     posteriorcingulate       & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\021.93 \pm \013.05$               & $\024.39
-    \pm \019.52$             & $\052.42 \pm \033.33$               & $\056.27
-        \pm \052.59$
+    0.01$                    & $\z21.93 \pm \z13.05$               & $\z24.39
+    \pm \z19.52$             & $\z52.42 \pm \z33.33$               & $\z56.27
+        \pm \z52.59$
     \\
     precentral               & $0.02 \pm 0.02$                     & $0.02 \pm
-    0.02$                    & $\046.92 \pm \053.54$               & $\057.46
-    \pm \070.35$             & $118.04 \pm 157.21$                 & $148.21 \pm
+    0.02$                    & $\z46.92 \pm \z53.54$               & $\z57.46
+    \pm \z70.35$             & $118.04 \pm 157.21$                 & $148.21 \pm
     233.10$                                                                                             \\
     precuneus                & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.00$                    & $\038.04 \pm \042.87$               & $\038.95
-    \pm \040.96$             & $100.91 \pm 111.15$                 & $102.24 \pm
-    \096.62$                                                                                            \\
+    0.00$                    & $\z38.04 \pm \z42.87$               & $\z38.95
+    \pm \z40.96$             & $100.91 \pm 111.15$                 & $102.24 \pm
+    \z96.62$                                                                                            \\
     rostralanteriorcingulate & $0.05 \pm 0.02$                     & $0.04 \pm
-    0.02$                    & $\034.80 \pm \015.03$               & $\022.00
-    \pm \010.59$             & $\081.04 \pm \041.59$               & $\061.95
-        \pm \033.93$
+    0.02$                    & $\z34.80 \pm \z15.03$               & $\z22.00
+    \pm \z10.59$             & $\z81.04 \pm \z41.59$               & $\z61.95
+        \pm \z33.93$
     \\
     rostralmiddlefrontal     & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\092.87 \pm \096.23$               & $108.40 \pm
+    0.01$                    & $\z92.87 \pm \z96.23$               & $108.40 \pm
     132.97$                  & $213.81 \pm 259.58$                 & $252.00 \pm
     358.20$                                                                                             \\
     superiorfrontal          & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\085.23 \pm \086.47$               & $\098.14
+    0.01$                    & $\z85.23 \pm \z86.47$               & $\z98.14
     \pm 120.75$              & $223.91 \pm 234.89$                 & $243.75 \pm
     304.56$                                                                                             \\
     superiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\049.49 \pm \080.81$               & $\062.89
-    \pm \096.86$             & $132.77 \pm 207.97$                 & $161.39 \pm
+    0.01$                    & $\z49.49 \pm \z80.81$               & $\z62.89
+    \pm \z96.86$             & $132.77 \pm 207.97$                 & $161.39 \pm
     235.01$                                                                                             \\
     superiortemporal         & $0.02 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\047.70 \pm \033.64$               & $\041.38
-    \pm \023.84$             & $156.30 \pm 101.85$                 & $129.01 \pm
-    \078.70$                                                                                            \\
+    0.01$                    & $\z47.70 \pm \z33.64$               & $\z41.38
+    \pm \z23.84$             & $156.30 \pm 101.85$                 & $129.01 \pm
+    \z78.70$                                                                                            \\
     supramarginal            & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\050.87 \pm \058.82$               & $\050.06
-    \pm \083.24$             & $136.23 \pm 168.28$                 & $133.99 \pm
+    0.01$                    & $\z50.87 \pm \z58.82$               & $\z50.06
+    \pm \z83.24$             & $136.23 \pm 168.28$                 & $133.99 \pm
     207.69$                                                                                             \\
     frontalpole              & $0.07 \pm 0.04$                     & $0.07 \pm
-    0.04$                    & $\012.99 \pm \0\04.02$              & $\016.42
-    \pm \0\04.47$            & $\056.49 \pm \032.17$               & $\067.84
-        \pm \028.93$
+    0.04$                    & $\z12.99 \pm \z\z4.02$              & $\z16.42
+    \pm \z\z4.47$            & $\z56.49 \pm \z32.17$               & $\z67.84
+        \pm \z28.93$
     \\
     temporalpole             & $0.09 \pm 0.05$                     & $0.08 \pm
-    0.05$                    & $\025.08 \pm \010.71$               & $\022.16
-    \pm \011.78$             & $154.60 \pm \079.32$                & $138.28 \pm
-    \078.33$                                                                                            \\
+    0.05$                    & $\z25.08 \pm \z10.71$               & $\z22.16
+    \pm \z11.78$             & $154.60 \pm \z79.32$                & $138.28 \pm
+    \z78.33$                                                                                            \\
     transversetemporal       & $0.03 \pm 0.02$                     & $0.03 \pm
-    0.02$                    & $\012.73 \pm \0\05.33$              & $\0\09.98
-    \pm \0\03.33$            & $\029.55 \pm \012.34$               & $\024.91
-        \pm \0\08.79$
+    0.02$                    & $\z12.73 \pm \z\z5.33$              & $\z\z9.98
+    \pm \z\z3.33$            & $\z29.55 \pm \z12.34$               & $\z24.91
+        \pm \z\z8.79$
     \\
     insula                   & $0.04 \pm 0.02$                     & $0.04 \pm
-    0.01$                    & $\073.45 \pm \030.66$               & $\095.70
-    \pm \037.63$             & $146.49 \pm \064.11$                & $183.39 \pm
-    \081.47$                                                                                            \\
+    0.01$                    & $\z73.45 \pm \z30.66$               & $\z95.70
+    \pm \z37.63$             & $146.49 \pm \z64.11$                & $183.39 \pm
+    \z81.47$                                                                                            \\
 \end{longtblr}
 
 \begin{longtblr}[ caption={Within-subject significant digits averaged across all
@@ -609,27 +610,26 @@ robustness compared to cortical parcellations.
     Significant digits                                               & {Standard deviation                        \\ ($\text{mm}^3$)} \\
     \hline
     Left-Thalamus                                                    & $1.42 \pm 0.21$     & $120.08  \pm 69.61$  \\
-    Left-Caudate                                                     & $1.57 \pm 0.20$     & $\038.83 \pm 25.11$  \\
-    Left-Putamen                                                     & $1.49 \pm 0.22$     & $\065.88 \pm 46.39$  \\
-    Left-Pallidum                                                    & $1.25 \pm 0.19$     & $\047.81 \pm 25.09$  \\
-    Left-Hippocampus                                                 & $1.48 \pm 0.17$     & $\056.23 \pm 41.03$  \\
-    Left-Amygdala                                                    & $1.13 \pm 0.16$     & $\048.71 \pm 20.04$  \\
-    Left-Accumbens-area                                              & $0.88 \pm 0.16$     & $\024.20 \pm \08.80$ \\
+    Left-Caudate                                                     & $1.57 \pm 0.20$     & $\z38.83 \pm 25.11$  \\
+    Left-Putamen                                                     & $1.49 \pm 0.22$     & $\z65.88 \pm 46.39$  \\
+    Left-Pallidum                                                    & $1.25 \pm 0.19$     & $\z47.81 \pm 25.09$  \\
+    Left-Hippocampus                                                 & $1.48 \pm 0.17$     & $\z56.23 \pm 41.03$  \\
+    Left-Amygdala                                                    & $1.13 \pm 0.16$     & $\z48.71 \pm 20.04$  \\
+    Left-Accumbens-area                                              & $0.88 \pm 0.16$     & $\z24.20 \pm \z8.80$ \\
     Right-Thalamus                                                   & $1.42 \pm 0.20$     & $118.92  \pm 68.76$  \\
-    Right-Caudate                                                    & $1.51 \pm 0.24$     & $\049.37 \pm 42.71$  \\
-    Right-Putamen                                                    & $1.51 \pm 0.25$     & $\068.07 \pm 70.23$  \\
-    Right-Pallidum                                                   & $1.22 \pm 0.19$     & $\049.11 \pm 30.50$  \\
-    Right-Hippocampus                                                & $1.55 \pm 0.18$     & $\048.59 \pm 28.98$  \\
-    Right-Amygdala                                                   & $1.23 \pm 0.17$     & $\042.21 \pm 18.68$  \\
-    Right-Accumbens-area                                             & $0.99 \pm 0.15$     & $\020.50 \pm \07.72$ \\
+    Right-Caudate                                                    & $1.51 \pm 0.24$     & $\z49.37 \pm 42.71$  \\
+    Right-Putamen                                                    & $1.51 \pm 0.25$     & $\z68.07 \pm 70.23$  \\
+    Right-Pallidum                                                   & $1.22 \pm 0.19$     & $\z49.11 \pm 30.50$  \\
+    Right-Hippocampus                                                & $1.55 \pm 0.18$     & $\z48.59 \pm 28.98$  \\
+    Right-Amygdala                                                   & $1.23 \pm 0.17$     & $\z42.21 \pm 18.68$  \\
+    Right-Accumbens-area                                             & $0.99 \pm 0.15$     & $\z20.50 \pm \z7.72$ \\
 \end{longtblr}
 
 \begin{table}[h]
     \centering
-    \caption{Summary of executions failure and excluded subjects. To standardize
+    \caption{Summary of executions failures and excluded subjects. To standardize
         the sample, we keep 26 repetitions per subject/visits pair.
-        Subject/visit pairs with less than 26 repetitions were excluded which is
-        12 subjects.}
+        Subject/visit pairs with less than 26 repetitions were excluded (12 subjects).}
     \begin{tabular}{l c c}
         \toprule
         \textbf{Stage}     & \textbf{Number of rejected repetitions} &
@@ -655,20 +655,20 @@ robustness compared to cortical parcellations.
 %         \multirow{5}{*}{\textbf{\shortstack{Before                               \\QC}}} & n
 %                         & 106                         & 181                      \\
 %                         & Age (y)                     & $60.6 \pm 10.2   $
-%                         & $61.7 \pm \09.6$
+%                         & $61.7 \pm \z9.6$
 %         \\
 %                         & Age range                   & $30.6 - 84.3  $
 %                         & $36.3 - 83.3$
 %         \\
 %                         & Gender (male, \%)           & $58 \; (54.7\%)   $
 %                         & $119 \; (65.7\%)          $                            \\
-%                         & Education (y)               & $16.6 \pm \03.3  $
-%                         & $15.9 \pm \02.9$                                       \\
+%                         & Education (y)               & $16.6 \pm \z3.3  $
+%                         & $15.9 \pm \z2.9$                                       \\
 %         \hline
 %         \multirow{8}{*}{\textbf{\shortstack{After                                \\QC}}} & n
 %                         & $89$                        & $112                   $ \\
 %                         & Age (y)                     & $60.7 \pm 10.3   $
-%                         & $60.6 \pm \08.9        $
+%                         & $60.6 \pm \z8.9        $
 %         \\
 %                         & Age range                   & $30.6 - 79.8  $
 %                         & $39.2 - 78.3           $
@@ -676,8 +676,8 @@ robustness compared to cortical parcellations.
 %                         & Gender (male, \%)           & $47 \; (52.8\%)   $
 %                         & $74 \; (66.1\%)        $
 %         \\
-%                         & Education (y)               & $16.0 \pm \03.1  $
-%                         & $16.1 \pm \03.1        $
+%                         & Education (y)               & $16.0 \pm \z3.1  $
+%                         & $16.1 \pm \z3.1        $
 %         \\
 %                         & UPDRS III OFF baseline      & $-            $
 %                         & $23.3 \pm 10.0         $
@@ -685,8 +685,8 @@ robustness compared to cortical parcellations.
 %                         & UPDRS III OFF follow-up     & $-            $
 %                         & $25.6 \pm 11.2         $
 %         \\
-%                         & Duration T2 - T1 (y)        & $\01.4 \pm \00.5 $
-%                         & $\01.4 \pm \00.6       $
+%                         & Duration T2 - T1 (y)        & $\z1.4 \pm \z0.5 $
+%                         & $\z1.4 \pm \z0.6       $
 %         \\
 %         \bottomrule
 %     \end{tabular}
@@ -715,7 +715,7 @@ cortical regions, highlighting regions with higher or lower \npvr values.
     \centering
     \includegraphics[width=\textwidth]{figures/NPV_map/figure_area_volume.pdf}
     \caption{Numerical-Population Variability Ratio (\npvr) for cortical surface
-        area (top row in each panel) area and cortical volume (bottom row) in HC
+        area (top row in each panel) and cortical volume (bottom row) in HC
         and PD. Panels show \npvr{} maps at baseline for PD and HC,
         longitudinally for HC and PD. Higher \npvr{} values indicate greater
         computational uncertainty relative to inter-subject anatomical
@@ -725,7 +725,7 @@ cortical regions, highlighting regions with higher or lower \npvr values.
 
 \subsection{Consistency results}
 
-We evaluated the stability of statistical inferences by quantifying the
+We evaluated the stability of statistical inference by quantifying the
 frequency of significance flipping across 26 MCA repetitions
 (Table~\ref{tab:fluctuating_regions}). The analysis revealed that longitudinal
 processing introduces considerably more instability than baseline
@@ -756,11 +756,9 @@ showed significant variance differences in far fewer regions.
     \small
     \setlength{\tabcolsep}{6pt}
     \renewcommand{\arraystretch}{1.15}
-    \caption{Variance variability in subcortical structures
-        (Ansari-Bradley test). Comparison of cross-sectional vs. longitudinal
-        variances of test statistics. Significant results (*) indicate that
-        longitudinal variance is significantly greater than baseline variance
-        ($p_{\text{FDR}} < 0.05$, one-sided). $W$: test statistic.}
+    \caption{Frequency of significance flipping across 26 MCA repetitions.
+        Values report the number (and percentage) of unstable regions for each
+        metric and analysis, for baseline and longitudinal settings.}
     \label{tab:fluctuating_regions}
     \begin{tabular}{lcccc}
         \hline
@@ -1125,7 +1123,7 @@ numerical perturbation.
     % 22q11.2 deletion syndrome row
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{22q11.2}} \end{minipage}%
+            \centering\rotatebox[origin=c]{90}{\textbf{22q11.2}} \end{minipage}%
         \begin{minipage}[c]{0.95\linewidth}
             \begin{subfigure}[c]{0.47\linewidth}
                 \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_area_all.png}
@@ -1148,7 +1146,7 @@ numerical perturbation.
     % ADHD row
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{ADHD}} \end{minipage}%
+            \centering\rotatebox[origin=c]{90}{\textbf{ADHD}} \end{minipage}%
         \begin{minipage}[c]{0.95\linewidth}
             \begin{subfigure}[c]{0.47\linewidth}
                 \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_area_adult.png}
@@ -1171,7 +1169,7 @@ numerical perturbation.
     % bipolar disorder row
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{Bipolar}} \end{minipage}%
+            \centering\rotatebox[origin=c]{90}{\textbf{Bipolar}} \end{minipage}%
         \begin{minipage}[c]{0.95\linewidth}
             \begin{subfigure}[c]{0.47\linewidth}
                 \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_area_adult.png}
@@ -1193,7 +1191,7 @@ numerical perturbation.
     % depression
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{Depression}} \end{minipage}%
+            \centering\rotatebox[origin=c]{90}{\textbf{Depression}} \end{minipage}%
         \begin{minipage}[c]{0.95\linewidth}
             \begin{subfigure}[c]{0.47\linewidth}
                 \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_area_adult.png}
@@ -1215,7 +1213,7 @@ numerical perturbation.
     % ocd 
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{OCD}} \end{minipage}%
+            \centering\rotatebox[origin=c]{90}{\textbf{OCD}} \end{minipage}%
         \begin{minipage}[c]{0.95\linewidth}
             \begin{subfigure}[c]{0.47\linewidth}
                 \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_area_adult.png}
@@ -1237,7 +1235,7 @@ numerical perturbation.
     % schizophrenia
     \begin{minipage}[b]{\linewidth}
         \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox{90}{\textbf{Schizophrenia}} \end{minipage}%
+            \centering\rotatebox[origin=c]{90}{\textbf{Schizophrenia}} \end{minipage}%
         \begin{minipage}[c]{0.95\linewidth}
             \begin{subfigure}[c]{0.47\linewidth}
                 \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_area_all.png}
