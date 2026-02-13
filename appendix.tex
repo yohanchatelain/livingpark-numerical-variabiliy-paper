@@ -1262,6 +1262,109 @@ numerical perturbation.
     \label{fig:npvr_enigma_area}
 \end{figure}
 
+\section{Numerical validation of numerical uncertainty propagation}
+\label{appendix:numerical_validation_uncertainty_propagation}
+
+\section{Numerical validation of numerical uncertainty propagation}
+\label{appendix:numerical_validation_uncertainty_propagation}
+
+To numerically validate the proposed uncertainty-propagation framework, we
+systematically compared analytical standard-deviation estimates derived from the
+closed-form expressions reported in Table~\ref{tab:stat_uncertainty} with
+empirical estimates obtained through repeated Monte Carlo Arithmetic (MCA)
+perturbations of the full processing pipelines. For each statistical endpoint
+(Cohen's $d$, two-sample $t$-statistics, partial correlation coefficients, and
+ANCOVA $F$-statistics), as well as their associated $p$-values (except for
+Cohen's $d$), we computed the standard deviation across MCA repetitions and
+quantified the relative error between sampled and analytical estimates. This
+comparison was performed across all cortical and subcortical regions, imaging
+metrics, and for both cross-sectional and longitudinal study designs, thereby
+assessing the fidelity of the analytical model under heterogeneous numerical and
+statistical conditions.
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_stat.pdf}
+    \caption{Relative error between analytical and sampled standard-deviation
+        estimates of test statistics across all brain regions and metrics. Each violin
+        plot corresponds to a specific statistic (Cohen's $d$, two-sample $t$-test,
+        partial correlation coefficient, ANCOVA $F$-statistic) and analysis type
+        (cross-sectional or longitudinal). Distributions are generally concentrated
+        within the interval $[-0.5,0.5]$, with cross-sectional analyses remaining close
+        to zero and longitudinal analyses exhibiting broader dispersion and a moderate
+        negative shift for some statistics, most prominently ANCOVA.}
+    \label{fig:uncertainty_validation_statistics}
+\end{figure}
+
+Overall, the analytical estimates captured the order of magnitude and regional
+structure of the sampled variability, although the agreement is not uniformly
+centered at zero across all configurations. In cross-sectional analyses, the
+average relative error was -0.014 ($\pm$0.160) for the two-sample $t$-test,
+-0.014 ($\pm$0.160) for Cohen's $d$, 0.015 ($\pm$0.200) for ANCOVA
+$F$-statistics, and 0.079 ($\pm$0.260) for partial correlations. These
+distributions remain visually concentrated around zero with limited skewness.
+Longitudinal analyses yielded similarly small mean discrepancies for the
+$t$-test (-0.010 $\pm$0.145) and Cohen's $d$ (-0.003 $\pm$0.146), whereas
+partial correlations (-0.002 $\pm$0.184) and especially ANCOVA
+(-0.184 $\pm$0.207) display a broader spread and a clearer negative displacement.
+Inspection of the violin plots (Fig.~\ref{fig:uncertainty_validation_statistics})
+shows that this shift is not uniform across metrics: cortical thickness and area
+tend to remain closer to zero, while cortical and subcortical volumes contribute
+more strongly to the negative tail. Cohen's $d$ consistently exhibits the most
+compact and symmetric distributions among the tested statistics.
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_pvalue.pdf}
+    \caption{Relative error between analytical and sampled standard-deviation
+        estimates of $p$-values across all brain regions and metrics. Each violin
+        plot corresponds to a specific statistical test (two-sample $t$-test,
+        partial correlation coefficient, ANCOVA $F$-statistic) and analysis type.
+        Cross-sectional distributions remain centered near zero, whereas longitudinal
+        analyses display wider spreads and systematic negative tendencies, particularly
+        for cortical area and volume metrics.}
+    \label{fig:uncertainty_validation_pvalues}
+\end{figure}
+
+A similar but more dispersed pattern was observed for $p$-values. In
+cross-sectional analyses, mean relative errors were 0.054 ($\pm$0.301) for the
+two-sample $t$-test, 0.106 ($\pm$0.323) for ANCOVA, and 0.043 ($\pm$0.322) for
+partial correlations, with most densities overlapping zero but exhibiting heavier
+tails than their statistic counterparts. Longitudinal analyses showed negative
+mean relative errors of -0.251 ($\pm$0.374) for the $t$-test,
+-0.117 ($\pm$0.426) for ANCOVA, and -0.233 ($\pm$0.310) for partial
+correlations. The violin plots (Fig.~\ref{fig:uncertainty_validation_pvalues})
+indicate that these negative tendencies arise from broadened and asymmetric
+distributions with several metrics maintaining
+substantial overlap with zero.
+
+These results indicate that the analytical uncertainty model provides a faithful
+approximation of numerically induced variability in downstream statistical
+measures, with accuracy depending on both the statistical test and study design.
+Cross-sectional configurations show near-unbiased and tightly bounded relative
+errors, whereas longitudinal settings exhibit increased dispersion and negative
+shifts, especially for partial correlation and $p$-values. Importantly, the
+error distributions remain largely confined within $\pm0.5$ for the majority of
+regions and metrics, and Cohen's $d$ consistently demonstrates the highest
+stability. The longitudinal negative bias reflects a conservative tendency of
+the analytical model to overestimate variability.
+
+% Statistics mean relative error across all regions and metrics:
+% student - baseline: mean=-0.0139, std=0.1603
+% student - longitudinal: mean=-0.0101, std=0.1447
+% ancova - baseline: mean=0.0145, std=0.2004
+% ancova - longitudinal: mean=-0.1843, std=0.2072
+% partial_correlation - baseline: mean=0.0788, std=0.2602
+% partial_correlation - longitudinal: mean=-0.0015, std=0.1838
+% cohen_d - baseline: mean=-0.0138, std=0.1596
+% cohen_d - longitudinal: mean=-0.0027, std=0.1457
+
+% P-value mean relative error across all regions and metrics:
+% student - baseline: mean=0.0539, std=0.3005
+% student - longitudinal: mean=-0.2508, std=0.3738
+% ancova - baseline: mean=0.1061, std=0.3228
+% ancova - longitudinal: mean=-0.1172, std=0.4257
+% partial_correlation - baseline: mean=0.0429, std=0.3216
+% partial_correlation - longitudinal: mean=-0.2326, std=0.3099
+
 \section{Numerical validation of flip significance simulations}
 \label{appendix:numerical_validation_flip_significance}
 
