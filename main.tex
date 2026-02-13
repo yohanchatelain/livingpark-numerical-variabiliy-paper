@@ -9,8 +9,8 @@ control~\cite{bhagwat2021understanding}. In functional MRI, different research
 teams analyzing the data have found only moderately consistent
 results~\cite{botvinik2020variability}. In diffusion MRI, variability among
 white matter bundle segmentation protocols was found to be comparable to
-variability across subjects~\cite{schilling2021tractography}. The reliability of
-MRI-derived measures critically depends on a better understanding and
+variability across subjects~\cite{schilling2021tractography}. The reliability
+of MRI-derived measures critically depends on a better understanding and
 characterization of the impacts of analytical variability, including data
 selection, analytical decisions, tool selection, computational infrastructure,
 and numerical state~\cite{kennedy2019everything,kiar2024experimental}.
@@ -22,14 +22,14 @@ and numerical state~\cite{kennedy2019everything,kiar2024experimental}.
 Among these sources of analytical variability, numerical variability has been
 shown to have a measurable impact on MRI
 analyses~\cite{gronenschild2012effects,glatard2015reproducibility} but remains
-understudied, mainly due to the practical challenges of quantifying its effects.
-Numerical variability arises from rounding and truncation errors associated with
-the use of limited-precision numerical formats, such as the widespread IEEE-754
-standard for floating-point arithmetic~\cite{markstein2008new}. Numerical errors
-manifest slightly differently across computational platforms (hardware,
-operating systems, or library versions) and these differences sometimes
-accumulate and amplify across computational analyses, eventually leading to
-measurable differences in final
+understudied, mainly due to the practical challenges of quantifying its
+effects. Numerical variability arises from rounding and truncation errors
+associated with the use of limited-precision numerical formats, such as the
+widespread IEEE-754 standard for floating-point
+arithmetic~\cite{markstein2008new}. Numerical errors manifest slightly
+differently across computational platforms (hardware, operating systems, or
+library versions) and these differences sometimes accumulate and amplify across
+computational analyses, eventually leading to measurable differences in final
 outputs~\cite{salari2021accurate,kiar2021numerical,des2023reproducibility,vila2024impact,chatelain2024numerical,mirhakimi2025numerical}.
 Such issues occur particularly within high-dimensional optimization processes
 such as linear and non-linear image registration, or the training of deep
@@ -78,15 +78,15 @@ disorders. The final dataset included 112 PD participants without MCI
 We processed all images for both time points using FreeSurfer's
 \texttt{recon-all}. To quantify the numerical variability, we introduced
 machine-level numerical noise via Monte Carlo Arithmetic
-(MCA)~\cite{parker1997monte} to mimic realistic perturbations in this
-pipeline. MCA injects random, zero-mean perturbations into floating-point
-operations while preserving mathematical expectations. Injected perturbations
-are on the order of IEEE-754 machine precision. Such noise is representative of
-the noise introduced by typical variations in hardware (e.g., CPU models),
-software libraries (e.g., operating system updates), or parallelization (e.g.,
-sequential vs multi-threaded execution). The validity of MCA to model
-realistic numerical variability in neuroimaging pipelines has been demonstrated
-in prior work for Operating Systems~\cite{salari2021accurate} and hardware
+(MCA)~\cite{parker1997monte} to mimic realistic perturbations in this pipeline.
+MCA injects random, zero-mean perturbations into floating-point operations
+while preserving mathematical expectations. Injected perturbations are on the
+order of IEEE-754 machine precision. Such noise is representative of the noise
+introduced by typical variations in hardware (e.g., CPU models), software
+libraries (e.g., operating system updates), or parallelization (e.g.,
+sequential vs multi-threaded execution). The validity of MCA to model realistic
+numerical variability in neuroimaging pipelines has been demonstrated in prior
+work for Operating Systems~\cite{salari2021accurate} and hardware
 variations~\cite{vila2024impact}. We repeated the perturbed analyses, yielding
 26 usable runs from which we estimated numerical variability. We verified the
 validity of the numerical perturbation approach by confirming that all
@@ -224,11 +224,11 @@ interactive web interface available at
 (Appendix Figure~\ref{fig:brain_render_tool}). This tool allows researchers to
 upload standard summary statistics to instantly estimate the numerical
 uncertainty floor of their findings. The interface includes a 3D visualization
-engine that maps uncertainty onto cortical and subcortical atlases, allowing for
-interactive exploration of pipeline stability. To aid interpretation, the tool
-automatically flags regions where the reported effect size is indistinguishable
-from the estimated numerical noise, thereby identifying potentially spurious
-findings.
+engine that maps uncertainty onto cortical and subcortical atlases, allowing
+for interactive exploration of pipeline stability. To aid interpretation, the
+tool automatically flags regions where the reported effect size is
+indistinguishable from the estimated numerical noise, thereby identifying
+potentially spurious findings.
 
 \begin{figure}[h]
     \centering
@@ -268,15 +268,15 @@ variability on reported outcomes based on available summary statistics.
 For each $p$-value reported as significant in the original articles, we
 calculated the associated numerical variability using the formulas in
 Table~\ref{tab:stat_uncertainty}. We then estimated the probability of a
-significance flip where a result transitions from significant to non-significant
-due to numerical error by modeling the $p$-value variability as a Beta
-distribution (see Section~\ref{sec:false-positives-modeling}). We parametrized
-this distribution such that the reported $p$-value represents the mean and the
-calculated numerical variability represents the standard deviation. By computing
-the cumulative distribution function of this characterized Beta distribution at
-the original significance threshold, we derived the probability that the
-reported significant finding was actually a numerically induced
-significance flip.
+significance flip where a result transitions from significant to
+non-significant due to numerical error by modeling the $p$-value variability as
+a Beta distribution (see Section~\ref{sec:false-positives-modeling}). We
+parametrized this distribution such that the reported $p$-value represents the
+mean and the calculated numerical variability represents the standard
+deviation. By computing the cumulative distribution function of this
+characterized Beta distribution at the original significance threshold, we
+derived the probability that the reported significant finding was actually a
+numerically induced significance flip.
 
 Figure~\ref{fig:false_positive_vs_sample_size} shows the estimated probability
 of numerically induced significance flips as a function of the distance between
@@ -347,8 +347,8 @@ In this study, we demonstrated that numerical variability arising from
 floating-point computation constituted a substantial source of variability in
 structural MRI analyses of Parkinson's disease, accounting for up to 90\% of
 population variability. By systematically perturbing the FreeSurfer pipeline
-using Monte Carlo Arithmetic, we showed that numerical noise alone accounted for
-a non-negligible fraction of population variability in both cortical and
+using Monte Carlo Arithmetic, we showed that numerical noise alone accounted
+for a non-negligible fraction of population variability in both cortical and
 subcortical measures. This variability was sufficient to alter downstream
 statistical inference, leading to frequent significance flips in group
 comparisons and clinical correlations, even when pipeline configurations and
@@ -395,6 +395,11 @@ These findings indicate that numerical variability is a property of
 computational pipelines rather than a specific implementation artifact. The
 magnitude of the uncertainty then depends on algorithmic design choices,
 numerical precision, and optimization dynamics.%~\YC{cite Mathieu}
+Torabi et al.~\cite{torabi2024variability} compared methodological variability
+to biological variability in dynamic functional connectivity assessment methods,
+reporting a ratio of methodological to biological variability of 0.94 across
+seven different methods. This ratio is comparable to the worst case NPVR values
+observed in our study.
 
 The increasing adoption of deep learning-based components in neuroimaging
 pipelines does not eliminate numerical variability but instead shifts its
