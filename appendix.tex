@@ -1265,22 +1265,17 @@ numerical perturbation.
 \section{Numerical validation of numerical uncertainty propagation}
 \label{appendix:numerical_validation_uncertainty_propagation}
 
-\section{Numerical validation of numerical uncertainty propagation}
-\label{appendix:numerical_validation_uncertainty_propagation}
-
 To numerically validate the proposed uncertainty-propagation framework, we
-systematically compared analytical standard-deviation estimates derived from the
+compared analytical standard-deviation estimates derived from the
 closed-form expressions reported in Table~\ref{tab:stat_uncertainty} with
 empirical estimates obtained through repeated Monte Carlo Arithmetic (MCA)
-perturbations of the full processing pipelines. For each statistical endpoint
+perturbations of the full processing pipelines. For each statistical test
 (Cohen's $d$, two-sample $t$-statistics, partial correlation coefficients, and
 ANCOVA $F$-statistics), as well as their associated $p$-values (except for
 Cohen's $d$), we computed the standard deviation across MCA repetitions and
 quantified the relative error between sampled and analytical estimates. This
 comparison was performed across all cortical and subcortical regions, imaging
-metrics, and for both cross-sectional and longitudinal study designs, thereby
-assessing the fidelity of the analytical model under heterogeneous numerical and
-statistical conditions.
+metrics, and for both cross-sectional and longitudinal study designs.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_stat.pdf}
@@ -1309,8 +1304,7 @@ partial correlations (-0.002 $\pm$0.184) and especially ANCOVA
 Inspection of the violin plots (Fig.~\ref{fig:uncertainty_validation_statistics})
 shows that this shift is not uniform across metrics: cortical thickness and area
 tend to remain closer to zero, while cortical and subcortical volumes contribute
-more strongly to the negative tail. Cohen's $d$ consistently exhibits the most
-compact and symmetric distributions among the tested statistics.
+more strongly to the negative tail.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_pvalue.pdf}
@@ -1325,12 +1319,12 @@ compact and symmetric distributions among the tested statistics.
 \end{figure}
 
 A similar but more dispersed pattern was observed for $p$-values. In
-cross-sectional analyses, mean relative errors were 0.054 ($\pm$0.301) for the
-two-sample $t$-test, 0.106 ($\pm$0.323) for ANCOVA, and 0.043 ($\pm$0.322) for
+cross-sectional analyses, mean relative errors were -0.071 ($\pm$0.180) for the
+two-sample $t$-test, 0.106 ($\pm$0.323) for ANCOVA, and 0.032 ($\pm$0.277) for
 partial correlations, with most densities overlapping zero but exhibiting heavier
 tails than their statistic counterparts. Longitudinal analyses showed negative
-mean relative errors of -0.251 ($\pm$0.374) for the $t$-test,
--0.117 ($\pm$0.426) for ANCOVA, and -0.233 ($\pm$0.310) for partial
+mean relative errors of -0.290 ($\pm$0.156) for the $t$-test,
+-0.286 ($\pm$0.159) for ANCOVA, and -0.269 ($\pm$0.174) for partial
 correlations. The violin plots (Fig.~\ref{fig:uncertainty_validation_pvalues})
 indicate that these negative tendencies arise from broadened and asymmetric
 distributions with several metrics maintaining
@@ -1344,26 +1338,26 @@ errors, whereas longitudinal settings exhibit increased dispersion and negative
 shifts, especially for partial correlation and $p$-values. Importantly, the
 error distributions remain largely confined within $\pm0.5$ for the majority of
 regions and metrics, and Cohen's $d$ consistently demonstrates the highest
-stability. The longitudinal negative bias reflects a conservative tendency of
-the analytical model to overestimate variability.
+stability. The longitudinal negative bias reflects a tendency of the analytical
+model to overestimate variability.
 
 % Statistics mean relative error across all regions and metrics:
 % student - baseline: mean=-0.0139, std=0.1603
 % student - longitudinal: mean=-0.0101, std=0.1447
 % ancova - baseline: mean=0.0145, std=0.2004
 % ancova - longitudinal: mean=-0.1843, std=0.2072
-% partial_correlation - baseline: mean=0.0788, std=0.2602
-% partial_correlation - longitudinal: mean=-0.0015, std=0.1838
+% partial_correlation - baseline: mean=0.0791, std=0.2603
+% partial_correlation - longitudinal: mean=0.0002, std=0.1849
 % cohen_d - baseline: mean=-0.0138, std=0.1596
-% cohen_d - longitudinal: mean=-0.0027, std=0.1457
+% cohen_d - longitudinal: mean=-0.0027, std=0.1459
 
 % P-value mean relative error across all regions and metrics:
-% student - baseline: mean=0.0539, std=0.3005
-% student - longitudinal: mean=-0.2508, std=0.3738
+% student - baseline: mean=-0.0711, std=0.1792
+% student - longitudinal: mean=-0.2903, std=0.1562
 % ancova - baseline: mean=0.1061, std=0.3228
-% ancova - longitudinal: mean=-0.1172, std=0.4257
-% partial_correlation - baseline: mean=0.0429, std=0.3216
-% partial_correlation - longitudinal: mean=-0.2326, std=0.3099
+% ancova - longitudinal: mean=-0.2864, std=0.1591
+% partial_correlation - baseline: mean=0.0032, std=0.2765
+% partial_correlation - longitudinal: mean=-0.2690, std=0.1739
 
 \section{Numerical validation of flip significance simulations}
 \label{appendix:numerical_validation_flip_significance}
