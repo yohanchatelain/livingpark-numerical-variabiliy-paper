@@ -251,7 +251,7 @@ potentially spurious findings.
 %         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
 % \end{figure}
 
-\subsection{Impact of numerical variability on published findings}
+\subsection{Published findings near the significance threshold are numerically unstable}
 \label{sec:impact_published_findings}
 
 To assess the broader implications of numerical variability on MRI measures of
@@ -332,8 +332,11 @@ neuroimaging studies.
     \caption{Probability of numerically-induced significance flips as a function
         of the $p$-value distance to significance threshold across different
         statistics: T-values (T), F-values (F), and correlation coefficients
-        (R). The marker's size reflects the sample size.
-        \label{fig:false_positive_vs_sample_size}}
+        (R). False positives correspond to p-values reported as significant and
+        false negatives correspond to p-values reported as non-significant. Bars
+        indicate the mean significance flip probability within bins of distance
+        to the threshold (e.g., $0.005$ for false positives and $0.05$ for false
+        negatives). \label{fig:false_positive_vs_sample_size}}
 \end{figure}
 
 \section{Discussion}
