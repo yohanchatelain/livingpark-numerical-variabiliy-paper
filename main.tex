@@ -68,7 +68,7 @@ measured with the MDS-Unified Parkinson's Disease Rating Scale part 3
 (UPDRS-III). For both, we conducted a cross-sectional analysis at baseline and
 a longitudinal analysis across two time points.
 
-We selected T1-weighted MRI data from the Parkinson's Progression Marker
+We selected T1-weighted MRI data from the Parkinson's Progression Markers
 Initiative (PPMI) dataset~\cite{marek2011parkinson}, including participants
 with at least two usable visits separated by 0.9--2.0 years, and excluding
 participants with Mild Cognitive Impairment (MCI) or other neurological
@@ -95,12 +95,12 @@ results.
 
 For both group comparisons and correlation analyses, statistical outcomes
 varied substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
-(Figures \ref{fig:significance_correlation_subcortical_volume}
+(Figures~\ref{fig:significance_correlation_subcortical_volume}
 and~\ref{fig:significance_correlation_thickness}). For subcortical volumes (14
-regions; Figure \ref{fig:significance_correlation_subcortical_volume}),
+regions; Figure~\ref{fig:significance_correlation_subcortical_volume}),
 p-values crossed the 0.05 threshold in 27\% of all (regions, analysis) pairs,
 indicating frequent inconsistencies across repetitions. For cortical thickness
-(68 regions; Figure \ref{fig:significance_correlation_thickness}), 21\% of
+(68 regions; Figure~\ref{fig:significance_correlation_thickness}), 21\% of
 (regions, analysis) pairs were similarly unstable. These fluctuations
 demonstrate that numerical noise alone can alter downstream statistical
 inference in structural MRI analyses of PD.
@@ -282,19 +282,19 @@ Figure~\ref{fig:false_positive_vs_sample_size} shows the estimated probability
 of numerically induced significance flips as a function of the distance between
 reported $p$-values and the significance threshold, across multiple statistical
 tests. Each point corresponds to a significant result reported in the
-literature; the thirteen studies are anonymized to avoid singling out individual
-findings. The vertical axis shows the probability that numerical variability
-causes the result to cross the significance threshold, while the horizontal axis
-represents the distance to that threshold. Negative x-axis values correspond to
-reported significant results ($p < \alpha$), whereas positive values indicate
-reported non-significant results ($p > \alpha$). For negative distances, the
-significance flip probability quantifies the likelihood that a reported
-significant finding becomes non-significant (false positive) under numerical
-variability; for positive distances, it reflects the likelihood that a reported
-non-significant finding becomes significant (false negative). Bars indicate the
-mean significance flip probability within bins of distance to the threshold
-(e.g., $0.005$ for false positives and $0.05$ for false negatives).
-
+literature; the thirteen studies are anonymized to avoid singling out
+individual findings. The vertical axis shows the probability that numerical
+variability causes the result to cross the significance threshold, while the
+horizontal axis represents the distance to that threshold. Negative x-axis
+values correspond to reported significant results ($p < \alpha$), whereas
+positive values indicate reported non-significant results ($p > \alpha$). For
+negative distances, the significance flip probability quantifies the likelihood
+that a reported significant finding becomes non-significant (false positive)
+under numerical variability; for positive distances, it reflects the likelihood
+that a reported non-significant finding becomes significant (false negative).
+Bars indicate the mean significance flip probability within bins of distance to
+the threshold (e.g., $0.005$ for false positives and $0.05$ for false
+negatives).
 
 Across statistical tests and analysis types, significance flip probability
 peaks at the significance threshold, indicating that findings near this
@@ -347,7 +347,7 @@ neuroimaging studies.
 
 In this study, we demonstrated that numerical variability arising from
 floating-point computation constituted a substantial source of variability in
-structural MRI analyses of Parkinson's disease, accounting for up to 90\% of
+structural MRI analyses of Parkinson's disease, accounting for up to 80\% of
 population variability. By systematically perturbing the FreeSurfer pipeline
 using Monte Carlo Arithmetic, we showed that numerical noise alone accounted
 for a non-negligible fraction of population variability in both cortical and
@@ -396,12 +396,12 @@ potentially due to differences in optimization strategies and regularization.
 These findings indicate that numerical variability is a property of
 computational pipelines rather than a specific implementation artifact. The
 magnitude of the uncertainty then depends on algorithmic design choices,
-numerical precision, and optimization dynamics.%~\YC{cite Mathieu}
-Torabi et al.~\cite{torabi2024variability} compared methodological variability
-to biological variability in dynamic functional connectivity assessment methods,
+numerical precision, and optimization dynamics. Torabi et
+al.~\cite{torabi2024variability} compared methodological variability to
+biological variability in dynamic functional connectivity assessment methods,
 reporting a ratio of methodological to biological variability of 0.94 across
 seven different methods. This ratio is comparable to the worst case NPVR values
-observed in our study.
+observed in our study.%~\YC{cite Mathieu}
 
 The increasing adoption of deep learning-based components in neuroimaging
 pipelines does not eliminate numerical variability but instead shifts its
