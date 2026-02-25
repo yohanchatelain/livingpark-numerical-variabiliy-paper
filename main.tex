@@ -15,10 +15,6 @@ characterization of the impacts of analytical variability, including data
 selection, analytical decisions, tool selection, computational infrastructure,
 and numerical state~\cite{kennedy2019everything,kiar2024experimental}.
 
-% Estimating variability
-% is particularly important when effect sizes are moderate, as it is the case in
-% studies of Parkinson's disease (PD)~\cite{he2020progressive}. 
-
 Among these sources of analytical variability, numerical variability has been
 shown to have a measurable impact on MRI
 analyses~\cite{gronenschild2012effects,glatard2015reproducibility} but remains
@@ -122,28 +118,6 @@ inference in structural MRI analyses of PD.
 
 \subsection{A practical model to quantify the impact of numerical variability}
 \label{sec:modeling_numerical_variability}
-% Comments:
-% - Build a tool that can be broadly applied to any neuroimaging
-% - Analytical modeling of sigma_d
-% - Explain why having a tool is important
-% - Why having a tool fast is important
-%   - Measuring numerical variability is a time-consuming process
-%   - Analytical modeling of sigma_d allows applying the tool to any
-%     neuroimaging papers, existing results.
-% - Quality Control impact findings => a tool to find potentially unreliable
-%   results
-% - To be general, we developped an analytical model
-% - Refers to the online tool on yohanchatelain.github.io/brain-render
-
-% \TG[done]{Instead of re-stating the importance of numerical variability in this
-%     paragraph, which supposedly should be understood from the end of the
-%     introduction, here you could explain the need for a tool to quickly and
-%     practically evaluate its impact in a given study, explain and justify your
-%     assumptions (e.g., numerical variability is a feature of the pipeline rather
-%     than the population---refer to previous works). In doing so, you could explain
-%     how running MCA is currently not realistic due to computational requirements
-%     (although new architectures may enable it in the coming years), and explain the
-%     need for a statistical correction.}
 
 While the previous results demonstrate that numerical variability can alter
 statistical inference in MRI analyses of PD, routinely conducting
@@ -170,10 +144,6 @@ reliability of p-values and effect sizes. Crucially, because these formulas
 rely solely on summary statistics, they allow for the retrospective quality
 control of existing literature without requiring access to original raw data or
 costly re-computation.
-
-% \TG[done]{I think I would rather present the $\sigma_d$ result first, then explain
-%     NAV. When introducing sigma d, you could better explain that numerical
-%     variability has to be evaluated in the context of a particular effect size, and its impact will be dependent on sample size.}
 
 \begin{table}[ht]
     \centering
@@ -221,14 +191,14 @@ reliability.
 To facilitate the use of this framework, we developed an open-source,
 interactive web interface available at
 \href{https://yohanchatelain.github.io/brain_render/}{\nolinkurl{yohanchatelain.github.io/brain_render}}
-(Appendix Figure~\ref{fig:brain_render_tool}). This tool allows researchers to
-upload standard summary statistics to instantly estimate the numerical
-uncertainty floor of their findings. The interface includes a 3D visualization
-engine that maps uncertainty onto cortical and subcortical atlases, allowing
-for interactive exploration of pipeline stability. To aid interpretation, the
-tool automatically flags regions where the reported effect size is
-indistinguishable from the estimated numerical noise, thereby identifying
-potentially spurious findings.
+(Supplementary Figure~\ref{fig:brain_render_tool}). This tool allows
+researchers to upload standard summary statistics to instantly estimate the
+numerical uncertainty floor of their findings. The interface includes a 3D
+visualization engine that maps uncertainty onto cortical and subcortical
+atlases, allowing for interactive exploration of pipeline stability. To aid
+interpretation, the tool automatically flags regions where the reported effect
+size is indistinguishable from the estimated numerical noise, thereby
+identifying potentially spurious findings.
 
 \begin{figure}[h]
     \centering
@@ -241,15 +211,6 @@ potentially spurious findings.
     \label{fig:npvr}
 \end{figure}
 
-% \begin{figure}
-%     \includegraphics[width=\linewidth]{figures/sigma_d_contour.pdf}
-%     \caption{\TG{could you show some of the papers in this figure? } Relationship between \npvr and population sample size  \(N\) for
-%         predicting the uncertainty in Cohen's d effect size estimation. The
-%         contour lines represent different \npvr values, showing how numerical
-%         variability scales with sample size. With a typical \npvr value of 0.2,
-%         to maintain reliable effect size estimates $\sigma_d \leq 0.01$, the
-%         plot suggests to use $N \geq 1500$.\label{fig:sigma_d_contour}}
-% \end{figure}
 
 \subsection{Widespread impact of numerical variability on published findings}
 \label{sec:impact_published_findings}
@@ -309,24 +270,6 @@ impact of numerical variability on reported MRI measures of Parkinson's disease
 and underscore the need for systematic numerical robustness assessments in
 neuroimaging studies.
 
-% \TG{I have reworded the previous paragraph (still available in Latex comments)
-%     as your four claims would need to be backed by statistical tests, which I don't
-%     think makes a lot of sense given the scarcity of the data.}
-% Our analysis yields four key observations. First, no specific statistical test
-% appears inherently more robust to numerical variability than others. Second,
-% contrary to standard statistical intuition regarding sampling error, sample
-% size does not appear to mitigate the probability of numerically induced false
-% positives; for example, cross-sectional volume analyses exhibited similar
-% instability magnitudes at sample sizes of both 43 and 315. Third, while
-% longitudinal analyses generally showed lower false positive probabilities than
-% cross-sectional analyses, they simultaneously exhibited higher \npvr. This
-% apparent contradiction suggests that the proximity of a p-value to the
-% significance threshold is the primary driver of instability: p-values hovering
-% near the threshold are highly sensitive to numerical noise, regardless of the
-% study design. Finally, cortical measures demonstrated higher false positive
-% probabilities compared to subcortical measures, indicating a greater
-% sensitivity to numerical variability in cortical measures.
-
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/figure-distance-paper.pdf}
     \caption{Probability of numerically-induced significance flips as a function
@@ -340,13 +283,6 @@ neuroimaging studies.
 \end{figure}
 
 \section{Discussion}
-
-% Comments:
-% 1. Summarize the main results and what do they mean
-% 2. Extension beyond FreeSurfer and expectation to generalize the findings to other neuroimaging software
-% 3. Discuss the potential sources of numerical variability (minimal local, minimal precision, etc.)
-
-% [] Mention using neuroimaging as biomarker (n=1 scenario), personalized medicine,
 
 In this study, we demonstrated that numerical variability arising from
 floating-point computation constituted a substantial source of variability in
@@ -404,7 +340,7 @@ al.~\cite{torabi2024variability} compared methodological variability to
 biological variability in dynamic functional connectivity assessment methods,
 reporting a ratio of methodological to biological variability of 0.94 across
 seven different methods. This ratio is comparable to the worst case NPVR values
-observed in our study.%~\YC{cite Mathieu}
+observed in our study.
 
 The increasing adoption of deep learning-based components in neuroimaging
 pipelines does not eliminate numerical variability but instead shifts its

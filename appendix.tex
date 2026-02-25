@@ -2,6 +2,12 @@
 
 \appendix
 
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+
 \section{Partial derivatives of sample statistics}
 
 We derive below the partial derivatives of common sample statistics for a
@@ -1266,16 +1272,16 @@ numerical perturbation.
 \label{appendix:numerical_validation_uncertainty_propagation}
 
 To numerically validate the proposed uncertainty-propagation framework, we
-compared analytical standard-deviation estimates derived from the
-closed-form expressions reported in Table~\ref{tab:stat_uncertainty} with
-empirical estimates obtained through repeated Monte Carlo Arithmetic (MCA)
-perturbations of the full processing pipelines. For each statistical test
-(Cohen's $d$, two-sample $t$-statistics, partial correlation coefficients, and
-ANCOVA $F$-statistics), as well as their associated $p$-values (except for
-Cohen's $d$), we computed the standard deviation across MCA repetitions and
-quantified the relative error between sampled and analytical estimates. This
-comparison was performed across all cortical and subcortical regions, imaging
-metrics, and for both cross-sectional and longitudinal study designs.
+compared analytical standard-deviation estimates derived from the closed-form
+expressions reported in Table~\ref{tab:stat_uncertainty} with empirical
+estimates obtained through repeated Monte Carlo Arithmetic (MCA) perturbations
+of the full processing pipelines. For each statistical test (Cohen's $d$,
+two-sample $t$-statistics, partial correlation coefficients, and ANCOVA
+$F$-statistics), as well as their associated $p$-values (except for Cohen's
+$d$), we computed the standard deviation across MCA repetitions and quantified
+the relative error between sampled and analytical estimates. This comparison
+was performed across all cortical and subcortical regions, imaging metrics, and
+for both cross-sectional and longitudinal study designs.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_stat.pdf}
@@ -1299,12 +1305,13 @@ $F$-statistics, and 0.079 ($\pm$0.260) for partial correlations. These
 distributions remain visually concentrated around zero with limited skewness.
 Longitudinal analyses yielded similarly small mean discrepancies for the
 $t$-test (-0.010 $\pm$0.145) and Cohen's $d$ (-0.003 $\pm$0.146), whereas
-partial correlations (-0.002 $\pm$0.184) and especially ANCOVA
-(-0.184 $\pm$0.207) display a broader spread and a clearer negative displacement.
-Inspection of the violin plots (Fig.~\ref{fig:uncertainty_validation_statistics})
-shows that this shift is not uniform across metrics: cortical thickness and area
-tend to remain closer to zero, while cortical and subcortical volumes contribute
-more strongly to the negative tail.
+partial correlations (-0.002 $\pm$0.184) and especially ANCOVA (-0.184
+$\pm$0.207) display a broader spread and a clearer negative displacement.
+Inspection of the violin plots
+(Fig.~\ref{fig:uncertainty_validation_statistics}) shows that this shift is not
+uniform across metrics: cortical thickness and area tend to remain closer to
+zero, while cortical and subcortical volumes contribute more strongly to the
+negative tail.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_pvalue.pdf}
@@ -1321,25 +1328,24 @@ more strongly to the negative tail.
 A similar but more dispersed pattern was observed for $p$-values. In
 cross-sectional analyses, mean relative errors were -0.071 ($\pm$0.180) for the
 two-sample $t$-test, 0.106 ($\pm$0.323) for ANCOVA, and 0.032 ($\pm$0.277) for
-partial correlations, with most densities overlapping zero but exhibiting heavier
-tails than their statistic counterparts. Longitudinal analyses showed negative
-mean relative errors of -0.290 ($\pm$0.156) for the $t$-test,
--0.286 ($\pm$0.159) for ANCOVA, and -0.269 ($\pm$0.174) for partial
-correlations. The violin plots (Fig.~\ref{fig:uncertainty_validation_pvalues})
-indicate that these negative tendencies arise from broadened and asymmetric
-distributions with several metrics maintaining
-substantial overlap with zero.
+partial correlations, with most densities overlapping zero but exhibiting
+heavier tails than their statistic counterparts. Longitudinal analyses showed
+negative mean relative errors of -0.290 ($\pm$0.156) for the $t$-test, -0.286
+($\pm$0.159) for ANCOVA, and -0.269 ($\pm$0.174) for partial correlations. The
+violin plots (Fig.~\ref{fig:uncertainty_validation_pvalues}) indicate that
+these negative tendencies arise from broadened and asymmetric distributions
+with several metrics maintaining substantial overlap with zero.
 
-These results indicate that the analytical uncertainty model provides a faithful
-approximation of numerically induced variability in downstream statistical
-measures, with accuracy depending on both the statistical test and study design.
-Cross-sectional configurations show near-unbiased and tightly bounded relative
-errors, whereas longitudinal settings exhibit increased dispersion and negative
-shifts, especially for partial correlation and $p$-values. Importantly, the
-error distributions remain largely confined within $\pm0.5$ for the majority of
-regions and metrics, and Cohen's $d$ consistently demonstrates the highest
-stability. The longitudinal negative bias reflects a tendency of the analytical
-model to overestimate variability.
+These results indicate that the analytical uncertainty model provides a
+faithful approximation of numerically induced variability in downstream
+statistical measures, with accuracy depending on both the statistical test and
+study design. Cross-sectional configurations show near-unbiased and tightly
+bounded relative errors, whereas longitudinal settings exhibit increased
+dispersion and negative shifts, especially for partial correlation and
+$p$-values. Importantly, the error distributions remain largely confined within
+$\pm0.5$ for the majority of regions and metrics, and Cohen's $d$ consistently
+demonstrates the highest stability. The longitudinal negative bias reflects a
+tendency of the analytical model to overestimate variability.
 
 % Statistics mean relative error across all regions and metrics:
 % student - baseline: mean=-0.0139, std=0.1603
