@@ -89,15 +89,23 @@ validity of the numerical perturbation approach by confirming that all
 unperturbed results belonged to the range defined by numerically perturbed
 results.
 
-For both group comparisons and correlation analyses, statistical outcomes
-varied substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
+For both group comparisons and correlation analyses, statistical outcomes varied
+substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
 (Figures~\ref{fig:significance_correlation_subcortical_volume}
 and~\ref{fig:significance_correlation_thickness}). For subcortical volumes (14
-regions; Figure~\ref{fig:significance_correlation_subcortical_volume}),
-p-values crossed the 0.05 threshold in 27\% of all (regions, analysis) pairs,
-indicating frequent inconsistencies across repetitions. For cortical thickness
-(68 regions; Figure~\ref{fig:significance_correlation_thickness}), 21\% of
-(regions, analysis) pairs were similarly unstable. These fluctuations
+regions; Figure~\ref{fig:significance_correlation_subcortical_volume}), p-values
+crossed the 0.05 threshold in 27\% of all (regions, analysis) pairs, indicating
+frequent inconsistencies across repetitions. For cortical thickness (68 regions;
+Figure~\ref{fig:significance_correlation_thickness}), 21\% of (regions,
+analysis) pairs were similarly unstable (see Supplementary
+Note~\ref{appendix:summary_stats_inference} for region-level details).
+Statistical test values (r-values and F-values) also exhibited substantial
+variability across repetitions (see Supplementary
+Note~\ref{appendix:distribution_stats_values}). This instability is consistent
+with the intrinsically low numerical precision of FreeSurfer: cross-sectional
+analyses revealed fewer than 2 significant digits for most subcortical and
+cortical regions (see Supplementary
+Note~\ref{appendix:numerical_variability_baseline}). These fluctuations
 demonstrate that numerical noise alone can alter downstream statistical
 inference in structural MRI analyses of PD.
 
@@ -170,18 +178,19 @@ costly re-computation.
 \end{table}
 
 We applied this model to quantify the stability of the analyses reported above
-(Figure~\ref{fig:npvr}). In cross-sectional baseline analyses, the average
-\npvr was 0.191 for the PD group and 0.176 for HC, with no significant
-difference between groups (permutation test, $p > 0.05$; Appendix
-Table~\ref{tab:bootstrap-npvr}). Applying the Cohen's $d$ uncertainty formula
-(Table~\ref{tab:stat_uncertainty}) to these \npvr values reveals that
-suppressing numerical uncertainty to a negligible level ($\sigma_d \leq 0.01$)
-in cross-sectional studies would require approximately 1,340 participants.
+(Figure~\ref{fig:npvr}; Supplementary Figure~\ref{fig:npvr_maps_area_volume}).
+In cross-sectional baseline analyses, the average \npvr was 0.191 for the PD
+group and 0.176 for HC, with no significant difference between groups
+(permutation test, $p > 0.05$; Supplementary Table~\ref{tab:bootstrap-npvr}).
+Applying the Cohen's $d$ uncertainty formula (Table~\ref{tab:stat_uncertainty})
+to these \npvr values reveals that suppressing numerical uncertainty to a
+negligible level ($\sigma_d \leq 0.01$) in cross-sectional studies would require
+approximately 1,340 participants.
 
 In contrast, longitudinal analyses exhibited substantially higher instability,
 with average \npvr values of 0.561 for PD and 0.549 for HC, although no
 significant difference was found between groups (permutation test, $p > 0.05$;
-Appendix Table~\ref{tab:bootstrap-npvr}). This amplification is likely driven
+Supplementary Table~\ref{tab:bootstrap-npvr}). This amplification is likely driven
 by catastrophic cancellation that occurs when subtracting nearly identical
 values between time points. Consequently, achieving the same level of numerical
 uncertainty ($\sigma_d \leq 0.01$) would require a sample size exceeding 12,000
@@ -237,7 +246,8 @@ mean and the calculated numerical variability represents the standard
 deviation. By computing the cumulative distribution function of this
 characterized Beta distribution at the original significance threshold, we
 derived the probability that the reported significant finding was actually a
-numerically induced significance flip.
+numerically induced significance flip. Numerical validation of this approach
+is provided in Supplementary Note~\ref{appendix:numerical_validation_flip_significance}.
 
 Figure~\ref{fig:false_positive_vs_sample_size} shows the estimated probability
 of numerically induced significance flips as a function of the distance between
@@ -317,12 +327,13 @@ revealed that a fraction of reported significant findings are susceptible to
 numerically induced instability, highlighting that numerical variability is not
 only a technical artifact but a substantive factor that can directly influence
 scientific conclusions. By making this assessment feasible from summary
-statistics alone, NPVR provides a scalable approach for retrospective
-evaluation of the existing literature. In this context, NPVR can be used by
-researchers and reviewers to estimate the potential contribution of numerical
-noise to observed false positive rates. Numerical validation demonstrated that
-these estimates tend to be conservative, thereby minimizing the risk of
-underestimating the impact of numerical variability.
+statistics alone, NPVR provides a scalable approach for retrospective evaluation
+of the existing literature. In this context, NPVR can be used by researchers and
+reviewers to estimate the potential contribution of numerical noise to observed
+false positive rates. Numerical validation (see Supplementary
+Note~\ref{appendix:numerical_validation_uncertainty_propagation}) demonstrated
+that these estimates tend to minimize the risk of underestimating the impact of
+numerical variability.
 
 Although our empirical analyses focused on FreeSurfer 7.3.1, the observed
 instabilities are not unique to this software. Prior

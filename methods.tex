@@ -82,7 +82,7 @@ FreeSurfer failures) and quality control (QC) failures.
 
 For QC, we visually inspected nine representative slices (3 along each axis)
 per run to identify gross artifacts, such as missing brain tissue, blurring, or
-biologically implausible segmentation. Appendix Table~\ref{tab:qc} details the
+biologically implausible segmentation. Supplementary Table~\ref{tab:qc} details the
 exclusion rates. To ensure statistical consistency across the cohort, we
 randomly subsampled the remaining runs to retain exactly 26 valid realisations
 per participant.
@@ -243,6 +243,7 @@ through the delta method as
 
 Table~\ref{tab:stat_uncertainty} summarizes the derived expressions for the
 numerical standard deviation of several common statistics.
+Proofs of partial derivations of sample statistics\footnote{mean, variance, standard-deviation, covariance, Pearson correlation coefficient and correlation identities.} used in the following sections are provided in the Supplementary Note~\ref{appendix:partial_derivatives_proofs}.
 
 \paragraph{Cohen's \textit{d}}
 
@@ -554,8 +555,8 @@ The first-order partial derivatives are:
     \frac{\partial R}{\partial a} = \frac{1}{D}, \qquad
     \frac{\partial R}{\partial b} = \frac{(1 - c^{2})(ab - c)}{D^{3}}.
 \]
-and the derivatives of the correlations with respect to $x_i$ are (see
-Eq.~\ref{eq:pearson_derivative}):
+and the derivatives of the correlations with respect to $x_i$ are
+(see Supplementary Eq.~\ref{eq:pearson_derivative})
 \[
     \frac{\partial a}{\partial x_i}
     =
@@ -607,8 +608,8 @@ thus $(\partial R / \partial x_i)^{2}$ is:
         \right].
 \end{align*}
 Using the correlation identities $\sum\alpha_i^2 = (n-1)(1 - a^{2})$,
-$\sum\beta_i^2 = (n-1)(1 - b^{2})$, $\sum\alpha_i\beta_i = (n-1)(c - ab)$ (see
-proof in Appendix~\ref{sec:correlation_identities}), and that
+$\sum\beta_i^2 = (n-1)(1 - b^{2})$, $\sum\alpha_i\beta_i = (n-1)(c - ab)$
+(see Supplementary Eq.~\ref{eq:correlation_identities}), and that
 $(1-b^{2})(1-c^{2})-(a-bc)^{2} = (1-a^{2})(1-b^{2})-(c-ab)^{2}$, we sum over all
 $i$ to obtain:
 \begin{align*}
@@ -767,8 +768,8 @@ $\alpha$, as illustrated in Figure~\ref{fig:false-positives-model}. This
 probabilistic modeling provides an explicit link between numerical variability
 and classical Type~I and Type~II error rates, allowing us to isolate the
 contribution of numerical variability to spurious statistical significance.
-Numerical validation of this model is presented in Appendix
-Section~\ref{appendix:numerical_validation_flip_significance}.
+Numerical validation of this model is presented in Supplementary
+Note~\ref{appendix:numerical_validation_flip_significance}.
 
 \vspace{1em}
 
