@@ -18,12 +18,12 @@ quality control to distinguish numerical artifacts from technical failures; and
 \subsection{Participants}
 
 Structural MRI data were obtained from the Parkinson's Progression Markers
-Initiative (PPMI; \url{www.ppmi-info.org}). The study included 201 participants:
-112 individuals diagnosed with Parkinson's disease without mild cognitive
-impairment (PD-non-MCI) and 89 healthy controls (HC). All participants had two
-usable T1-weighted MRI scans acquired approximately $1.4 \pm 0.5$ years apart
-($0.9$--$2.0$ years). Patients with mild cognitive impairment were excluded to
-minimize confounding effects of cognitive decline.
+Initiative (PPMI; \url{www.ppmi-info.org}). The study included 201
+participants: 112 individuals diagnosed with Parkinson's disease without mild
+cognitive impairment (PD-non-MCI) and 89 healthy controls (HC). All
+participants had two usable T1-weighted MRI scans acquired approximately $1.4
+    \pm 0.5$ years apart ($0.9$--$2.0$ years). Patients with mild cognitive
+impairment were excluded to minimize confounding effects of cognitive decline.
 
 Inclusion criteria were: (i) diagnosis of idiopathic Parkinson's disease
 (PD-non-MCI) or healthy control status; (ii) availability of two high-quality
@@ -82,7 +82,7 @@ FreeSurfer failures) and quality control (QC) failures.
 
 For QC, we visually inspected nine representative slices (3 along each axis)
 per run to identify gross artifacts, such as missing brain tissue, blurring, or
-biologically implausible segmentation. Appendix Table~\ref{tab:qc} details the
+biologically implausible segmentation. Supplementary Table~\ref{tab:qc} details the
 exclusion rates. To ensure statistical consistency across the cohort, we
 randomly subsampled the remaining runs to retain exactly 26 valid realisations
 per participant.
@@ -179,11 +179,10 @@ correlation, and ANCOVA). Our goal is to characterize how numerical noise
 propagates through the analytical pipeline to produce uncertainty in the
 reported statistics.
 
-For each MCA repetition $r$, we denote by
-$\tilde{\mathbf{x}}^{(r)} = (\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})^\top$
-the vector of perturbed measurements across $N$ subjects. Each perturbed
-observation is modeled as the sum of the subject's biological value and a
-numerical error term:
+For each MCA repetition $r$, we denote by $\tilde{\mathbf{x}}^{(r)} =
+    (\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})^\top$ the vector of perturbed
+measurements across $N$ subjects. Each perturbed observation is modeled as the
+sum of the subject's biological value and a numerical error term:
 \begin{equation*}
     \tilde{x}_i^{(r)} = x_i + \varepsilon_i^{(r)},
     \qquad
@@ -244,6 +243,7 @@ through the delta method as
 
 Table~\ref{tab:stat_uncertainty} summarizes the derived expressions for the
 numerical standard deviation of several common statistics.
+Proofs of partial derivations of sample statistics\footnote{mean, variance, standard-deviation, covariance, Pearson correlation coefficient and correlation identities.} used in the following sections are provided in the Supplementary Note~\ref{appendix:partial_derivatives_proofs}.
 
 \paragraph{Cohen's \textit{d}}
 
@@ -555,8 +555,8 @@ The first-order partial derivatives are:
     \frac{\partial R}{\partial a} = \frac{1}{D}, \qquad
     \frac{\partial R}{\partial b} = \frac{(1 - c^{2})(ab - c)}{D^{3}}.
 \]
-and the derivatives of the correlations with respect to $x_i$ are (see
-Eq.~\ref{eq:pearson_derivative}):
+and the derivatives of the correlations with respect to $x_i$ are
+(see Supplementary Eq.~\ref{eq:pearson_derivative})
 \[
     \frac{\partial a}{\partial x_i}
     =
@@ -608,8 +608,8 @@ thus $(\partial R / \partial x_i)^{2}$ is:
         \right].
 \end{align*}
 Using the correlation identities $\sum\alpha_i^2 = (n-1)(1 - a^{2})$,
-$\sum\beta_i^2 = (n-1)(1 - b^{2})$, $\sum\alpha_i\beta_i = (n-1)(c - ab)$ (see
-proof in Appendix~\ref{sec:correlation_identities}), and that
+$\sum\beta_i^2 = (n-1)(1 - b^{2})$, $\sum\alpha_i\beta_i = (n-1)(c - ab)$
+(see Supplementary Eq.~\ref{eq:correlation_identities}), and that
 $(1-b^{2})(1-c^{2})-(a-bc)^{2} = (1-a^{2})(1-b^{2})-(c-ab)^{2}$, we sum over all
 $i$ to obtain:
 \begin{align*}
@@ -730,11 +730,12 @@ Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$ leads to:
 
 To quantify the probability of significance flips findings arising from
 numerical variability, we model the computed $p$-value as a random variable
-following a Beta distribution, $p \sim \text{Beta}(a, b)$, which is suitable for
-modeling probabilities and proportions bounded on $[0,1]$. The distribution is
-parameterized by shape parameters $(a,b)$ determined from a target mean $\mu_p$
-and variance $\sigma_p^2$ estimated using the uncertainty propagation formulae
-reported in Table~\ref{tab:stat_uncertainty}. The parameters are given by:
+following a Beta distribution, $p \sim \text{Beta}(a, b)$, which is suitable
+for modeling probabilities and proportions bounded on $[0,1]$. The distribution
+is parameterized by shape parameters $(a,b)$ determined from a target mean
+$\mu_p$ and variance $\sigma_p^2$ estimated using the uncertainty propagation
+formulae reported in Table~\ref{tab:stat_uncertainty}. The parameters are given
+by:
 
 \begin{equation*}
     a = \mu_p\left(\frac{\mu_p(1 - \mu_p)}{\sigma_p^2} - 1\right), \quad
@@ -764,11 +765,11 @@ $p$-value $p_0$ lies above or below $\alpha$
 The probabilities for these outcomes are obtained by computing the cumulative
 distribution function (CDF) of the Beta distribution up to the threshold
 $\alpha$, as illustrated in Figure~\ref{fig:false-positives-model}. This
-probabilistic modeling provides an explicit link between numerical
-variability and classical Type~I and Type~II error rates, allowing us to
-isolate the contribution of numerical variability to spurious statistical
-significance. Numerical validation of this model is presented in Appendix
-Section~\ref{appendix:numerical_validation_flip_significance}.
+probabilistic modeling provides an explicit link between numerical variability
+and classical Type~I and Type~II error rates, allowing us to isolate the
+contribution of numerical variability to spurious statistical significance.
+Numerical validation of this model is presented in Supplementary
+Note~\ref{appendix:numerical_validation_flip_significance}.
 
 \vspace{1em}
 
@@ -801,14 +802,12 @@ Section~\ref{appendix:numerical_validation_flip_significance}.
                 \draw[dashed, axisGrey] (axis cs:0.25,0) -- (axis cs:0.25,3.2);
 
                 % --- Shading ---
-                % Area below alpha (Spurious Significance / "False Positive")
+                % Area below alpha 
                 \addplot[falseColor!30] fill between[of=H1Curve and xaxis, soft clip={domain=0:0.25}];
-                % Area above alpha (Consistent Negative)
+                % Area above alpha 
                 \addplot[trueColor!30] fill between[of=H1Curve and xaxis, soft clip={domain=0.25:1}];
 
                 % Labels
-                % Note: Check definitions of FN/TN in your preamble. 
-                % Standard stats: p0 > alpha is Negative. If noise makes p < alpha, it's a False Positive.
                 \node[falseColor!80!black] at (axis cs:0.1, 0.55) {\textbf{\FN}};
                 \node[trueColor!80!black] at (axis cs:0.45, 0.55) {\textbf{\TN}};
 
@@ -848,9 +847,9 @@ Section~\ref{appendix:numerical_validation_flip_significance}.
                 \draw[dashed, axisGrey] (axis cs:0.25,0) -- (axis cs:0.25,2.2);
 
                 % --- Shading ---
-                % Area below alpha (Consistent Positive)
+                % Area below alpha
                 \addplot[trueColor!30] fill between[of=H0Curve and xaxis, soft clip={domain=0:0.25}];
-                % Area above alpha (Missed Significance / "False Negative")
+                % Area above alpha
                 \addplot[falseColor!30] fill between[of=H0Curve and xaxis, soft clip={domain=0.25:1}];
 
                 % Labels

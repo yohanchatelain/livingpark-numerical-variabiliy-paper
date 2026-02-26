@@ -2,16 +2,25 @@
 
 \appendix
 
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{equation}{0}
+
+\section*{Supplementary Information}
+
 \section{Partial derivatives of sample statistics}
+\label{appendix:partial_derivatives_proofs}
 
 We derive below the partial derivatives of common sample statistics for a
 dataset \(x = \{x_1, x_2, \ldots, x_n\}\) with respect to an individual
 observation \(x_i\), where \(n\) denotes the sample size. The Kronecker delta
 \(\delta_{ij}\) equals 1 when \(i = j\) and 0 otherwise.
 
-\subsection{Sample Mean}
-\label{sec:sample_mean_derivation}
-
+\paragraph{Sample Mean.}
 The partial derivative of the sample mean with respect to \(x_i\) is constant:
 \begin{equation}
     \frac{\partial \overline{x}}{\partial x_i} = \frac{1}{n}.
@@ -33,8 +42,7 @@ The partial derivative of the sample mean with respect to \(x_i\) is constant:
     \]
 \end{proof}
 
-\subsection{Sample Variance}
-\label{sec:sample_variance_derivation}
+\paragraph{Sample Variance.}
 
 The partial derivative of the sample variance with respect to \(x_i\) is
 \begin{equation}
@@ -66,8 +74,7 @@ The partial derivative of the sample variance with respect to \(x_i\) is
     \]
 \end{proof}
 
-\subsection{Sample Standard Deviation}
-\label{sec:sample_std_derivation}
+\paragraph{Sample Standard Deviation.}
 
 The partial derivative of the sample standard deviation with respect to \(x_i\)
 is
@@ -85,8 +92,7 @@ is
     \end{align*}
 \end{proof}
 
-\subsection{Pooled Standard Deviation}
-\label{sec:pooled_std_derivation}
+\paragraph{Pooled Standard Deviation.}
 
 The pooled standard deviation is a weighted average of the variances of two
 groups \(|G_1|=n_1\) and \(|G_2|=n_2\) with \(df=n_1+n_2-2\). Its partial
@@ -113,8 +119,7 @@ derivative with respect to \(x_i\), \(i \in G_g\) is given by
     \end{align*}
 \end{proof}
 
-\subsection{Sample Covariance}
-\label{sec:sample_covariance_derivation}
+\paragraph{Sample Covariance.}
 
 The partial derivative of the sample covariance with respect to \(x_i\) is
 \begin{equation}
@@ -145,8 +150,8 @@ The partial derivative of the sample covariance with respect to \(x_i\) is
     \]
 \end{proof}
 
-\subsection{Pearson correlation coefficient}
-\label{sec:pearson_derivation}
+\paragraph{Pearson correlation coefficient.}
+
 The partial derivative of \(r_{x,y}\) with respect to an individual
 observation \(x_i\) is given by
 \begin{equation}
@@ -174,14 +179,14 @@ observation \(x_i\) is given by
     \end{align*}
 \end{proof}
 
-\subsection{Correlation identities}
-\label{sec:correlation_identities}
+\paragraph{Correlation identities.}
+
 Let \(\tilde{x}_i = (x_i - \overline{x})/s_x\), \(\tilde{y}_i = (y_i - \overline{y})/s_y\) and \(\tilde{z}_i = (z_i - \overline{z})/s_z\) be the standardized variables.
 The following identities hold:
 \begin{align}
     \sum_{i=1}^{n} \left( \tilde{x}_i - r_{xy} \tilde{y}_i \right)^{2}                                            & = (n-1)(1 - r_{xy}^2)          \\
     \sum_{i=1}^{n} \left( \tilde{y}_i - r_{xy} \tilde{x}_i \right)\left( \tilde{z}_i - r_{xz} \tilde{x}_i \right) & = (n-1)(r_{yz} - r_{xy}r_{xz})
-    \label{eq:correlation_identity}
+    \label{eq:correlation_identities}
 \end{align}
 
 \begin{proof}
@@ -204,10 +209,11 @@ The following identities hold:
     \end{align*}
 \end{proof}
 
-\section{Cross-sectional numerical variability quantification at baseline visit}
+\section{Cross-sectional numerical variability quantification}
+\label{appendix:numerical_variability_baseline}
 
 As a complementary component of our analysis, we quantified cross-sectional
-numerical variability for cortical and subcortical measures at baseline.
+numerical variability for cortical and subcortical measures.
 Numerical variability was assessed using two metrics: (1) the number of
 significant digits~\cite{sohier2021confidence} ($p_s=0.95$, confidence
 $1-\alpha_s=0.95$), calculated using the \texttt{significantdigits}
@@ -217,20 +223,21 @@ spatial overlap of segmentation masks across $n$ repetitions. The extended Dice
 coefficient is defined as:
 \begin{equation}
     \text{Dice}(A_1, A_2, \dots, A_n) = \frac{n \left| \bigcap_{i=1}^{n} A_i \right|}{\sum_{i=1}^{n} \left| A_i \right|},
+    \label{eq:dice}
 \end{equation}
-where $A_i$ represents the segmentation for the $i$-th Monte Carlo sample.
+where $A_i$ represents the segmentation for the $i$-th Monte Carlo observation.
 
 FreeSurfer 7.3.1 demonstrated limited numerical precision across all anatomical
-measures. Cortical metrics showed averages of $1.61 \pm 0.20$ significant
-digits for thickness, $1.33 \pm 0.23$ for surface area, and $1.33 \pm 0.23$ for
+measures. Cortical metrics showed averages of $1.62 \pm 0.20$ significant
+digits for thickness, $1.34 \pm 0.24$ for surface area, and $1.34 \pm 0.23$ for
 cortical volume (Figure~\ref{fig:sig_digits_cortical}). Subcortical volumes
 exhibited similar instability, with an average of $1.33 \pm 0.22$ significant
 digits (Figure~\ref{fig:sig_digits_subcortical}). These results indicate that,
 on average, FreeSurfer measurements are precise to only one decimal place, with
 specific instances exhibiting complete loss of significant digits. While
 variability was observed across all metrics, cortical thickness displayed the
-highest relative precision (range: $1.22-1.93$ digits), whereas surface area
-($0.82 - 1.72$) and cortical volume ($0.80 - 1.72$) were notably less stable.
+highest relative precision (range: $1.22-1.94$ digits), whereas surface area
+($0.83 - 1.73$) and cortical volume ($0.80 - 1.73$) were less stable.
 Table~\ref{tab:sig-cortical} and Table~\ref{tab:std-cortical} provide a
 detailed breakdown of within-subject significant digits and standard-deviation
 average across all subjects for each cortical region and metric.
@@ -238,14 +245,14 @@ Table~\ref{tab:sig-std-subcortical-volume} presents the corresponding data for
 subcortical regions.
 
 To assess spatial stability, we evaluated the volumetric overlap using the
-extended Sørensen-Dice coefficient. The analysis revealed substantial
-inter-subject and regional variability (Figure~\ref{fig:dice}). Cortical
-regions showed marked instability, with Dice coefficients ranging from $0.00$
-to $0.91$ (mean $0.75 \pm 0.11$), indicating that for some regions, numerical
-noise could lead to a complete lack of spatial overlap. Subcortical structures
-appeared comparatively more stable, ranging from $0.18$ to $0.94$ (mean $0.82
-    \pm 0.08$). Overall, subcortical segmentations demonstrated higher spatial
-robustness compared to cortical parcellations.
+extended Sørensen-Dice coefficient (Eq.~\ref{eq:dice}). The analysis revealed
+substantial inter-subject and regional variability (Figure~\ref{fig:dice}).
+Cortical regions showed marked instability, with Dice coefficients ranging from
+$0.00$ to $0.91$ (mean $0.73 \pm 0.13$), indicating that for some regions,
+numerical noise could lead to a complete lack of spatial overlap. Subcortical
+structures appeared comparatively more stable, ranging from $0.03$ to $0.94$
+(mean $0.81 \pm 0.09$). Overall, subcortical segmentations demonstrated higher
+spatial robustness compared to cortical parcellations.
 
 \begin{figure}[h]
     \centering
@@ -259,7 +266,7 @@ robustness compared to cortical parcellations.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{figures/sig_digits.pdf}
+    \includegraphics[width=\linewidth]{figures/significant_digits.pdf}
     \caption{Numerical precision of cortical measures. The number of significant
         digits for cortical thickness, surface area, and volume across regions.
         Lower values indicate higher instability. Significant digits for population
@@ -271,7 +278,7 @@ robustness compared to cortical parcellations.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{figures/sig_digits_subcortical_volume.pdf}
+    \includegraphics[width=\linewidth]{figures/significant_digits_subcortical_volume.pdf}
     \caption{Numerical precision of subcortical volumes. The number of
         significant digits estimated for each subcortical region, showing comparable
         instability to cortical volume measures. Significant digits for population
@@ -293,145 +300,42 @@ robustness compared to cortical parcellations.
                                                                           & lh                                &
     rh                                                                    & lh
                                                                           & rh                                & lh
-                                                                          & rh                                                                    \\
+                                                                          & rh                                                                                                                          \\
     \hline
-    bankssts                                                              & $1.65 \pm 0.16$                   &
-    $1.69 \pm 0.13$                                                       & $1.15 \pm 0.18$
-                                                                          & $1.21 \pm 0.13$                   & $1.08 \pm 0.17$ & $1.14 \pm 0.13$
-    \\
-    caudalanteriorcingulate                                               & $1.38 \pm 0.14$                   &
-    $1.40 \pm 0.14$                                                       & $1.14 \pm 0.22$
-                                                                          & $1.19 \pm 0.18$                   & $1.14 \pm 0.24$ & $1.21 \pm 0.20$
-    \\
-    caudalmiddlefrontal                                                   & $1.77 \pm 0.18$                   &
-    $1.77 \pm 0.19$                                                       & $1.40 \pm 0.21$
-                                                                          & $1.31 \pm 0.23$                   & $1.40 \pm 0.22$ & $1.30 \pm 0.23$
-    \\
-    cuneus                                                                & $1.52 \pm 0.19$                   &
-    $1.54 \pm 0.19$                                                       & $1.34 \pm 0.14$
-                                                                          & $1.33 \pm 0.14$                   & $1.32 \pm 0.14$ & $1.28 \pm 0.15$
-    \\
-    entorhinal                                                            & $1.22 \pm 0.23$                   &
-    $1.22 \pm 0.23$                                                       & $0.82 \pm 0.19$
-                                                                          & $0.87 \pm 0.18$                   & $0.80 \pm 0.19$ & $0.81 \pm 0.18$
-    \\
-    fusiform                                                              & $1.66 \pm 0.17$                   &
-    $1.71 \pm 0.16$                                                       & $1.41 \pm 0.18$
-                                                                          & $1.43 \pm 0.19$                   & $1.33 \pm 0.18$ & $1.37 \pm 0.20$
-    \\
-    inferiorparietal                                                      & $1.81 \pm 0.15$                   &
-    $1.82 \pm 0.13$                                                       & $1.53 \pm 0.18$
-                                                                          & $1.59 \pm 0.20$                   & $1.50 \pm 0.17$ & $1.56 \pm 0.17$
-    \\
-    inferiortemporal                                                      & $1.66 \pm 0.17$                   &
-    $1.70 \pm 0.16$                                                       & $1.37 \pm 0.25$
-                                                                          & $1.38 \pm 0.21$                   & $1.37 \pm 0.23$ & $1.41 \pm 0.19$
-    \\
-    isthmuscingulate                                                      & $1.46 \pm 0.12$                   &
-    $1.43 \pm 0.13$                                                       & $1.27 \pm 0.15$
-                                                                          & $1.24 \pm 0.15$                   & $1.27 \pm 0.14$ & $1.27 \pm 0.15$
-    \\
-    lateraloccipital                                                      & $1.75 \pm 0.18$                   &
-    $1.77 \pm 0.17$                                                       & $1.58 \pm 0.15$
-                                                                          & $1.57 \pm 0.16$                   & $1.49 \pm 0.16$ & $1.50 \pm 0.15$
-    \\
-    lateralorbitofrontal                                                  & $1.65 \pm 0.17$                   &
-    $1.51 \pm 0.15$                                                       & $1.44 \pm 0.23$
-                                                                          & $0.95 \pm 0.13$                   & $1.51 \pm 0.16$ & $1.12 \pm 0.14$
-    \\
-    lingual                                                               & $1.54 \pm 0.22$                   &
-    $1.52 \pm 0.21$                                                       & $1.47 \pm 0.18$
-                                                                          & $1.46 \pm 0.17$                   & $1.50 \pm 0.18$ & $1.49 \pm 0.18$
-    \\
-    medialorbitofrontal                                                   & $1.50 \pm 0.15$                   &
-    $1.53 \pm 0.15$                                                       & $1.09 \pm 0.16$
-                                                                          & $1.15 \pm 0.14$                   & $1.15 \pm 0.17$ & $1.21 \pm 0.13$
-    \\
-    middletemporal                                                        & $1.74 \pm 0.16$                   &
-    $1.81 \pm 0.14$                                                       & $1.42 \pm 0.23$
-                                                                          & $1.52 \pm 0.19$                   & $1.44 \pm 0.21$ & $1.55 \pm 0.18$
-    \\
-    parahippocampal                                                       & $1.54 \pm 0.14$                   &
-    $1.56 \pm 0.12$                                                       & $1.13 \pm 0.13$
-                                                                          & $1.09 \pm 0.13$                   & $1.11 \pm 0.13$ & $1.07 \pm 0.13$
-    \\
-    paracentral                                                           & $1.59 \pm 0.22$                   &
-    $1.60 \pm 0.22$                                                       & $1.40 \pm 0.17$
-                                                                          & $1.40 \pm 0.19$                   & $1.36 \pm 0.18$ & $1.36 \pm 0.20$
-    \\
-    parsopercularis                                                       & $1.74 \pm 0.17$                   &
-    $1.71 \pm 0.16$                                                       & $1.38 \pm 0.19$
-                                                                          & $1.30 \pm 0.18$                   & $1.38 \pm 0.19$ & $1.30 \pm 0.20$
-    \\
-    parsorbitalis                                                         & $1.53 \pm 0.20$                   &
-    $1.51 \pm 0.20$                                                       & $1.21 \pm 0.14$
-                                                                          & $1.21 \pm 0.18$                   & $1.19 \pm 0.16$ & $1.22 \pm 0.18$
-    \\
-    parstriangularis                                                      & $1.68 \pm 0.17$                   &
-    $1.63 \pm 0.19$                                                       & $1.33 \pm 0.16$
-                                                                          & $1.30 \pm 0.22$                   & $1.30 \pm 0.16$ & $1.28 \pm 0.21$
-    \\
-    pericalcarine                                                         & $1.33 \pm 0.21$                   &
-    $1.30 \pm 0.22$                                                       & $1.23 \pm 0.20$
-                                                                          & $1.21 \pm 0.22$                   & $1.18 \pm 0.17$ & $1.18 \pm 0.17$
-    \\
-    postcentral                                                           & $1.84 \pm 0.24$                   &
-    $1.81 \pm 0.26$                                                       & $1.68 \pm 0.23$
-                                                                          & $1.69 \pm 0.28$                   & $1.64 \pm 0.20$ & $1.63 \pm 0.24$
-    \\
-    posteriorcingulate                                                    & $1.57 \pm 0.13$                   &
-    $1.56 \pm 0.14$                                                       & $1.37 \pm 0.20$
-                                                                          & $1.35 \pm 0.21$                   & $1.39 \pm 0.19$ & $1.39 \pm 0.22$
-    \\
-    precentral                                                            & $1.79 \pm 0.26$                   &
-    $1.76 \pm 0.28$                                                       & $1.71 \pm 0.24$
-                                                                          & $1.64 \pm 0.27$                   & $1.72 \pm 0.22$ & $1.66 \pm 0.28$
-    \\
-    precuneus                                                             & $1.83 \pm 0.13$                   &
-    $1.84 \pm 0.13$                                                       & $1.65 \pm 0.21$
-                                                                          & $1.66 \pm 0.21$                   & $1.61 \pm 0.18$ & $1.62 \pm 0.19$
-    \\
-    rostralanteriorcingulate                                              & $1.34 \pm 0.14$                   &
-    $1.39 \pm 0.15$                                                       & $1.00 \pm 0.16$
-                                                                          & $1.07 \pm 0.17$                   & $1.11 \pm 0.19$ & $1.11 \pm 0.18$
-    \\
-    rostralmiddlefrontal                                                  & $1.77 \pm 0.19$                   &
-    $1.74 \pm 0.19$                                                       & $1.44 \pm 0.24$
-                                                                          & $1.41 \pm 0.28$                   & $1.49 \pm 0.21$ & $1.48 \pm 0.25$
-    \\
-    superiorfrontal                                                       & $1.87 \pm 0.17$                   &
-    $1.85 \pm 0.18$                                                       & $1.61 \pm 0.23$
-                                                                          & $1.56 \pm 0.27$                   & $1.64 \pm 0.21$ & $1.62 \pm 0.25$
-    \\
-    superiorparietal                                                      & $1.92 \pm 0.18$                   &
-    $1.93 \pm 0.17$                                                       & $1.72 \pm 0.24$
-                                                                          & $1.65 \pm 0.28$                   & $1.66 \pm 0.22$ & $1.60 \pm 0.26$
-    \\
-    superiortemporal                                                      & $1.83 \pm 0.17$                   &
-    $1.85 \pm 0.15$                                                       & $1.57 \pm 0.22$
-                                                                          & $1.58 \pm 0.18$                   & $1.52 \pm 0.21$ & $1.57 \pm 0.18$
-    \\
-    supramarginal                                                         & $1.83 \pm 0.16$                   &
-    $1.85 \pm 0.15$                                                       & $1.57 \pm 0.22$
-                                                                          & $1.59 \pm 0.26$                   & $1.56 \pm 0.20$ & $1.56 \pm 0.24$
-    \\
-    frontalpole                                                           & $1.26 \pm 0.23$                   &
-    $1.23 \pm 0.20$                                                       & $0.94 \pm 0.11$
-                                                                          & $0.91 \pm 0.11$                   & $0.88 \pm 0.17$ & $0.87 \pm 0.14$
-    \\
-    temporalpole                                                          & $1.24 \pm 0.26$                   &
-    $1.28 \pm 0.25$                                                       & $0.94 \pm 0.16$
-                                                                          & $0.99 \pm 0.19$                   & $0.86 \pm 0.20$ & $0.91 \pm 0.22$
-    \\
-    transversetemporal                                                    & $1.47 \pm 0.20$                   &
-    $1.46 \pm 0.18$                                                       & $1.17 \pm 0.13$
-                                                                          & $1.13 \pm 0.11$                   & $1.20 \pm 0.15$ & $1.15 \pm 0.13$
-    \\
-    insula                                                                & $1.47 \pm 0.16$                   &
-    $1.42 \pm 0.14$                                                       & $1.13 \pm 0.18$
-                                                                          & $1.00 \pm 0.18$                   & $1.29 \pm 0.16$ & $1.19 \pm 0.19$
-    \\
-\end{longtblr}
+    bankssts                                                              & $1.66 \pm 0.15$                   & $1.70 \pm 0.13$ & $1.16 \pm 0.17$ & $1.22 \pm 0.12$ & $1.09 \pm 0.17$ & $1.14 \pm 0.12$ \\
+    caudalanteriorcingulate                                               & $1.39 \pm 0.14$                   & $1.40 \pm 0.14$ & $1.15 \pm 0.22$ & $1.19 \pm 0.17$ & $1.15 \pm 0.23$ & $1.21 \pm 0.19$ \\
+    caudalmiddlefrontal                                                   & $1.78 \pm 0.17$                   & $1.78 \pm 0.18$ & $1.41 \pm 0.19$ & $1.32 \pm 0.21$ & $1.41 \pm 0.19$ & $1.31 \pm 0.21$ \\
+    cuneus                                                                & $1.53 \pm 0.19$                   & $1.54 \pm 0.18$ & $1.34 \pm 0.14$ & $1.33 \pm 0.13$ & $1.33 \pm 0.14$ & $1.28 \pm 0.15$ \\
+    entorhinal                                                            & $1.22 \pm 0.23$                   & $1.23 \pm 0.23$ & $0.83 \pm 0.18$ & $0.88 \pm 0.18$ & $0.80 \pm 0.19$ & $0.81 \pm 0.18$ \\
+    fusiform                                                              & $1.67 \pm 0.15$                   & $1.71 \pm 0.15$ & $1.41 \pm 0.17$ & $1.44 \pm 0.19$ & $1.34 \pm 0.18$ & $1.38 \pm 0.20$ \\
+    inferiorparietal                                                      & $1.81 \pm 0.14$                   & $1.83 \pm 0.12$ & $1.54 \pm 0.17$ & $1.60 \pm 0.19$ & $1.50 \pm 0.16$ & $1.57 \pm 0.16$ \\
+    inferiortemporal                                                      & $1.66 \pm 0.16$                   & $1.71 \pm 0.15$ & $1.38 \pm 0.24$ & $1.39 \pm 0.20$ & $1.37 \pm 0.22$ & $1.41 \pm 0.18$ \\
+    isthmuscingulate                                                      & $1.46 \pm 0.11$                   & $1.44 \pm 0.12$ & $1.27 \pm 0.14$ & $1.25 \pm 0.14$ & $1.27 \pm 0.13$ & $1.28 \pm 0.13$ \\
+    lateraloccipital                                                      & $1.76 \pm 0.17$                   & $1.78 \pm 0.16$ & $1.58 \pm 0.15$ & $1.57 \pm 0.16$ & $1.50 \pm 0.15$ & $1.51 \pm 0.15$ \\
+    lateralorbitofrontal                                                  & $1.65 \pm 0.17$                   & $1.52 \pm 0.15$ & $1.45 \pm 0.23$ & $0.95 \pm 0.13$ & $1.52 \pm 0.15$ & $1.11 \pm 0.13$ \\
+    lingual                                                               & $1.54 \pm 0.21$                   & $1.52 \pm 0.21$ & $1.47 \pm 0.18$ & $1.46 \pm 0.17$ & $1.50 \pm 0.17$ & $1.50 \pm 0.17$ \\
+    medialorbitofrontal                                                   & $1.50 \pm 0.15$                   & $1.54 \pm 0.15$ & $1.09 \pm 0.16$ & $1.16 \pm 0.14$ & $1.15 \pm 0.16$ & $1.21 \pm 0.12$ \\
+    middletemporal                                                        & $1.75 \pm 0.15$                   & $1.82 \pm 0.13$ & $1.43 \pm 0.22$ & $1.54 \pm 0.18$ & $1.44 \pm 0.21$ & $1.56 \pm 0.17$ \\
+    parahippocampal                                                       & $1.54 \pm 0.14$                   & $1.57 \pm 0.12$ & $1.14 \pm 0.13$ & $1.09 \pm 0.13$ & $1.12 \pm 0.13$ & $1.07 \pm 0.13$ \\
+    paracentral                                                           & $1.60 \pm 0.21$                   & $1.61 \pm 0.21$ & $1.41 \pm 0.16$ & $1.41 \pm 0.19$ & $1.37 \pm 0.16$ & $1.37 \pm 0.19$ \\
+    parsopercularis                                                       & $1.75 \pm 0.15$                   & $1.72 \pm 0.15$ & $1.39 \pm 0.17$ & $1.30 \pm 0.17$ & $1.39 \pm 0.17$ & $1.31 \pm 0.19$ \\
+    parsorbitalis                                                         & $1.54 \pm 0.20$                   & $1.52 \pm 0.20$ & $1.21 \pm 0.14$ & $1.22 \pm 0.18$ & $1.20 \pm 0.15$ & $1.22 \pm 0.18$ \\
+    parstriangularis                                                      & $1.68 \pm 0.17$                   & $1.64 \pm 0.18$ & $1.33 \pm 0.15$ & $1.31 \pm 0.21$ & $1.31 \pm 0.15$ & $1.29 \pm 0.20$ \\
+    pericalcarine                                                         & $1.33 \pm 0.21$                   & $1.31 \pm 0.22$ & $1.23 \pm 0.20$ & $1.22 \pm 0.21$ & $1.18 \pm 0.17$ & $1.18 \pm 0.16$ \\
+    postcentral                                                           & $1.84 \pm 0.23$                   & $1.83 \pm 0.25$ & $1.68 \pm 0.22$ & $1.70 \pm 0.27$ & $1.65 \pm 0.18$ & $1.64 \pm 0.23$ \\
+    posteriorcingulate                                                    & $1.57 \pm 0.13$                   & $1.56 \pm 0.14$ & $1.38 \pm 0.20$ & $1.35 \pm 0.21$ & $1.39 \pm 0.18$ & $1.39 \pm 0.22$ \\
+    precentral                                                            & $1.80 \pm 0.24$                   & $1.78 \pm 0.27$ & $1.72 \pm 0.22$ & $1.65 \pm 0.26$ & $1.73 \pm 0.20$ & $1.68 \pm 0.25$ \\
+    precuneus                                                             & $1.83 \pm 0.12$                   & $1.85 \pm 0.12$ & $1.67 \pm 0.19$ & $1.68 \pm 0.19$ & $1.62 \pm 0.16$ & $1.63 \pm 0.17$ \\
+    rostralanteriorcingulate                                              & $1.35 \pm 0.13$                   & $1.39 \pm 0.14$ & $1.00 \pm 0.16$ & $1.08 \pm 0.16$ & $1.11 \pm 0.18$ & $1.11 \pm 0.17$ \\
+    rostralmiddlefrontal                                                  & $1.78 \pm 0.18$                   & $1.75 \pm 0.18$ & $1.46 \pm 0.23$ & $1.43 \pm 0.27$ & $1.50 \pm 0.20$ & $1.49 \pm 0.24$ \\
+    superiorfrontal                                                       & $1.88 \pm 0.17$                   & $1.87 \pm 0.17$ & $1.62 \pm 0.22$ & $1.57 \pm 0.25$ & $1.65 \pm 0.19$ & $1.63 \pm 0.23$ \\
+    superiorparietal                                                      & $1.92 \pm 0.17$                   & $1.94 \pm 0.16$ & $1.73 \pm 0.22$ & $1.67 \pm 0.25$ & $1.68 \pm 0.20$ & $1.61 \pm 0.24$ \\
+    superiortemporal                                                      & $1.84 \pm 0.16$                   & $1.86 \pm 0.14$ & $1.58 \pm 0.21$ & $1.59 \pm 0.17$ & $1.53 \pm 0.20$ & $1.58 \pm 0.16$ \\
+    supramarginal                                                         & $1.84 \pm 0.14$                   & $1.86 \pm 0.14$ & $1.58 \pm 0.19$ & $1.60 \pm 0.23$ & $1.57 \pm 0.18$ & $1.57 \pm 0.22$ \\
+    frontalpole                                                           & $1.27 \pm 0.23$                   & $1.24 \pm 0.20$ & $0.94 \pm 0.11$ & $0.91 \pm 0.11$ & $0.89 \pm 0.16$ & $0.87 \pm 0.14$ \\
+    temporalpole                                                          & $1.24 \pm 0.25$                   & $1.28 \pm 0.24$ & $0.94 \pm 0.16$ & $1.00 \pm 0.18$ & $0.87 \pm 0.20$ & $0.92 \pm 0.21$ \\
+    transversetemporal                                                    & $1.48 \pm 0.19$                   & $1.47 \pm 0.18$ & $1.18 \pm 0.12$ & $1.13 \pm 0.11$ & $1.21 \pm 0.14$ & $1.15 \pm 0.12$ \\
+    insula                                                                & $1.47 \pm 0.15$                   & $1.43 \pm 0.13$ & $1.13 \pm 0.17$ & $1.00 \pm 0.17$ & $1.29 \pm 0.16$ & $1.18 \pm 0.18$ \\\end{longtblr}
 
 \begin{longtblr}[ caption={Within-subject standard-deviation average across all subjects for
                 cortical metrics.}, label={tab:std-cortical}, ]{
@@ -439,190 +343,79 @@ robustness compared to cortical parcellations.
         row{even}={white,font=\footnotesize},
         row{odd}={gray9,font=\footnotesize}, rows = {rowsep=0pt},
         rowhead=2, row{1}={white,font=\bfseries}, row{2}={gray9}}
-    \SetCell[c=1]{c}Region   & \SetCell[c=2]{c}{cortical thickness                                      \\
-    (mm)}                    &                                     & \SetCell[c=2]{c}{surface area      \\
+    \SetCell[c=1]{c}Region   & \SetCell[c=2]{c}{cortical thickness                                                                                                                                     \\
+    (mm)}                    &                                     & \SetCell[c=2]{c}{surface area                                                                                                     \\
     ($\text{mm}^2$)}         &                                     &
-    \SetCell[c=2]{c}{cortical volume                                                                    \\ ($\text{mm}^3$)} &
+    \SetCell[c=2]{c}{cortical volume                                                                                                                                                                   \\ ($\text{mm}^3$)} &
     \\
                              & lh                                  & rh                            & lh
                              & rh                                  & lh                            & rh
     \\
     \hline
-    bankssts                 & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z28.65 \pm \z15.97$               & $\z21.73
-    \pm \z\z8.68$            & $\z77.25 \pm \z37.44$               & $\z59.87
-        \pm \z20.45$
-    \\
-    caudalanteriorcingulate  & $0.04 \pm 0.01$                     & $0.04 \pm
-    0.01$                    & $\z19.98 \pm \z13.83$               & $\z21.01
-    \pm \z14.96$             & $\z51.33 \pm \z37.32$               & $\z51.67
-        \pm \z41.74$
-    \\
-    caudalmiddlefrontal      & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z38.58 \pm \z36.77$               & $\z46.65
-    \pm \z44.68$             & $104.41 \pm 108.02$                 & $124.11 \pm
-    112.10$                                                                                             \\
-    cuneus                   & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z28.45 \pm \z11.50$               & $\z31.25
-    \pm \z15.67$             & $\z60.72 \pm \z25.52$               & $\z74.77
-        \pm \z34.16$
-    \\
-    entorhinal               & $0.08 \pm 0.05$                     & $0.08 \pm
-    0.05$                    & $\z27.41 \pm \z16.67$               & $\z22.37
-    \pm \z11.70$             & $125.48 \pm \z71.07$                & $115.94 \pm
-    \z57.21$                                                                                            \\
-    fusiform                 & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z50.70 \pm \z25.16$               & $\z47.86
-    \pm \z28.19$             & $182.92 \pm \z92.31$                & $170.22 \pm
-    103.05$                                                                                             \\
-    inferiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\z53.01 \pm \z29.19$               & $\z59.90
-    \pm \z50.62$             & $145.66 \pm \z72.95$                & $159.55 \pm
-    110.14$                                                                                             \\
-    inferiortemporal         & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z64.73 \pm \z42.27$               & $\z58.75
-    \pm \z34.04$             & $198.15 \pm 127.44$                 & $168.38 \pm
-    \z84.67$                                                                                            \\
-    isthmuscingulate         & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\z23.74 \pm \z11.07$               & $\z23.35
-    \pm \z13.99$             & $\z57.43 \pm \z29.59$               & $\z53.05
-        \pm \z34.34$
-    \\
-    lateraloccipital         & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z53.82 \pm \z24.63$               & $\z56.35
-    \pm \z28.61$             & $156.83 \pm \z66.16$                & $160.98 \pm
-    \z76.00$                                                                                            \\
-    lateralorbitofrontal     & $0.02 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\z43.31 \pm \z30.16$               & $117.14 \pm
-    \z33.75$                 & $\z92.60 \pm \z56.29$               & $217.89 \pm
-    \z69.06$                                                                                            \\
-    lingual                  & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\z44.26 \pm \z22.65$               & $\z46.73
-    \pm \z23.96$             & $\z89.19 \pm \z46.24$               & $\z95.82
-        \pm \z49.65$
-    \\
-    medialorbitofrontal      & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\z66.04 \pm \z24.11$               & $\z58.06
-    \pm \z19.00$             & $147.37 \pm \z57.84$                & $134.52 \pm
-    \z42.26$                                                                                            \\
-    middletemporal           & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z53.01 \pm \z34.97$               & $\z44.87
-    \pm \z28.36$             & $165.49 \pm 108.52$                 & $135.26 \pm
-    \z77.98$                                                                                            \\
-    parahippocampal          & $0.03 \pm 0.01$                     & $0.03 \pm
-    0.01$                    & $\z19.55 \pm \z\z8.42$              & $\z20.45
-    \pm \z\z7.81$            & $\z64.22 \pm \z25.29$               & $\z65.43
-        \pm \z24.59$
-    \\
-    paracentral              & $0.03 \pm 0.02$                     & $0.03 \pm
-    0.01$                    & $\z22.94 \pm \z12.98$               & $\z26.94
-    \pm \z19.80$             & $\z63.71 \pm \z40.74$               & $\z73.88
-        \pm \z56.66$
-    \\
-    parsopercularis          & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z28.65 \pm \z28.77$               & $\z29.46
-    \pm \z26.82$             & $\z80.67 \pm \z92.87$               & $\z82.38
-        \pm \z89.16$
-    \\
-    parsorbitalis            & $0.03 \pm 0.02$                     & $0.03 \pm
-    0.02$                    & $\z17.82 \pm \z\z9.77$              & $\z21.41
-    \pm \z10.66$             & $\z60.63 \pm \z45.20$               & $\z68.18
-        \pm \z36.64$
-    \\
-    parstriangularis         & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z25.67 \pm \z14.65$               & $\z34.86
-    \pm \z37.79$             & $\z71.73 \pm \z45.49$               & $\z96.87
-        \pm 102.22$
-    \\
-    pericalcarine            & $0.03 \pm 0.02$                     & $0.04 \pm
-    0.02$                    & $\z36.04 \pm \z20.18$               & $\z42.02
-    \pm \z24.82$             & $\z59.64 \pm \z29.98$               & $\z68.61
-        \pm \z34.89$
-    \\
-    postcentral              & $0.01 \pm 0.02$                     & $0.02 \pm
-    0.02$                    & $\z43.47 \pm \z67.12$               & $\z45.98
-    \pm \z83.10$             & $100.26 \pm 121.35$                 & $104.53 \pm
-    156.51$                                                                                             \\
-    posteriorcingulate       & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z21.93 \pm \z13.05$               & $\z24.39
-    \pm \z19.52$             & $\z52.42 \pm \z33.33$               & $\z56.27
-        \pm \z52.59$
-    \\
-    precentral               & $0.02 \pm 0.02$                     & $0.02 \pm
-    0.02$                    & $\z46.92 \pm \z53.54$               & $\z57.46
-    \pm \z70.35$             & $118.04 \pm 157.21$                 & $148.21 \pm
-    233.10$                                                                                             \\
-    precuneus                & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.00$                    & $\z38.04 \pm \z42.87$               & $\z38.95
-    \pm \z40.96$             & $100.91 \pm 111.15$                 & $102.24 \pm
-    \z96.62$                                                                                            \\
-    rostralanteriorcingulate & $0.05 \pm 0.02$                     & $0.04 \pm
-    0.02$                    & $\z34.80 \pm \z15.03$               & $\z22.00
-    \pm \z10.59$             & $\z81.04 \pm \z41.59$               & $\z61.95
-        \pm \z33.93$
-    \\
-    rostralmiddlefrontal     & $0.02 \pm 0.01$                     & $0.02 \pm
-    0.01$                    & $\z92.87 \pm \z96.23$               & $108.40 \pm
-    132.97$                  & $213.81 \pm 259.58$                 & $252.00 \pm
-    358.20$                                                                                             \\
-    superiorfrontal          & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\z85.23 \pm \z86.47$               & $\z98.14
-    \pm 120.75$              & $223.91 \pm 234.89$                 & $243.75 \pm
-    304.56$                                                                                             \\
-    superiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\z49.49 \pm \z80.81$               & $\z62.89
-    \pm \z96.86$             & $132.77 \pm 207.97$                 & $161.39 \pm
-    235.01$                                                                                             \\
-    superiortemporal         & $0.02 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\z47.70 \pm \z33.64$               & $\z41.38
-    \pm \z23.84$             & $156.30 \pm 101.85$                 & $129.01 \pm
-    \z78.70$                                                                                            \\
-    supramarginal            & $0.01 \pm 0.01$                     & $0.01 \pm
-    0.01$                    & $\z50.87 \pm \z58.82$               & $\z50.06
-    \pm \z83.24$             & $136.23 \pm 168.28$                 & $133.99 \pm
-    207.69$                                                                                             \\
-    frontalpole              & $0.07 \pm 0.04$                     & $0.07 \pm
-    0.04$                    & $\z12.99 \pm \z\z4.02$              & $\z16.42
-    \pm \z\z4.47$            & $\z56.49 \pm \z32.17$               & $\z67.84
-        \pm \z28.93$
-    \\
-    temporalpole             & $0.09 \pm 0.05$                     & $0.08 \pm
-    0.05$                    & $\z25.08 \pm \z10.71$               & $\z22.16
-    \pm \z11.78$             & $154.60 \pm \z79.32$                & $138.28 \pm
-    \z78.33$                                                                                            \\
-    transversetemporal       & $0.03 \pm 0.02$                     & $0.03 \pm
-    0.02$                    & $\z12.73 \pm \z\z5.33$              & $\z\z9.98
-    \pm \z\z3.33$            & $\z29.55 \pm \z12.34$               & $\z24.91
-        \pm \z\z8.79$
-    \\
-    insula                   & $0.04 \pm 0.02$                     & $0.04 \pm
-    0.01$                    & $\z73.45 \pm \z30.66$               & $\z95.70
-    \pm \z37.63$             & $146.49 \pm \z64.11$                & $183.39 \pm
-    \z81.47$                                                                                            \\
+    bankssts                 & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z27.27 \pm \z12.31$  & $\z21.23 \pm \z\z6.77$  & $\z74.82 \pm \z33.80$ & $\z59.56 \pm \z19.75$  \\
+    caudalanteriorcingulate  & $0.04 \pm 0.01$                     & $0.04 \pm 0.01$               & $\z19.30 \pm \z12.89$  & $\z19.96 \pm \z10.26$   & $\z49.88 \pm \z35.51$ & $\z49.51 \pm \z29.83$  \\
+    caudalmiddlefrontal      & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z35.84 \pm \z25.90$  & $\z43.79 \pm \z40.86$   & $\z97.03 \pm \z75.10$ & $118.40 \pm 103.50$    \\
+    cuneus                   & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z28.10 \pm \z11.52$  & $\z30.55 \pm \z11.58$   & $\z59.82 \pm \z25.31$ & $\z74.10 \pm \z33.48$  \\
+    entorhinal               & $0.08 \pm 0.05$                     & $0.08 \pm 0.05$               & $\z26.61 \pm \z14.27$  & $\z21.77 \pm \z10.84$   & $123.91 \pm \z71.51$  & $113.59 \pm \z54.35$   \\
+    fusiform                 & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z49.89 \pm \z24.61$  & $\z46.46 \pm \z25.84$   & $180.70 \pm \z89.05$  & $166.81 \pm 100.45$    \\
+    inferiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm 0.00$               & $\z51.59 \pm \z28.04$  & $\z56.02 \pm \z34.37$   & $142.05 \pm \z66.60$  & $154.27 \pm \z83.39$   \\
+    inferiortemporal         & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z62.57 \pm \z40.30$  & $\z55.44 \pm \z28.39$   & $193.69 \pm 126.22$   & $162.93 \pm \z73.79$   \\
+    isthmuscingulate         & $0.03 \pm 0.01$                     & $0.03 \pm 0.01$               & $\z23.35 \pm \z10.50$  & $\z22.37 \pm \z\z9.36$  & $\z55.89 \pm \z27.93$ & $\z50.62 \pm \z20.49$  \\
+    lateraloccipital         & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z53.42 \pm \z25.36$  & $\z54.41 \pm \z23.83$   & $155.09 \pm \z64.52$  & $157.13 \pm \z63.76$   \\
+    lateralorbitofrontal     & $0.02 \pm 0.01$                     & $0.03 \pm 0.01$               & $\z41.96 \pm \z27.54$  & $117.56 \pm \z34.52$    & $\z90.37 \pm \z46.33$ & $219.18 \pm \z66.60$   \\
+    lingual                  & $0.02 \pm 0.01$                     & $0.03 \pm 0.01$               & $\z43.28 \pm \z22.69$  & $\z45.84 \pm \z21.91$   & $\z87.96 \pm \z44.06$ & $\z94.17 \pm \z47.94$  \\
+    medialorbitofrontal      & $0.03 \pm 0.01$                     & $0.03 \pm 0.01$               & $\z66.45 \pm \z24.41$  & $\z57.66 \pm \z18.60$   & $147.05 \pm \z57.44$  & $133.80 \pm \z39.83$   \\
+    middletemporal           & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z51.62 \pm \z34.71$  & $\z42.47 \pm \z21.33$   & $163.34 \pm 112.66$   & $130.25 \pm \z69.43$   \\
+    parahippocampal          & $0.03 \pm 0.01$                     & $0.03 \pm 0.01$               & $\z19.41 \pm \z\z8.04$ & $\z20.41 \pm \z\z7.78$  & $\z63.72 \pm \z25.09$ & $\z65.29 \pm \z25.31$  \\
+    paracentral              & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z22.31 \pm \z10.65$  & $\z26.25 \pm \z19.09$   & $\z62.06 \pm \z32.19$ & $\z72.35 \pm \z52.53$  \\
+    parsopercularis          & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z26.87 \pm \z22.11$  & $\z28.29 \pm \z26.23$   & $\z75.38 \pm \z73.36$ & $\z78.43 \pm \z82.86$  \\
+    parsorbitalis            & $0.03 \pm 0.02$                     & $0.03 \pm 0.02$               & $\z17.41 \pm \z\z7.43$ & $\z21.16 \pm \z10.84$   & $\z58.47 \pm \z30.32$ & $\z66.97 \pm \z36.20$  \\
+    parstriangularis         & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z24.94 \pm \z12.71$  & $\z33.23 \pm \z34.08$   & $\z69.56 \pm \z35.25$ & $\z91.80 \pm \z92.84$  \\
+    pericalcarine            & $0.03 \pm 0.02$                     & $0.04 \pm 0.02$               & $\z36.06 \pm \z20.78$  & $\z40.87 \pm \z22.31$   & $\z59.39 \pm \z30.30$ & $\z67.43 \pm \z30.27$  \\
+    postcentral              & $0.01 \pm 0.02$                     & $0.01 \pm 0.02$               & $\z40.59 \pm \z51.94$  & $\z43.59 \pm \z79.24$   & $\z94.87 \pm \z86.49$ & $100.06 \pm 142.98$    \\
+    posteriorcingulate       & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z21.77 \pm \z13.34$  & $\z23.99 \pm \z18.96$   & $\z51.65 \pm \z32.20$ & $\z56.06 \pm \z53.38$  \\
+    precentral               & $0.02 \pm 0.02$                     & $0.02 \pm 0.02$               & $\z43.62 \pm \z39.38$  & $\z55.94 \pm \z73.28$   & $108.19 \pm 111.74$   & $138.97 \pm 231.57$    \\
+    precuneus                & $0.01 \pm 0.00$                     & $0.01 \pm 0.00$               & $\z36.28 \pm \z40.87$  & $\z35.39 \pm \z26.91$   & $\z96.75 \pm 105.71$  & $\z95.33 \pm \z70.33$  \\
+    rostralanteriorcingulate & $0.05 \pm 0.02$                     & $0.04 \pm 0.02$               & $\z34.36 \pm \z14.18$  & $\z21.45 \pm \z\z9.11$  & $\z80.02 \pm \z40.40$ & $\z60.81 \pm \z29.66$  \\
+    rostralmiddlefrontal     & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z87.41 \pm \z85.86$  & $102.23 \pm 126.07$     & $200.08 \pm 219.10$   & $237.94 \pm 343.51$    \\
+    superiorfrontal          & $0.01 \pm 0.01$                     & $0.01 \pm 0.01$               & $\z80.01 \pm \z76.79$  & $\z90.69 \pm 101.55$    & $210.90 \pm 196.48$   & $229.26 \pm 269.13$    \\
+    superiorparietal         & $0.01 \pm 0.01$                     & $0.01 \pm 0.00$               & $\z46.45 \pm \z72.33$  & $\z56.57 \pm \z80.57$   & $124.42 \pm 190.52$   & $149.45 \pm 203.55$    \\
+    superiortemporal         & $0.02 \pm 0.01$                     & $0.01 \pm 0.01$               & $\z46.10 \pm \z29.52$  & $\z39.74 \pm \z18.32$   & $152.84 \pm \z90.37$  & $122.30 \pm \z58.09$   \\
+    supramarginal            & $0.01 \pm 0.01$                     & $0.01 \pm 0.00$               & $\z46.84 \pm \z49.40$  & $\z45.11 \pm \z68.05$   & $127.44 \pm 139.22$   & $124.56 \pm 180.11$    \\
+    frontalpole              & $0.06 \pm 0.04$                     & $0.07 \pm 0.04$               & $\z12.85 \pm \z\z3.78$ & $\z16.28 \pm \z\z4.42$  & $\z55.13 \pm \z30.96$ & $\z66.50 \pm \z26.70$  \\
+    temporalpole             & $0.09 \pm 0.05$                     & $0.08 \pm 0.05$               & $\z24.83 \pm \z10.67$  & $\z21.55 \pm \z11.12$   & $151.09 \pm \z79.63$  & $134.74 \pm \z74.22$   \\
+    transversetemporal       & $0.03 \pm 0.02$                     & $0.03 \pm 0.01$               & $\z12.50 \pm \z\z4.55$ & $\z\z9.84 \pm \z\z2.97$ & $\z29.19 \pm \z10.93$ & $\z24.48 \pm \z\z8.24$ \\
+    insula                   & $0.04 \pm 0.01$                     & $0.04 \pm 0.01$               & $\z72.75 \pm \z29.05$  & $\z95.26 \pm \z35.62$   & $144.91 \pm \z56.35$  & $184.82 \pm \z78.92$   \\
 \end{longtblr}
 
-\begin{longtblr}[ caption={Within-subject significant digits averaged across all
-                subjects for subcortical volumes.},
-        label={tab:sig-std-subcortical-volume},]{ colspec={lc|c},
+\begin{longtblr}[
+        caption={Within-subject significant digits averaged across all subjects for subcortical volumes.},
+        label={tab:sig-std-subcortical-volume},
+    ]{
+        colspec={lc|c},
         row{even}={gray9,font=\footnotesize},
-        row{odd}={white,font=\footnotesize}, rows = {rowsep=0pt},
-    row{Z}={font=\small}, rowhead=1, row{1}={font=\bfseries}} Region &
-    Significant digits                                               & {Standard deviation                        \\ ($\text{mm}^3$)} \\
+        row{odd}={white,font=\footnotesize},
+        rows={rowsep=0pt},
+        row{Z}={font=\small},
+        rowhead=1,
+        row{1}={font=\bfseries}
+    }
+    Region               & Significant digits & {Standard deviation  \\ ($\text{mm}^3$)} \\
     \hline
-    Left-Thalamus                                                    & $1.42 \pm 0.21$     & $120.08  \pm 69.61$  \\
-    Left-Caudate                                                     & $1.57 \pm 0.20$     & $\z38.83 \pm 25.11$  \\
-    Left-Putamen                                                     & $1.49 \pm 0.22$     & $\z65.88 \pm 46.39$  \\
-    Left-Pallidum                                                    & $1.25 \pm 0.19$     & $\z47.81 \pm 25.09$  \\
-    Left-Hippocampus                                                 & $1.48 \pm 0.17$     & $\z56.23 \pm 41.03$  \\
-    Left-Amygdala                                                    & $1.13 \pm 0.16$     & $\z48.71 \pm 20.04$  \\
-    Left-Accumbens-area                                              & $0.88 \pm 0.16$     & $\z24.20 \pm \z8.80$ \\
-    Right-Thalamus                                                   & $1.42 \pm 0.20$     & $118.92  \pm 68.76$  \\
-    Right-Caudate                                                    & $1.51 \pm 0.24$     & $\z49.37 \pm 42.71$  \\
-    Right-Putamen                                                    & $1.51 \pm 0.25$     & $\z68.07 \pm 70.23$  \\
-    Right-Pallidum                                                   & $1.22 \pm 0.19$     & $\z49.11 \pm 30.50$  \\
-    Right-Hippocampus                                                & $1.55 \pm 0.18$     & $\z48.59 \pm 28.98$  \\
-    Right-Amygdala                                                   & $1.23 \pm 0.17$     & $\z42.21 \pm 18.68$  \\
-    Right-Accumbens-area                                             & $0.99 \pm 0.15$     & $\z20.50 \pm \z7.72$ \\
+    Left-Thalamus        & $1.41 \pm 0.21$    & $121.72 \pm 68.93$   \\
+    Left-Caudate         & $1.58 \pm 0.20$    & $\z37.92 \pm 24.01$  \\
+    Left-Putamen         & $1.49 \pm 0.22$    & $\z65.18 \pm 46.06$  \\
+    Left-Pallidum        & $1.25 \pm 0.19$    & $\z47.39 \pm 24.91$  \\
+    Left-Hippocampus     & $1.48 \pm 0.17$    & $\z55.50 \pm 39.50$  \\
+    Left-Amygdala        & $1.13 \pm 0.15$    & $\z48.19 \pm 19.29$  \\
+    Left-Accumbens-area  & $0.88 \pm 0.16$    & $\z24.16 \pm \z8.70$ \\
+    Right-Thalamus       & $1.42 \pm 0.20$    & $118.52 \pm 70.08$   \\
+    Right-Caudate        & $1.52 \pm 0.24$    & $\z48.78 \pm 44.28$  \\
+    Right-Putamen        & $1.51 \pm 0.25$    & $\z67.42 \pm 70.59$  \\
+    Right-Pallidum       & $1.23 \pm 0.19$    & $\z48.00 \pm 27.88$  \\
+    Right-Hippocampus    & $1.55 \pm 0.17$    & $\z48.26 \pm 29.47$  \\
+    Right-Amygdala       & $1.23 \pm 0.17$    & $\z41.77 \pm 18.52$  \\
+    Right-Accumbens-area & $0.99 \pm 0.15$    & $\z20.74 \pm \z7.60$ \\
 \end{longtblr}
 
 \begin{table}[h]
@@ -644,91 +437,13 @@ robustness compared to cortical parcellations.
     \label{tab:qc}
 \end{table}
 
-% \begin{table}[h!]
-%     \centering
-%     \begin{tabular}{c|lcc}
-%         \toprule
-%         \textbf{Status} & \textbf{Cohort}             & \textbf{HC}
-%                         & \textbf{PD-non-MCI}
-%         \\
-%         \hline
-%         \multirow{5}{*}{\textbf{\shortstack{Before                               \\QC}}} & n
-%                         & 106                         & 181                      \\
-%                         & Age (y)                     & $60.6 \pm 10.2   $
-%                         & $61.7 \pm \z9.6$
-%         \\
-%                         & Age range                   & $30.6 - 84.3  $
-%                         & $36.3 - 83.3$
-%         \\
-%                         & Gender (male, \%)           & $58 \; (54.7\%)   $
-%                         & $119 \; (65.7\%)          $                            \\
-%                         & Education (y)               & $16.6 \pm \z3.3  $
-%                         & $15.9 \pm \z2.9$                                       \\
-%         \hline
-%         \multirow{8}{*}{\textbf{\shortstack{After                                \\QC}}} & n
-%                         & $89$                        & $112                   $ \\
-%                         & Age (y)                     & $60.7 \pm 10.3   $
-%                         & $60.6 \pm \z8.9        $
-%         \\
-%                         & Age range                   & $30.6 - 79.8  $
-%                         & $39.2 - 78.3           $
-%         \\
-%                         & Gender (male, \%)           & $47 \; (52.8\%)   $
-%                         & $74 \; (66.1\%)        $
-%         \\
-%                         & Education (y)               & $16.0 \pm \z3.1  $
-%                         & $16.1 \pm \z3.1        $
-%         \\
-%                         & UPDRS III OFF baseline      & $-            $
-%                         & $23.3 \pm 10.0         $
-%         \\
-%                         & UPDRS III OFF follow-up     & $-            $
-%                         & $25.6 \pm 11.2         $
-%         \\
-%                         & Duration T2 - T1 (y)        & $\z1.4 \pm \z0.5 $
-%                         & $\z1.4 \pm \z0.6       $
-%         \\
-%         \bottomrule
-%     \end{tabular}
-%     \vspace{1em}
-
-%     \textbf{Abbreviations:} MCI = Mild Cognitive Impairment; UPDRS = Unified
-%     Parkinson's Disease Rating Scale; PD = Parkinson's disease. Descriptive
-%     statistics before and after quality control (QC). Values are expressed as
-%     mean $\pm$ standard deviation. PD-non-MCI longitudinal sample is a subsample
-%     of the PD-non-MCI original sample that had longitudinal data and disease
-%     severity scores available.
-%     \label{tab:cohort_stat_vertical}
-% \end{table}
-
-\section{Numerical-Population Variability Ratio (\npvr)}
-
-\subsection{\npvr maps}
-
-Figure~\ref{fig:npvr_maps_area_volume} shows the \npvr maps for cortical
-surface area and volume, for each region. The color scale indicates the \npvr
-value, with warmer colors indicating higher \npvr values. The maps provide a
-visual representation of the variability in the \npvr values across different
-cortical regions, highlighting regions with higher or lower \npvr values.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figures/NPV_map/figure_area_volume.pdf}
-    \caption{Numerical-Population Variability Ratio (\npvr) for cortical surface
-        area (top row in each panel) and cortical volume (bottom row) in HC
-        and PD. Panels show \npvr{} maps at baseline for PD and HC,
-        longitudinally for HC and PD. Higher \npvr{} values indicate greater
-        computational uncertainty relative to inter-subject anatomical
-        variability. Warmer colors denote higher \npvr{} values.}
-    \label{fig:npvr_maps_area_volume}
-\end{figure}
-
-\subsection{Consistency results}
+\section{Numerical instability of statistical inference details}
+\label{appendix:summary_stats_inference}
 
 We evaluated the stability of statistical inference by quantifying the
 frequency of significance flipping across 26 MCA repetitions
 (Table~\ref{tab:fluctuating_regions}). The analysis revealed that longitudinal
-processing introduces considerably more instability than baseline
+processing introduces considerably more instability than
 cross-sectional analysis, particularly for cortical metrics. Notably, partial
 correlation analysis exhibited higher susceptibility to instability in cortical
 volume (53\% of regions unstable) and area (38\% unstable) compared to ANCOVA.
@@ -738,8 +453,8 @@ we compared the dispersion of the test statistics ($F$-values for ANCOVA,
 correlation coefficients $r$ for partial correlation) in longitudinal versus
 cross-sectional pipelines. We used a one-sided Ansari-Bradley test on
 mean-centered distributions to test the specific hypothesis that longitudinal
-processing has significantly higher numerical variance compared to the baseline
-(Tables~\ref{tab:stats-coef-var-subcortical} and
+processing has significantly higher numerical variance compared to the
+cross-sectional. (Tables~\ref{tab:stats-coef-var-subcortical} and
 \ref{tab:stats-coef-var-cortical}).
 
 For subcortical structures (Table~\ref{tab:stats-coef-var-subcortical}),
@@ -780,10 +495,10 @@ showed significant variance differences in far fewer regions.
 \begin{table}[h]
     \centering
     \centering
-    \caption={Variance variability in cortical regions. One-sided
-    Ansari-Bradley test comparing cross-sectional vs. longitudinal variances of
-    test statistics. ($* p_{\text{FDR}} < 0.05$). L/R =
-    Left/Right.  $W$ = statistic, $p$ = p-value.}
+    \caption{Variance variability in cortical regions. One-sided
+        Ansari-Bradley test comparing cross-sectional vs. longitudinal variances of
+        test statistics. ($* p_{\text{FDR}} < 0.05$). L/R =
+        Left/Right. $W$ = statistic, $p$ = p-value.}
     \label{tab:stats-coef-var-subcortical}
     \begin{tblr}[
         ]
@@ -938,8 +653,6 @@ showed significant variance differences in far fewer regions.
     \end{tabular}
 \end{table}
 
-\subsubsection{Consistency of statistical tests}
-
 For both group comparisons and correlation analyses, statistical outcomes
 varied substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
 (Figures \ref{fig:npvr_consistency_area_plot} and
@@ -954,30 +667,33 @@ statistical inference in structural MRI analyses of PD.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figures/consistency/cortical_area_significance_correlation.pdf}
-    \caption{Consistency of statistical tests for cortical area across all
-        subjects and regions. The plot shows the percentage of subjects for
-        which the statistical test was significant ($\alpha = 0.05$) for each
-        region. The consistency varies across regions, with some regions showing
-        higher consistency than others.}
+    \caption{Proportion of significant tests ($p<0.05$, uncorrected) for
+        cortical surface area across 26 numerical perturbations.}
     \label{fig:npvr_consistency_area_plot}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figures/consistency/cortical_volume_significance_correlation.pdf}
-    \caption{Consistency of statistical tests for cortical volume across all
-        subjects and regions. The plot shows the percentage of subjects for
-        which the statistical test was significant ($\alpha = 0.05$) for each
-        region. The consistency varies across regions, with some regions showing
-        higher consistency than others.}
+    \caption{Proportion of significant tests ($p<0.05$, uncorrected) for
+        cortical volume across 26 numerical perturbations.}
     \label{fig:consistency_volume_plot}
 \end{figure}
 
-\subsection{Interactive web tool}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/NPV_map/figure_area_volume.pdf}
+    \caption{Numerical-Population Variability Ratio (\npvr) for cortical surface
+        area (top row in each panel) and cortical volume (bottom row in each
+        panel) in healthy controls (HC) and Parkinson's disease (PD). Higher
+        \npvr values indicate higher computational uncertainty relative to
+        inter-subject variability.}
+    \label{fig:npvr_maps_area_volume}
+\end{figure}
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/screenshot_light.png}
+    \includegraphics[width=\linewidth]{figures/screenshot_light.png}
     \caption{Interactive web tool for estimating NPVR and assessing numerical
         variability in neuroimaging studies. Users can input summary statistics
         to obtain NPVR values and visualize the impact of numerical variability
@@ -987,36 +703,18 @@ statistical inference in structural MRI analyses of PD.
 \end{figure}
 
 \section{Distribution of statistical test coefficients}
-\label{appendix:distribution_stats_ieee}
+\label{appendix:distribution_stats_values}
 
-Figures \ref{fig:statstest_coefficients_distribution},
-\ref{fig:consistency_area_coefficients} and
-\ref{fig:consistency_volume_coefficients} show the distribution of partial
-correlation coefficients and F-statistics for subcortical volume measures,
-cortical thickness, cortical areas and cortical volumes, across all subjects
-and regions. Red triangles indicate the unperturbed (IEEE-754) run for
-reference. For all analyses, the unperturbed (IEEE-754) result is included in
-the range of numerically perturbed results, which supports the validity of the
-numerical perturbation.
-
-% The distribution shows the variability in the
-% coefficients, with some regions exhibiting higher consistency than others.
-
-% For subcortical volumes, the distributions of partial-correlation coefficients
-% ($r$) and ANCOVA $F$-statistics
-% (Figure~\ref{fig:statstest_coefficients_distribution}) show that the unperturbed
-% IEEE-754 estimates (red markers) consistently fall within the MCA-sampled range.
-% This supports the validity of the instrumentation rather than indicating a
-% methodological artifact. The spread of the $r$ coefficients is larger in
-% longitudinal than in baseline analyses (Ansari-Bradley one-sided test at
-% $p<0.05$ corrected with Bonferroni; detailed results in Appendix
-% Table~\ref{tab:stats-coef-var-subcortical}), whereas no significant difference
-% in spread is detected for $F$-statistics using the same test
-% (Bonferroni-corrected, $p<0.05$). This indicates that numerical variability has
-% a more pronounced impact on longitudinal studies than on cross-sectional ones.
-% An analogous analysis for cortical thickness leads to similar conclusions
-% (Appendix Figure~\ref{fig:consistency_thickness_coefficients},
-% Table~\ref{tab:stats-coef-var-cortical}).
+Figures \ref{fig:statstest_coefficients_distribution_subcortical},
+\ref{fig:statstest_coefficients_distribution_thickness},
+\ref{fig:statstest_coefficients_distribution_area} and
+\ref{fig:statstest_coefficients_distribution_volume} show the distribution of
+partial correlation coefficients and F-statistics for subcortical volume,
+cortical thickness, cortical surface area and cortical volume measures, across
+all subjects and regions. Red triangles indicate the unperturbed (IEEE-754) run
+for reference. For all analyses, the unperturbed (IEEE-754) result is included
+in the range of numerically perturbed results, which supports the validity of
+the numerical perturbation.
 
 \begin{figure}[ht]
     \centering
@@ -1024,7 +722,7 @@ numerical perturbation.
     \caption{ Distribution of partial correlation coefficients (r-values) and
         F-statistics from ANCOVA across MCA repetitions for subcortical volume
         measures. Red dots represent the IEEE-754 unperturbed results.
-        \label{fig:statstest_coefficients_distribution}}
+        \label{fig:statstest_coefficients_distribution_subcortical}}
 \end{figure}
 
 \begin{figure}
@@ -1035,17 +733,16 @@ numerical perturbation.
         \caption{Left hemisphere}
         \label{fig:consistency_thickness_left}
     \end{subfigure}
-
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_thickness_coefficients_distribution-Right.pdf}
         \caption{Right hemisphere}
         \label{fig:consistency_thickness_right}
     \end{subfigure}
-    \caption{Distribution of partial correlation coefficients for cortical
-        thickness across all subjects and regions. Red triangles indicate the
-        IEEE-754 run for reference. }
-    \label{fig:consistency_thickness_coefficients}
+    \caption{Distribution of partial correlation coefficients (r-values) and
+        F-statistics from ANCOVA across MCA repetitions for cortical thickness
+        measures. Red dots represent the IEEE-754 unperturbed results. }
+    \label{fig:statstest_coefficients_distribution_thickness}
 \end{figure}
 
 \begin{figure}[h]
@@ -1063,10 +760,10 @@ numerical perturbation.
         \caption{Right hemisphere}
         \label{fig:consistency_area_right}
     \end{subfigure}
-    \caption{ Distribution of partial correlation coefficients for cortical surface area
-        across all subjects and regions. Red triangles indicate the IEEE-754 run
-        for reference. }
-    \label{fig:consistency_area_coefficients}
+    \caption{ Distribution of partial correlation coefficients (r-values) and
+        F-statistics from ANCOVA across MCA repetitions for cortical surface area
+        measures. Red dots represent the IEEE-754 unperturbed results. }
+    \label{fig:statstest_coefficients_distribution_area}
 \end{figure}
 
 \begin{figure}[h]
@@ -1084,198 +781,27 @@ numerical perturbation.
         \caption{Right hemisphere}
         \label{fig:consistency_volume_right}
     \end{subfigure}
-    \caption{ Distribution of partial correlation coefficients for cortical
-        volume across all subjects and regions. Red triangles indicate the
-        IEEE-754 run for reference. The distribution shows the variability in
-        the coefficients, with some regions exhibiting higher consistency than
-        others.}
-    \label{fig:consistency_volume_coefficients}
+    \caption{Distribution of partial correlation coefficients (r-values) and
+        F-statistics from ANCOVA across MCA repetitions for cortical volume
+        measures. Red dots represent the IEEE-754 unperturbed results.}
+    \label{fig:statstest_coefficients_distribution_volume}
 \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \vspace{0.2cm}
-
-    % Header row with column labels
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            % Empty space for alignment with condition labels
-        \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{minipage}[c]{0.47\linewidth}
-                \centering\textbf{Unthresholded}
-            \end{minipage}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                % Vertical line separator
-            \end{minipage}%
-            \hfill
-            \begin{minipage}[c]{0.47\linewidth}
-                \centering\textbf{Thresholded}
-            \end{minipage}
-        \end{minipage}
-    \end{minipage}
-
-    % Horizontal line
-    \noindent\rule{\linewidth}{0.5pt}
-    \vspace{-1.5cm}
-
-    % 22q11.2 deletion syndrome row
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox[origin=c]{90}{\textbf{22q11.2}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_area_all.png}
-                \label{fig:enigma_22q_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/22q_area_all_thresholded.png}
-                \label{fig:enigma_22q_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-
-    % ADHD row
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox[origin=c]{90}{\textbf{ADHD}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_area_adult.png}
-                \label{fig:enigma_adhd_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/adhd_area_adult_thresholded.png}
-                \label{fig:enigma_adhd_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-
-    % bipolar disorder row
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox[origin=c]{90}{\textbf{Bipolar}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_area_adult.png}
-                \label{fig:enigma_bipolar_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/bipolar_area_adult_thresholded.png}
-                \label{fig:enigma_bipolar_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-    % depression
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox[origin=c]{90}{\textbf{Depression}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_area_adult.png}
-                \label{fig:enigma_depression_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/depression_area_adult_thresholded.png}
-                \label{fig:enigma_depression_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-    % ocd 
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox[origin=c]{90}{\textbf{OCD}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_area_adult.png}
-                \label{fig:enigma_ocd_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/ocd_area_adult_thresholded.png}
-                \label{fig:enigma_ocd_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \vspace{-2cm}
-    % schizophrenia
-    \begin{minipage}[b]{\linewidth}
-        \begin{minipage}[c]{0.05\linewidth}
-            \centering\rotatebox[origin=c]{90}{\textbf{Schizophrenia}} \end{minipage}%
-        \begin{minipage}[c]{0.95\linewidth}
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_area_all.png}
-                \label{fig:enigma_schizophrenia_unthresholded}
-            \end{subfigure}%
-            \hfill
-            \begin{minipage}[c]{0.005\linewidth}
-                \centering\rule{0.5pt}{4cm}
-            \end{minipage}%
-            \hfill
-            \begin{subfigure}[c]{0.47\linewidth}
-                \includegraphics[width=\linewidth]{figures/cohen_d_map/enigma/schizophrenia_area_all_thresholded.png}
-                \label{fig:enigma_schizophrenia_thresholded}
-            \end{subfigure}
-        \end{minipage}
-    \end{minipage}
-
-    \caption{ENIGMA cortical area Cohen's d maps showing unthresholded effect
-        sizes (left) and effect sizes thresholded by the \npvr framework (right)
-        for different disorders. Black regions indicate areas where Cohen's d
-        values fall below the numerical variability threshold, demonstrating
-        regions where reported effect sizes may be unreliable due to
-        computational uncertainty.}
-    \label{fig:npvr_enigma_area}
-\end{figure}
 
 \section{Numerical validation of numerical uncertainty propagation}
 \label{appendix:numerical_validation_uncertainty_propagation}
 
 To numerically validate the proposed uncertainty-propagation framework, we
-compared analytical standard-deviation estimates derived from the
-closed-form expressions reported in Table~\ref{tab:stat_uncertainty} with
-empirical estimates obtained through repeated Monte Carlo Arithmetic (MCA)
-perturbations of the full processing pipelines. For each statistical test
-(Cohen's $d$, two-sample $t$-statistics, partial correlation coefficients, and
-ANCOVA $F$-statistics), as well as their associated $p$-values (except for
-Cohen's $d$), we computed the standard deviation across MCA repetitions and
-quantified the relative error between sampled and analytical estimates. This
-comparison was performed across all cortical and subcortical regions, imaging
-metrics, and for both cross-sectional and longitudinal study designs.
+compared analytical standard-deviation estimates derived from the closed-form
+expressions reported in Table~\ref{tab:stat_uncertainty} with empirical
+estimates obtained through repeated Monte Carlo Arithmetic (MCA) perturbations
+of the full processing pipelines. For each statistical test (Cohen's $d$,
+two-sample $t$-statistics, partial correlation coefficients, and ANCOVA
+$F$-statistics), as well as their associated $p$-values (except for Cohen's
+$d$), we computed the standard deviation across MCA repetitions and quantified
+the relative error between sampled and analytical estimates. This comparison
+was performed across all cortical and subcortical regions, imaging metrics, and
+for both cross-sectional and longitudinal study designs.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_stat.pdf}
@@ -1299,12 +825,13 @@ $F$-statistics, and 0.079 ($\pm$0.260) for partial correlations. These
 distributions remain visually concentrated around zero with limited skewness.
 Longitudinal analyses yielded similarly small mean discrepancies for the
 $t$-test (-0.010 $\pm$0.145) and Cohen's $d$ (-0.003 $\pm$0.146), whereas
-partial correlations (-0.002 $\pm$0.184) and especially ANCOVA
-(-0.184 $\pm$0.207) display a broader spread and a clearer negative displacement.
-Inspection of the violin plots (Fig.~\ref{fig:uncertainty_validation_statistics})
-shows that this shift is not uniform across metrics: cortical thickness and area
-tend to remain closer to zero, while cortical and subcortical volumes contribute
-more strongly to the negative tail.
+partial correlations (-0.002 $\pm$0.184) and especially ANCOVA (-0.184
+$\pm$0.207) display a broader spread and a clearer negative displacement.
+Inspection of the violin plots
+(Fig.~\ref{fig:uncertainty_validation_statistics}) shows that this shift is not
+uniform across metrics: cortical thickness and area tend to remain closer to
+zero, while cortical and subcortical volumes contribute more strongly to the
+negative tail.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_pvalue.pdf}
@@ -1321,25 +848,24 @@ more strongly to the negative tail.
 A similar but more dispersed pattern was observed for $p$-values. In
 cross-sectional analyses, mean relative errors were -0.071 ($\pm$0.180) for the
 two-sample $t$-test, 0.106 ($\pm$0.323) for ANCOVA, and 0.032 ($\pm$0.277) for
-partial correlations, with most densities overlapping zero but exhibiting heavier
-tails than their statistic counterparts. Longitudinal analyses showed negative
-mean relative errors of -0.290 ($\pm$0.156) for the $t$-test,
--0.286 ($\pm$0.159) for ANCOVA, and -0.269 ($\pm$0.174) for partial
-correlations. The violin plots (Fig.~\ref{fig:uncertainty_validation_pvalues})
-indicate that these negative tendencies arise from broadened and asymmetric
-distributions with several metrics maintaining
-substantial overlap with zero.
+partial correlations, with most densities overlapping zero but exhibiting
+heavier tails than their statistic counterparts. Longitudinal analyses showed
+negative mean relative errors of -0.290 ($\pm$0.156) for the $t$-test, -0.286
+($\pm$0.159) for ANCOVA, and -0.269 ($\pm$0.174) for partial correlations. The
+violin plots (Fig.~\ref{fig:uncertainty_validation_pvalues}) indicate that
+these negative tendencies arise from broadened and asymmetric distributions
+with several metrics maintaining substantial overlap with zero.
 
-These results indicate that the analytical uncertainty model provides a faithful
-approximation of numerically induced variability in downstream statistical
-measures, with accuracy depending on both the statistical test and study design.
-Cross-sectional configurations show near-unbiased and tightly bounded relative
-errors, whereas longitudinal settings exhibit increased dispersion and negative
-shifts, especially for partial correlation and $p$-values. Importantly, the
-error distributions remain largely confined within $\pm0.5$ for the majority of
-regions and metrics, and Cohen's $d$ consistently demonstrates the highest
-stability. The longitudinal negative bias reflects a tendency of the analytical
-model to overestimate variability.
+These results indicate that the analytical uncertainty model provides a
+faithful approximation of numerically induced variability in downstream
+statistical measures, with accuracy depending on both the statistical test and
+study design. Cross-sectional configurations show near-unbiased and tightly
+bounded relative errors, whereas longitudinal settings exhibit increased
+dispersion and negative shifts, especially for partial correlation and
+$p$-values. Importantly, the error distributions remain largely confined within
+$\pm0.5$ for the majority of regions and metrics, and Cohen's $d$ consistently
+demonstrates the highest stability. The longitudinal negative bias reflects a
+tendency of the analytical model to overestimate variability.
 
 % Statistics mean relative error across all regions and metrics:
 % student - baseline: mean=-0.0139, std=0.1603
