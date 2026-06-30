@@ -268,9 +268,10 @@ horizontal axis represents the distance to that threshold. Negative x-axis
 values correspond to reported significant results ($p < \alpha$), whereas
 positive values indicate reported non-significant results ($p > \alpha$). For
 negative distances, the significance flip probability quantifies the likelihood
-that a reported significant finding becomes non-significant (false positive)
-under numerical variability; for positive distances, it reflects the likelihood
-that a reported non-significant finding becomes significant (false negative).
+that a reported significant finding becomes non-significant (false positive
+risk) under numerical variability; for positive distances, it reflects the
+likelihood that a reported non-significant finding becomes significant (false
+negative risk).
 Lines indicate the mean significance flip probability within bins of distance to
 the threshold (e.g., $0.005$ for false positives and $0.05$ for false
 negatives). Standard error envelopes are shown in shaded areas when more than
@@ -421,7 +422,7 @@ multiple neuroimaging pipelines rather than relying on a single tool, as
 numerical sensitivity varies across software~\cite{mirhakimi2025numerical}.
 Third, multiverse analyses that systematically explore the space of analytical
 decisions are valuable for characterizing their effect on
-conclusions~\cite{efortbesnard2025sdma}. Fourth, numerical stability should be
+conclusions~\cite{lefortbesnard2025sdma}. Fourth, numerical stability should be
 systematically evaluated using the NPVR framework or the associated web tool,
 particularly for longitudinal analyses where numerical amplification is
 pronounced. Fifth, pipeline development for longitudinal applications should

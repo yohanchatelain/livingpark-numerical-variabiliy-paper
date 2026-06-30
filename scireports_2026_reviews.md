@@ -62,7 +62,7 @@ We agree that actionable guidance is essential and thank the reviewer for raisin
 I believe the manuscript would benefit from clearer guidance regarding the practical implications of these findings.
 Furthremore, there are some specific points that could be addressed or commented on:
 - Loosy and inconsistent vocabulary should be improved: Caption of Figure 4 is misleading, as e.g. "False positives" actually refers to results reported as True positive if my understanding is correct. This doesn't help that the y-label is merely "Probability". The text mentions "Each point corresponds to a significant result reported in the literature", where non-significant results are necessarily plotted too, etc. IMHO, more effort on the figure and terminology would convey the result in a more precise and accurate way, with less reader effort.
-- 
+
 Authors responses:
 
 We thank the reviewer for catching these inconsistencies and agree that the previous figure and text lacked precision. We have made the following corrections:
