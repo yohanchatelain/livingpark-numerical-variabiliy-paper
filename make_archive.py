@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """
-Create a submission archive with everything needed to build the PDF.
+Create submission archives with everything needed to build the PDFs.
 
 Usage:
-    python3 make_archive.py [--output submission.zip]
+    python3 make_archive.py [--output-dir .]
+
+Produces two zip files for separate npj uploads:
+    submission-main.zip          — main text (paper-main.tex flattened)
+    submission-supplementary.zip — supplementary material (paper-supplementary.tex flattened)
 
 Steps:
-    1. Flatten paper.tex into a single .tex file (via flatten_tex.py).
+    1. Flatten each .tex into a single self-contained file (via flatten_tex.py).
     2. Pack the flat .tex, .bib, .bst, and all referenced figures into a zip.
 """
 
@@ -19,7 +23,6 @@ from pathlib import Path
 
 
 PROJECT_DIR = Path(__file__).parent
-FLAT_TEX = PROJECT_DIR / "paper-flat.tex"
 BIB_FILE = PROJECT_DIR / "paper.bib"
 BST_FILE = PROJECT_DIR / "naturemag.bst"
 
@@ -46,9 +49,9 @@ def get_figures(tex: Path) -> list[Path]:
     return paths
 
 
-def build_archive(output: Path):
+def build_archive(source_tex: Path, flat_tex: Path, output: Path, label: str):
     # --- 1. Flatten ---
-    flatten(PROJECT_DIR / "paper.tex", FLAT_TEX)
+    flatten(source_tex, flat_tex)
 
     # --- 2. Collect files ---
     files: list[tuple[Path, str]] = []  # (absolute path, archive path)
@@ -59,11 +62,11 @@ def build_archive(output: Path):
         else:
             print(f"  WARNING: not found, skipping: {path}")
 
-    add(FLAT_TEX, "paper.tex")
+    add(flat_tex, "paper.tex")
     add(BIB_FILE)
     add(BST_FILE)
 
-    figures = get_figures(FLAT_TEX)
+    figures = get_figures(flat_tex)
     for fig in figures:
         add(PROJECT_DIR / fig, str(fig))
 
@@ -79,7 +82,7 @@ def build_archive(output: Path):
     )
 
     # --- 3. Write zip ---
-    print(f"\nCreating archive: {output}")
+    print(f"\nCreating {label} archive: {output}")
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("Makefile", makefile)
         print("  + Makefile")
@@ -88,8 +91,8 @@ def build_archive(output: Path):
             print(f"  + {arcname}")
 
     total = sum(abs_path.stat().st_size for abs_path, _ in files)
-    print(f"\nDone. {len(files)} files, {total / 1024:.1f} KB uncompressed.")
-    print(f"Archive: {output}  ({output.stat().st_size / 1024:.1f} KB)")
+    print(f"Done. {len(files)} files, {total / 1024:.1f} KB uncompressed.")
+    print(f"Archive: {output}  ({output.stat().st_size / 1024:.1f} KB)\n")
 
 
 def main():
@@ -97,17 +100,30 @@ def main():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "--output",
-        default="submission.zip",
-        help="Output archive name (default: submission.zip)",
+        "--output-dir",
+        default=".",
+        help="Directory for output zip files (default: current directory)",
     )
     args = parser.parse_args()
 
-    output = Path(args.output)
-    if not output.is_absolute():
-        output = PROJECT_DIR / output
+    output_dir = Path(args.output_dir)
+    if not output_dir.is_absolute():
+        output_dir = PROJECT_DIR / output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    build_archive(output)
+    build_archive(
+        source_tex=PROJECT_DIR / "paper-main.tex",
+        flat_tex=PROJECT_DIR / "paper-main-flat.tex",
+        output=output_dir / "submission-main.zip",
+        label="main text",
+    )
+
+    build_archive(
+        source_tex=PROJECT_DIR / "paper-supplementary.tex",
+        flat_tex=PROJECT_DIR / "paper-supplementary-flat.tex",
+        output=output_dir / "submission-supplementary.zip",
+        label="supplementary",
+    )
 
 
 if __name__ == "__main__":

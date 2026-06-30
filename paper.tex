@@ -39,6 +39,15 @@
 Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
 \providecommand{\includeappendix}{true}
+% Cross-document reference macros — compiled together: use \ref
+\newcommand{\suppnoteref}[2]{\ref{#1}}
+\newcommand{\suppfigref}[2]{\ref{#1}}
+\newcommand{\supptabref}[2]{\ref{#1}}
+\newcommand{\suppequref}[2]{\ref{#1}}
+\newcommand{\mainsecref}[2]{\ref{#1}}
+\newcommand{\maintabref}[2]{\ref{#1}}
+\newcommand{\mainequref}[2]{Eq.~\ref{#1}}
+
 \newcommand{\z}{\mspace{9mu}}
 \newcommand{\npvr}[0]{$\nu_{\mathrm{npv}}$\xspace}
 \newcommand{\Var}[0]{\mathrm{Var}}
@@ -149,6 +158,10 @@ The authors declare no competing interests.
 
 \bibliographystyle{naturemag}
 \bibliography{paper}
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{Concordia University - Ethics Exemption - Dr Glatard.pdf}
+\end{figure}
 
 \ifthenelse{\equal{\includeappendix}{true}}{
     \include{appendix}

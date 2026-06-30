@@ -793,7 +793,7 @@ the numerical perturbation.
 
 To numerically validate the proposed uncertainty-propagation framework, we
 compared analytical standard-deviation estimates derived from the closed-form
-expressions reported in Table~\ref{tab:stat_uncertainty} with empirical
+expressions reported in Table~\maintabref{tab:stat_uncertainty}{1} with empirical
 estimates obtained through repeated Monte Carlo Arithmetic (MCA) perturbations
 of the full processing pipelines. For each statistical test (Cohen's $d$,
 two-sample $t$-statistics, partial correlation coefficients, and ANCOVA
@@ -902,7 +902,7 @@ and false negatives, respectively.
 
 Figure~\ref{fig:std_sampled_simulated_comparison} compares standard deviations
 of $p$-values estimated directly from 26 MCA runs with those predicted by the
-analytical uncertainty formulas (Table~\ref{tab:stat_uncertainty}). Each point
+analytical uncertainty formulas (Table~\maintabref{tab:stat_uncertainty}{1}). Each point
 corresponds to a cortical or subcortical brain region. Results show close
 agreement between sampled and simulated estimates, particularly in the
 cross-sectional setting. In the longitudinal analyses, simulated standard
@@ -921,10 +921,42 @@ Fig.~\ref{fig:std_sampled_simulated_comparison}.
 Finally, Figure~\ref{fig:ppr_sampled_comparison} assesses the Beta distribution
 model used to translate sampled $p$-value variability into PPR estimates. Here,
 PPR is computed using MCA-derived standard deviations propagated through the
-Beta model (Eq.~\ref{eq:beta-params}). Both cross-sectional and longitudinal
+Beta model (\mainequref{eq:beta-params}{see Methods}). Both cross-sectional and longitudinal
 results align closely with the identity line, supporting the suitability of the
 Beta modeling framework for capturing numerically induced variability in
 statistical significance.
+
+Figure~\ref{fig:false_positive_vs_sample_size_extended} extends the analysis of
+Figure~\maintabref{fig:false_positive_vs_sample_size}{4} from the main text by
+providing a breakdown of significance flip probabilities by statistical test type:
+Student's $t$-test (T), ANCOVA ($F$-values), and partial correlation (R).
+The same overall pattern holds across all three test types: significance flip
+probability is highest for results near the significance threshold (negative
+distances for reported significant findings, positive distances for reported
+non-significant findings) and decreases as results move farther from the
+threshold. Partial correlations tend to exhibit slightly higher flip
+probabilities, consistent with their generally larger numerical variability
+as quantified by the NPVR framework (Table~\maintabref{tab:stat_uncertainty}{1}).
+These results confirm that the widespread numerical fragility observed across
+the 13 reviewed Parkinson's disease studies is not specific to any single
+statistical test type.
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{figures/figure-distance-paper.pdf}
+    \caption{Probability of numerically-induced significance flips as a function
+        of the $p$-value distance to significance threshold, broken down by
+        statistical test type: Student's $t$-test (T), ANCOVA ($F$-values), and
+        partial correlation (R). Each point represents a result (significant or
+        non-significant) reported in the 13 reviewed studies. Negative distances
+        correspond to results reported as significant ($p < \alpha$), for which
+        the y-axis gives the probability of flipping to non-significant (false
+        positive risk); positive distances correspond to results reported as
+        non-significant ($p > \alpha$), for which the y-axis gives the
+        probability of flipping to significant (false negative risk). Bars
+        indicate the mean significance flip probability within bins of distance
+        to the threshold (e.g., $0.005$ for false positive risk and $0.05$ for
+        false negative risk). \label{fig:false_positive_vs_sample_size_extended}}
+\end{figure}
 
 \begin{figure}[ht]
     \centering
@@ -933,7 +965,7 @@ statistical significance.
         MCA sampling and analytical simulations. Sampled estimates are computed from
         26 MCA repetitions, while simulated estimates are derived from the
         uncertainty propagation formulas reported in
-        Table~\ref{tab:stat_uncertainty}. Each point corresponds to a cortical or
+        Table~\maintabref{tab:stat_uncertainty}{1}. Each point corresponds to a cortical or
         subcortical brain region. The solid line denotes the identity line. Results
         show close agreement between sampled and simulated estimates, with
         cross-sectional analyses exhibiting tighter clustering than longitudinal
@@ -948,9 +980,9 @@ statistical significance.
     \includegraphics[width=.9\linewidth]{figures/ppr_simulated.pdf}
     \caption{ Comparison between simulated positive prediction rate (PPR;
         Eq.~\ref{eq:ppr}) and the empirical proportion of significant tests
-        (Section~\ref{sec:empirical_evaluation}). Simulated PPR values are computed
+        (Section~\mainsecref{sec:empirical_evaluation}{2.1}). Simulated PPR values are computed
         using analytical uncertainty estimates derived from
-        Table~\ref{tab:stat_uncertainty}. Each point represents a cortical or
+        Table~\maintabref{tab:stat_uncertainty}{1}. Each point represents a cortical or
         subcortical brain region, and the solid line indicates the identity line.
         Simulated PPR closely matches empirical significance rates in the
         cross-sectional setting, while longitudinal analyses show a tendency toward
@@ -963,9 +995,9 @@ statistical significance.
     \includegraphics[width=.9\linewidth]{figures/ppr_sampled.pdf}
     \caption{Comparison between sampled positive prediction rate (PPR;
         Eq.~\ref{eq:ppr}) and the empirical proportion of significant tests
-        (Section~\ref{sec:empirical_evaluation}). Sampled PPR values are
+        (Section~\mainsecref{sec:empirical_evaluation}{2.1}). Sampled PPR values are
         computed from MCA-derived $p$-value standard deviations and propagated
-        through the Beta distribution model (Eq.~\ref{eq:beta-params}). Each
+        through the Beta distribution model (\mainequref{eq:beta-params}{see Methods}). Each
         point corresponds to a cortical or subcortical brain region, and the
         solid line denotes the identity line. Both cross-sectional and
         longitudinal results align closely with the identity line, supporting

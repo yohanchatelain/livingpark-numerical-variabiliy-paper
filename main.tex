@@ -97,22 +97,29 @@ regions; Figure~\ref{fig:significance_correlation_subcortical_volume}), p-values
 crossed the 0.05 threshold in 27\% of all (regions, analysis) pairs, indicating
 frequent inconsistencies across repetitions. For cortical thickness (68 regions;
 Figure~\ref{fig:significance_correlation_thickness}), 21\% of (regions,
-analysis) pairs were similarly unstable (see Supplementary
-Note~\ref{appendix:summary_stats_inference} for region-level details).
+analysis) pairs were similarly unstable. Instability rates varied across
+metric types: cortical area exhibited the highest longitudinal instability
+(up to 53\% of regions), followed by cortical volume (up to 53\%),
+subcortical volume (up to 36\%), and cortical thickness (up to 28\%),
+consistent with a metric-specific dependence on numerical precision
+(see Supplementary Table~\supptabref{tab:fluctuating_regions}{S5} and
+Supplementary Note~\suppnoteref{appendix:summary_stats_inference}{S3} for region-level details).
 Statistical test values (r-values and F-values) also exhibited substantial
 variability across repetitions (see Supplementary
-Note~\ref{appendix:distribution_stats_values}). This instability is consistent
+Note~\suppnoteref{appendix:distribution_stats_values}{S4}). This instability is consistent
 with the intrinsically low numerical precision of FreeSurfer: cross-sectional
 analyses revealed fewer than 2 significant digits for most subcortical and
 cortical regions (see Supplementary
-Note~\ref{appendix:numerical_variability_baseline}). These fluctuations
+Note~\suppnoteref{appendix:numerical_variability_baseline}{S2}). These fluctuations
 demonstrate that numerical noise alone can alter downstream statistical
 inference in structural MRI analyses of PD.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_significance_correlation.pdf}
     \caption{ Proportion of significant tests ($p<0.05$, uncorrected) for
-        subcortical volumes across 26 numerical perturbations.
+        subcortical volumes across 26 numerical perturbations. Confidence
+        intervals were computed using the Wilson score interval at 95\%
+        confidence level.
         \label{fig:significance_correlation_subcortical_volume}}
 \end{figure}
 
@@ -120,8 +127,9 @@ inference in structural MRI analyses of PD.
     \centering
     \includegraphics[width=\linewidth]{figures/consistency/cortical_thickness_significance_correlation.pdf}
     \caption{Proportion of significant tests ($p<0.05$, uncorrected) for
-        cortical thickness across 26 numerical
-        perturbations.\label{fig:significance_correlation_thickness}}
+        cortical thickness across 26 numerical perturbations. Confidence
+        intervals were computed using the Wilson score interval at 95\%
+        confidence level.\label{fig:significance_correlation_thickness}}
 \end{figure}
 
 \subsection{A practical model to quantify the impact of numerical variability}
@@ -178,10 +186,10 @@ costly re-computation.
 \end{table}
 
 We applied this model to quantify the stability of the analyses reported above
-(Figure~\ref{fig:npvr}; Supplementary Figure~\ref{fig:npvr_maps_area_volume}).
+(Figure~\ref{fig:npvr}; Supplementary Figure~\suppfigref{fig:npvr_maps_area_volume}{S6}).
 In cross-sectional baseline analyses, the average \npvr was 0.191 for the PD
 group and 0.176 for HC, with no significant difference between groups
-(permutation test, $p > 0.05$; Supplementary Table~\ref{tab:bootstrap-npvr}).
+(permutation test, $p > 0.05$; Supplementary Table~\supptabref{tab:bootstrap-npvr}{S8}).
 Applying the Cohen's $d$ uncertainty formula (Table~\ref{tab:stat_uncertainty})
 to these \npvr values reveals that suppressing numerical uncertainty to a
 negligible level ($\sigma_d \leq 0.01$) in cross-sectional studies would require
@@ -190,7 +198,7 @@ approximately 1,340 participants.
 In contrast, longitudinal analyses exhibited substantially higher instability,
 with average \npvr values of 0.561 for PD and 0.549 for HC, although no
 significant difference was found between groups (permutation test, $p > 0.05$;
-Supplementary Table~\ref{tab:bootstrap-npvr}). This amplification is likely driven
+Supplementary Table~\supptabref{tab:bootstrap-npvr}{S8}). This amplification is likely driven
 by catastrophic cancellation that occurs when subtracting nearly identical
 values between time points. Consequently, achieving the same level of numerical
 uncertainty ($\sigma_d \leq 0.01$) would require a sample size exceeding 12,000
@@ -200,7 +208,7 @@ reliability.
 To facilitate the use of this framework, we developed an open-source,
 interactive web interface available at
 \href{https://yohanchatelain.github.io/brain_render/}{\nolinkurl{yohanchatelain.github.io/brain_render}}
-(Supplementary Figure~\ref{fig:brain_render_tool}). This tool allows
+(Supplementary Figure~\suppfigref{fig:brain_render_tool}{S7}). This tool allows
 researchers to upload standard summary statistics to instantly estimate the
 numerical uncertainty floor of their findings. The interface includes a 3D
 visualization engine that maps uncertainty onto cortical and subcortical
@@ -247,12 +255,12 @@ deviation. By computing the cumulative distribution function of this
 characterized Beta distribution at the original significance threshold, we
 derived the probability that the reported significant finding was actually a
 numerically induced significance flip. Numerical validation of this approach
-is provided in Supplementary Note~\ref{appendix:numerical_validation_flip_significance}.
+is provided in Supplementary Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
 
 Figure~\ref{fig:false_positive_vs_sample_size} shows the estimated probability
 of numerically induced significance flips as a function of the distance between
 reported $p$-values and the significance threshold, across multiple statistical
-tests. Each point corresponds to a significant result reported in the
+tests. Each point corresponds to a result (significant or non-significant) reported in the
 literature; the thirteen studies are anonymized to avoid singling out
 individual findings. The vertical axis shows the probability that numerical
 variability causes the result to cross the significance threshold, while the
@@ -263,9 +271,10 @@ negative distances, the significance flip probability quantifies the likelihood
 that a reported significant finding becomes non-significant (false positive)
 under numerical variability; for positive distances, it reflects the likelihood
 that a reported non-significant finding becomes significant (false negative).
-Bars indicate the mean significance flip probability within bins of distance to
+Lines indicate the mean significance flip probability within bins of distance to
 the threshold (e.g., $0.005$ for false positives and $0.05$ for false
-negatives).
+negatives). Standard error envelopes are shown in shaded areas when more than
+three points are available in a bin.
 
 Across statistical tests and analysis types, significance flip probability
 peaks at the significance threshold, indicating that findings near this
@@ -275,21 +284,35 @@ significance flip probabilities. High significance flip rates persist near the
 threshold across sample sizes, demonstrating that even well-powered studies can
 remain numerically fragile. Significance flip probability therefore reflects
 the joint influence of distance to the significance threshold and the
-Numerical-Population Variability Ratio. These results reveal a widespread
-impact of numerical variability on reported MRI measures of Parkinson's disease
-and underscore the need for systematic numerical robustness assessments in
-neuroimaging studies.
+Numerical-Population Variability Ratio. A breakdown by statistical test type
+(T-values, F-values, and correlation coefficients) is provided in
+Supplementary Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6},
+where the pattern is consistent across test types: findings reported near the
+significance boundary carry substantially higher flip risk regardless of the
+statistic used. These results reveal a widespread impact of numerical
+variability on reported MRI measures of Parkinson's disease, affecting
+findings across multiple test types and study designs, and underscore the
+need for systematic numerical robustness assessments in neuroimaging studies.
 
 \begin{figure}
-    \includegraphics[width=\linewidth]{figures/figure-distance-paper.pdf}
+    \includegraphics[width=\linewidth]{figures/figure-flip-probability.pdf}
     \caption{Probability of numerically-induced significance flips as a function
-        of the $p$-value distance to significance threshold across different
-        statistics: T-values (T), F-values (F), and correlation coefficients
-        (R). False positives correspond to p-values reported as significant and
-        false negatives correspond to p-values reported as non-significant. Bars
-        indicate the mean significance flip probability within bins of distance
-        to the threshold (e.g., $0.005$ for false positives and $0.05$ for false
-        negatives). \label{fig:false_positive_vs_sample_size}}
+        of the $p$-value distance to significance threshold, pooled across
+        statistics (T-values, F-values, and correlation coefficients; see
+        Supplementary Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}
+        for per-statistic breakdown). Each point represents a result reported
+        in the literature (significant or non-significant). Negative distances
+        correspond to results reported as significant ($p < \alpha$); positive
+        distances to results reported as non-significant ($p > \alpha$). For
+        reported significant results (false positive risk), the y-axis gives
+        the probability of flipping to non-significant under numerical
+        variability; for reported non-significant results (false negative risk),
+        it gives the probability of flipping to significant. Lines indicate the
+        mean flip probability within bins of distance to the threshold (e.g.,
+        $0.005$ for false positive risk and $0.05$ for false negative risk).
+        Standard error envelopes are shown in shaded areas when more than three
+        points are available in a bin.
+        \label{fig:false_positive_vs_sample_size}}
 \end{figure}
 
 \section{Discussion}
@@ -331,7 +354,7 @@ statistics alone, NPVR provides a scalable approach for retrospective evaluation
 of the existing literature. In this context, NPVR can be used by researchers and
 reviewers to estimate the potential contribution of numerical noise to observed
 false positive rates. Numerical validation (see Supplementary
-Note~\ref{appendix:numerical_validation_uncertainty_propagation}) demonstrated
+Note~\suppnoteref{appendix:numerical_validation_uncertainty_propagation}{S5}) demonstrated
 that these estimates tend to minimize the risk of underestimating the impact of
 numerical variability.
 
@@ -379,6 +402,36 @@ measurements across diverse datasets, disease contexts, and software packages
 will be important to build a comprehensive map of computational reliability in
 neuroimaging, though our results already suggest that numerical variability is
 sufficiently large to warrant routine consideration.
+
+Our results also highlight that the magnitude of numerical instability differs
+across MRI metric types. Cortical area and cortical volume showed the highest
+rates of significance flipping, reaching up to 53\% of regions in longitudinal
+analyses, while cortical thickness and subcortical volume were comparatively more
+stable (Supplementary Table~\supptabref{tab:fluctuating_regions}{S5}). These
+metric-specific differences should inform the interpretation of neuroimaging
+findings and motivate targeted investigation of numerical stability in analyses
+relying on the most sensitive metrics.
+
+Based on our findings, we offer the following practical recommendations for
+neuroimaging researchers. First, statistical inference should move beyond binary
+$p < 0.05$ thresholds: reporting effect sizes, confidence intervals, and both
+significant and non-significant results is essential for capturing the full
+picture~\cite{amrhein2019retire}. Second, results should be validated across
+multiple neuroimaging pipelines rather than relying on a single tool, as
+numerical sensitivity varies across software~\cite{mirhakimi2025numerical}.
+Third, multiverse analyses that systematically explore the space of analytical
+decisions are valuable for characterizing their effect on
+conclusions~\cite{efortbesnard2025sdma}. Fourth, numerical stability should be
+systematically evaluated using the NPVR framework or the associated web tool,
+particularly for longitudinal analyses where numerical amplification is
+pronounced. Fifth, pipeline development for longitudinal applications should
+explicitly prioritize numerical robustness. Sixth, the field would benefit from
+a gallery comparing numerical variability and population variability across
+neuroimaging tools and pipelines, modeled on existing galleries of effect sizes
+such as BrainEffeX~\cite{shearer2025braineffex}. Such a resource would let
+researchers situate the numerical variability of a given tool relative to the
+population variability typically observed for the same measure, and compare this
+relationship across tools.
 
 More broadly, this work highlights that computational uncertainty should be
 treated as a serious component of uncertainty in neuroimaging, alongside
