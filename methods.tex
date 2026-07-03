@@ -190,8 +190,8 @@ propagates through the analytical pipeline to produce uncertainty in the
 reported statistics.
 
 For each MCA repetition $r$, we denote by $\tilde{\mathbf{x}}^{(r)} =
-    {(\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})}^\top$ the vector of perturbed
-measurements across $N$ subjects. Each perturbed observation is modeled as the
+    {(\tilde{x}_1^{(r)}, \dots, \tilde{x}_n^{(r)})}^\top$ the vector of perturbed
+measurements across $n$ subjects. Each perturbed observation is modeled as the
 sum of the subject's biological value and a numerical error term:
 \begin{equation*}
     \tilde{x}_i^{(r)} = x_i + \varepsilon_i^{(r)},
@@ -201,7 +201,7 @@ sum of the subject's biological value and a numerical error term:
     \mathrm{Cov}[\boldsymbol{\varepsilon}^{(r)}] = \Sigma_{\mathrm{num}}.
     \label{eq:model_noise}
 \end{equation*}
-Here, $\mathbf{x} = {(x_1, \dots, x_N)}^\top$ represents the fixed, biological
+Here, $\mathbf{x} = {(x_1, \dots, x_n)}^\top$ represents the fixed, biological
 measurements, while $\boldsymbol{\varepsilon}^{(r)}$ captures the random
 numerical perturbations introduced during computation.
 
@@ -216,7 +216,7 @@ variability, we make three simplifying assumptions:
               \boldsymbol{\varepsilon}^{(r)} \sim
               \mathcal{N}\!\left(\mathbf{0},\,\Sigma_{\mathrm{num}}\right)$, where,
           under homoscedasticity, $\Sigma_{\mathrm{num}} =
-              \sigma_{\mathrm{num}}^2 I_N$.
+              \sigma_{\mathrm{num}}^2 I_n$.
 
     \item \textbf{Population variability.} The between-subject variance
           $\sigma_{\mathrm{pop}}^2 = \Var(\{x_i\})$ dominates the numerical
@@ -231,7 +231,7 @@ variability, we make three simplifying assumptions:
           isolates numerical variability effects from sampling variation; the
           resulting expressions remain accurate near the null and for small
           effect sizes. In this setting, the biological values $\mathbf{x} =
-              {(x_1, \dots, x_N)}^\top$ are treated as fixed, and all randomness
+              {(x_1, \dots, x_n)}^\top$ are treated as fixed, and all randomness
           arises from numerical perturbations $\boldsymbol{\varepsilon}^{(r)}$.
 
 \end{enumerate}
@@ -300,12 +300,12 @@ negative for $g=2$. Substituting back into the expression for $\partial
     d/\partial x_i$, we have:
 \begin{equation*}
     \frac{\partial d}{\partial x_i} = \pm\frac{1}{n_g s_p} - \frac{\Delta(x_i - \bar{x}_g)}{df s_p^3}
-    \Rightarrow {\left(\frac{\partial d}{\partial x_i}\right)}^2 = \frac{1}{n_g^2 s_p^2} \pm \frac{2\Delta(x_i - \bar{x}_g)}{n_g df s_p^4} + \frac{\Delta^2{(x_i - \bar{x}_g)}^2}{df^2 s_p^6}
+    \Rightarrow {\left(\frac{\partial d}{\partial x_i}\right)}^2 = \frac{1}{n_g^2 s_p^2} \mp \frac{2\Delta(x_i - \bar{x}_g)}{n_g df s_p^4} + \frac{\Delta^2{(x_i - \bar{x}_g)}^2}{df^2 s_p^6}
 \end{equation*}
 and summing over all $i$ in group $G_g$:
 \begin{equation*}
     \sum_{i\in G_g}{\left(\frac{\partial d}{\partial x_i}\right)}^2 =
-    \frac{1}{n_g s_p^2} \pm \frac{2\Delta}{n_g df s_p^4}\sum_{i\in G_g}(x_i - \bar{x}_g) + \frac{\Delta^2}{df^2 s_p^6}\sum_{i\in G_g}{(x_i - \bar{x}_g)}^2 = \frac{1}{n_g s_p^2} + \frac{\Delta^2}{df^2 s_p^6}\left((n_g - 1)s_g^2 \right)
+    \frac{1}{n_g s_p^2} \mp \frac{2\Delta}{n_g df s_p^4}\sum_{i\in G_g}(x_i - \bar{x}_g) + \frac{\Delta^2}{df^2 s_p^6}\sum_{i\in G_g}{(x_i - \bar{x}_g)}^2 = \frac{1}{n_g s_p^2} + \frac{\Delta^2}{df^2 s_p^6}\left((n_g - 1)s_g^2 \right)
 \end{equation*}
 since $\sum_{i\in G_g}(x_i - \bar{x}_g) = 0$, so finally summing over both
 groups:
@@ -757,6 +757,8 @@ by:
     b = (1 - \mu_p)\left(\frac{\mu_p(1 - \mu_p)}{\sigma_p^2} - 1\right).
     \label{eq:beta-params}
 \end{equation*}
+These shape parameters are positive—i.e.\ the Beta distribution is well
+defined—only when $\sigma_p^2 < \mu_p(1 - \mu_p)$.
 
 This formulation defines a distribution of plausible $p$-values centered around
 the nominal value $p_0=\mu_p$, with dispersion determined by numerical
