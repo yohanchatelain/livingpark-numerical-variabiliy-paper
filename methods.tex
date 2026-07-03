@@ -3,8 +3,8 @@
 We quantified the impact of numerical variability on structural MRI findings in
 Parkinson's disease (PD) using (1) stochastic perturbation experiments and (2)
 analytical uncertainty propagation. Empirically, we processed a longitudinal
-PPMI cohort using FreeSurfer instrumented with stochastic numerical noise to
-isolate run-to-run variability. Analytically, we derived closed-form
+PPMI cohort using FreeSurfer 7.3.1 instrumented with stochastic numerical noise
+to isolate run-to-run variability. Analytically, we derived closed-form
 approximations linking this pipeline instability (\npvr) to uncertainty in
 effect sizes and test statistics, enabling retrospective quality control using
 only summary statistics.
@@ -43,24 +43,34 @@ Table~\ref{tab:cohort_stat}).
     \centering
     \begin{tabular}{lcc}
         \toprule
-        \textbf{Cohort}              & \textbf{HC}       & \textbf{PD-non-MCI} \\
+        \textbf{Cohort}              & \textbf{HC}       & \textbf{PD-non-MCI}
+        \\
         \hline % chktex 44
-        $n$                          & $89$              & $112$               \\
-        Age (years)                  & $60.7 \pm 9.7$    & $60.6 \pm 8.9$      \\
-        Age range                    & $30.6$ --- $79.8$ & $39.2$ --- $78.3$   \\
-        Gender (male,\%)             & $47$ (52.8\%)     & $74$ (66.1\%)       \\
-        Education (years)            & $16.7 \pm 3.4$    & $16.0 \pm 3.1$      \\
-        UPDRS-III OFF baseline       & $-$               & $23.3 \pm 10.0$     \\
-        UPDRS-III OFF follow-up      & $-$               & $25.6 \pm 11.2$     \\
-        Inter-visit interval (years) & $1.4 \pm 0.5$     & $1.4 \pm 0.6$       \\
+        $n$                          & $89$              & $112$
+        \\
+        Age (years)                  & $60.7 \pm 9.7$    & $60.6 \pm 8.9$
+        \\
+        Age range                    & $30.6$ --- $79.8$ & $39.2$ --- $78.3$
+        \\
+        Gender (male,\%)             & $47$ (52.8\%)     & $74$ (66.1\%)
+        \\
+        Education (years)            & $16.7 \pm 3.4$    & $16.0 \pm 3.1$
+        \\
+        UPDRS-III OFF baseline       & $-$               & $23.3 \pm 10.0$
+        \\
+        UPDRS-III OFF follow-up      & $-$               & $25.6 \pm 11.2$
+        \\
+        Inter-visit interval (years) & $1.4 \pm 0.5$     & $1.4 \pm 0.6$
+        \\
         \bottomrule
     \end{tabular}
     \vspace{1em}
     \caption{\textbf{Participant characteristics.} Values represent mean $\pm$
-        standard deviation. PD = Parkinson's disease; MCI = mild cognitive impairment;
-        UPDRS = Unified Parkinson's Disease Rating Scale. The PD-non-MCI longitudinal
-        subset corresponds to participants with available follow-up MRI and disease
-        severity scores available.\label{tab:cohort_stat}}
+        standard deviation. PD = Parkinson's disease; MCI = mild cognitive
+        impairment; UPDRS = Unified Parkinson's Disease Rating Scale. The
+        PD-non-MCI longitudinal subset corresponds to participants with
+        available follow-up MRI and disease severity scores
+        available.\label{tab:cohort_stat}}
 \end{table}
 
 \subsection{Image acquisition and preprocessing}
@@ -87,7 +97,8 @@ Table~\supptabref{tab:qc}{S4} details the exclusion rates. To ensure
 statistical consistency across the cohort, we randomly subsampled the remaining
 runs to retain exactly 26 valid realisations per participant.
 
-\subsection{Numerical variability assessment\label{sec:numerical_variability_assessment}}
+\subsection{Numerical variability
+    assessment\label{sec:numerical_variability_assessment}}
 
 To quantify the numerical variability in the FreeSurfer pipeline, we employed
 Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}. MCA is a stochastic
@@ -163,11 +174,12 @@ indexes subject-visits and $r=1,\dots,k$ indexes repetitions. Let
     \right].
     \label{eq:sigma_anat}
 \end{equation}
-where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means,
-respectively. Higher \npvr\ values indicate regions where computational
-uncertainty approaches population variation.
+where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means, respectively.
+Higher \npvr\ values indicate regions where computational uncertainty approaches
+population variation.
 
-\subsubsection{Relationship between \npvr~and downstream statistical test uncertainty\label{sec:theoretical_derivations}}
+\subsubsection{Relationship between \npvr~and downstream statistical test
+    uncertainty\label{sec:theoretical_derivations}}
 
 To establish a quantitative link between a method's computational
 reproducibility and the reliability of group-level statistical inferences, we
@@ -189,13 +201,13 @@ sum of the subject's biological value and a numerical error term:
     \mathrm{Cov}[\boldsymbol{\varepsilon}^{(r)}] = \Sigma_{\mathrm{num}}.
     \label{eq:model_noise}
 \end{equation*}
-Here, $\mathbf{x} = {(x_1, \dots, x_N)}^\top$ represents the fixed,
-biological measurements, while $\boldsymbol{\varepsilon}^{(r)}$
-captures the random numerical perturbations introduced during computation.
+Here, $\mathbf{x} = {(x_1, \dots, x_N)}^\top$ represents the fixed, biological
+measurements, while $\boldsymbol{\varepsilon}^{(r)}$ captures the random
+numerical perturbations introduced during computation.
 
 \vspace{0.4em}
-\noindent\textbf{Assumptions.}
-To isolate the contribution of numerical variability, we make three simplifying assumptions:
+\noindent\textbf{Assumptions.} To isolate the contribution of numerical
+variability, we make three simplifying assumptions:
 \begin{enumerate}
 
     \item \textbf{Numerical error model.} The numerical perturbations are
@@ -213,11 +225,11 @@ To isolate the contribution of numerical variability, we make three simplifying 
           data can be approximated by the biological one, $s_p \approx
               \sigma_{\mathrm{pop}}$.
 
-    \item \textbf{Null-hypothesis scenario.} We condition on the
-          observed biological measurements $\mathbf{x}$ and quantify variability
-          only from numerical perturbations $\boldsymbol{\varepsilon}^{(r)}$.
-          This isolates numerical variability effects from sampling variation;
-          the resulting expressions remain accurate near the null and for small
+    \item \textbf{Null-hypothesis scenario.} We condition on the observed
+          biological measurements $\mathbf{x}$ and quantify variability only
+          from numerical perturbations $\boldsymbol{\varepsilon}^{(r)}$. This
+          isolates numerical variability effects from sampling variation; the
+          resulting expressions remain accurate near the null and for small
           effect sizes. In this setting, the biological values $\mathbf{x} =
               {(x_1, \dots, x_N)}^\top$ are treated as fixed, and all randomness
           arises from numerical perturbations $\boldsymbol{\varepsilon}^{(r)}$.
@@ -266,7 +278,8 @@ conditional on the fixed dataset $\mathbf{x}$, is given by:
     = \Var\!\left[d(\tilde{\mathbf{x}})\,\big|\,\mathbf{x}\right].
     \label{eq:var-rep-def}
 \end{equation*}
-Applying the multivariate delta method (Eq.~\ref{eq:var-ds}) around the baseline $\mathbf{x}_0 = \mathbf{x}$, we obtain:
+Applying the multivariate delta method (Eq.~\ref{eq:var-ds}) around the baseline
+$\mathbf{x}_0 = \mathbf{x}$, we obtain:
 \begin{equation}
     \Var_{\mathrm{num}}[d]
     \approx
@@ -282,8 +295,9 @@ For an observation $x_i \in G_g$ ($g \in \{1,2\}$), the chain rule gives:
     \frac{\partial s_p}{\partial x_i} = \frac{x_i - \bar{x}_g}{df s_p}
     \label{eq:d-deriv-chain}
 \end{equation*}
-where the sign in $\partial \Delta/\partial x_i$ is positive for $g=1$ and negative for $g=2$.
-Substituting back into the expression for $\partial d/\partial x_i$, we have:
+where the sign in $\partial \Delta/\partial x_i$ is positive for $g=1$ and
+negative for $g=2$. Substituting back into the expression for $\partial
+    d/\partial x_i$, we have:
 \begin{equation*}
     \frac{\partial d}{\partial x_i} = \pm\frac{1}{n_g s_p} - \frac{\Delta(x_i - \bar{x}_g)}{df s_p^3}
     \Rightarrow {\left(\frac{\partial d}{\partial x_i}\right)}^2 = \frac{1}{n_g^2 s_p^2} \pm \frac{2\Delta(x_i - \bar{x}_g)}{n_g df s_p^4} + \frac{\Delta^2{(x_i - \bar{x}_g)}^2}{df^2 s_p^6}
@@ -293,7 +307,8 @@ and summing over all $i$ in group $G_g$:
     \sum_{i\in G_g}{\left(\frac{\partial d}{\partial x_i}\right)}^2 =
     \frac{1}{n_g s_p^2} \pm \frac{2\Delta}{n_g df s_p^4}\sum_{i\in G_g}(x_i - \bar{x}_g) + \frac{\Delta^2}{df^2 s_p^6}\sum_{i\in G_g}{(x_i - \bar{x}_g)}^2 = \frac{1}{n_g s_p^2} + \frac{\Delta^2}{df^2 s_p^6}\left((n_g - 1)s_g^2 \right)
 \end{equation*}
-since $\sum_{i\in G_g}(x_i - \bar{x}_g) = 0$, so finally summing over both groups:
+since $\sum_{i\in G_g}(x_i - \bar{x}_g) = 0$, so finally summing over both
+groups:
 \begin{align*}
     \sum_{i = 1}^{n}{\left(\frac{\partial d}{\partial x_i}\right)}^2
      & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2}\right) +
@@ -302,8 +317,8 @@ since $\sum_{i\in G_g}(x_i - \bar{x}_g) = 0$, so finally summing over both group
     \frac{1}{df}\frac{\Delta^2}{s_p^2}\frac{1}{s_p^2}\frac{\left((n_1 - 1)s_1^2 + (n_2 - 1)s_2^2 \right)}{df}\right) \\
      & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2} + \frac{d^2}{df} \right).
 \end{align*}
-Finally, assuming $s_p \approx \sigma_{\mathrm{pop}}$, the population (between-subject)
-variance, Eq.~\eqref{eq:var-rep-approx} becomes:
+Finally, assuming $s_p \approx \sigma_{\mathrm{pop}}$, the population
+(between-subject) variance, Eq.~\eqref{eq:var-rep-approx} becomes:
 \begin{equation}
     \Var_{\mathrm{num}}[d]
     \approx
@@ -311,18 +326,18 @@ variance, Eq.~\eqref{eq:var-rep-approx} becomes:
     \left(\frac{1}{n_1}+\frac{1}{n_2}+\frac{d^2}{df}\right).
     \label{eq:var-rep-simplified}
 \end{equation}
-For balanced groups ($n_1 = n_2 = n/2$) and large $n$, the $d^2/df$ term is negligible:
+For balanced groups ($n_1 = n_2 = n/2$) and large $n$, the $d^2/df$ term is
+negligible:
 \begin{align*}
     \Var_{\mathrm{num}}[d]   & \approx \frac{4}{n} \frac{\sigma_{\mathrm{num}}^2}{\sigma_{\mathrm{pop}}^2}   = \frac{4}{n} \nu_{\mathrm{npv}}^2 \\
     \sigma_{\mathrm{num}}[d] & \approx \frac{2}{\sqrt{n}}\,\nu_{\mathrm{npv}}
     \label{eq:var-rep-final-simplified}
 \end{align*}
-where $\nu_{\mathrm{npv}} = \sigma_{\mathrm{num}} / \sigma_{\mathrm{pop}}$
-is the numerical-population variability ratio.
-This expression quantitatively links the numerical uncertainty captured by
-$\nu_{\mathrm{npv}}$ to the variability of Cohen's~$d$ effect size,
-providing a practical measure of the stability of statistical inferences
-under finite-precision arithmetic.
+where $\nu_{\mathrm{npv}} = \sigma_{\mathrm{num}} / \sigma_{\mathrm{pop}}$ is
+the numerical-population variability ratio. This expression quantitatively links
+the numerical uncertainty captured by $\nu_{\mathrm{npv}}$ to the variability of
+Cohen's~$d$ effect size, providing a practical measure of the stability of
+statistical inferences under finite-precision arithmetic.
 
 \paragraph{Two-sample \textit{t}-test statistic}
 
@@ -335,14 +350,12 @@ between two group means:
     \frac{d}{\sqrt{\tfrac{1}{n_1} + \tfrac{1}{n_2}}},
     \label{eq:t-stat-def}
 \end{equation*}
-where $d$ is Cohen's~$d$ defined in Eq.~\eqref{eq:cohen-d-def}.
-Defining
+where $d$ is Cohen's~$d$ defined in Eq.~\eqref{eq:cohen-d-def}. Defining
 \(
 \omega_n = \tfrac{1}{n_1} + \tfrac{1}{n_2},
 \)
-the $t$ statistic can be expressed as
-\(t = d / \sqrt{\omega_n}\).
-From Eq.~\eqref{eq:var-rep-simplified}, the variance of $d$ due to numerical
+the $t$ statistic can be expressed as \(t = d / \sqrt{\omega_n}\). From
+Eq.~\eqref{eq:var-rep-simplified}, the variance of $d$ due to numerical
 perturbations propagates to the variance of $t$ as:
 \begin{equation}
     \begin{aligned}
@@ -378,11 +391,10 @@ symmetrically, when $n_2 \gg n_1$,
 df\,\omega_n \approx \tfrac{n_2 - 2}{n_1}.
 \)
 In both cases, $1/(df\,\omega_n) \to 0$, so the correction term
-\(\tfrac{d^2}{df\,\omega_n}\) vanishes for unbalanced groups.
-When the groups are balanced ($n_1 = n_2 = n/2$),
-$df \omega_n = 4\!\left(1 - \tfrac{2}{n}\right) \to 4$ as $n \to \infty$,
-so that $\tfrac{d^2}{df\,\omega_n} \to d^2 / 4$.
-Substituting these results into Eq.~\eqref{eq:t-var-approx} gives:
+\(\tfrac{d^2}{df\,\omega_n}\) vanishes for unbalanced groups. When the groups
+are balanced ($n_1 = n_2 = n/2$), $df \omega_n = 4\!\left(1 -
+    \tfrac{2}{n}\right) \to 4$ as $n \to \infty$, so that $\tfrac{d^2}{df\,\omega_n}
+    \to d^2 / 4$. Substituting these results into Eq.~\eqref{eq:t-var-approx} gives:
 \begin{equation*}
     \Var_{\mathrm{num}}[t]
     \approx
@@ -390,9 +402,9 @@ Substituting these results into Eq.~\eqref{eq:t-var-approx} gives:
     \label{eq:t-var-final}
 \end{equation*}
 where $\epsilon$ tends to $0$ for strongly unbalanced groups and to $d^{2}/4$
-for large balanced samples.
-For small effect sizes ($d^2 \ll 4$) and unbalanced groups, the correction term
-$\epsilon$ is negligible, yielding the simplified expression:
+for large balanced samples. For small effect sizes ($d^2 \ll 4$) and unbalanced
+groups, the correction term $\epsilon$ is negligible, yielding the simplified
+expression:
 \begin{align*}
     \Var_{\mathrm{num}}[t]   & \approx \nu_{\mathrm{npv}}^{2} \notag \\
     \sigma_{\mathrm{num}}[t] & \approx \nu_{\mathrm{npv}}.
@@ -401,8 +413,8 @@ $\epsilon$ is negligible, yielding the simplified expression:
 
 \vspace{0.5em}
 \noindent
-The uncertainty of the corresponding $p$-values can then be derived. Let $X$ be the
-random variable with $\mathbb{E}_{\mathrm{num}}[X]=t_0$ and
+The uncertainty of the corresponding $p$-values can then be derived. Let $X$ be
+the random variable with $\mathbb{E}_{\mathrm{num}}[X]=t_0$ and
 $\Var_{\mathrm{num}}[X]=\nu_{\mathrm{npv}}^{2}$. Let $f_t$, $F_t$ be the
 probability density and cumulative distribution functions of the Student
 $t$-distribution with $df$ degrees of freedom. Applying the delta method to the
@@ -433,12 +445,12 @@ where $\mathbf{y}$ is the vector of measurements across subjects, and
 $\mathbf{X}$ includes an intercept, diagnostic group (PD vs.\ HC), and
 covariates (e.g., age and sex). The adjusted group difference is expressed as
 the one-degree-of-freedom contrast $c^{\top}\boldsymbol{\beta}$, with contrast
-vector $c = {[0,\, 1,\, 0,\, 0]}^{\top}$. Let
-$\widehat{\boldsymbol{\beta}} = {(\mathbf{X}^{\top}\mathbf{X})}^{-1}
-    \mathbf{X}^{\top}\mathbf{y}$ denote the ordinary least-squares (OLS) estimator
-and $\widehat{\sigma}_{\mathrm{res}}^{2} = SS_{\mathrm{res}} / df_2$ the
-residual mean square, where $df_2 = n - \mathrm{rank}(\mathbf{X})$.
-The sum of squares associated with the group effect is:
+vector $c = {[0,\, 1,\, 0,\, 0]}^{\top}$. Let $\widehat{\boldsymbol{\beta}} =
+    {(\mathbf{X}^{\top}\mathbf{X})}^{-1} \mathbf{X}^{\top}\mathbf{y}$ denote the
+ordinary least-squares (OLS) estimator and $\widehat{\sigma}_{\mathrm{res}}^{2}
+    = SS_{\mathrm{res}} / df_2$ the residual mean square, where $df_2 = n -
+    \mathrm{rank}(\mathbf{X})$. The sum of squares associated with the group effect
+is:
 \begin{equation*}
     SS_{\mathrm{group}}
     =
@@ -459,8 +471,8 @@ The corresponding ANCOVA $F$ statistic is given by:
     F \sim \mathcal{F}(df_1 = 1,\, df_2).
     \label{eq:ancova-F}
 \end{equation*}
-Significance is evaluated using the upper-tail of the central $\mathcal{F}$ distribution under
-the null hypothesis:
+Significance is evaluated using the upper-tail of the central $\mathcal{F}$
+distribution under the null hypothesis:
 \[
     p(X) = 1 - F_{\mathcal{F}}\left(X;df_1,df_2\right),
 \]
@@ -609,10 +621,10 @@ thus ${(\partial R / \partial x_i)}^{2}$ is:
         \right].
 \end{align*}
 Using the correlation identities $\sum\alpha_i^2 = (n-1)(1 - a^{2})$,
-$\sum\beta_i^2 = (n-1)(1 - b^{2})$, $\sum\alpha_i\beta_i = (n-1)(c - ab)$
-(see Supplementary Eq.~\suppequref{eq:correlation_identities}{S6}), and that
-$(1-b^{2})(1-c^{2})-{(a-bc)}^{2} = (1-a^{2})(1-b^{2})-{(c-ab)}^{2}$, we sum over all
-$i$ to obtain:
+$\sum\beta_i^2 = (n-1)(1 - b^{2})$, $\sum\alpha_i\beta_i = (n-1)(c - ab)$ (see
+Supplementary Eq.~\suppequref{eq:correlation_identities}{S6}), and that
+$(1-b^{2})(1-c^{2})-{(a-bc)}^{2} = (1-a^{2})(1-b^{2})-{(c-ab)}^{2}$, we sum over
+all $i$ to obtain:
 \begin{align*}
     \sum_{i=1}^{n}
     {\left(\frac{\partial R}{\partial x_i}\right)}^{2}
@@ -648,7 +660,8 @@ $i$ to obtain:
         \frac{1  - R^{2}}{1 - b^{2}}
         \right].
 \end{align*}
-Substituting back into Eq.~\eqref{eq:delta-partial} with $s_x^2 \approx \sigma_{\mathrm{pop}}^2$ gives:
+Substituting back into Eq.~\eqref{eq:delta-partial} with $s_x^2 \approx
+    \sigma_{\mathrm{pop}}^2$ gives:
 \begin{equation}
     \Var_{\mathrm{num}}[R]
     \approx
@@ -658,9 +671,9 @@ Substituting back into Eq.~\eqref{eq:delta-partial} with $s_x^2 \approx \sigma_{
     \right].
     \label{eq:partial-var}
 \end{equation}
-Since $b$ is rarely reported in practice, we further simplify
-this expression by deriving a lower bound on $\Var_{\mathrm{num}}[R]$.
-Since $0 \leq b^{2} \leq 1$, then $1/(1 - b^{2}) \geq 1$. Therefore:
+Since $b$ is rarely reported in practice, we further simplify this expression by
+deriving a lower bound on $\Var_{\mathrm{num}}[R]$. Since $0 \leq b^{2} \leq 1$,
+then $1/(1 - b^{2}) \geq 1$. Therefore:
 \begin{equation}
     \frac{1-R^{2}}{1 - b^{2}} \geq 1 - R^{2}.
     \label{eq:partial-corr-bound}
@@ -708,7 +721,8 @@ with the partial derivatives given by:
     \frac{\partial t}{\partial R} = \sqrt{\frac{df}{{(1-R^{2})}^{3}}}.
     \label{eq:partial-t-deriv}
 \end{equation}
-Combining equations~\eqref{eq:partial-p-var} and~\eqref{eq:partial-t-deriv} yields
+Combining equations~\eqref{eq:partial-p-var} and~\eqref{eq:partial-t-deriv}
+yields
 \begin{align}
     \Var_{\mathrm{num}}[p(X)]
      & \approx
@@ -726,7 +740,8 @@ Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$ leads to:
     2f_t(|t_0|)\sqrt{\frac{df}{n-1}} \frac{\nu_{\mathrm{npv}}}{(1-R_0^{2})}.
 \]
 
-\subsection{Probability of significance flips induced by numerical uncertainty\label{sec:false-positives-modeling}}
+\subsection{Probability of significance flips induced by numerical
+    uncertainty\label{sec:false-positives-modeling}}
 
 To quantify the probability of significance flips findings arising from
 numerical variability, we model the computed $p$-value as a random variable
@@ -781,17 +796,10 @@ Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
         \centering
         \subcaption{Negative case ($p_0 > \alpha$)\label{fig:fp-negative-case}}
         \begin{tikzpicture}
-            \begin{axis}[
-                    axis lines=left,
-                    xmin=0, xmax=1.05,
-                    ymin=0, ymax=3.5,
-                    xlabel={$p$-value},
-                    ytick=\empty,
-                    xtick={0,0.25,1},
-                    xticklabels={$0$,$\alpha$,$1$},
-                    width=\linewidth, height=5cm,
-                    clip=false
-                ]
+            \begin{axis}[ axis lines=left, xmin=0, xmax=1.05, ymin=0, ymax=3.5,
+                    xlabel={$p$-value}, ytick=\empty, xtick={0,0.25,1},
+                    xticklabels={$0$,$\alpha$,$1$}, width=\linewidth,
+                    height=5cm, clip=false ]
                 % Beta Distribution Curve for H1 (Skewed Left approximation)
                 \addplot[thick, samples=200, domain=0.001:1, name path=H1Curve]
                 {30 * x^(2.5) * (1-x)^1.5};
@@ -801,18 +809,21 @@ Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
                 % Alpha line
                 \draw[dashed, axisGrey] (axis cs:0.25,0) -- (axis cs:0.25,3.2);
 
-                % --- Shading ---
-                % Area below alpha 
-                \addplot[falseColor!30] fill between[of=H1Curve and xaxis, soft clip={domain=0:0.25}];
+                % --- Shading --- Area below alpha 
+                \addplot[falseColor!30] fill between[of=H1Curve and xaxis, soft
+                clip={domain=0:0.25}];
                 % Area above alpha 
-                \addplot[trueColor!30] fill between[of=H1Curve and xaxis, soft clip={domain=0.25:1}];
+                \addplot[trueColor!30] fill between[of=H1Curve and xaxis, soft
+                clip={domain=0.25:1}];
 
                 % Labels
-                \node[falseColor!80!black] at (axis cs:0.1, 0.55) {\textbf{\FN}};
-                \node[trueColor!80!black] at (axis cs:0.45, 0.55) {\textbf{\TN}};
+                \node[falseColor!80!black] at (axis cs:0.1, 0.55)
+                {\textbf{\FN}}; \node[trueColor!80!black] at (axis cs:0.45,
+                0.55) {\textbf{\TN}};
 
                 % Sample p0
-                \draw[-{Latex}, thick] (axis cs:0.62, 0) -- (axis cs:0.62, 2.5) node[above, right] {$p_0$};
+                \draw[-{Latex}, thick] (axis cs:0.62, 0) -- (axis cs:0.62, 2.5)
+                node[above, right] {$p_0$};
             \end{axis}
         \end{tikzpicture}
         \begin{align*}
@@ -824,19 +835,13 @@ Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
     % --- H0 Figure (Positive Case) ---
     \begin{minipage}[t]{0.48\textwidth}
         \centering
-        \subcaption{Positive case ($p_0 \leq \alpha$)\label{fig:fp-positive-case}}
+        \subcaption{Positive case ($p_0 \leq
+                \alpha$)\label{fig:fp-positive-case}}
         \begin{tikzpicture}
-            \begin{axis}[
-                    axis lines=left,
-                    xmin=0, xmax=1.05,
-                    ymin=0, ymax=2.5,
-                    xlabel={$p$-value},
-                    ytick=\empty,
-                    xtick={0,0.25,1},
-                    xticklabels={$0$,$\alpha$,$1$},
-                    width=\linewidth, height=5cm,
-                    clip=false
-                ]
+            \begin{axis}[ axis lines=left, xmin=0, xmax=1.05, ymin=0, ymax=2.5,
+                    xlabel={$p$-value}, ytick=\empty, xtick={0,0.25,1},
+                    xticklabels={$0$,$\alpha$,$1$}, width=\linewidth,
+                    height=5cm, clip=false ]
                 % Beta Distribution Curve for H0 (Skewed Right approximation)
                 \addplot[thick, samples=200, domain=0:1, name path=H0Curve]
                 {7.5 * x^(0.5) * (1-x)^(5)};
@@ -846,18 +851,20 @@ Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
                 % Alpha line
                 \draw[dashed, axisGrey] (axis cs:0.25,0) -- (axis cs:0.25,2.2);
 
-                % --- Shading ---
-                % Area below alpha
-                \addplot[trueColor!30] fill between[of=H0Curve and xaxis, soft clip={domain=0:0.25}];
+                % --- Shading --- Area below alpha
+                \addplot[trueColor!30] fill between[of=H0Curve and xaxis, soft
+                clip={domain=0:0.25}];
                 % Area above alpha
-                \addplot[falseColor!30] fill between[of=H0Curve and xaxis, soft clip={domain=0.25:1}];
+                \addplot[falseColor!30] fill between[of=H0Curve and xaxis, soft
+                clip={domain=0.25:1}];
 
                 % Labels
                 \node[trueColor!80!black] at (axis cs:0.17, 0.5) {\textbf{\TP}};
                 \node[falseColor!80!black] at (axis cs:0.5, 0.5) {\textbf{\FP}};
 
                 % Sample p0
-                \draw[-{Latex}, thick] (axis cs:0.085, 0) -- (axis cs:0.085, 1.75) node[above, right] {$p_0$};
+                \draw[-{Latex}, thick] (axis cs:0.085, 0) -- (axis cs:0.085,
+                1.75) node[above, right] {$p_0$};
             \end{axis}
         \end{tikzpicture}
         \begin{align*}

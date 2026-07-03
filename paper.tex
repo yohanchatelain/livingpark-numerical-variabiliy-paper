@@ -34,7 +34,7 @@
 \usepgfplotslibrary{fillbetween}
 \pgfplotsset{compat=1.18}
 
-\newcommand{\YC}[1]{\textcolor{red}{YC: #1}}
+\newcommand{\YC}[1]{\textcolor{red}{YC:\@ #1}}
 \newcommand{\TG}[2][]{\ifthenelse{\equal{#1}{done}}{[\textcolor{teal}{$\blacksquare$}]~\textcolor{blue!60}{\textsc{From
 Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
@@ -89,7 +89,7 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 \begin{abstract}
     Numerical variability is rarely quantified in neuroimaging despite many
     measures relying on subtle morphometric differences across individuals. We
-    instrumented FreeSurfer, a widely used neuroimaging pipeline, to simulate
+    instrumented FreeSurfer 7.3.1, a widely used neuroimaging pipeline, to simulate
     numerical differences across computational environments, and used it to
     measure numerical variability in MRI analyses of Parkinson's disease
     patients and controls. In multiple cortical and subcortical regions,
@@ -97,14 +97,16 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
     altering statistical conclusions about group differences and clinical
     associations. To assess the impact of numerical noise in existing studies,
     we developed a practical tool that estimates the Numerical-Population
-    Variability Ratio (NPVR) in a study, and propagates the resulting numerical uncertainty
-    to common statistics and associated p-values. By applying this framework to
-    thirteen previously published studies reporting MRI measures in Parkinson's
-    disease, we quantified the probability of numerically induced false
-    positives and false negatives in the literature, highlighting a substantial
-    impact of numerical variability on MRI measures of Parkinson's disease.
-    These results underscore the importance of systematically evaluating
-    numerical stability in neuroimaging and provides a practical framework to do so.
+    Variability Ratio (NPVR) in a study, and propagates the resulting numerical
+    uncertainty to common statistics and associated p-values. By applying this
+    framework to thirteen previously published studies reporting MRI measures in
+    Parkinson's disease, we quantified the probability of numerically induced
+    false positives and false negatives in the literature, highlighting a
+    substantial impact of numerical variability on MRI measures of Parkinson's
+    disease with an average flip significance probability of 5\% for cross
+    sectional studies and 10\% for longitudinal studies. These results
+    underscore the importance of systematically evaluating numerical stability
+    in neuroimaging and provides a practical framework to do so.
 \end{abstract}
 
 \input{main}
@@ -118,7 +120,7 @@ Parkinson's Progression Markers Initiative (PPMI) database
 but restrictions apply to the availability of these data, which were used under
 license for the current study, and so are not publicly available. Data are
 available from the authors upon reasonable request and with permission of the
-PPMI.
+PPMI.\@
 
 \section{Code Availability}
 All MCA instrumentation scripts, FreeSurfer build instructions, and analysis
@@ -143,24 +145,23 @@ publish, or preparation of the manuscript.
 \section*{Declarations}
 
 \subsection*{Author Contributions}
-Y.C. and T.G. conceived and designed the study.
-Y.C. implemented the MCA instrumentation, conducted the analyses, and developed the web tool.
-A.S. contributed to data curation and analysis.
-M.S. contributed to clinical interpretation of the results.
-J.-B.P. contributed to the conceptualization of the study and the statistical analyses.
-T.G., M.S., and J.-B.P. acquired funding and supervised the project.
-Y.C. drafted the manuscript.
-All authors contributed to reviewing and editing the manuscript and approved the final version.
+Y.C. and T.G. conceived and designed the study. Y.C. implemented the MCA
+instrumentation, conducted the analyses, and developed the web tool. A.S.
+contributed to data curation and analysis. M.S. contributed to clinical
+interpretation of the results. J.-B.P. contributed to the conceptualization of
+the study and the statistical analyses. T.G., M.S., and J.-B.P. acquired
+funding and supervised the project. Y.C. drafted the manuscript. All authors
+contributed to reviewing and editing the manuscript and approved the final
+version.
 
 \subsection*{Competing Interests}
 The authors declare no competing interests.
-
 
 \bibliographystyle{naturemag}
 \bibliography{paper}
 
 \begin{figure}
-    \includegraphics[width=\linewidth]{Concordia University - Ethics Exemption - Dr Glatard.pdf}
+    \includegraphics[width=\linewidth]{Concordia University - Ethics Exemption - Dr Glatard.pdf} % chktex 8
 \end{figure}
 
 \ifthenelse{\equal{\includeappendix}{true}}{
