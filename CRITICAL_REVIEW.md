@@ -114,6 +114,49 @@ probabilities. A web tool is provided.
 - **"Test statistics" vs "statistical test values":** now consistent in the main
   text; check the appendix uses the same term throughout.
 
+## Mathematical review (derivations)
+
+Every derivation was checked step by step against the supporting proofs. The
+mathematics is sound; there are no algebraic errors in the propagation results.
+
+Verified correct:
+
+- **Delta-method core** (`methods.tex`, `eq:var-ds`): Var_num[ds] ≈ σ_num²‖∇f‖²
+  under the stated independent, homoscedastic Gaussian noise model.
+- **Cohen's *d***: Σ(∂d/∂xᵢ)² = (1/s_p²)(1/n₁ + 1/n₂ + d²/df); the cross term
+  vanishes because Σ_{i∈G_g}(xᵢ − x̄_g) = 0, and (n₁−1)s₁² + (n₂−1)s₂² = df·s_p².
+  Balanced large-n limit σ_d ≈ 2ν/√n.
+- **Two-sample *t***: Var[t] = ν²(1 + d²/(df·ω_n)); the df·ω_n limits (→4 balanced,
+  →∞ unbalanced) are correct; σ_p = 2f_t(|t₀|)ν.
+- **ANCOVA (df₁=1)**: F = t² ⇒ σ_F = 2√F·ν and σ_p = 2√F₀·f_F(F₀)·ν.
+- **Partial correlation**: ∂R/∂b re-derived independently, equal to the paper's
+  (1−c²)(ab−c)/D³; the gradient sum collapses via the correlation identities
+  (Σαᵢ² = (n−1)(1−a²), Σβᵢ² = (n−1)(1−b²), Σαᵢβᵢ = (n−1)(c−ab)) and the symmetric
+  identity (1−a²)(1−b²)−(c−ab)² = (1−b²)(1−c²)−(a−bc)² to
+  Σ(∂R/∂xᵢ)² = (1−R²)/((n−1)s_x²(1−b²)). The lower bound (b²∈[0,1]) and the
+  propagated σ_p bound follow correctly.
+- **Supplementary Note S1** proofs (mean, variance, std, pooled std, covariance,
+  Pearson derivative, correlation identities): all correct.
+- **Table 1** reproduces every derived σ and σ_p expression.
+- **Beta parameterization** (`eq:beta-params`): standard method-of-moments (valid
+  while σ_p² < μ_p(1−μ_p)); the flip-probability integrals P[FN]=∫₀^α, P[FP]=∫_α^1
+  are consistent with the figure shading and the main-text FP/FN-risk convention.
+
+One fix applied (terminology, not math): the two flip-probability bullets
+(`methods.tex`) labeled the flip regions FN/FP (consistent with the paper's
+false-positive/false-negative-**risk** convention) but tagged them "Type I-like"
+/"Type II-like", which is the opposite pairing in standard usage (false positive ≡
+Type I, false negative ≡ Type II) and reads as self-contradictory — the same
+vocabulary problem Reviewer 2 raised for Figure 4. The two parenthetical
+"(instability leading to Type X-like errors)" clauses were removed; the general
+statement that the model links to classical Type I/II error rates is retained.
+
+Minor (not errors), optional: subject count is written `n` in the σ definitions
+and the estimator sums but `N` in the noise-model paragraph — harmonize; the
+squared Cohen's-*d* derivative uses "±" for a cross term whose sign is group-
+dependent but which vanishes on summation; and the Beta model's validity
+condition (σ_p² < μ_p(1−μ_p)) could be stated.
+
 ## Bottom line
 
 The core contribution (NPVR and its retrospective applicability) is solid and the
