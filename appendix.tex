@@ -12,8 +12,7 @@
 
 \section*{Supplementary Information}
 
-\section{Partial derivatives of sample statistics}
-\label{appendix:partial_derivatives_proofs}
+\section{Partial derivatives of sample statistics\label{appendix:partial_derivatives_proofs}}
 
 We derive below the partial derivatives of common sample statistics for a
 dataset \(x = \{x_1, x_2, \ldots, x_n\}\) with respect to an individual
@@ -59,7 +58,7 @@ The partial derivative of the sample variance with respect to \(x_i\) is
     \begin{align*}
         \frac{\partial s^2}{\partial x_i}
          & = \frac{1}{n-1} \sum_{j=1}^{n}
-        \frac{\partial}{\partial x_i} (x_j - \overline{x})^2                           \\
+        \frac{\partial}{\partial x_i} {(x_j - \overline{x})}^2                         \\
          & = \frac{2}{n-1} \sum_{j=1}^{n}
         (x_j - \overline{x}) \frac{\partial (x_j - \overline{x})}{\partial x_i}        \\
          & = \frac{2}{n-1} \sum_{j=1}^{n}
@@ -152,8 +151,8 @@ The partial derivative of the sample covariance with respect to \(x_i\) is
 
 \paragraph{Pearson correlation coefficient.}
 
-The partial derivative of \(r_{x,y}\) with respect to an individual
-observation \(x_i\) is given by
+The partial derivative of \(r_{x,y}\) with respect to an individual observation
+\(x_i\) is given by
 \begin{equation}
     \frac{\partial r_{x,y}}{\partial x_i} = \frac{1}{(n-1)s_x } \left( \frac{y_i - \overline{y}}{s_y} - \frac{r_{x,y}}{s_x} \frac{x_i - \overline{x}}{s_x} \right).
     \label{eq:pearson_derivative}
@@ -181,23 +180,24 @@ observation \(x_i\) is given by
 
 \paragraph{Correlation identities.}
 
-Let \(\tilde{x}_i = (x_i - \overline{x})/s_x\), \(\tilde{y}_i = (y_i - \overline{y})/s_y\) and \(\tilde{z}_i = (z_i - \overline{z})/s_z\) be the standardized variables.
-The following identities hold:
+Let \(\tilde{x}_i = (x_i - \overline{x})/s_x\), \(\tilde{y}_i = (y_i -
+\overline{y})/s_y\) and \(\tilde{z}_i = (z_i - \overline{z})/s_z\) be the
+standardized variables. The following identities hold:
 \begin{align}
-    \sum_{i=1}^{n} \left( \tilde{x}_i - r_{xy} \tilde{y}_i \right)^{2}                                            & = (n-1)(1 - r_{xy}^2)          \\
+    \sum_{i=1}^{n} {\left( \tilde{x}_i - r_{xy} \tilde{y}_i \right)}^{2}                                          & = (n-1)(1 - r_{xy}^2)          \\
     \sum_{i=1}^{n} \left( \tilde{y}_i - r_{xy} \tilde{x}_i \right)\left( \tilde{z}_i - r_{xz} \tilde{x}_i \right) & = (n-1)(r_{yz} - r_{xy}r_{xz})
     \label{eq:correlation_identities}
 \end{align}
 
 \begin{proof}
-    Note that \((n-1)s_x^2 = \sum_{i=1}^{n} (x_i - \overline{x})^2\) and \((n-1)s_{xy} = \sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})\) then by using the definitions of standardized variables, we have for the first identity:
+    Note that \((n-1)s_x^2 = \sum_{i=1}^{n} {(x_i - \overline{x})}^2\) and \((n-1)s_{xy} = \sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})\) then by using the definitions of standardized variables, we have for the first identity:
     \begin{align*}
-        \sum_{i=1}^{n} \left( \tilde{x}_i - r_{xy} \tilde{y}_i \right)^{2} & = \sum_{i=1}^{n} \left( \tilde{x}_i^2 - 2r_{xy} \tilde{x}_i \tilde{y}_i + r_{xy}^2 \tilde{y}_i^2 \right)                                                                                                  \\
-                                                                           & = \sum_{i=1}^{n} \left[ \frac{(x_i - \overline{x})^2}{s_x^2} - 2r_{xy} \frac{(x_i - \overline{x})(y_i - \overline{y})}{s_x s_y} + r_{xy}^2 \frac{(y_i - \overline{y})^2}{s_y^2} \right]                   \\
-                                                                           & = \frac{1}{s_x^2} \sum_{i=1}^{n} (x_i - \overline{x})^2 - \frac{2r_{xy}}{s_x s_y} \sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y}) +  \frac{r_{xy}^2}{s_y^2} \sum_{i=1}^{n} (y_i - \overline{y})^2 \\
-                                                                           & = (n-1) - 2r_{xy} (n-1) r_{xy} + r_{xy}^2 (n-1)                                                                                                                                                           \\
-                                                                           & = (n-1)(1 - 2r_{xy}^2 + r_{xy}^2)                                                                                                                                                                         \\
-                                                                           & = (n-1)(1 - r_{xy}^2).
+        \sum_{i=1}^{n} {\left( \tilde{x}_i - r_{xy} \tilde{y}_i \right)}^{2} & = \sum_{i=1}^{n} \left( \tilde{x}_i^2 - 2r_{xy} \tilde{x}_i \tilde{y}_i + r_{xy}^2 \tilde{y}_i^2 \right)                                                                                                      \\
+                                                                             & = \sum_{i=1}^{n} \left[ \frac{{(x_i - \overline{x})}^2}{s_x^2} - 2r_{xy} \frac{(x_i - \overline{x})(y_i - \overline{y})}{s_x s_y} + r_{xy}^2 \frac{{(y_i - \overline{y})}^2}{s_y^2} \right]                   \\
+                                                                             & = \frac{1}{s_x^2} \sum_{i=1}^{n} {(x_i - \overline{x})}^2 - \frac{2r_{xy}}{s_x s_y} \sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y}) +  \frac{r_{xy}^2}{s_y^2} \sum_{i=1}^{n} {(y_i - \overline{y})}^2 \\
+                                                                             & = (n-1) - 2r_{xy} (n-1) r_{xy} + r_{xy}^2 (n-1)                                                                                                                                                               \\
+                                                                             & = (n-1)(1 - 2r_{xy}^2 + r_{xy}^2)                                                                                                                                                                             \\
+                                                                             & = (n-1)(1 - r_{xy}^2).
     \end{align*}
     and for the second identity:
     \begin{align*}
@@ -209,14 +209,13 @@ The following identities hold:
     \end{align*}
 \end{proof}
 
-\section{Cross-sectional numerical variability quantification}
-\label{appendix:numerical_variability_baseline}
+\section{Cross-sectional numerical variability quantification\label{appendix:numerical_variability_baseline}}
 
 As a complementary component of our analysis, we quantified cross-sectional
-numerical variability for cortical and subcortical measures.
-Numerical variability was assessed using two metrics: (1) the number of
-significant digits~\cite{sohier2021confidence} ($p_s=0.95$, confidence
-$1-\alpha_s=0.95$), calculated using the \texttt{significantdigits}
+numerical variability for cortical and subcortical measures. Numerical
+variability was assessed using two metrics: (1) the number of significant
+digits~\cite{sohier2021confidence} ($p_s=0.95$, confidence $1-\alpha_s=0.95$),
+calculated using the \texttt{significantdigits}
 package\footnote{\url{github.com/verificarlo/significantdigits}} (version
 0.4.0); and (2) the extended Sørensen-Dice coefficient, which measures the
 spatial overlap of segmentation masks across $n$ repetitions. The extended Dice
@@ -260,8 +259,7 @@ spatial robustness compared to cortical parcellations.
     \caption{Numerical variability of segmentation. The distribution of extended
         Sørensen-Dice coefficients, highlighting the variability in spatial overlap
         for cortical and subcortical segmentations due to numerical variability. Lower
-        values indicate higher instability.}
-    \label{fig:dice}
+        values indicate higher instability.\label{fig:dice}}
 \end{figure}
 
 \begin{figure}[h]
@@ -272,8 +270,7 @@ spatial robustness compared to cortical parcellations.
         Lower values indicate higher instability. Significant digits for population
         variability (black cross) remain consistently lower than numerical
         variability on average, indicating that numerical variability does not
-        dominate population variability.}
-    \label{fig:sig_digits_cortical}
+        dominate population variability.\label{fig:sig_digits_cortical}}
 \end{figure}
 
 \begin{figure}[h]
@@ -284,8 +281,7 @@ spatial robustness compared to cortical parcellations.
         instability to cortical volume measures. Significant digits for population
         variability (black cross) remain consistently lower than numerical
         variability on average, indicating that numerical variability does not
-        dominate population variability.}
-    \label{fig:sig_digits_subcortical}
+        dominate population variability.\label{fig:sig_digits_subcortical}}
 \end{figure}
 
 \begin{longtblr}[ caption={Within-subject significant digits averaged across all subjects.},
@@ -301,7 +297,7 @@ spatial robustness compared to cortical parcellations.
     rh                                                                    & lh
                                                                           & rh                                & lh
                                                                           & rh                                                                                                                          \\
-    \hline
+    \hline % chktex 44 
     bankssts                                                              & $1.66 \pm 0.15$                   & $1.70 \pm 0.13$ & $1.16 \pm 0.17$ & $1.22 \pm 0.12$ & $1.09 \pm 0.17$ & $1.14 \pm 0.12$ \\
     caudalanteriorcingulate                                               & $1.39 \pm 0.14$                   & $1.40 \pm 0.14$ & $1.15 \pm 0.22$ & $1.19 \pm 0.17$ & $1.15 \pm 0.23$ & $1.21 \pm 0.19$ \\
     caudalmiddlefrontal                                                   & $1.78 \pm 0.17$                   & $1.78 \pm 0.18$ & $1.41 \pm 0.19$ & $1.32 \pm 0.21$ & $1.41 \pm 0.19$ & $1.31 \pm 0.21$ \\
@@ -351,7 +347,7 @@ spatial robustness compared to cortical parcellations.
                              & lh                                  & rh                            & lh
                              & rh                                  & lh                            & rh
     \\
-    \hline
+    \hline % chktex 44 
     bankssts                 & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z27.27 \pm \z12.31$  & $\z21.23 \pm \z\z6.77$  & $\z74.82 \pm \z33.80$ & $\z59.56 \pm \z19.75$  \\
     caudalanteriorcingulate  & $0.04 \pm 0.01$                     & $0.04 \pm 0.01$               & $\z19.30 \pm \z12.89$  & $\z19.96 \pm \z10.26$   & $\z49.88 \pm \z35.51$ & $\z49.51 \pm \z29.83$  \\
     caudalmiddlefrontal      & $0.02 \pm 0.01$                     & $0.02 \pm 0.01$               & $\z35.84 \pm \z25.90$  & $\z43.79 \pm \z40.86$   & $\z97.03 \pm \z75.10$ & $118.40 \pm 103.50$    \\
@@ -401,7 +397,7 @@ spatial robustness compared to cortical parcellations.
         row{1}={font=\bfseries}
     }
     Region               & Significant digits & {Standard deviation  \\ ($\text{mm}^3$)} \\
-    \hline
+    \hline % chktex 44 
     Left-Thalamus        & $1.41 \pm 0.21$    & $121.72 \pm 68.93$   \\
     Left-Caudate         & $1.58 \pm 0.20$    & $\z37.92 \pm 24.01$  \\
     Left-Putamen         & $1.49 \pm 0.22$    & $\z65.18 \pm 46.06$  \\
@@ -433,20 +429,18 @@ spatial robustness compared to cortical parcellations.
         QC failure         & 319 (1.48\%)                            & 21488 \\
         Total              & 1633 (7.60\%)                           & 21488 \\
         \bottomrule
-    \end{tabular}
-    \label{tab:qc}
+    \end{tabular}\label{tab:qc}
 \end{table}
 
-\section{Numerical instability of statistical inference: additional information}
-\label{appendix:summary_stats_inference}
+\section{Numerical instability of statistical inference: additional information\label{appendix:summary_stats_inference}}
 
 We evaluated the stability of statistical inference by quantifying the
 frequency of significance flipping across 26 MCA repetitions
 (Table~\ref{tab:fluctuating_regions}). The analysis revealed that longitudinal
-processing introduces considerably more instability than
-cross-sectional analysis, particularly for cortical metrics. Notably, partial
-correlation analysis exhibited higher susceptibility to instability in cortical
-volume (53\% of regions unstable) and area (38\% unstable) compared to ANCOVA.
+processing introduces considerably more instability than cross-sectional
+analysis, particularly for cortical metrics. Notably, partial correlation
+analysis exhibited higher susceptibility to instability in cortical volume
+(53\% of regions unstable) and area (38\% unstable) compared to ANCOVA\@.
 
 To investigate whether longitudinal processing amplifies numerical instability,
 we compared the dispersion of the test statistics ($F$-values for ANCOVA,
@@ -454,8 +448,8 @@ correlation coefficients $r$ for partial correlation) in longitudinal versus
 cross-sectional pipelines. We used a one-sided Ansari-Bradley test on
 mean-centered distributions to test the specific hypothesis that longitudinal
 processing has significantly higher numerical variance compared to the
-cross-sectional (Tables~\ref{tab:stats-coef-var-subcortical} and
-\ref{tab:stats-coef-var-cortical}).
+cross-sectional (Tables~\ref{tab:stats-coef-var-subcortical}
+and~\ref{tab:stats-coef-var-cortical}).
 
 For subcortical structures (Table~\ref{tab:stats-coef-var-subcortical}),
 partial correlation yielded significantly higher variance in the longitudinal
@@ -473,21 +467,20 @@ showed significant variance differences in far fewer regions.
     \renewcommand{\arraystretch}{1.15}
     \caption{Frequency of significance flipping across 26 MCA repetitions.
         Values report the number (and percentage) of unstable regions for each
-        metric and analysis, for baseline and longitudinal settings.}
-    \label{tab:fluctuating_regions}
+        metric and analysis, for baseline and longitudinal settings.\label{tab:fluctuating_regions}}
     \begin{tabular}{lcccc}
-        \hline
+        \hline % chktex 44 
         \multirow{2}{*}{\textbf{Metric}}    &
         \multicolumn{2}{c}{\textbf{ANCOVA}} &
         \multicolumn{2}{c}{\textbf{Partial correlation}}                                                                            \\
         \cline{2-5}
                                             & \textbf{Baseline} & \textbf{Longitudinal} & \textbf{Baseline} & \textbf{Longitudinal} \\
-        \hline
+        \hline % chktex 44 
         Cortical Area (68 regions)          & 18 (27\%)         & 36 (53\%)             & 4 (6\%)           & 26 (38\%)             \\
         Cortical Thickness (68 regions)     & 11 (16\%)         & 9 (13\%)              & 19 (28\%)         & 17 (25\%)             \\
         Cortical Volume (68 regions)        & 14 (20\%)         & 20 (29\%)             & 8 (12\%)          & 36 (53\%)             \\
         Subcortical Volume (14 regions)     & 4 (29\%)          & 2 (14\%)              & 4 (29\%)          & 5 (36\%)              \\
-        \hline
+        \hline % chktex 44 
     \end{tabular}
 \end{table}
 
@@ -496,10 +489,9 @@ showed significant variance differences in far fewer regions.
     \centering
     \centering
     \caption{Variance variability in cortical regions. One-sided
-        Ansari-Bradley test comparing cross-sectional vs. longitudinal variances of
+        Ansari-Bradley test comparing cross-sectional vs.\ longitudinal variances of
         test statistics. ($* p_{\text{FDR}} < 0.05$). L/R =
-        Left/Right. $W$ = statistic, $p$ = p-value.}
-    \label{tab:stats-coef-var-subcortical}
+        Left/Right. $W$ = statistic, $p$ = p-value.\label{tab:stats-coef-var-subcortical}}
     \begin{tblr}[
         ]
         {
@@ -512,11 +504,11 @@ showed significant variance differences in far fewer regions.
             rows = {rowsep=0pt},
             rowhead = 2,
         }
-        \hline
+        \hline % chktex 44
         \SetCell[r=2]{m} Region & \SetCell[c=2]{c} ANCOVA &          & \SetCell[c=2]{c} Partial Corr &         \\
-        \hline
+        \hline % chktex 44
                                 & W                       & p        & W                             & p       \\
-        \hline
+        \hline % chktex 44
         L-Thalamus              & 248                     & 1.00     & 465                           & 6.1e-6* \\
         L-Caudate               & 501                     & 3.1e-10* & 459                           & 2.0e-5* \\
         L-Putamen               & 327                     & 0.81     & 491                           & 9.6e-9* \\
@@ -531,13 +523,13 @@ showed significant variance differences in far fewer regions.
         R-Hippocampus           & 335                     & 0.73     & 493                           & 5.1e-9* \\
         R-Amygdala              & 316                     & 0.90     & 408                           & 1.9e-2* \\
         R-Accumbens             & 214                     & 1.00     & 418                           & 7.0e-3* \\
-        \hline
+        \hline % chktex 44
     \end{tblr}
 \end{table}
 
 % Table 2: Cortical Regions
 \begin{longtblr}[
-        caption={Ansari-Bradley test results for cross-sectional vs. longitudinal variances in cortical regions. * indicates FDR-corrected significance ($p < 0.05$). lh/rh =
+        caption={Ansari-Bradley test results for cross-sectional vs.\ longitudinal variances in cortical regions. * indicates FDR-corrected significance ($p < 0.05$).\ lh/rh =
                 left/right hemisphere. ACC = anterior cingulate cortex, MF = middle
                 frontal. $W$ = statistic, $p$ = p-value.},
         label={tab:stats-coef-var-cortical},
@@ -552,13 +544,13 @@ showed significant variance differences in far fewer regions.
         rows = {font=\footnotesize, rowsep=0pt},
         rowhead = 3,
     }
-    \hline
+    \hline % chktex 44
     \SetCell[r=3]{m} Region   & \SetCell[c=4]{c} Cortical Volume &          &                               &          & \SetCell[c=4]{c} Cortical Thickness &          &                               &         & \SetCell[c=4]{c} Cortical Area &          &                               &          \\
-    \hline
+    \hline % chktex 44
                               & \SetCell[c=2]{c} ANCOVA          &          & \SetCell[c=2]{c} Partial Corr &          & \SetCell[c=2]{c} ANCOVA             &          & \SetCell[c=2]{c} Partial Corr &         & \SetCell[c=2]{c} ANCOVA        &          & \SetCell[c=2]{c} Partial Corr &          \\
-    \hline
+    \hline % chktex 44
                               & W                                & p        & W                             & p        & W                                   & p        & W                             & p       & W                              & p        & W                             & p        \\
-    \hline
+    \hline % chktex 44
     bankssts (lh)             & 447                              & 1.6e-4*  & 486                           & 4.1e-8*  & 454                                 & 4.8e-5*  & 433                           & 1.2e-3* & 455                            & 4.1e-5*  & 481                           & 1.6e-7*  \\
     bankssts (rh)             & 403                              & 2.9e-2   & 466                           & 5.0e-6*  & 469                                 & 2.7e-6*  & 449                           & 1.1e-4* & 447                            & 1.6e-4*  & 461                           & 1.3e-5*  \\
     caudalACC (lh)            & 446                              & 1.8e-4*  & 487                           & 3.1e-8*  & 322                                 & 0.86     & 475                           & 6.9e-7* & 350                            & 0.52     & 480                           & 2.0e-7*  \\
@@ -627,57 +619,54 @@ showed significant variance differences in far fewer regions.
     transversetemporal (rh)   & 324                              & 0.84     & 417                           & 7.8e-3*  & 477                                 & 4.3e-7*  & 442                           & 3.3e-4* & 347                            & 0.56     & 435                           & 9.0e-4*  \\
     insula (lh)               & 249                              & 1.00     & 470                           & 2.1e-6*  & 220                                 & 1.00     & 457                           & 2.8e-5* & 263                            & 1.00     & 438                           & 6.0e-4*  \\
     insula (rh)               & 267                              & 1.00     & 444                           & 2.5e-4*  & 401                                 & 3.5e-2   & 439                           & 5.2e-4* & 235                            & 1.00     & 410                           & 1.6e-2   \\
-    \hline
+    \hline % chktex 44
 \end{longtblr}
 
 \begin{table}[t]
     \centering
-    \caption{Permutation test comparison of $\nu_{\text{npv}}$ between HC and PD.
+    \caption{Permutation test comparison of $\nu_{\text{npv}}$ between HC and PD.\@
         No significance detected after Bonferroni correction ($\alpha=0.05/8$).
-        Values are observed differences (PD$-$HC). 95\% CIs from percentile bootstrap.}
-    \label{tab:bootstrap-npvr}
+        Values are observed differences (PD$-$HC). 95\% CIs from percentile bootstrap.\label{tab:bootstrap-npvr}}
     \begin{tabular}{lcccc}
         \toprule
         \textbf{Metric}    & {\textbf{Observed} $\Delta$} & \textbf{95\% CI}    & {\textbf{p-value}} & \textbf{Study}  \\
         \midrule
-        area               & 0.005                        & {[}-0.002, 0.013{]} & 0.734              & cross-sectional \\
-        thickness          & 0.027                        & {[}0.020, 0.034{]}  & 0.033              & cross-sectional \\
-        volume             & 0.013                        & {[} 0.004, 0.022{]} & 0.371              & cross-sectional \\
-        subcortical volume & 0.014                        & {[} 0.004, 0.025{]} & 0.646              & cross-sectional \\
+        area               & 0.005                        & [-0.002, 0.013] & 0.734              & cross-sectional \\
+        thickness          & 0.027                        & [ 0.020, 0.034]  & 0.033              & cross-sectional \\
+        volume             & 0.013                        & [ 0.004, 0.022] & 0.371              & cross-sectional \\
+        subcortical volume & 0.014                        & [ 0.004, 0.025] & 0.646              & cross-sectional \\
         \midrule
-        area               & 0.021                        & {[}-0.002, 0.044{]} & 0.482              & longitudinal    \\
-        thickness          & 0.002                        & {[}-0.014, 0.020{]} & 0.919              & longitudinal    \\
-        volume             & 0.025                        & {[} 0.002, 0.049{]} & 0.370              & longitudinal    \\
-        subcortical volume & -0.027                       & {[}-0.047,-0.006{]} & 0.489              & longitudinal    \\
+        area               & 0.021                        & [-0.002, 0.044] & 0.482              & longitudinal    \\
+        thickness          & 0.002                        & [-0.014, 0.020] & 0.919              & longitudinal    \\
+        volume             & 0.025                        & [ 0.002, 0.049] & 0.370              & longitudinal    \\
+        subcortical volume & -0.027                       & [-0.047,-0.006] & 0.489              & longitudinal    \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 For both group comparisons and correlation analyses, statistical outcomes
 varied substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
-(Figures \ref{fig:npvr_consistency_area_plot} and
-\ref{fig:consistency_volume_plot}). For cortical area (68 regions; Figure
-\ref{fig:npvr_consistency_area_plot}), significance flipped in 31\% of all
-(regions, analysis) pairs, indicating frequent inconsistencies across
-repetitions. For cortical volume (68 regions; Figure
-\ref{fig:consistency_volume_plot}), 29\% of pairs were similarly unstable.
-These fluctuations demonstrate that numerical noise alone can alter downstream
-statistical inference in structural MRI analyses of PD.
+(Figures~\ref{fig:npvr_consistency_area_plot}
+and~\ref{fig:consistency_volume_plot}). For cortical area (68 regions;
+Figure~\ref{fig:npvr_consistency_area_plot}), significance flipped in 31\% of
+all (regions, analysis) pairs, indicating frequent inconsistencies across
+repetitions. For cortical volume (68 regions;
+Figure~\ref{fig:consistency_volume_plot}), 29\% of pairs were similarly
+unstable. These fluctuations demonstrate that numerical noise alone can alter
+downstream statistical inference in structural MRI analyses of PD.\@
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figures/consistency/cortical_area_significance_correlation.pdf}
     \caption{Proportion of significant tests ($p<0.05$, uncorrected) for
-        cortical surface area across 26 numerical perturbations.}
-    \label{fig:npvr_consistency_area_plot}
+        cortical surface area across 26 numerical perturbations.\label{fig:npvr_consistency_area_plot}}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figures/consistency/cortical_volume_significance_correlation.pdf}
     \caption{Proportion of significant tests ($p<0.05$, uncorrected) for
-        cortical volume across 26 numerical perturbations.}
-    \label{fig:consistency_volume_plot}
+        cortical volume across 26 numerical perturbations.\label{fig:consistency_volume_plot}}
 \end{figure}
 
 \begin{figure}[t]
@@ -686,9 +675,8 @@ statistical inference in structural MRI analyses of PD.
     \caption{Numerical-Population Variability Ratio (\npvr) for cortical surface
         area (top row in each panel) and cortical volume (bottom row in each
         panel) in healthy controls (HC) and Parkinson's disease (PD). Higher
-        \npvr values indicate higher computational uncertainty relative to
-        inter-subject variability.}
-    \label{fig:npvr_maps_area_volume}
+        \npvr\ values indicate higher computational uncertainty relative to
+        inter-subject variability.\label{fig:npvr_maps_area_volume}}
 \end{figure}
 
 \begin{figure}[ht]
@@ -698,18 +686,14 @@ statistical inference in structural MRI analyses of PD.
         variability in neuroimaging studies. Users can input summary statistics
         to obtain NPVR values and visualize the impact of numerical variability
         on effect size estimates. The tool is available at
-        \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.
-        \label{fig:brain_render_tool}}
+        \href{https://yohanchatelain.github.io/brain\_render/}{yohanchatelain.github.io/brain\_render}.\label{fig:brain_render_tool}}
 \end{figure}
 
-\section{Distribution of statistical test coefficients}
-\label{appendix:distribution_stats_values}
+\section{Distribution of statistical test coefficients\label{appendix:distribution_stats_values}}
 
-Figures \ref{fig:statstest_coefficients_distribution_subcortical},
-\ref{fig:statstest_coefficients_distribution_thickness},
-\ref{fig:statstest_coefficients_distribution_area} and
-\ref{fig:statstest_coefficients_distribution_volume} show the distribution of
-partial correlation coefficients and F-statistics for subcortical volume,
+Figures~\ref{fig:statstest_coefficients_distribution_subcortical},~\ref{fig:statstest_coefficients_distribution_thickness},~\ref{fig:statstest_coefficients_distribution_area}
+and~\ref{fig:statstest_coefficients_distribution_volume} show the distribution
+of partial correlation coefficients and F-statistics for subcortical volume,
 cortical thickness, cortical surface area and cortical volume measures, across
 all subjects and regions. Red triangles indicate the unperturbed (IEEE-754) run
 for reference. For all analyses, the unperturbed (IEEE-754) result is included
@@ -721,8 +705,7 @@ the numerical perturbation.
     \includegraphics[width=\linewidth]{figures/consistency/subcortical_volume_coefficients_distribution.pdf}
     \caption{ Distribution of partial correlation coefficients (r-values) and
         F-statistics from ANCOVA across MCA repetitions for subcortical volume
-        measures. Red dots represent the IEEE-754 unperturbed results.
-        \label{fig:statstest_coefficients_distribution_subcortical}}
+        measures. Red dots represent the IEEE-754 unperturbed results.\label{fig:statstest_coefficients_distribution_subcortical}}
 \end{figure}
 
 \begin{figure}
@@ -730,19 +713,17 @@ the numerical perturbation.
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_thickness_coefficients_distribution-Left.pdf}
-        \caption{Left hemisphere}
-        \label{fig:consistency_thickness_left}
+        \caption{Left hemisphere\label{fig:consistency_thickness_left}}
     \end{subfigure}
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_thickness_coefficients_distribution-Right.pdf}
-        \caption{Right hemisphere}
-        \label{fig:consistency_thickness_right}
+        \caption{Right hemisphere\label{fig:consistency_thickness_right}}
     \end{subfigure}
     \caption{Distribution of partial correlation coefficients (r-values) and
         F-statistics from ANCOVA across MCA repetitions for cortical thickness
-        measures. Red dots represent the IEEE-754 unperturbed results. }
-    \label{fig:statstest_coefficients_distribution_thickness}
+        measures. Red dots represent the IEEE-754 unperturbed
+        results.\label{fig:statstest_coefficients_distribution_thickness}}
 \end{figure}
 
 \begin{figure}[h]
@@ -750,20 +731,18 @@ the numerical perturbation.
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Left.pdf}
-        \caption{Left hemisphere}
-        \label{fig:consistency_area_left}
+        \caption{Left hemisphere\label{fig:consistency_area_left}}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_area_coefficients_distribution-Right.pdf}
-        \caption{Right hemisphere}
-        \label{fig:consistency_area_right}
+        \caption{Right hemisphere\label{fig:consistency_area_right}}
     \end{subfigure}
     \caption{ Distribution of partial correlation coefficients (r-values) and
-        F-statistics from ANCOVA across MCA repetitions for cortical surface area
-        measures. Red dots represent the IEEE-754 unperturbed results. }
-    \label{fig:statstest_coefficients_distribution_area}
+        F-statistics from ANCOVA across MCA repetitions for cortical surface
+        area measures. Red dots represent the IEEE-754 unperturbed
+        results.\label{fig:statstest_coefficients_distribution_area}}
 \end{figure}
 
 \begin{figure}[h]
@@ -771,37 +750,32 @@ the numerical perturbation.
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Left.pdf}
-        \caption{Left hemisphere}
-        \label{fig:consistency_volume_left}
+        \caption{Left hemisphere\label{fig:consistency_volume_left}}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\linewidth}
         \centering
         \includegraphics[width=.9\linewidth]{figures/consistency/cortical_volume_coefficients_distribution-Right.pdf}
-        \caption{Right hemisphere}
-        \label{fig:consistency_volume_right}
+        \caption{Right hemisphere\label{fig:consistency_volume_right}}
     \end{subfigure}
     \caption{Distribution of partial correlation coefficients (r-values) and
         F-statistics from ANCOVA across MCA repetitions for cortical volume
-        measures. Red dots represent the IEEE-754 unperturbed results.}
-    \label{fig:statstest_coefficients_distribution_volume}
+        measures. Red dots represent the IEEE-754 unperturbed results.\label{fig:statstest_coefficients_distribution_volume}}
 \end{figure}
 
-
-\section{Numerical validation of numerical uncertainty propagation}
-\label{appendix:numerical_validation_uncertainty_propagation}
+\section{Numerical validation of numerical uncertainty propagation\label{appendix:numerical_validation_uncertainty_propagation}}
 
 To numerically validate the proposed uncertainty-propagation framework, we
 compared analytical standard-deviation estimates derived from the closed-form
-expressions reported in Table~\maintabref{tab:stat_uncertainty}{1} with empirical
-estimates obtained through repeated Monte Carlo Arithmetic (MCA) perturbations
-of the full processing pipelines. For each statistical test (Cohen's $d$,
-two-sample $t$-statistics, partial correlation coefficients, and ANCOVA
-$F$-statistics), as well as their associated $p$-values (except for Cohen's
-$d$), we computed the standard deviation across MCA repetitions and quantified
-the relative error between sampled and analytical estimates. This comparison
-was performed across all cortical and subcortical regions, imaging metrics, and
-for both cross-sectional and longitudinal study designs.
+expressions reported in Table~\maintabref{tab:stat_uncertainty}{1} with
+empirical estimates obtained through repeated Monte Carlo Arithmetic (MCA)
+perturbations of the full processing pipelines. For each statistical test
+(Cohen's $d$, two-sample $t$-statistics, partial correlation coefficients, and
+ANCOVA $F$-statistics), as well as their associated $p$-values (except for
+Cohen's $d$), we computed the standard deviation across MCA repetitions and
+quantified the relative error between sampled and analytical estimates. This
+comparison was performed across all cortical and subcortical regions, imaging
+metrics, and for both cross-sectional and longitudinal study designs.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/aggregated_relative_difference_violins_stat.pdf}
@@ -812,8 +786,7 @@ for both cross-sectional and longitudinal study designs.
         (cross-sectional or longitudinal). Distributions are generally concentrated
         within the interval $[-0.5,0.5]$, with cross-sectional analyses remaining close
         to zero and longitudinal analyses exhibiting broader dispersion and a moderate
-        negative shift for some statistics, most prominently ANCOVA.}
-    \label{fig:uncertainty_validation_statistics}
+        negative shift for some statistics, most prominently ANCOVA.\label{fig:uncertainty_validation_statistics}}
 \end{figure}
 
 Overall, the analytical estimates captured the order of magnitude and regional
@@ -841,8 +814,7 @@ negative tail.
         partial correlation coefficient, ANCOVA $F$-statistic) and analysis type.
         Cross-sectional distributions remain centered near zero, whereas longitudinal
         analyses display wider spreads and systematic negative tendencies, particularly
-        for cortical area and volume metrics.}
-    \label{fig:uncertainty_validation_pvalues}
+        for cortical area and volume metrics.\label{fig:uncertainty_validation_pvalues}}
 \end{figure}
 
 A similar but more dispersed pattern was observed for $p$-values. In
@@ -885,8 +857,7 @@ tendency of the analytical model to overestimate variability.
 % partial_correlation - baseline: mean=0.0032, std=0.2765
 % partial_correlation - longitudinal: mean=-0.2690, std=0.1739
 
-\section{Numerical validation of flip significance simulations}
-\label{appendix:numerical_validation_flip_significance}
+\section{Numerical validation of flip significance simulations\label{appendix:numerical_validation_flip_significance}}
 
 To assess the validity of the analytical uncertainty framework used to model
 numerically induced significance instability, we compared simulated estimates
@@ -902,16 +873,16 @@ and false negatives, respectively.
 
 Figure~\ref{fig:std_sampled_simulated_comparison} compares standard deviations
 of $p$-values estimated directly from 26 MCA runs with those predicted by the
-analytical uncertainty formulas (Table~\maintabref{tab:stat_uncertainty}{1}). Each point
-corresponds to a cortical or subcortical brain region. Results show close
-agreement between sampled and simulated estimates, particularly in the
+analytical uncertainty formulas (Table~\maintabref{tab:stat_uncertainty}{1}).
+Each point corresponds to a cortical or subcortical brain region. Results show
+close agreement between sampled and simulated estimates, particularly in the
 cross-sectional setting. In the longitudinal analyses, simulated standard
 deviations tend to be slightly larger than sampled values, indicating a
 conservative bias of the analytical model.
 
 Figure~\ref{fig:ppr_simulated_comparison} evaluates how this analytical
 uncertainty propagates to downstream inference by comparing the simulated
-positive prediction rate (PPR; Eq.~\ref{eq:ppr}) with the empirical proportion
+positive prediction rate (PPR;\@ Eq.~\ref{eq:ppr}) with the empirical proportion
 of significant tests observed across MCA repetitions. Cross-sectional results
 closely follow the identity line, while longitudinal results show a moderate
 overestimation of PPR, consistent with the conservative overestimation of
@@ -921,22 +892,22 @@ Fig.~\ref{fig:std_sampled_simulated_comparison}.
 Finally, Figure~\ref{fig:ppr_sampled_comparison} assesses the Beta distribution
 model used to translate sampled $p$-value variability into PPR estimates. Here,
 PPR is computed using MCA-derived standard deviations propagated through the
-Beta model (\mainequref{eq:beta-params}{see Methods}). Both cross-sectional and longitudinal
-results align closely with the identity line, supporting the suitability of the
-Beta modeling framework for capturing numerically induced variability in
-statistical significance.
+Beta model (\mainequref{eq:beta-params}{see Methods}). Both cross-sectional and
+longitudinal results align closely with the identity line, supporting the
+suitability of the Beta modeling framework for capturing numerically induced
+variability in statistical significance.
 
 Figure~\ref{fig:false_positive_vs_sample_size_extended} extends the analysis of
 Figure~\ref{fig:false_positive_vs_sample_size} (Figure 4 in the main text) by
-providing a breakdown of significance flip probabilities by statistical test type:
-Student's $t$-test (T), ANCOVA ($F$-values), and partial correlation (R).
+providing a breakdown of significance flip probabilities by statistical test
+type: Student's $t$-test (T), ANCOVA ($F$-values), and partial correlation (R).
 The same overall pattern holds across all three test types: significance flip
 probability is highest for results near the significance threshold (negative
 distances for reported significant findings, positive distances for reported
 non-significant findings) and decreases as results move farther from the
 threshold. Partial correlations tend to exhibit slightly higher flip
-probabilities, consistent with their generally larger numerical variability
-as quantified by the NPVR framework (Table~\maintabref{tab:stat_uncertainty}{1}).
+probabilities, consistent with their generally larger numerical variability as
+quantified by the NPVR framework (Table~\maintabref{tab:stat_uncertainty}{1}).
 These results confirm that the widespread numerical fragility observed across
 the 13 reviewed Parkinson's disease studies is not specific to any single
 statistical test type.
@@ -955,53 +926,54 @@ statistical test type.
         probability of flipping to significant (false negative risk). Bars
         indicate the mean significance flip probability within bins of distance
         to the threshold (e.g., $0.005$ for false positive risk and $0.05$ for
-        false negative risk). \label{fig:false_positive_vs_sample_size_extended}}
+        false negative risk).\label{fig:false_positive_vs_sample_size_extended}}
 \end{figure}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.9\linewidth]{figures/std-sampled-simulated-comparison.pdf}
-    \caption{Comparison of standard deviation estimates of $p$-values obtained from
-        MCA sampling and analytical simulations. Sampled estimates are computed from
-        26 MCA repetitions, while simulated estimates are derived from the
-        uncertainty propagation formulas reported in
-        Table~\maintabref{tab:stat_uncertainty}{1}. Each point corresponds to a cortical or
-        subcortical brain region. The solid line denotes the identity line. Results
-        show close agreement between sampled and simulated estimates, with
-        cross-sectional analyses exhibiting tighter clustering than longitudinal
-        analyses. In the longitudinal setting, simulated standard deviations tend to
-        slightly overestimate sampled variability, indicating conservative behavior
-        of the analytical uncertainty model.
-        \label{fig:std_sampled_simulated_comparison}}
+    \caption{Comparison of standard deviation estimates of $p$-values obtained
+        from MCA sampling and analytical simulations. Sampled estimates are
+        computed from 26 MCA repetitions, while simulated estimates are derived
+        from the uncertainty propagation formulas reported in
+        Table~\maintabref{tab:stat_uncertainty}{1}. Each point corresponds to a
+        cortical or subcortical brain region. The solid line denotes the
+        identity line. Results show close agreement between sampled and
+        simulated estimates, with cross-sectional analyses exhibiting tighter
+        clustering than longitudinal analyses. In the longitudinal setting,
+        simulated standard deviations tend to slightly overestimate sampled
+        variability, indicating conservative behavior of the analytical
+        uncertainty model.\label{fig:std_sampled_simulated_comparison}}
 \end{figure}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.9\linewidth]{figures/ppr_simulated.pdf}
-    \caption{ Comparison between simulated positive prediction rate (PPR;
+    \caption{ Comparison between simulated positive prediction rate (PPR;\@
         Eq.~\ref{eq:ppr}) and the empirical proportion of significant tests
-        (Section~\mainsecref{sec:empirical_evaluation}{2.1}). Simulated PPR values are computed
-        using analytical uncertainty estimates derived from
-        Table~\maintabref{tab:stat_uncertainty}{1}. Each point represents a cortical or
-        subcortical brain region, and the solid line indicates the identity line.
-        Simulated PPR closely matches empirical significance rates in the
-        cross-sectional setting, while longitudinal analyses show a tendency toward
-        overestimation, consistent with the corresponding overestimation of
-        $p$-value variability.\label{fig:ppr_simulated_comparison}}
+        (Section~\mainsecref{sec:empirical_evaluation}{2.1}). Simulated PPR
+        values are computed using analytical uncertainty estimates derived from
+        Table~\maintabref{tab:stat_uncertainty}{1}. Each point represents a
+        cortical or subcortical brain region, and the solid line indicates the
+        identity line. Simulated PPR closely matches empirical significance
+        rates in the cross-sectional setting, while longitudinal analyses show a
+        tendency toward overestimation, consistent with the corresponding
+        overestimation of $p$-value
+        variability.\label{fig:ppr_simulated_comparison}}
 \end{figure}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.9\linewidth]{figures/ppr_sampled.pdf}
-    \caption{Comparison between sampled positive prediction rate (PPR;
+    \caption{Comparison between sampled positive prediction rate (PPR;\@
         Eq.~\ref{eq:ppr}) and the empirical proportion of significant tests
-        (Section~\mainsecref{sec:empirical_evaluation}{2.1}). Sampled PPR values are
-        computed from MCA-derived $p$-value standard deviations and propagated
-        through the Beta distribution model (\mainequref{eq:beta-params}{see Methods}). Each
-        point corresponds to a cortical or subcortical brain region, and the
-        solid line denotes the identity line. Both cross-sectional and
-        longitudinal results align closely with the identity line, supporting
-        the suitability of the Beta modeling framework for capturing numerically
-        induced variability in statistical significance.
-        \label{fig:ppr_sampled_comparison}}
+        (Section~\mainsecref{sec:empirical_evaluation}{2.1}). Sampled PPR values
+        are computed from MCA-derived $p$-value standard deviations and
+        propagated through the Beta distribution model
+        (\mainequref{eq:beta-params}{see Methods}). Each point corresponds to a
+        cortical or subcortical brain region, and the solid line denotes the
+        identity line. Both cross-sectional and longitudinal results align
+        closely with the identity line, supporting the suitability of the Beta
+        modeling framework for capturing numerically induced variability in
+        statistical significance.\label{fig:ppr_sampled_comparison}}
 \end{figure}

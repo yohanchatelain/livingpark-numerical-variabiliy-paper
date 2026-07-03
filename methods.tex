@@ -18,7 +18,7 @@ quality control to distinguish numerical artifacts from technical failures; and
 \subsection{Participants}
 
 Structural MRI data were obtained from the Parkinson's Progression Markers
-Initiative (PPMI; \url{www.ppmi-info.org}). The study included 201
+Initiative (PPMI;\@ \url{www.ppmi-info.org}). The study included 201
 participants: 112 individuals diagnosed with Parkinson's disease without mild
 cognitive impairment (PD-non-MCI) and 89 healthy controls (HC). All
 participants had two usable T1-weighted MRI scans acquired approximately $1.4
@@ -43,16 +43,16 @@ Table~\ref{tab:cohort_stat}).
     \centering
     \begin{tabular}{lcc}
         \toprule
-        \textbf{Cohort}              & \textbf{HC}     & \textbf{PD-non-MCI} \\
-        \hline
-        $n$                          & $89$            & $112$               \\
-        Age (years)                  & $60.7 \pm 9.7$  & $60.6 \pm 8.9$      \\
-        Age range                    & $30.6$ - $79.8$ & $39.2$ - $78.3$     \\
-        Gender (male,\%)             & $47$ (52.8\%)   & $74$ (66.1\%)       \\
-        Education (years)            & $16.7 \pm 3.4$  & $16.0 \pm 3.1$      \\
-        UPDRS-III OFF baseline       & $-$             & $23.3 \pm 10.0$     \\
-        UPDRS-III OFF follow-up      & $-$             & $25.6 \pm 11.2$     \\
-        Inter-visit interval (years) & $1.4 \pm 0.5$   & $1.4 \pm 0.6$       \\
+        \textbf{Cohort}              & \textbf{HC}       & \textbf{PD-non-MCI} \\
+        \hline % chktex 44
+        $n$                          & $89$              & $112$               \\
+        Age (years)                  & $60.7 \pm 9.7$    & $60.6 \pm 8.9$      \\
+        Age range                    & $30.6$ --- $79.8$ & $39.2$ --- $78.3$   \\
+        Gender (male,\%)             & $47$ (52.8\%)     & $74$ (66.1\%)       \\
+        Education (years)            & $16.7 \pm 3.4$    & $16.0 \pm 3.1$      \\
+        UPDRS-III OFF baseline       & $-$               & $23.3 \pm 10.0$     \\
+        UPDRS-III OFF follow-up      & $-$               & $25.6 \pm 11.2$     \\
+        Inter-visit interval (years) & $1.4 \pm 0.5$     & $1.4 \pm 0.6$       \\
         \bottomrule
     \end{tabular}
     \vspace{1em}
@@ -60,7 +60,7 @@ Table~\ref{tab:cohort_stat}).
         standard deviation. PD = Parkinson's disease; MCI = mild cognitive impairment;
         UPDRS = Unified Parkinson's Disease Rating Scale. The PD-non-MCI longitudinal
         subset corresponds to participants with available follow-up MRI and disease
-        severity scores available. \label{tab:cohort_stat}}
+        severity scores available.\label{tab:cohort_stat}}
 \end{table}
 
 \subsection{Image acquisition and preprocessing}
@@ -82,13 +82,12 @@ FreeSurfer failures) and quality control (QC) failures.
 
 For QC, we visually inspected nine representative slices (3 along each axis)
 per run to identify gross artifacts, such as missing brain tissue, blurring, or
-biologically implausible segmentation. Supplementary Table~\supptabref{tab:qc}{S4} details the
-exclusion rates. To ensure statistical consistency across the cohort, we
-randomly subsampled the remaining runs to retain exactly 26 valid realisations
-per participant.
+biologically implausible segmentation. Supplementary
+Table~\supptabref{tab:qc}{S4} details the exclusion rates. To ensure
+statistical consistency across the cohort, we randomly subsampled the remaining
+runs to retain exactly 26 valid realisations per participant.
 
-\subsection{Numerical variability assessment}
-\label{sec:numerical_variability_assessment}
+\subsection{Numerical variability assessment\label{sec:numerical_variability_assessment}}
 
 To quantify the numerical variability in the FreeSurfer pipeline, we employed
 Monte Carlo Arithmetic (MCA)~\cite{parker1997monte}. MCA is a stochastic
@@ -128,7 +127,7 @@ representative of realistic machine-level precision errors.
 
 To quantify computational stability relative to population variation, we
 introduce the Numerical-Population Variability Ratio (\npvr). For each brain
-region, \npvr measures the ratio of measurement uncertainty arising from
+region, \npvr\ measures the ratio of measurement uncertainty arising from
 computational processes to natural inter-subject variation:
 
 \[
@@ -151,7 +150,7 @@ indexes subject-visits and $r=1,\dots,k$ indexes repetitions. Let
 \begin{equation}
     \sigma^2_{\mathrm{num}}
     = \frac{1}{n}\sum_{i=1}^{n}\left[
-    \frac{1}{k-1}\sum_{r=1}^{k}\bigl(x_i^{(r)}-\bar x_i\bigr)^2
+    \frac{1}{k-1}\sum_{r=1}^{k}{\bigl(x_i^{(r)}-\bar x_i\bigr)}^2
     \right].
     \label{eq:sigma_num}
 \end{equation}
@@ -160,16 +159,15 @@ indexes subject-visits and $r=1,\dots,k$ indexes repetitions. Let
 \begin{equation}
     \sigma^2_{\mathrm{pop}}
     = \frac{1}{k}\sum_{r=1}^{k}\left[
-    \frac{1}{n-1}\sum_{i=1}^{n}\bigl(x_i^{(r)}-\bar x^{(r)}\bigr)^2
+    \frac{1}{n-1}\sum_{i=1}^{n}{\bigl(x_i^{(r)}-\bar x^{(r)}\bigr)}^2
     \right].
     \label{eq:sigma_anat}
 \end{equation}
 where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means,
-respectively. Higher \npvr values indicate regions where computational
+respectively. Higher \npvr\ values indicate regions where computational
 uncertainty approaches population variation.
 
-\subsubsection{Relationship between \npvr~and downstream statistical test uncertainty}
-\label{sec:theoretical_derivations}
+\subsubsection{Relationship between \npvr~and downstream statistical test uncertainty\label{sec:theoretical_derivations}}
 
 To establish a quantitative link between a method's computational
 reproducibility and the reliability of group-level statistical inferences, we
@@ -180,7 +178,7 @@ propagates through the analytical pipeline to produce uncertainty in the
 reported statistics.
 
 For each MCA repetition $r$, we denote by $\tilde{\mathbf{x}}^{(r)} =
-    (\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})^\top$ the vector of perturbed
+    {(\tilde{x}_1^{(r)}, \dots, \tilde{x}_N^{(r)})}^\top$ the vector of perturbed
 measurements across $N$ subjects. Each perturbed observation is modeled as the
 sum of the subject's biological value and a numerical error term:
 \begin{equation*}
@@ -191,7 +189,7 @@ sum of the subject's biological value and a numerical error term:
     \mathrm{Cov}[\boldsymbol{\varepsilon}^{(r)}] = \Sigma_{\mathrm{num}}.
     \label{eq:model_noise}
 \end{equation*}
-Here, $\mathbf{x} = (x_1, \dots, x_N)^\top$ represents the fixed,
+Here, $\mathbf{x} = {(x_1, \dots, x_N)}^\top$ represents the fixed,
 biological measurements, while $\boldsymbol{\varepsilon}^{(r)}$
 captures the random numerical perturbations introduced during computation.
 
@@ -221,29 +219,32 @@ To isolate the contribution of numerical variability, we make three simplifying 
           This isolates numerical variability effects from sampling variation;
           the resulting expressions remain accurate near the null and for small
           effect sizes. In this setting, the biological values $\mathbf{x} =
-              (x_1, \dots, x_N)^\top$ are treated as fixed, and all randomness
+              {(x_1, \dots, x_N)}^\top$ are treated as fixed, and all randomness
           arises from numerical perturbations $\boldsymbol{\varepsilon}^{(r)}$.
 
 \end{enumerate}
 
 Under these assumptions, each downstream statistic $ds = f(\tilde{\mathbf{x}})$
 can be linearized around the baseline $\mathbf{x}$ as $ds(\tilde{\mathbf{x}})
-    \approx ds(\mathbf{x}) + \nabla_{\!\mathbf{x}}f(\mathbf{x})^\top
+    \approx ds(\mathbf{x}) + \nabla_{\!\mathbf{x}}f{(\mathbf{x})}^\top
     \boldsymbol{\varepsilon}$, allowing the numerical variance to be expressed
 through the delta method as
 \begin{equation}
     \Var_{\mathrm{num}}[ds]
     \approx
-    \nabla_{\!\mathbf{x}} f(\mathbf{x})^\top
+    \nabla_{\!\mathbf{x}} f{(\mathbf{x})}^\top
     \Sigma_{\mathrm{num}}
-    \nabla_{\!\mathbf{x}} f(\mathbf{x})
-    = \sigma_{\mathrm{num}}^2 \|\nabla_{\!\mathbf{x}} f(\mathbf{x})\|_2^2.
+    \nabla_{\!\mathbf{x}} f{(\mathbf{x})}
+    = \sigma_{\mathrm{num}}^2 \|\nabla_{\!\mathbf{x}} f{(\mathbf{x})}\|_2^2.
     \label{eq:var-ds}
 \end{equation}
 
 Table~\ref{tab:stat_uncertainty} summarizes the derived expressions for the
-numerical standard deviation of several common statistics.
-Proofs of partial derivations of sample statistics\footnote{mean, variance, standard-deviation, covariance, Pearson correlation coefficient and correlation identities.} used in the following sections are provided in the Supplementary Note~\suppnoteref{appendix:partial_derivatives_proofs}{S1}.
+numerical standard deviation of several common statistics. Proofs of partial
+derivations of sample statistics\footnote{mean, variance, standard-deviation,
+    covariance, Pearson correlation coefficient and correlation identities.} used
+in the following sections are provided in the Supplementary
+Note~\suppnoteref{appendix:partial_derivatives_proofs}{S1}.
 
 \paragraph{Cohen's \textit{d}}
 
@@ -271,7 +272,7 @@ Applying the multivariate delta method (Eq.~\ref{eq:var-ds}) around the baseline
     \approx
     \sigma_{\mathrm{num}}^2
     \sum_{i=1}^{n}
-    \left(\frac{\partial d}{\partial x_i}\right)^{\!2}.
+    {\left(\frac{\partial d}{\partial x_i}\right)}^{\!2}.
     \label{eq:var-rep-approx}
 \end{equation}
 For an observation $x_i \in G_g$ ($g \in \{1,2\}$), the chain rule gives:
@@ -285,16 +286,16 @@ where the sign in $\partial \Delta/\partial x_i$ is positive for $g=1$ and negat
 Substituting back into the expression for $\partial d/\partial x_i$, we have:
 \begin{equation*}
     \frac{\partial d}{\partial x_i} = \pm\frac{1}{n_g s_p} - \frac{\Delta(x_i - \bar{x}_g)}{df s_p^3}
-    \Rightarrow {\left(\frac{\partial d}{\partial x_i}\right)}^2 = \frac{1}{n_g^2 s_p^2} \pm \frac{2\Delta(x_i - \bar{x}_g)}{n_g df s_p^4} + \frac{\Delta^2(x_i - \bar{x}_g)^2}{df^2 s_p^6}
+    \Rightarrow {\left(\frac{\partial d}{\partial x_i}\right)}^2 = \frac{1}{n_g^2 s_p^2} \pm \frac{2\Delta(x_i - \bar{x}_g)}{n_g df s_p^4} + \frac{\Delta^2{(x_i - \bar{x}_g)}^2}{df^2 s_p^6}
 \end{equation*}
 and summing over all $i$ in group $G_g$:
 \begin{equation*}
-    \sum_{i\in G_g}\left(\frac{\partial d}{\partial x_i}\right)^2 =
-    \frac{1}{n_g s_p^2} \pm \frac{2\Delta}{n_g df s_p^4}\sum_{i\in G_g}(x_i - \bar{x}_g) + \frac{\Delta^2}{df^2 s_p^6}\sum_{i\in G_g}(x_i - \bar{x}_g)^2 = \frac{1}{n_g s_p^2} + \frac{\Delta^2}{df^2 s_p^6}\left((n_g - 1)s_g^2 \right)
+    \sum_{i\in G_g}{\left(\frac{\partial d}{\partial x_i}\right)}^2 =
+    \frac{1}{n_g s_p^2} \pm \frac{2\Delta}{n_g df s_p^4}\sum_{i\in G_g}(x_i - \bar{x}_g) + \frac{\Delta^2}{df^2 s_p^6}\sum_{i\in G_g}{(x_i - \bar{x}_g)}^2 = \frac{1}{n_g s_p^2} + \frac{\Delta^2}{df^2 s_p^6}\left((n_g - 1)s_g^2 \right)
 \end{equation*}
 since $\sum_{i\in G_g}(x_i - \bar{x}_g) = 0$, so finally summing over both groups:
 \begin{align*}
-    \sum_{i = 1}^{n}\left(\frac{\partial d}{\partial x_i}\right)^2
+    \sum_{i = 1}^{n}{\left(\frac{\partial d}{\partial x_i}\right)}^2
      & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2}\right) +
     \frac{\Delta^2}{df^2 s_p^6}\left((n_1 - 1)s_1^2 + (n_2 - 1)s_2^2 \right)                                         \\
      & = \frac{1}{s_p^2}\left(\frac{1}{n_1} + \frac{1}{n_2} +
@@ -432,8 +433,8 @@ where $\mathbf{y}$ is the vector of measurements across subjects, and
 $\mathbf{X}$ includes an intercept, diagnostic group (PD vs.\ HC), and
 covariates (e.g., age and sex). The adjusted group difference is expressed as
 the one-degree-of-freedom contrast $c^{\top}\boldsymbol{\beta}$, with contrast
-vector $c = [0,\, 1,\, 0,\, 0]^{\top}$. Let
-$\widehat{\boldsymbol{\beta}} = (\mathbf{X}^{\top}\mathbf{X})^{-1}
+vector $c = {[0,\, 1,\, 0,\, 0]}^{\top}$. Let
+$\widehat{\boldsymbol{\beta}} = {(\mathbf{X}^{\top}\mathbf{X})}^{-1}
     \mathbf{X}^{\top}\mathbf{y}$ denote the ordinary least-squares (OLS) estimator
 and $\widehat{\sigma}_{\mathrm{res}}^{2} = SS_{\mathrm{res}} / df_2$ the
 residual mean square, where $df_2 = n - \mathrm{rank}(\mathbf{X})$.
@@ -441,8 +442,8 @@ The sum of squares associated with the group effect is:
 \begin{equation*}
     SS_{\mathrm{group}}
     =
-    \frac{(c^{\top}\widehat{\boldsymbol{\beta}})^{2}}
-    {c^{\top}(\mathbf{X}^{\top}\mathbf{X})^{-1}c},
+    \frac{{(c^{\top}\widehat{\boldsymbol{\beta}})}^{2}}
+    {c^{\top}{(\mathbf{X}^{\top}\mathbf{X})}^{-1}c},
     \qquad df_1 = 1.
 \end{equation*}
 The corresponding ANCOVA $F$ statistic is given by:
@@ -451,9 +452,9 @@ The corresponding ANCOVA $F$ statistic is given by:
     =
     \frac{MS_{\mathrm{group}}}{MS_{\mathrm{res}}}
     =
-    \frac{(c^{\top}\widehat{\boldsymbol{\beta}})^{2}}
+    \frac{{(c^{\top}\widehat{\boldsymbol{\beta}})}^{2}}
     {\widehat{\sigma}_{\mathrm{res}}^{2}\;
-    c^{\top}(\mathbf{X}^{\top}\mathbf{X})^{-1}c},
+    c^{\top}{(\mathbf{X}^{\top}\mathbf{X})}^{-1}c},
     \qquad
     F \sim \mathcal{F}(df_1 = 1,\, df_2).
     \label{eq:ancova-F}
@@ -472,7 +473,7 @@ statistic due to numerical noise follows directly from the uncertainty of $t$:
 \begin{align*}
     \Var_{\mathrm{num}}[F]
      & = \Var_{\mathrm{num}}[t^{2}]
-    \approx (2t)^{2}\Var_{\mathrm{num}}[t]
+    \approx { (2t) }^{2}\Var_{\mathrm{num}}[t]
     = 4t^{2}\nu_{\mathrm{npv}}^{2}
     = 4F\nu_{\mathrm{npv}}^{2},
 \end{align*}
@@ -491,8 +492,8 @@ $F_{\mathcal{F}}$ the probability density and cumulative distribution functions.
 Applying the delta-method to the upper-tail $p$-value is $p(X) = 1 -
     F_{\mathcal{F}}(X)$ yields:
 \begin{align*}
-    \Var_{\mathrm{num}}[p(X)] & = \Var_{\mathrm{num}}[1 - F_{\mathcal{F}}(X)]           \\
-                              & \approx f_{\mathcal{F}}(F_0)^{2}\Var_{\mathrm{num}}[X]  \\
+    \Var_{\mathrm{num}}[p(X)] & = \Var_{\mathrm{num}}[1 - F_{\mathcal{F}}(X)]            \\
+                              & \approx {f_{\mathcal{F}}(F_0)}^{2}\Var_{\mathrm{num}}[X] \\
                               & = 4F_0{f_{\mathcal{F}}(F_0)}^{2}\nu_{\mathrm{npv}}^{2},
 \end{align*}
 so that
@@ -537,7 +538,7 @@ that
 Applying the delta method (Eq.~\ref{eq:var-ds}) to the partial correlation, we
 have:
 \begin{equation}
-    \Var_{\mathrm{num}}[R] \approx \sigma_{\mathrm{num}}^{2} \sum_{i=1}^{n} \left(\frac{\partial R}{\partial x_i}\right)^{2},
+    \Var_{\mathrm{num}}[R] \approx \sigma_{\mathrm{num}}^{2} \sum_{i=1}^{n} {\left(\frac{\partial R}{\partial x_i}\right)}^{2},
     \label{eq:delta-partial}
 \end{equation}
 
@@ -555,8 +556,8 @@ The first-order partial derivatives are:
     \frac{\partial R}{\partial a} = \frac{1}{D}, \qquad
     \frac{\partial R}{\partial b} = \frac{(1 - c^{2})(ab - c)}{D^{3}}.
 \]
-and the derivatives of the correlations with respect to $x_i$ are
-(see Supplementary Eq.~\suppequref{eq:pearson_derivative}{S5})
+and the derivatives of the correlations with respect to $x_i$ are (see
+Supplementary Eq.~\suppequref{eq:pearson_derivative}{S5})
 \[
     \frac{\partial a}{\partial x_i}
     =
@@ -577,69 +578,69 @@ respectively. Then $\partial R / \partial x_i$ becomes:
         \frac{(1 - c^{2})(ab - c)}{D^{3}}
         \right]
 \end{align*}
-thus $(\partial R / \partial x_i)^{2}$ is:
+thus ${(\partial R / \partial x_i)}^{2}$ is:
 \begin{align*}
-    \left(\frac{\partial R}{\partial x_i}\right)^{2}
+    {\left(\frac{\partial R}{\partial x_i}\right)}^{2}
      & =
-    \frac{1}{(n-1)^{2}s_{x}^{2}}
+    \frac{1}{{(n-1)}^{2}s_{x}^{2}}
     \left[
         \frac{\alpha_i^{2}}{D^{2}}
         +
-        2\frac{\alpha_i\beta_i(1 - c^{2})(ab - c)}{D^{4}}
+        2\frac{\alpha_i\beta_i{(1 - c^{2})}{(ab - c)}}{D^{4}}
         +
-        \frac{\beta_i^{2}(1 - c^{2})^{2}(ab - c)^{2}}{D^{6}}
-    \right]                           \\
+        \frac{\beta_i^{2}{(1 - c^{2})}^{2}{(ab - c)}^{2}}{D^{6}}
+    \right]                             \\
      & =
-    \frac{1}{(n-1)^{2}s_{x}^{2}}
+    \frac{1}{{(n-1)}^{2}s_{x}^{2}}
     \left[
         \frac{\alpha_i^{2}}{(1 - b^{2})(1 - c^{2})}
         +
-        2\frac{\alpha_i\beta_i(1 - c^{2})(ab - c)}{(1 - b^{2})^{2}(1 - c^{2})^{2}}
+        2\frac{\alpha_i\beta_i{(1 - c^{2})}{(ab - c)}}{{(1 - b^{2})}^{2}{(1 - c^{2})}^{2}}
         +
-        \frac{\beta_i^{2}(1 - c^{2})^{2}(ab - c)^{2}}{(1 - b^{2})^{3}(1 - c^{2})^{3}}
-    \right]                           \\
-     & = \frac{1}{(n-1)^{2}s_{x}^{2}}
+        \frac{\beta_i^{2}{(1 - c^{2})}^{2}{(ab - c)}^{2}}{{(1 - b^{2})}^{3}{(1 - c^{2})}^{3}}
+    \right]                             \\
+     & = \frac{1}{{(n-1)}^{2}s_{x}^{2}}
     \left[
         \frac{\alpha_i^{2}}{(1 - b^{2})(1 - c^{2})}
         +
-        2\frac{\alpha_i\beta_i(ab - c)}{(1 - b^{2})^{2}(1 - c^{2})}
+        2\frac{\alpha_i\beta_i(ab - c)}{{(1 - b^{2})}^{2}(1 - c^{2})}
         +
-        \frac{\beta_i^{2}(ab - c)^{2}}{(1 - b^{2})^{3}(1 - c^{2})}
+        \frac{\beta_i^{2}{(ab - c)}^{2}}{{(1 - b^{2})}^{3}(1 - c^{2})}
         \right].
 \end{align*}
 Using the correlation identities $\sum\alpha_i^2 = (n-1)(1 - a^{2})$,
 $\sum\beta_i^2 = (n-1)(1 - b^{2})$, $\sum\alpha_i\beta_i = (n-1)(c - ab)$
 (see Supplementary Eq.~\suppequref{eq:correlation_identities}{S6}), and that
-$(1-b^{2})(1-c^{2})-(a-bc)^{2} = (1-a^{2})(1-b^{2})-(c-ab)^{2}$, we sum over all
+$(1-b^{2})(1-c^{2})-{(a-bc)}^{2} = (1-a^{2})(1-b^{2})-{(c-ab)}^{2}$, we sum over all
 $i$ to obtain:
 \begin{align*}
     \sum_{i=1}^{n}
-    \left(\frac{\partial R}{\partial x_i}\right)^{2}
+    {\left(\frac{\partial R}{\partial x_i}\right)}^{2}
      & =
     \frac{1}{(n-1)s_{x}^{2}}
     \left[
         \frac{(1 - a^{2})}{(1 - b^{2})(1 - c^{2})}
         -
-        2\frac{(ab - c)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+        2\frac{{(ab - c)}^{2}}{{(1 - b^{2})}^{2}(1 - c^{2})}
         +
-        \frac{(ab - c)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+        \frac{{(ab - c)}^{2}}{{(1 - b^{2})}^{2}(1 - c^{2})}
     \right] \\
      & =
     \frac{1}{(n-1)s_{x}^{2}}
     \left[
         \frac{(1 - a^{2})}{(1 - b^{2})(1 - c^{2})}
         -
-        \frac{(ab - c)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+        \frac{{(ab - c)}^{2}}{{(1 - b^{2})}^{2}(1 - c^{2})}
     \right] \\
      & =
     \frac{1}{(n-1)s_{x}^{2}}
     \left[
-    \frac{(1 - a^{2})(1-b^{2}) - (ab - c)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+    \frac{(1 - a^{2})(1-b^{2}) - {(ab - c)}^{2}}{{(1 - b^{2})}^{2}(1 - c^{2})}
     \right] \\
      & =
     \frac{1}{(n-1)s_{x}^{2}}
     \left[
-    \frac{(1 - b^{2})(1-c^{2}) - (a - bc)^{2}}{(1 - b^{2})^{2}(1 - c^{2})}
+    \frac{(1 - b^{2})(1-c^{2}) - {(a - bc)}^{2}}{{(1 - b^{2})}^{2}(1 - c^{2})}
     \right] \\
      & =
     \frac{1}{(n-1)s_{x}^{2}}
@@ -697,26 +698,26 @@ gives:
 \begin{equation}
     \Var_{\mathrm{num}}[p(X)]
     \approx
-    \left(\frac{\partial p}{\partial t}\frac{\partial t}{\partial R}\right)^{2}
+    {\left(\frac{\partial p}{\partial t}\frac{\partial t}{\partial R}\right)}^{2}
     \Var_{\mathrm{num}}[X],
     \label{eq:partial-p-var}
 \end{equation}
 with the partial derivatives given by:
 \begin{equation}
     \frac{\partial p}{\partial t} = -2 f_t(|t|)\,\mathrm{sign}(t),\qquad
-    \frac{\partial t}{\partial R} = \sqrt{\frac{df}{(1-R^{2})^{3}}}.
+    \frac{\partial t}{\partial R} = \sqrt{\frac{df}{{(1-R^{2})}^{3}}}.
     \label{eq:partial-t-deriv}
 \end{equation}
-Combining equations \eqref{eq:partial-p-var} and \eqref{eq:partial-t-deriv} yields
+Combining equations~\eqref{eq:partial-p-var} and~\eqref{eq:partial-t-deriv} yields
 \begin{align}
     \Var_{\mathrm{num}}[p(X)]
      & \approx
-    4f_t(|t_0|)^{2}\frac{df}{(1-R_0^{2})^{3}}\Var_{\mathrm{num}}[R] \\
+    4f_t{(|t_0|)}^{2}\frac{df}{{(1-R_0^{2})}^{3}}\Var_{\mathrm{num}}[R] \\
      & \geq
-    4f_t(|t_0|)^{2}\frac{df}{(1-R_0^{2})^{3}}
-    \nu_{\mathrm{npv}}^{2}\frac{(1 - R_0^{2})}{n-1}                 \\
+    4f_t{(|t_0|)}^{2}\frac{df}{{(1-R_0^{2})}^{3}}
+    \nu_{\mathrm{npv}}^{2}\frac{(1 - R_0^{2})}{n-1}                     \\
      & \geq
-    4f_t(|t_0|)^{2}\frac{df}{n-1}\frac{\nu_{\mathrm{npv}}^{2}}{(1-R_0^{2})^{2}}.
+    4f_t{(|t_0|)}^{2}\frac{df}{n-1}\frac{\nu_{\mathrm{npv}}^{2}}{{(1-R_0^{2})}^{2}}.
 \end{align}
 Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$ leads to:
 \[
@@ -725,8 +726,7 @@ Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$ leads to:
     2f_t(|t_0|)\sqrt{\frac{df}{n-1}} \frac{\nu_{\mathrm{npv}}}{(1-R_0^{2})}.
 \]
 
-\subsection{Probability of significance flips induced by numerical uncertainty}
-\label{sec:false-positives-modeling}
+\subsection{Probability of significance flips induced by numerical uncertainty\label{sec:false-positives-modeling}}
 
 To quantify the probability of significance flips findings arising from
 numerical variability, we model the computed $p$-value as a random variable
@@ -872,7 +872,7 @@ Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
         crossing $\alpha$ represents the probability of a false negative finding
         (\FN). The positive case ($p_0 \leq \alpha$,
         Fig.~\ref{fig:fp-positive-case}), where the tail extending beyond
-        $\alpha$ represents the probability of a false positive finding (\FP).}
-    \label{fig:false-positives-model}
+        $\alpha$ represents the probability of a false positive finding
+        (\FP).\label{fig:false-positives-model}}
 \end{figure}
 
