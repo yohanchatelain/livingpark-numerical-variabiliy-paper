@@ -31,9 +31,9 @@ Such issues occur particularly within high-dimensional optimization processes
 such as linear and non-linear image registration, or the training of deep
 learning models~\cite{gonzalez2025uncertain}.
 
-The implications of numerical variability for clinical measures are unknown.
-Previous studies focused on measuring its impact on image pre-processing and
-did not include any particular downstream analysis. The first aim of this study
+The implications of numerical variability for clinical measures remain largely
+unknown. Previous studies measured its impact on image preprocessing but did
+not consider downstream statistical analyses. The first aim of this study
 was to quantify the impact of numerical variability in structural MRI analyses
 of Parkinson's disease (PD), where robust MRI measures of the disease have yet
 to be identified. We conducted typical cross-sectional and longitudinal
@@ -295,7 +295,7 @@ statistic used. Longitudinal analyses exhibit a higher risk of significance
 flips than cross-sectional analyses (0.05 probability of significance flip for
 cross-sectional analyses on average, compared to 0.1 for longitudinal
 analyses). Moreover, the risk remains substantial even for results far from the
-significance threshold, particularly for non significant results in
+significance threshold, particularly for non-significant results in
 longitudinal analyses, suggesting a potential underestimation of significant
 effects. These results reveal a widespread impact of numerical variability on
 reported MRI measures of Parkinson's disease, affecting findings across
@@ -327,7 +327,7 @@ numerical robustness assessments in neuroimaging studies.
 \section{Discussion}
 
 In this study, we demonstrated that numerical variability arising from
-floating-point computation constituted a substantial source of variability in
+floating-point computation is a substantial source of uncertainty in
 structural MRI analyses of Parkinson's disease, accounting for 18\% of
 population variability in cross-sectional analyses and 55\% in longitudinal
 analyses on average, with up to 80\% in some regions. By systematically
@@ -337,7 +337,7 @@ variability in both cortical and subcortical measures. This variability was
 sufficient to alter downstream statistical inference, leading to frequent
 significance flips in group comparisons and clinical correlations, even when
 pipeline configurations and computational environments were held constant.
-These findings highlighted how numerical noise contributes to reproducibility
+These findings highlight how numerical noise contributes to reproducibility
 challenges reported in neuroimaging studies.
 
 The Numerical-Population Variability Ratio (NPVR) introduced in this work
