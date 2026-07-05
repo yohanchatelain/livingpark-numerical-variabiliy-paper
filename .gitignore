@@ -6,3 +6,6 @@
 *.out
 *.old
 paper.pdf
+paper-full.pdf
+paper-diff.pdf
+paper-diff*.tex
