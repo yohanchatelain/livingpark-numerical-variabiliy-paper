@@ -16,6 +16,7 @@
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{todonotes}
 \usepackage{longtable}
+\usepackage{float}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{subcaption}
@@ -39,14 +40,25 @@
 Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
 
 \providecommand{\includeappendix}{true}
-% Cross-document reference macros — compiled together: use \ref
-\newcommand{\suppnoteref}[2]{\ref{#1}}
-\newcommand{\suppfigref}[2]{\ref{#1}}
-\newcommand{\supptabref}[2]{\ref{#1}}
-\newcommand{\suppequref}[2]{\ref{#1}}
-\newcommand{\mainsecref}[2]{\ref{#1}}
-\newcommand{\maintabref}[2]{\ref{#1}}
-\newcommand{\mainequref}[2]{Eq.~\ref{#1}}
+% Cross-document references use real labels in full builds and explicit display
+% text in main-only builds where appendix labels are omitted.
+\ifthenelse{\equal{\includeappendix}{true}}{
+    \newcommand{\suppnoteref}[2]{\ref{#1}}
+    \newcommand{\suppfigref}[2]{\ref{#1}}
+    \newcommand{\supptabref}[2]{\ref{#1}}
+    \newcommand{\suppequref}[2]{\ref{#1}}
+    \newcommand{\mainsecref}[2]{\ref{#1}}
+    \newcommand{\maintabref}[2]{\ref{#1}}
+    \newcommand{\mainequref}[2]{Eq.~\ref{#1}}
+}{
+    \newcommand{\suppnoteref}[2]{#2}
+    \newcommand{\suppfigref}[2]{#2}
+    \newcommand{\supptabref}[2]{#2}
+    \newcommand{\suppequref}[2]{#2}
+    \newcommand{\mainsecref}[2]{#2}
+    \newcommand{\maintabref}[2]{#2}
+    \newcommand{\mainequref}[2]{#2}
+}
 
 \newcommand{\z}{\mspace{9mu}}
 \newcommand{\npvr}[0]{$\nu_{\mathrm{npv}}$\xspace}
@@ -103,10 +115,10 @@ Tristan:} #2}}{\textcolor{blue}{\textsc{From Tristan:} #2}}}
     Parkinson's disease, we quantified the probability of numerically induced
     false positives and false negatives in the literature, highlighting a
     substantial impact of numerical variability on MRI measures of Parkinson's
-    disease with an average flip significance probability of 5\% for cross
-    sectional studies and 10\% for longitudinal studies. These results
+    disease with an average significance-flip probability of 5\% for
+    cross-sectional studies and 10\% for longitudinal studies. These results
     underscore the importance of systematically evaluating numerical stability
-    in neuroimaging and provides a practical framework to do so.
+    in neuroimaging and provide a practical framework to do so.
 \end{abstract}
 
 \input{main}

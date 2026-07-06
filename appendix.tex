@@ -460,7 +460,7 @@ correlation analysis consistently demonstrated significantly greater variance
 longitudinally across volume, thickness, and surface area. In contrast, ANCOVA
 showed significant variance differences in far fewer regions.
 
-\begin{table}[ht]
+\begin{table}[H]
     \centering
     \small
     \setlength{\tabcolsep}{6pt}
@@ -480,13 +480,34 @@ showed significant variance differences in far fewer regions.
         Cortical Thickness (68 regions)     & 11 (16\%)         & 9 (13\%)              & 19 (28\%)         & 17 (25\%)             \\
         Cortical Volume (68 regions)        & 14 (20\%)         & 20 (29\%)             & 8 (12\%)          & 36 (53\%)             \\
         Subcortical Volume (14 regions)     & 4 (29\%)          & 2 (14\%)              & 4 (29\%)          & 5 (36\%)              \\
-        \hline % chktex 44 
+        \hline % chktex 44
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Permutation test comparison of $\nu_{\text{npv}}$ between HC and PD.\@
+        No significance detected after Bonferroni correction ($\alpha=0.05/8$).
+        Values are observed differences (PD$-$HC). 95\% CIs from percentile bootstrap.\label{tab:bootstrap-npvr}}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Metric}    & {\textbf{Observed} $\Delta$} & \textbf{95\% CI}    & {\textbf{p-value}} & \textbf{Study}  \\
+        \midrule
+        area               & 0.005                        & [-0.002, 0.013] & 0.734              & cross-sectional \\
+        thickness          & 0.027                        & [ 0.020, 0.034]  & 0.033              & cross-sectional \\
+        volume             & 0.013                        & [ 0.004, 0.022] & 0.371              & cross-sectional \\
+        subcortical volume & 0.014                        & [ 0.004, 0.025] & 0.646              & cross-sectional \\
+        \midrule
+        area               & 0.021                        & [-0.002, 0.044] & 0.482              & longitudinal    \\
+        thickness          & 0.002                        & [-0.014, 0.020] & 0.919              & longitudinal    \\
+        volume             & 0.025                        & [ 0.002, 0.049] & 0.370              & longitudinal    \\
+        subcortical volume & -0.027                       & [-0.047,-0.006] & 0.489              & longitudinal    \\
+        \bottomrule
     \end{tabular}
 \end{table}
 
 % Table 1: Subcortical Structures
-\begin{table}[h]
-    \centering
+\begin{table}[H]
     \centering
     \caption{Variance variability in cortical regions. One-sided
         Ansari-Bradley test comparing cross-sectional vs.\ longitudinal variances of
@@ -621,28 +642,6 @@ showed significant variance differences in far fewer regions.
     insula (rh)               & 267                              & 1.00     & 444                           & 2.5e-4*  & 401                                 & 3.5e-2   & 439                           & 5.2e-4* & 235                            & 1.00     & 410                           & 1.6e-2   \\
     \hline % chktex 44
 \end{longtblr}
-
-\begin{table}[t]
-    \centering
-    \caption{Permutation test comparison of $\nu_{\text{npv}}$ between HC and PD.\@
-        No significance detected after Bonferroni correction ($\alpha=0.05/8$).
-        Values are observed differences (PD$-$HC). 95\% CIs from percentile bootstrap.\label{tab:bootstrap-npvr}}
-    \begin{tabular}{lcccc}
-        \toprule
-        \textbf{Metric}    & {\textbf{Observed} $\Delta$} & \textbf{95\% CI}    & {\textbf{p-value}} & \textbf{Study}  \\
-        \midrule
-        area               & 0.005                        & [-0.002, 0.013] & 0.734              & cross-sectional \\
-        thickness          & 0.027                        & [ 0.020, 0.034]  & 0.033              & cross-sectional \\
-        volume             & 0.013                        & [ 0.004, 0.022] & 0.371              & cross-sectional \\
-        subcortical volume & 0.014                        & [ 0.004, 0.025] & 0.646              & cross-sectional \\
-        \midrule
-        area               & 0.021                        & [-0.002, 0.044] & 0.482              & longitudinal    \\
-        thickness          & 0.002                        & [-0.014, 0.020] & 0.919              & longitudinal    \\
-        volume             & 0.025                        & [ 0.002, 0.049] & 0.370              & longitudinal    \\
-        subcortical volume & -0.027                       & [-0.047,-0.006] & 0.489              & longitudinal    \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 For both group comparisons and correlation analyses, statistical outcomes
 varied substantially across the 26 Monte Carlo Arithmetic (MCA) repetitions
