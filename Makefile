@@ -18,10 +18,12 @@ full: paper.tex main.tex methods.tex appendix.tex paper.bib
 #   make diff BASE=<commit>
 # Requires: latexdiff, latexdiff-vc. Produces paper-diff.pdf.
 BASE ?= b488490
+LATEXDIFF_OPTS ?= --preamble=latexdiff-preamble.tex --ignore-warnings --disable-citation-markup --graphics-markup=none --math-markup=off --config MINWORDSBLOCK=1
 
 diff: paper.tex main.tex methods.tex appendix.tex paper.bib
-	\rm -f *.aux *.bbl *.blg paper-diff$(BASE).tex
-	latexdiff-vc --git --flatten --force -r $(BASE) paper.tex
+	\rm -f *.aux *.bbl *.blg paper-diff.out paper-diff$(BASE).tex
+	latexdiff-vc $(LATEXDIFF_OPTS) --git --flatten --force -r $(BASE) paper.tex
+	python3 scripts/strip-latexdiff-structural-markup.py paper-diff$(BASE).tex
 	pdflatex -interaction=nonstopmode -jobname=paper-diff "\def\includeappendix{true}\input{paper-diff$(BASE).tex}"
 	bibtex paper-diff
 	pdflatex -interaction=nonstopmode -jobname=paper-diff "\def\includeappendix{true}\input{paper-diff$(BASE).tex}"
