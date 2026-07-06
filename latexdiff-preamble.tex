@@ -1,0 +1,26 @@
+% Custom latexdiff markup for reviewer PDFs.
+\RequirePackage{xcolor}
+\RequirePackage[normalem]{ulem}
+\RequirePackage[left]{lineno}
+
+\definecolor{DIFaddtext}{RGB}{0, 153, 0}
+\definecolor{DIFdelred}{RGB}{180, 0, 0}
+
+\AtBeginDocument{\linenumbers}
+
+\providecommand{\DIFadd}[1]{{\color{DIFaddtext}\bfseries #1}}
+\providecommand{\DIFdel}[1]{{\color{DIFdelred}\sout{#1}}}
+
+\providecommand{\DIFaddbegin}{}
+\providecommand{\DIFaddend}{}
+\providecommand{\DIFdelbegin}{}
+\providecommand{\DIFdelend}{}
+\providecommand{\DIFmodbegin}{}
+\providecommand{\DIFmodend}{}
+
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}}
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}}
+\providecommand{\DIFaddbeginFL}{}
+\providecommand{\DIFaddendFL}{}
+\providecommand{\DIFdelbeginFL}{}
+\providecommand{\DIFdelendFL}{}

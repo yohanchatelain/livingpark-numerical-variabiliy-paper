@@ -2,9 +2,13 @@
 *.log
 *.bbl
 *.blg
-*.log
 *.out
 *.old
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+.mypy_cache/
+.vscode/
 paper.pdf
 paper-full.pdf
 paper-diff.pdf
