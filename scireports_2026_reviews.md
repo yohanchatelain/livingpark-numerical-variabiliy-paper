@@ -3,7 +3,8 @@
 Deadline: 9th July
 
 Dear Reviewers,
-We sincerely appreciate the time and effort you have dedicated to reviewing our manuscript The practical impact of numerical variability on structural MRI measures of Parkinson’s disease. Your insightful and constructive feedback has been invaluable in improving the quality and clarity of our work. We have carefully considered all of your comments and have made revisions accordingly. Below, we address each of your concerns and suggestions in detail.
+We sincerely appreciate the time and effort you have dedicated to reviewing our manuscript The practical impact of numerical variability on structural MRI measures of Parkinson’s disease. Your insightful and constructive feedback has been invaluable in improving the quality and clarity of our work. We have carefully considered all of your comments and have made revisions accordingly. Below, we address each of your concerns and suggestions in detail. Our manuscript includes the related edits in track-change mode.
+
 Best regards,
 
 Yohan Chatelain
@@ -24,7 +25,7 @@ The authors could better describe how this numerical effect is changing the key 
 ### Authors responses:
 We thank the reviewer for this suggestion. We made the following changes to address this point:
 
-- Figure 4 simplified: We simplified the Figure 4 by pooling results across statistical test types so that the key message (flip probability as a function of distance to the significance threshold) is conveyed more directly. The previous, more detailed version of the figure, which separates results by statistical test type, has been moved to Supplementary Note S6, where it is now discussed in greater depth as requested.
+- Figure 4 simplified: We simplified Figure 4 by pooling results across statistical test types so that the key message (significance flip probability as a function of distance to the significance threshold) is conveyed more directly. The previous, more detailed version of the figure, which separates results by statistical test type, has been moved to Supplementary Note S6, where it is now discussed in greater depth as requested.
 - Figure 4 caption revised: We rewrote the caption of Figure 4 to precisely define what is shown: each point represents a result (significant or non-significant) from the 13 reviewed studies; the y-axis is the probability of numerically-induced significance flip; and the terms "false positive risk" (reported significant result at risk of flipping to non-significant) and "false negative risk" (reported non-significant result at risk of flipping to significant) are now explicitly defined inline.
 - Discussion of Figure 4 expanded: We added sentences to the paragraph accompanying Figure 4 (Results section) explicitly noting that the breakdown by statistical test type is provided in Supplementary Note S6, and that the same pattern (high flip risk near the significance boundary) holds consistently across test types (T-values, F-values, and correlation coefficients), regardless of the statistic used.
 - Supplementary Note S6 expanded: We added a new paragraph to S6 that discusses the per-test-type breakdown shown in the figure in that section (Figure S6, previously labeled as `figure-distance-paper`). This paragraph explicitly interprets the distribution of flip probabilities across T-tests, ANCOVA (F-values), and partial correlations, noting that partial correlations tend to exhibit slightly higher flip probabilities consistent with their larger numerical variability as quantified by NPVR.
@@ -69,7 +70,7 @@ We additionally note, in the Discussion, that these metric-specific differences 
 
 **Lines 247-253**
 ```
-“Our results also highlight that the magnitude of numerical instability differs across MRI metric types. Cortical area and cortical volume showed the highest rates of significance flipping, reaching up to 53% of regions in longitudinal analyses, while cortical thickness and subcortical volume were comparatively more stable (Supplementary Table S5). These metric-specific differences should inform the interpretation of neuroimaging findings and motivate targeted investigation of numerical stability in analyses relying on the most sensitive metrics.”
+“Our results also highlight that the impact of numerical instability differs across MRI metrics. Cortical area and cortical volume showed the highest rates of significance flipping, reaching up to 53% of regions in longitudinal analyses, while cortical thickness and subcortical volume were comparatively more stable (Supplementary Table S5). These metric-specific differences should inform the interpretation of neuroimaging findings and motivate targeted investigation of numerical stability in analyses relying on the most sensitive metrics.”
 ```
 
 ### Comments

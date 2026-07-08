@@ -282,25 +282,26 @@ significance flip rates persist near the threshold across sample sizes,
 demonstrating that even well-powered studies can remain numerically fragile.
 This pattern is consistent with the theoretical relationship between numerical
 variability, sample size, and statistical uncertainty
-(Table~\ref{tab:stat_uncertainty}). No statistical correlation was found
-between flip significance probability and sample size (Pearson correlation
-$r=0.006$, $p=0.93$). Significance flip probability therefore reflects the
-joint influence of distance to the significance threshold and the
-Numerical-Population Variability Ratio. A breakdown by statistical test type
-(T-values, F-values, and correlation coefficients) is provided in Supplementary
+(Table~\ref{tab:stat_uncertainty}). No statistical correlation was found between
+flip significance probability and sample size (Pearson correlation $r=0.006$,
+$p=0.93$). Significance flip probability therefore reflects the joint influence
+of distance to the significance threshold and the Numerical-Population
+Variability Ratio. A breakdown by statistical test type (T-values, F-values, and
+correlation coefficients) is provided in Supplementary
 Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}, where
 the pattern is consistent across test types: findings reported near the
 significance boundary carry substantially higher flip risk regardless of the
 statistic used. Longitudinal analyses exhibit a higher risk of significance
 flips than cross-sectional analyses (0.05 probability of significance flip for
-cross-sectional analyses on average, compared to 0.1 for longitudinal
-analyses). Moreover, the risk remains substantial even for results far from the
-significance threshold, particularly for non-significant results in
-longitudinal analyses, suggesting a potential underestimation of significant
-effects. These results reveal a widespread impact of numerical variability on
-reported MRI measures of Parkinson's disease, affecting findings across
-multiple test types and study designs, and underscore the need for systematic
-numerical robustness assessments in neuroimaging studies.
+cross-sectional analyses on average, compared to 0.1 for longitudinal analyses).
+Moreover, longitudinal results reported as non-significant carry a high risk of
+significance flip even for p-values far from the significance threshold
+consistently with the data presented in Figure~\ref{fig:npvr}, suggesting a high
+risk of false negatives in longitudinal pipelines. These results reveal a
+widespread impact of numerical variability on reported MRI measures of
+Parkinson's disease, affecting findings across multiple test types and study
+designs, and underscore the need for systematic numerical robustness assessments
+in neuroimaging studies.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/figure-flip-probability.pdf}
@@ -411,8 +412,8 @@ will be important to build a comprehensive map of computational reliability in
 neuroimaging, though our results already suggest that numerical variability is
 sufficiently large to warrant routine consideration.
 
-Our results also highlight that the magnitude of numerical instability differs
-across MRI metric types. Cortical area and cortical volume showed the highest
+Our results also highlight that the impact of numerical instability differs
+across MRI metrics. Cortical area and cortical volume showed the highest
 rates of significance flipping, reaching up to 53\% of regions in longitudinal
 analyses, while cortical thickness and subcortical volume were comparatively
 more stable (Supplementary Table~\supptabref{tab:fluctuating_regions}{S5}).
