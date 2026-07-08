@@ -68,7 +68,7 @@ This pattern is consistent with the theoretical relationship between numerical v
 
 We additionally note, in the Discussion, that these metric-specific differences should inform the interpretation of neuroimaging findings and motivate targeted investigation of numerical stability for the most sensitive metrics. Understanding the precise mechanisms underlying these differences is an important avenue for future work, but is beyond the scope of the present study, which focuses on quantifying and communicating the impact of numerical variability.
 
-**Lines 247-253**
+**Lines 248-254**
 ```
 “Our results also highlight that the impact of numerical instability differs across MRI metrics. Cortical area and cortical volume showed the highest rates of significance flipping, reaching up to 53% of regions in longitudinal analyses, while cortical thickness and subcortical volume were comparatively more stable (Supplementary Table S5). These metric-specific differences should inform the interpretation of neuroimaging findings and motivate targeted investigation of numerical stability in analyses relying on the most sensitive metrics.”
 ```
@@ -85,7 +85,7 @@ We agree this distinction is important and have now addressed it explicitly. Sup
 “Instability rates varied across metric types: cortical area exhibited the highest longitudinal instability (53% for ANCOVA), followed by cortical volume (53% for partial correlation), subcortical volume (36% for partial correlation), and cortical thickness (25% for partial correlation), consistent with a metric-specific dependence on numerical precision (see Supplementary Table S5 and Supplementary Note S3 for region-level details).”
 ```
 
-**Lines 247-253:**
+**Lines 248-254:**
 ```
 “Our results also highlight that the magnitude of numerical instability differs across MRI metric types. Cortical area and cortical volume showed the highest rates of significance flipping, reaching up to 53% of regions in longitudinal analyses, while cortical thickness and subcortical volume were comparatively more stable (Supplementary Table S5). These metric-specific differences should inform the interpretation of neuroimaging findings and motivate targeted investigation of numerical stability in analyses relying on the most sensitive metrics.”
 ```
@@ -102,7 +102,7 @@ We agree that actionable guidance is essential and thank the reviewer for raisin
 - Complement numerical-stability checks with broader robust-reporting practices: report effect sizes, confidence intervals, and both significant and non-significant results (Amrhein et al. 2019); validate results across multiple neuroimaging pipelines (Bhagwat et al. 2021;Mirhakimi et al. 2025); and use multiverse analyses to assess sensitivity to analytical decisions (Lefort-Besnard et al. 2025).
 - Develop a public gallery comparing numerical variability and population variability across neuroimaging tools and pipelines (Shearer et al., 2025).
 
-**Lines 254-270:**
+**Lines 255-270:**
 ```
 “Based on our findings, we offer the following practical recommendations for neuroimaging researchers. First, numerical stability should be systematically evaluated using the NPVR framework or the associated web tool (yohanchatelain.github.io/brain_render), particularly for longitudinal analyses where numerical amplification is pronounced. Second, pipeline development for longitudinal applications should explicitly prioritize numerical robustness. Third, these numerically focused practices should complement broader recommendations for robust neuroimaging analyses: statistical inference should move beyond binary p-value thresholds by reporting effect sizes, confidence intervals, and both significant and non-significant results [39]; results should be validated across multiple neuroimaging pipelines because numerical sensitivity varies across software [1, 14]; and multiverse analyses should be used to characterize how analytical decisions affect conclusions [40]. Fourth, a public gallery comparing numerical variability and population variability across neuroimaging tools and pipelines, modeled on existing galleries of effect sizes such as BrainEffeX [41], would help researchers situate the numerical variability of a given tool relative to the population variability typically observed for the same measure, and compare this relationship across tools.”
 ```
