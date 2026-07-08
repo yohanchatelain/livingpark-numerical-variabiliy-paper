@@ -1,43 +1,104 @@
 #!/usr/bin/env python3
-"""
+r"""
 Create submission archives with everything needed to build the PDFs.
 
 Usage:
-    python3 make_archive.py [--output-dir .]
+    python3 scripts/make_archive.py [--output-dir .]
 
 Produces two zip files for separate npj uploads:
-    submission-main.zip          — main text (paper-main.tex flattened)
-    submission-supplementary.zip — supplementary material (paper-supplementary.tex flattened)
+    submission-main.zip          — main text (paper.tex flattened without appendix)
+    submission-supplementary.zip — supplementary material (appendix.tex standalone)
 
 Steps:
-    1. Flatten each .tex into a single self-contained file (via flatten_tex.py).
+    1. Flatten project-local \input and \include commands into one .tex file.
     2. Pack the flat .tex, .bib, .bst, and all referenced figures into a zip.
 """
 
 import argparse
 import re
-import subprocess
-import sys
 import zipfile
 from pathlib import Path
 
-
-PROJECT_DIR = Path(__file__).parent
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
+PAPER_FILE = PROJECT_DIR / "paper.tex"
+APPENDIX_FILE = PROJECT_DIR / "appendix.tex"
 BIB_FILE = PROJECT_DIR / "paper.bib"
 BST_FILE = PROJECT_DIR / "naturemag.bst"
+INCLUDE_APPENDIX_DEFAULT = r"\providecommand{\includeappendix}{true}"
+EXCLUDE_APPENDIX_DEFAULT = r"\providecommand{\includeappendix}{false}"
+INPUT_RE = re.compile(
+    r"^(?P<indent>\s*)\\(?P<command>input|include)\{(?P<target>[^}]+)\}(?P<tail>.*)$"
+)
 
 
-def flatten(source: Path, output: Path):
-    flatten_script = PROJECT_DIR / "flatten_tex.py"
-    print(f"Flattening {source.name} -> {output.name} ...")
-    subprocess.run(
-        [sys.executable, str(flatten_script), str(source), str(output)], check=True
+def tex_path(base_dir: Path, target: str) -> Path:
+    path = Path(target.strip())
+    if path.suffix != ".tex":
+        path = path.with_suffix(".tex")
+    if not path.is_absolute():
+        path = base_dir / path
+    return path.resolve()
+
+
+def flatten_tex(
+    source: Path, include_appendix: bool, stack: tuple[Path, ...] = ()
+) -> str:
+    """Return source with project-local \\input and \\include commands expanded."""
+    source = source.resolve()
+    if source in stack:
+        chain = " -> ".join(path.name for path in (*stack, source))
+        raise RuntimeError(f"recursive TeX include detected: {chain}")
+
+    output = []
+    for line in source.read_text().splitlines(keepends=True):
+        match = INPUT_RE.match(line)
+        if not match:
+            output.append(line)
+            continue
+
+        child = tex_path(source.parent, match.group("target"))
+        if child == APPENDIX_FILE.resolve() and not include_appendix:
+            continue
+        if not child.exists():
+            raise FileNotFoundError(f"{source}: included TeX file not found: {child}")
+
+        output.append(
+            f"% Begin expanded {match.group('command')}{{{match.group('target')}}}\n"
+        )
+        output.append(flatten_tex(child, include_appendix, (*stack, source)))
+        output.append(
+            f"% End expanded {match.group('command')}{{{match.group('target')}}}\n"
+        )
+
+    return "".join(output)
+
+
+def main_text_tex() -> str:
+    content = flatten_tex(PAPER_FILE, include_appendix=False)
+    return content.replace(INCLUDE_APPENDIX_DEFAULT, EXCLUDE_APPENDIX_DEFAULT)
+
+
+def supplementary_tex() -> str:
+    paper = PAPER_FILE.read_text()
+    preamble, _, _ = paper.partition(r"\begin{document}")
+    if not preamble:
+        raise RuntimeError(f"could not find LaTeX preamble in {PAPER_FILE}")
+
+    preamble = preamble.replace(INCLUDE_APPENDIX_DEFAULT, EXCLUDE_APPENDIX_DEFAULT)
+    appendix = flatten_tex(APPENDIX_FILE, include_appendix=True)
+    return (
+        preamble
+        + "\\begin{document}\n\n"
+        + appendix
+        + "\n\\bibliographystyle{naturemag}\n"
+        + "\\bibliography{paper}\n\n"
+        + "\\end{document}\n"
     )
 
 
-def get_figures(tex: Path) -> list[Path]:
-    """Return all unique paths referenced by \\includegraphics in the tex file."""
-    content = tex.read_text()
+def get_figures(content: str) -> list[Path]:
+    """Return all unique paths referenced by \\includegraphics in the tex content."""
     pattern = r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}"
     seen = set()
     paths = []
@@ -49,30 +110,28 @@ def get_figures(tex: Path) -> list[Path]:
     return paths
 
 
-def build_archive(source_tex: Path, flat_tex: Path, output: Path, label: str):
-    # --- 1. Flatten ---
-    flatten(source_tex, flat_tex)
-
-    # --- 2. Collect files ---
+def build_archive(tex_content: str, output: Path, label: str):
     files: list[tuple[Path, str]] = []  # (absolute path, archive path)
 
-    def add(path: Path, arcname: str = None):
+    def add(path: Path, arcname: str | None = None):
         if path.exists():
             files.append((path, arcname or path.name))
         else:
             print(f"  WARNING: not found, skipping: {path}")
 
-    add(flat_tex, "paper.tex")
     add(BIB_FILE)
     add(BST_FILE)
 
-    figures = get_figures(flat_tex)
+    figures = get_figures(tex_content)
     for fig in figures:
+        if fig.is_absolute() or ".." in fig.parts:
+            print(f"  WARNING: unsafe figure path, skipping: {fig}")
+            continue
         add(PROJECT_DIR / fig, str(fig))
 
     makefile = (
         "all: paper.pdf\n\n"
-        "paper.pdf: paper.tex paper.bib\n"
+        "paper.pdf: paper.tex paper.bib naturemag.bst\n"
         "\tpdflatex paper\n"
         "\tbibtex paper\n"
         "\tpdflatex paper\n"
@@ -84,14 +143,17 @@ def build_archive(source_tex: Path, flat_tex: Path, output: Path, label: str):
     # --- 3. Write zip ---
     print(f"\nCreating {label} archive: {output}")
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("paper.tex", tex_content)
+        print("  + paper.tex")
         zf.writestr("Makefile", makefile)
         print("  + Makefile")
         for abs_path, arcname in files:
             zf.write(abs_path, arcname)
             print(f"  + {arcname}")
 
-    total = sum(abs_path.stat().st_size for abs_path, _ in files)
-    print(f"Done. {len(files)} files, {total / 1024:.1f} KB uncompressed.")
+    total = len(tex_content.encode()) + len(makefile.encode())
+    total += sum(abs_path.stat().st_size for abs_path, _ in files)
+    print(f"Done. {len(files) + 2} files, {total / 1024:.1f} KB uncompressed.")
     print(f"Archive: {output}  ({output.stat().st_size / 1024:.1f} KB)\n")
 
 
@@ -112,15 +174,13 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     build_archive(
-        source_tex=PROJECT_DIR / "paper-main.tex",
-        flat_tex=PROJECT_DIR / "paper-main-flat.tex",
+        tex_content=main_text_tex(),
         output=output_dir / "submission-main.zip",
         label="main text",
     )
 
     build_archive(
-        source_tex=PROJECT_DIR / "paper-supplementary.tex",
-        flat_tex=PROJECT_DIR / "paper-supplementary-flat.tex",
+        tex_content=supplementary_tex(),
         output=output_dir / "submission-supplementary.zip",
         label="supplementary",
     )
