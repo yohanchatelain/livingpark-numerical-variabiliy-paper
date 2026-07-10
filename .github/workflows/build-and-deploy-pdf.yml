@@ -2,7 +2,7 @@ name: Build and Deploy LaTeX PDF
 
 on:
   push:
-    branches: [github-action]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -55,10 +55,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Prepare pages directory
+        run: |
+          mkdir -p pages
+          cp paper-full.pdf pages/
+
       - name: Upload PDFs to Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'paper-full.pdf'
+          path: 'pages'
 
       - name: Deploy to GitHub Pages
         id: deployment
