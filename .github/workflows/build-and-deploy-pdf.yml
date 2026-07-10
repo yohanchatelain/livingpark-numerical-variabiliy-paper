@@ -1,0 +1,65 @@
+name: Build and Deploy LaTeX PDF
+
+on:
+  push:
+    branches: [github-action]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y latexdiff python3
+
+      - name: Build paper-full.pdf
+        run: make full
+
+      # Upload PDF as downloadable artifact
+      - name: Upload PDF as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-full
+          path: paper-full.pdf
+          retention-days: 30
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Only deploy from main branch, not PRs
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download PDF from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: paper-full
+          path: .
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload PDFs to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'paper-full.pdf'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
