@@ -3,8 +3,8 @@
 LaTeX source for the manuscript on numerical variability in neuroimaging
 analyses of Parkinson's disease.
 
-[![PDF Download](https://img.shields.io/badge/PDF-paper.pdf-blue)](https://github.com/yohanchatelain/livingpark-numerical-variabiliy-paper/releases/latest/download/paper-full.pdf)
-[![Docker Package](https://img.shields.io/badge/GitHub_Packages-paper.pdf-blue)](https://github.com/users/yohanchatelain/packages/container/livingpark-numerical-variabiliy-paper%2Fpaper-full/versions)
+[![Latest Release](https://img.shields.io/github/v/release/yohanchatelain/livingpark-numerical-variabiliy-paper?label=latest%20release)](https://github.com/yohanchatelain/livingpark-numerical-variabiliy-paper/releases/latest/download/paper-full.pdf)
+[![Latest Commit](https://img.shields.io/github/last-commit/yohanchatelain/livingpark-numerical-variabiliy-paper/main?label=latest%20commit)](https://github.com/yohanchatelain/livingpark-numerical-variabiliy-paper/commits/main)
 
 ## Build
 
