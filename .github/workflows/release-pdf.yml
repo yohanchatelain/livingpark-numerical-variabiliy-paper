@@ -20,18 +20,13 @@ jobs:
           apt-get update
           apt-get install -y latexdiff python3
 
-      - name: Build paper.pdf (main manuscript)
-        run: make clean && make
-
       - name: Build paper-full.pdf (with appendix)
-        run: make full
+        run: make clean && make full
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            paper.pdf
-            paper-full.pdf
+          files: paper-full.pdf
           generate_release_notes: true
           draft: false
           prerelease: false
