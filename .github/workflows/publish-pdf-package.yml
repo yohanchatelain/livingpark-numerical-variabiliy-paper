@@ -1,0 +1,68 @@
+name: Publish PDF to GitHub Packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y latexdiff python3
+
+      - name: Build paper-full.pdf
+        run: make clean && make full
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-full
+          path: paper-full.pdf
+          retention-days: 1
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download PDF artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: paper-full
+          path: .
+
+      - name: Create Docker image with PDF
+        run: |
+          # Create a minimal Docker image containing the PDF
+          mkdir -p pdf-package
+          cp paper-full.pdf pdf-package/
+          
+          # Create a simple Dockerfile
+          cat > pdf-package/Dockerfile << 'EOF'
+          FROM scratch
+          COPY paper-full.pdf /paper-full.pdf
+          EOF
+          
+          # Build the Docker image
+          cd pdf-package
+          docker build -t ghcr.io/yohanchatelain/livingpark-numerical-variabiliy-paper/paper-full:${{ github.ref_name }} .
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push Docker image to GitHub Packages
+        run: |
+          docker push ghcr.io/yohanchatelain/livingpark-numerical-variabiliy-paper/paper-full:${{ github.ref_name }}
+          # Also tag as latest
+          docker tag ghcr.io/yohanchatelain/livingpark-numerical-variabiliy-paper/paper-full:${{ github.ref_name }} ghcr.io/yohanchatelain/livingpark-numerical-variabiliy-paper/paper-full:latest
+          docker push ghcr.io/yohanchatelain/livingpark-numerical-variabiliy-paper/paper-full:latest
