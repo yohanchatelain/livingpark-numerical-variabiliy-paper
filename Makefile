@@ -25,7 +25,8 @@ full: paper.tex main.tex methods.tex appendix.tex paper.bib
 # promoted out of its \ifthenelse guard first: latexdiff treats a
 # command-argument brace group as one opaque block and can never word-diff it,
 # so flattening alone is not enough -- the appendix must sit at the top level.
-BASE ?= b488490
+# BASE ?= b488490 1st submission (v1) commit, just before "Answering first round reviews"
+BASE ?= f100473
 BUILDDIR := .diff-build
 # PICTUREENV lists environments latexdiff must not inject markup into. We add
 # the tabularray environments (tblr/longtblr): injecting \DIFadd... color

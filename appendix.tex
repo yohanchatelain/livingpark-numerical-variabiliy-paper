@@ -12,9 +12,41 @@
 
 \section*{Supplementary Information}
 
+This Supplementary Information provides the derivations, additional analyses, and
+validation experiments supporting the main text. It is organised as follows:
+
+\begin{itemize}
+    \item \textbf{Section~\ref{appendix:partial_derivatives_proofs}} derives the
+          partial derivatives of common sample statistics that underlie the
+          closed-form variability-propagation formulas of Table~\maintabref{tab:stat_uncertainty}{1}
+          (Methods, ``Relationship between NPVR and downstream statistical test
+          variability'').
+    \item \textbf{Section~\ref{appendix:numerical_variability_baseline}} quantifies
+          cross-sectional numerical variability of FreeSurfer measures (significant
+          digits and spatial-overlap Dice coefficients), with region-by-region
+          precision tables supporting the low-precision claim in Results, Section~\mainsecref{sec:empirical_evaluation}{2.1}.
+    \item \textbf{Section~\ref{appendix:summary_stats_inference}} reports the
+          region-level significance-flip frequencies, the HC-vs-PD permutation test,
+          and the per-region Ansari-Bradley comparisons showing that longitudinal
+          processing amplifies variance (Results, Sections~\mainsecref{sec:empirical_evaluation}{2.1}--\mainsecref{sec:impact_published_findings}{2.3}).
+    \item \textbf{Section~\ref{appendix:distribution_stats_values}} shows the
+          distributions of test-statistic coefficients across MCA repetitions,
+          including the unperturbed (IEEE-754) reference used to check the validity
+          of the perturbation approach (Results, Section~\mainsecref{sec:empirical_evaluation}{2.1}).
+    \item \textbf{Section~\ref{appendix:numerical_validation_uncertainty_propagation}}
+          numerically validates the variability-propagation formulas of
+          Table~\maintabref{tab:stat_uncertainty}{1} against sampled MCA estimates.
+    \item \textbf{Section~\ref{appendix:numerical_validation_flip_significance}}
+          numerically validates the Beta-distribution significance-flip model used
+          in the retrospective analysis (Results, Section~\mainsecref{sec:impact_published_findings}{2.3}).
+\end{itemize}
+
 \section{Partial derivatives of sample statistics\label{appendix:partial_derivatives_proofs}}
 
-We derive below the partial derivatives of common sample statistics for a
+These derivations underpin the delta-method variability-propagation formulas of
+Table~\maintabref{tab:stat_uncertainty}{1} (Methods, ``Relationship between NPVR
+and downstream statistical test variability''). We derive below the partial
+derivatives of common sample statistics for a
 dataset \(x = \{x_1, x_2, \ldots, x_n\}\) with respect to an individual
 observation \(x_i\), where \(n\) denotes the sample size. The Kronecker delta
 \(\delta_{ij}\) equals 1 when \(i = j\) and 0 otherwise.
@@ -230,23 +262,25 @@ FreeSurfer 7.3.1 demonstrated limited numerical precision across all anatomical
 measures. Cortical metrics showed averages of $1.62 \pm 0.20$ significant
 digits for thickness, $1.34 \pm 0.24$ for surface area, and $1.34 \pm 0.23$ for
 cortical volume (Figure~\ref{fig:sig_digits_cortical}). Subcortical volumes
-exhibited similar instability, with an average of $1.33 \pm 0.22$ significant
+exhibited similar variability, with an average of $1.33 \pm 0.22$ significant
 digits (Figure~\ref{fig:sig_digits_subcortical}). These results indicate that,
 on average, FreeSurfer measurements are precise to only one decimal place, with
 specific instances exhibiting complete loss of significant digits. While
 variability was observed across all metrics, cortical thickness displayed the
 highest relative precision (range: $1.22-1.94$ digits), whereas surface area
 ($0.83 - 1.73$) and cortical volume ($0.80 - 1.73$) were less stable.
-Table~\ref{tab:sig-cortical} and Table~\ref{tab:std-cortical} provide a
-detailed breakdown of within-subject significant digits and standard-deviation
-average across all subjects for each cortical region and metric.
-Table~\ref{tab:sig-std-subcortical-volume} presents the corresponding data for
-subcortical regions.
+Table~\ref{tab:sig-cortical} and Table~\ref{tab:std-cortical} provide the
+region-by-region breakdown underlying these averages: within-subject
+significant digits and standard deviation for each cortical metric and
+hemisphere (lh/rh = left/right hemisphere); lower significant-digit values
+indicate regions where numerical variability more strongly erodes precision.
+Table~\ref{tab:sig-std-subcortical-volume} presents the corresponding
+region-level data for subcortical volumes.
 
 To assess spatial stability, we evaluated the volumetric overlap using the
 extended Sørensen-Dice coefficient (Eq.~\ref{eq:dice}). The analysis revealed
 substantial inter-subject and regional variability (Figure~\ref{fig:dice}).
-Cortical regions showed marked instability, with Dice coefficients ranging from
+Cortical regions showed marked variability, with Dice coefficients ranging from
 $0.00$ to $0.91$ (mean $0.73 \pm 0.13$), indicating that for some regions,
 numerical noise could lead to a complete lack of spatial overlap. Subcortical
 structures appeared comparatively more stable, ranging from $0.03$ to $0.94$
@@ -259,7 +293,7 @@ spatial robustness compared to cortical parcellations.
     \caption{Numerical variability of segmentation. The distribution of extended
         Sørensen-Dice coefficients, highlighting the variability in spatial overlap
         for cortical and subcortical segmentations due to numerical variability. Lower
-        values indicate higher instability.\label{fig:dice}}
+        values indicate higher variability.\label{fig:dice}}
 \end{figure}
 
 \begin{figure}[h]
@@ -267,7 +301,7 @@ spatial robustness compared to cortical parcellations.
     \includegraphics[width=\linewidth]{figures/significant_digits.pdf}
     \caption{Numerical precision of cortical measures. The number of significant
         digits for cortical thickness, surface area, and volume across regions.
-        Lower values indicate higher instability. Significant digits for population
+        Lower values indicate higher variability. Significant digits for population
         variability (black cross) remain consistently lower than numerical
         variability on average, indicating that numerical variability does not
         dominate population variability.\label{fig:sig_digits_cortical}}
@@ -278,7 +312,7 @@ spatial robustness compared to cortical parcellations.
     \includegraphics[width=\linewidth]{figures/significant_digits_subcortical_volume.pdf}
     \caption{Numerical precision of subcortical volumes. The number of
         significant digits estimated for each subcortical region, showing comparable
-        instability to cortical volume measures. Significant digits for population
+        variability to cortical volume measures. Significant digits for population
         variability (black cross) remain consistently lower than numerical
         variability on average, indicating that numerical variability does not
         dominate population variability.\label{fig:sig_digits_subcortical}}
@@ -432,17 +466,17 @@ spatial robustness compared to cortical parcellations.
     \end{tabular}\label{tab:qc}
 \end{table}
 
-\section{Numerical instability of statistical inference: additional information\label{appendix:summary_stats_inference}}
+\section{Numerical variability of statistical inference: additional information\label{appendix:summary_stats_inference}}
 
 We evaluated the stability of statistical inference by quantifying the
 frequency of significance flipping across 26 MCA repetitions
 (Table~\ref{tab:fluctuating_regions}). The analysis revealed that longitudinal
-processing introduces considerably more instability than cross-sectional
+processing introduces considerably more variability than cross-sectional
 analysis, particularly for cortical metrics. Notably, partial correlation
-analysis exhibited higher susceptibility to instability in cortical volume
+analysis exhibited higher susceptibility to variability in cortical volume
 (53\% of regions unstable) and area (38\% unstable) compared to ANCOVA\@.
 
-To investigate whether longitudinal processing amplifies numerical instability,
+To investigate whether longitudinal processing amplifies numerical variability,
 we compared the dispersion of the test statistics ($F$-values for ANCOVA,
 correlation coefficients $r$ for partial correlation) in longitudinal versus
 cross-sectional pipelines. We used a one-sided Ansari-Bradley test on
@@ -509,10 +543,15 @@ showed significant variance differences in far fewer regions.
 % Table 1: Subcortical Structures
 \begin{table}[H]
     \centering
-    \caption{Variance variability in cortical regions. One-sided
-        Ansari-Bradley test comparing cross-sectional vs.\ longitudinal variances of
-        test statistics. ($* p_{\text{FDR}} < 0.05$). L/R =
-        Left/Right. $W$ = statistic, $p$ = p-value.\label{tab:stats-coef-var-subcortical}}
+    \caption{Longitudinal versus cross-sectional variance of test statistics in
+        \textbf{subcortical} regions. One-sided Ansari-Bradley test comparing
+        cross-sectional vs.\ longitudinal variances of the test statistics
+        ($F$-values for ANCOVA, $r$-values for partial correlation). $W$ =
+        Ansari-Bradley statistic, $p$ = FDR-adjusted p-value; an asterisk
+        ($* p_{\text{FDR}} < 0.05$) marks regions where the test statistic is
+        significantly \emph{more} variable longitudinally than cross-sectionally,
+        i.e.\ where longitudinal processing inflates numerical variance. L/R =
+        Left/Right.\label{tab:stats-coef-var-subcortical}}
     \begin{tblr}[
         ]
         {
@@ -550,9 +589,14 @@ showed significant variance differences in far fewer regions.
 
 % Table 2: Cortical Regions
 \begin{longtblr}[
-        caption={Ansari-Bradley test results for cross-sectional vs.\ longitudinal variances in cortical regions. * indicates FDR-corrected significance ($p < 0.05$).\ lh/rh =
-                left/right hemisphere. ACC = anterior cingulate cortex, MF = middle
-                frontal. $W$ = statistic, $p$ = p-value.},
+        caption={Longitudinal versus cross-sectional variance of test statistics
+                in \textbf{cortical} regions (one-sided Ansari-Bradley test). $W$ =
+                Ansari-Bradley statistic, $p$ = FDR-adjusted p-value; an asterisk
+                (* $p < 0.05$) marks regions where the test statistic is
+                significantly more variable longitudinally than cross-sectionally,
+                i.e.\ where longitudinal processing inflates numerical variance.
+                lh/rh = left/right hemisphere; ACC = anterior cingulate cortex, MF =
+                middle frontal.},
         label={tab:stats-coef-var-cortical},
     ]{
         width=\linewidth,
@@ -674,7 +718,7 @@ downstream statistical inference in structural MRI analyses of PD.\@
     \caption{Numerical-Population Variability Ratio (\npvr) for cortical surface
         area (top row in each panel) and cortical volume (bottom row in each
         panel) in healthy controls (HC) and Parkinson's disease (PD). Higher
-        \npvr\ values indicate higher computational uncertainty relative to
+        \npvr\ values indicate higher numerical variability relative to
         inter-subject variability.\label{fig:npvr_maps_area_volume}}
 \end{figure}
 
@@ -690,6 +734,9 @@ downstream statistical inference in structural MRI analyses of PD.\@
 
 \section{Distribution of statistical test coefficients\label{appendix:distribution_stats_values}}
 
+This section provides the per-metric coefficient distributions underlying the
+substantial run-to-run variability of test statistics reported in Results,
+Section~\mainsecref{sec:empirical_evaluation}{2.1}.
 Figures~\ref{fig:statstest_coefficients_distribution_subcortical},~\ref{fig:statstest_coefficients_distribution_thickness},~\ref{fig:statstest_coefficients_distribution_area}
 and~\ref{fig:statstest_coefficients_distribution_volume} show the distribution
 of partial correlation coefficients and F-statistics for subcortical volume,
@@ -762,9 +809,9 @@ the numerical perturbation.
         measures. Red dots represent the IEEE-754 unperturbed results.\label{fig:statstest_coefficients_distribution_volume}}
 \end{figure}
 
-\section{Numerical validation of numerical uncertainty propagation\label{appendix:numerical_validation_uncertainty_propagation}}
+\section{Numerical validation of numerical variability propagation\label{appendix:numerical_validation_uncertainty_propagation}}
 
-To numerically validate the proposed uncertainty-propagation framework, we
+To numerically validate the proposed variability-propagation framework, we
 compared analytical standard-deviation estimates derived from the closed-form
 expressions reported in Table~\maintabref{tab:stat_uncertainty}{1} with
 empirical estimates obtained through repeated Monte Carlo Arithmetic (MCA)
@@ -827,7 +874,7 @@ violin plots (Fig.~\ref{fig:uncertainty_validation_pvalues}) indicate that
 these negative tendencies arise from broadened and asymmetric distributions
 with several metrics maintaining substantial overlap with zero.
 
-These results indicate that the analytical uncertainty model provides a
+These results indicate that the analytical variability model provides a
 faithful approximation of numerically induced variability in downstream
 statistical measures, with accuracy depending on both the statistical test and
 study design. Cross-sectional configurations show near-unbiased and tightly
@@ -858,9 +905,9 @@ tendency of the analytical model to overestimate variability.
 
 \section{Numerical validation of flip significance simulations\label{appendix:numerical_validation_flip_significance}}
 
-To assess the validity of the analytical uncertainty framework used to model
-numerically induced significance instability, we compared simulated estimates
-derived from closed-form uncertainty expressions with empirical estimates
+To assess the validity of the analytical variability framework used to model
+numerically induced significance flips, we compared simulated estimates
+derived from closed-form variability expressions with empirical estimates
 obtained from Monte Carlo Arithmetic (MCA) repetitions. Formally, the
 proportion of significant tests (positive prediction rate, PPR) is defined as:
 \begin{equation}
@@ -872,7 +919,7 @@ and false negatives, respectively.
 
 Figure~\ref{fig:std_sampled_simulated_comparison} compares standard deviations
 of $p$-values estimated directly from 26 MCA runs with those predicted by the
-analytical uncertainty formulas (Table~\maintabref{tab:stat_uncertainty}{1}).
+analytical variability formulas (Table~\maintabref{tab:stat_uncertainty}{1}).
 Each point corresponds to a cortical or subcortical brain region. Results show
 close agreement between sampled and simulated estimates, particularly in the
 cross-sectional setting. In the longitudinal analyses, simulated standard
@@ -880,7 +927,7 @@ deviations tend to be slightly larger than sampled values, indicating a
 conservative bias of the analytical model.
 
 Figure~\ref{fig:ppr_simulated_comparison} evaluates how this analytical
-uncertainty propagates to downstream inference by comparing the simulated
+variability propagates to downstream inference by comparing the simulated
 positive prediction rate (PPR; Eq.~\ref{eq:ppr}) with the empirical proportion
 of significant tests observed across MCA repetitions. Cross-sectional results
 closely follow the identity line, while longitudinal results show a moderate
@@ -934,7 +981,7 @@ statistical test type.
     \caption{Comparison of standard deviation estimates of $p$-values obtained
         from MCA sampling and analytical simulations. Sampled estimates are
         computed from 26 MCA repetitions, while simulated estimates are derived
-        from the uncertainty propagation formulas reported in
+        from the variability propagation formulas reported in
         Table~\maintabref{tab:stat_uncertainty}{1}. Each point corresponds to a
         cortical or subcortical brain region. The solid line denotes the
         identity line. Results show close agreement between sampled and
@@ -942,7 +989,7 @@ statistical test type.
         clustering than longitudinal analyses. In the longitudinal setting,
         simulated standard deviations tend to slightly overestimate sampled
         variability, indicating conservative behavior of the analytical
-        uncertainty model.\label{fig:std_sampled_simulated_comparison}}
+        variability model.\label{fig:std_sampled_simulated_comparison}}
 \end{figure}
 
 \begin{figure}[ht]
@@ -951,7 +998,7 @@ statistical test type.
     \caption{ Comparison between simulated positive prediction rate (PPR;
         Eq.~\ref{eq:ppr}) and the empirical proportion of significant tests
         (Section~\mainsecref{sec:empirical_evaluation}{2.1}). Simulated PPR
-        values are computed using analytical uncertainty estimates derived from
+        values are computed using analytical variability estimates derived from
         Table~\maintabref{tab:stat_uncertainty}{1}. Each point represents a
         cortical or subcortical brain region, and the solid line indicates the
         identity line. Simulated PPR closely matches empirical significance

@@ -2,10 +2,10 @@
 
 We quantified the impact of numerical variability on structural MRI findings in
 Parkinson's disease (PD) using (1) stochastic perturbation experiments and (2)
-analytical uncertainty propagation. Empirically, we processed a longitudinal
+analytical variability propagation. Empirically, we processed a longitudinal
 PPMI cohort using FreeSurfer 7.3.1 instrumented with stochastic numerical noise
 to isolate run-to-run variability. Analytically, we derived closed-form
-approximations linking this pipeline instability (\npvr) to uncertainty in
+approximations linking this pipeline variability (\npvr) to the variability in
 effect sizes and test statistics, enabling retrospective quality control using
 only summary statistics.
 
@@ -13,9 +13,9 @@ The experimental workflow proceeded in four stages: (1) curation of a
 longitudinal dataset with two visits per participant; (2) repeated processing
 under Monte Carlo Arithmetic (MCA) perturbations via Fuzzy-libm; (3) rigorous
 quality control to distinguish numerical artifacts from technical failures; and
-(4) statistical evaluation of inference instability across repetitions.
+(4) statistical evaluation of inference variability across repetitions.
 
-\subsection{Participants}
+\subsection{Participants\label{sec:participants}}
 
 Structural MRI data were obtained from the Parkinson's Progression Markers
 Initiative (PPMI; \url{www.ppmi-info.org}). The study included 201
@@ -36,8 +36,9 @@ All procedures were approved by the research ethics boards of participating
 PPMI sites, and written informed consent was obtained from all participants in
 accordance with the Declaration of Helsinki and was exempt from review by
 Concordia University's Research Ethics Unit. The PD and HC groups did not
-differ significantly in age, education, or sex distribution ($p > 0.05$;
-Table~\ref{tab:cohort_stat}).
+differ significantly in age ($t=-0.035$, $p=0.972$), education ($t=-1.479$,
+$p=0.141$; two-sample $t$-tests), or sex distribution ($\chi^2=3.108$,
+$p=0.078$; chi-square test; Table~\ref{tab:cohort_stat}).
 
 \begin{table}[h!]
     \centering
@@ -124,6 +125,13 @@ systems~\cite{glatard2015reproducibility}, Fuzzy-libm significantly reduces
 computational overhead while effectively capturing the numerical variability
 relevant to cross-platform
 reproducibility~\cite{salari2021accurate,vila2024impact,des2023reproducibility}.
+This machine-level noise is representative of the numerical differences
+introduced by typical variations in hardware (e.g., CPU models), software
+libraries (e.g., operating-system updates), and parallelization (e.g.,
+sequential vs.\ multi-threaded execution), and its validity as a model of
+realistic numerical variability in neuroimaging pipelines has been demonstrated
+for operating-system~\cite{salari2021accurate} and
+hardware~\cite{vila2024impact} variations.
 
 Fuzzy-libm is deployed via a Docker container and uses the \texttt{LD\_PRELOAD}
 mechanism to dynamically intercept calls to the standard system math library
@@ -138,7 +146,7 @@ representative of realistic machine-level precision errors.
 
 To quantify computational stability relative to population variation, we
 introduce the Numerical-Population Variability Ratio (\npvr). For each brain
-region, \npvr\ measures the ratio of measurement uncertainty arising from
+region, \npvr\ measures the ratio of numerical variability arising from
 computational processes to natural inter-subject variation:
 
 \[
@@ -175,19 +183,19 @@ indexes subject-visits and $r=1,\dots,k$ indexes repetitions. Let
     \label{eq:sigma_anat}
 \end{equation}
 where $\bar{x}_i$ and $\bar{x}^{(r)}$ denote column and row means, respectively.
-Higher \npvr\ values indicate regions where computational uncertainty approaches
+Higher \npvr\ values indicate regions where numerical variability approaches
 population variation.
 
 \subsubsection{Relationship between \npvr~and downstream statistical test
-    uncertainty\label{sec:theoretical_derivations}}
+    variability\label{sec:theoretical_derivations}}
 
 To establish a quantitative link between a method's computational
 reproducibility and the reliability of group-level statistical inferences, we
 derived analytical expressions connecting numerical variability to the
-uncertainty of commonly used statistical tests (Cohen's~$d$, $t$-tests, partial
-correlation, and ANCOVA). Our goal is to characterize how numerical noise
-propagates through the analytical pipeline to produce uncertainty in the
-reported statistics.
+resulting variability of commonly used statistical tests (Cohen's~$d$,
+$t$-tests, partial correlation, and ANCOVA). Our goal is to characterize how
+numerical noise propagates through the analytical pipeline to produce
+variability in the reported statistics.
 
 For each MCA repetition $r$, we denote by $\tilde{\mathbf{x}}^{(r)} =
     {(\tilde{x}_1^{(r)}, \dots, \tilde{x}_n^{(r)})}^\top$ the vector of perturbed
@@ -335,7 +343,7 @@ negligible:
 \end{align*}
 where $\nu_{\mathrm{npv}} = \sigma_{\mathrm{num}} / \sigma_{\mathrm{pop}}$ is
 the numerical-population variability ratio. This expression quantitatively links
-the numerical uncertainty captured by $\nu_{\mathrm{npv}}$ to the variability of
+the numerical variability captured by $\nu_{\mathrm{npv}}$ to the dispersion of
 Cohen's~$d$ effect size, providing a practical measure of the stability of
 statistical inferences under finite-precision arithmetic.
 
@@ -413,7 +421,7 @@ expression:
 
 \vspace{0.5em}
 \noindent
-The uncertainty of the corresponding $p$-values can then be derived. Let $X$ be
+The variability of the corresponding $p$-values can then be derived. Let $X$ be
 the random variable with $\mathbb{E}_{\mathrm{num}}[X]=t_0$ and
 $\Var_{\mathrm{num}}[X]=\nu_{\mathrm{npv}}^{2}$. Let $f_t$, $F_t$ be the
 probability density and cumulative distribution functions of the Student
@@ -424,7 +432,7 @@ two-sided $p$-value $p(X) = 2\left(1 - F_t(|X|)\right)$ gives:
                               & \approx {\left(-2f_t(|t_0|)\,\mathrm{sign}(t_0)\right)}^{2}\Var_{\mathrm{num}}[X] \notag \\
                               & \approx 4{\left(f_t(|t_0|)\right)}^{2}\nu_{\mathrm{npv}}^{2},
 \end{align*}
-which gives the standard deviation of the numerical uncertainty in the
+which gives the standard deviation of the numerical variability in the
 $p$-value:
 \begin{equation*}
     \sigma_{\mathrm{num}}[p(X)] = 2f_t(|t_0|)\,\nu_{\mathrm{npv}}.
@@ -480,8 +488,8 @@ with $X \sim \mathcal{F}(df_1, df_2)$ and $F_{\mathcal{F}}$ the cumulative
 distribution function of the $F$ distribution with $(df_1, df_2)$ degrees of
 freedom. For $df_1 = 1$, the ANCOVA $F$ statistic is equivalent to the
 two-sample $t$-test through $F = t^{2}$
-(see~\cite[p.~403]{johnson1995continuous}). Then the uncertainty in the $F$
-statistic due to numerical noise follows directly from the uncertainty of $t$:
+(see~\cite[p.~403]{johnson1995continuous}). Then the variability in the $F$
+statistic due to numerical noise follows directly from the variability of $t$:
 \begin{align*}
     \Var_{\mathrm{num}}[F]
      & = \Var_{\mathrm{num}}[t^{2}]
@@ -497,7 +505,7 @@ yielding
 
 \vspace{0.4em}
 \noindent
-The uncertainty in the corresponding $p$-values can be obtained by the delta
+The variability in the corresponding $p$-values can be obtained by the delta
 method. Let $X$ be a random variable with $\mathbb{E}_{\mathrm{num}}[X]=F_0$ and
 $\Var_{\mathrm{num}}[X]=4F_0\nu_{\mathrm{npv}}^{2}$ with $f_{\mathcal{F}}$,
 $F_{\mathcal{F}}$ the probability density and cumulative distribution functions.
@@ -741,14 +749,14 @@ Using \Cref{eq:partial-var-bound} to bound $\Var_{\mathrm{num}}[R]$ leads to:
 \]
 
 \subsection{Probability of significance flips induced by numerical
-    uncertainty\label{sec:false-positives-modeling}}
+    variability\label{sec:false-positives-modeling}}
 
 To quantify the probability of significance flips findings arising from
 numerical variability, we model the computed $p$-value as a random variable
 following a Beta distribution, $p \sim \text{Beta}(a, b)$, which is suitable
 for modeling probabilities and proportions bounded on $[0,1]$. The distribution
 is parameterized by shape parameters $(a,b)$ determined from a target mean
-$\mu_p$ and variance $\sigma_p^2$ estimated using the uncertainty propagation
+$\mu_p$ and variance $\sigma_p^2$ estimated using the variability propagation
 formulae reported in Table~\ref{tab:stat_uncertainty}. The parameters are given
 by:
 
@@ -762,7 +770,7 @@ defined only when $\sigma_p^2 < \mu_p(1 - \mu_p)$.
 
 This formulation defines a distribution of plausible $p$-values centered around
 the nominal value $p_0=\mu_p$, with dispersion determined by numerical
-instability. Importantly, this model enables direct estimation of error rates
+variability. Importantly, this model enables direct estimation of error rates
 caused by numerical perturbations relative to a fixed significance threshold
 $\alpha$. Two distinct regimes are considered, depending on whether the nominal
 $p$-value $p_0$ lies above or below $\alpha$
@@ -874,7 +882,7 @@ Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
     \end{minipage}
     \caption{\textbf{Modeling inference stability using Beta distributions.}
         The panels illustrate the probability of significance flipping due to
-        numerical uncertainty. The negative case ($p_0 > \alpha$,
+        numerical variability. The negative case ($p_0 > \alpha$,
         Fig.~\ref{fig:fp-negative-case}), where the tail of the distribution
         crossing $\alpha$ represents the probability of a false negative finding
         (\FN). The positive case ($p_0 \leq \alpha$,
@@ -882,4 +890,72 @@ Note~\suppnoteref{appendix:numerical_validation_flip_significance}{S6}.
         $\alpha$ represents the probability of a false positive finding
         (\FP).\label{fig:false-positives-model}}
 \end{figure}
+
+\subsection{Retrospective analysis of published studies\label{sec:retrospective_studies}}
+
+We compiled a set of previously published studies reporting FreeSurfer-derived
+structural MRI findings in Parkinson's disease, to illustrate the impact of
+numerical variability on reported outcomes across a range of study designs and
+research questions. Eligible studies had to report, for at least one cortical
+or subcortical measure, a $p$-value together with the sample size and
+statistical test used, so that numerical variability could be estimated from
+the formulas in Table~\maintabref{tab:stat_uncertainty}{1} without requiring
+access to the original raw data. Thirteen studies met these criteria and were
+retained~\cite{chagas2017neuroimaging,garcia2014structural,gerrits2016cortical,
+    hanganu2014mild,lewis2016pattern,li2022cortical,mak2014subcortical,
+    pellicano2015morphometric,radziunas2018brain,sokolowski2024impact,
+    sokolowski2024longitudinal,wilson2019cortical,yang2024longitudinal}.
+
+Table~\ref{tab:study_characteristics} summarizes the design, sample size,
+FreeSurfer-derived metric(s), and neuroscientific focus of each study. The set
+spans eight purely cross-sectional studies, two purely longitudinal studies,
+and three studies contributing both cross-sectional and longitudinal
+analyses, addressing questions of cognitive correlates and impairment (4
+studies), psychiatric and behavioral comorbidities (2), motor subtypes (1),
+disease staging, atrophy, and progression (3), sleep disturbance (1), and
+methodological replication (2).
+
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \begin{tblr}{
+            width = \linewidth,
+            colspec = {X[0.05,l,m] X[0.4,c,m] X[0.4,c,m] X[0.5,l,m] X[1,l,m]},
+            row{1} = {font=\bfseries},
+            rowsep = 1pt,
+        }
+        \hline
+        Study                             & Design               & $N$            & Metric(s)       & Neuroscientific focus                      \\
+        \hline
+        \cite{chagas2017neuroimaging}     & Cross-sectional      & 43 PD          & CT, CV, SCV     & Psychiatric comorbidity (depression)       \\
+        \cite{garcia2014structural}       & Cross-sectional      & 36 HC, 92 PD   & CT, CV          & Cognitive correlates                       \\
+        \cite{gerrits2016cortical}        & Cross-sectional      & 45 HC, 93 PD   & CA, SCV         & Cognitive heterogeneity/subtypes           \\
+        \cite{hanganu2014mild}            & Longitudinal         & 18 HC, 32 PD   & SCV             & Mild cognitive impairment/decline          \\
+        \cite{lewis2016pattern}           & Both                 & 70 HC, 76 PD   & CT, SCV         & Disease-stage atrophy, clinical correlates \\
+        \cite{li2022cortical}             & Cross-sectional      & 56 HC, 90 PD   & SCV             & Motor subtypes                             \\
+        \cite{mak2014subcortical}         & Cross-sectional      & 90 PD          &
+        SCV, CT/CV                        & Cognitive impairment
+        \\
+        \cite{pellicano2015morphometric}  & Cross-sectional      & 24 HC, 36 PD   & CT, SCV         & Psychiatric comorbidity (impulse control)  \\
+        \cite{radziunas2018brain}         & Cross-sectional      & 28 HC, 28 PD   & CT, CV, CA, SCV & Sleep disturbance                          \\
+        \cite{sokolowski2024impact}       & Both                 & 106 HC, 209 PD & SCV             & Methodological (FreeSurfer version)        \\
+        \cite{sokolowski2024longitudinal} & Longitudinal         & 25 PD, 18 HC   & SCV             & Replication                                \\
+        \cite{wilson2019cortical}         & Cross-sectional      & 30 HC, 80 PD   & CT, SCV         & Disease staging/severity                   \\
+        \cite{yang2024longitudinal}       & Both                 & 34 PD, 32 HC   & SCV             & Longitudinal shape/volume progression      \\
+        \hline
+    \end{tblr}
+    \caption{\textbf{Characteristics of the 13 retrospectively reviewed
+            studies.} $N$ reports each study's own analyzed sample sizes, as
+        stated in that publication. Metrics lists the measures from which
+        we extracted $p$-values for the numerical-variability re-analysis,
+        which for some studies is a subset of all structural measures
+        reported in the original publication. CT = cortical
+        thickness; CV = cortical volume; CA = cortical area; SCV =
+        subcortical volume.\label{tab:study_characteristics}}
+\end{table}
+
+For each study, we extracted every $p$-value reported for a FreeSurfer-derived
+structural measure, together with the corresponding test statistic, sample size,
+and test type, and propagated numerical variability through the
+significance-flip model described in Section~\ref{sec:false-positives-modeling}.
 
