@@ -78,7 +78,7 @@ We moved the method-descriptive paragraphs out of Results §2.1–§2.3 and into
 ```“...spanning a range of study designs and neuroscientific questions (selection criteria and study characteristics in Methods, §4.5 and Table 3)”```
 **Lines 158–163:**
 ```“For each p-value reported as significant in the original articles, we estimated the probability of a numerically induced significance flip using the Beta-distribution model described in Methods (§4.4), parametrized by the reported p-value (mean) and the propagated numerical variability (standard deviation).”```
-The selection rationale and study-by-study detail now live in a new Methods subsection, "Retrospective analysis of published studies" (see Reviewer 2, point 1, below).
+The selection rationale and study-by-study detail now live in a new Methods subsection, "Overview of evaluated studies" (see Reviewer 2, point 1, below).
 
 ### Comments
 
@@ -109,7 +109,7 @@ I still find it unfortunate that the authors did not take the opportunity to des
 
 ### Authors responses:
 
-We agree this would make the retrospective analysis considerably more informative. We added a new Methods subsection, "Retrospective analysis of published studies," which states the selection criteria and introduces a new characterization table covering, for each of the 13 studies: design (cross-sectional/longitudinal/both), the study's own sample size, the FreeSurfer-derived metric(s) examined, and its neuroscientific focus (new Methods §4.5, and Table 3 immediately following):
+We agree this would make the retrospective analysis considerably more informative. We added a new Methods subsection, "Overview of evaluated studies," which states the selection criteria and introduces a new characterization table covering, for each of the 13 studies: design (cross-sectional/longitudinal/both), the study's own sample size, the FreeSurfer-derived metric(s) examined, and its neuroscientific focus (new Methods §4.5, and Table 3 immediately following):
 **Lines 513–531:**
 ```“We compiled a set of previously published studies reporting FreeSurfer-derived structural MRI findings in Parkinson’s disease, to illustrate the impact of numerical variability on reported outcomes across a range of study designs and research questions. Eligible studies had to report, for at least one cortical or subcortical measure, a p-value together with the sample size and statistical test used, so that numerical variability could be estimated from the formulas in Table 1 without requiring access to the original raw data. Thirteen studies met these criteria and were retained [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]. Table 3 summarizes the design, sample size, FreeSurfer-derived metric(s), and neuroscientific focus of each study. The set spans eight purely cross-sectional studies, two purely longitudinal studies, and three studies contributing both cross-sectional and longitudinal analyses, addressing questions of cognitive correlates and impairment (4 studies), psychiatric and behavioral comorbidities (2), motor subtypes (1), disease staging, atrophy, and progression (3), sleep disturbance (1), and methodological replication (2). For each study, we extracted every p-value reported for a FreeSurfer-derived structural measure, together with the corresponding test statistic, sample size, and test type, and propagated numerical variability through the significance-flip model described in Section 4.4.”```
 
